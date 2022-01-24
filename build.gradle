@@ -1,0 +1,110 @@
+plugins {
+    id 'java'
+    id 'eclipse'
+    id "org.jetbrains.gradle.plugin.idea-ext" version "1.0.1"
+    id 'com.github.johnrengelman.shadow' version '7.0.0'
+}
+
+group = 'ir.sayandevelopment'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven {
+        url = uri('https://hub.spigotmc.org/nexus/content/repositories/snapshots/')
+    }
+    maven {
+        name = 'velocitypowered-repo'
+        url = 'https://nexus.velocitypowered.com/repository/maven-public/'
+    }
+    maven {
+        url = uri("https://maven.pkg.github.com/mohamad82bz/ruom")
+        credentials {
+            username = project.findProperty("gpr.user")
+            password = project.findProperty("gpr.key")
+        }
+    }
+    maven {
+        url = uri('https://jitpack.io')
+    }
+    maven {
+        url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
+    }
+    maven {
+        name = 'minecrell'
+        url = 'https://repo.minecrell.net/releases'
+    }
+    maven {
+        name = "sonatype-oss-snapshots"
+        url = "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
+}
+
+dependencies {
+    compileOnly 'com.velocitypowered:velocity-api:3.1.0'
+    compileOnly 'org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT'
+    compileOnly 'com.github.MadMartian:hydrazine-path-finding:1.6.0'
+    compileOnly 'me.clip:placeholderapi:2.11.1'
+    compileOnly files('libs/ServerListPlus-3.5.0.jar')
+    compileOnly files('libs/DBConnector-Velocity-1.0-all.jar')
+    compileOnly files('libs/SayanChat-2.2-all.jar')
+    annotationProcessor 'com.velocitypowered:velocity-api:3.1.0'
+    implementation "net.kyori:adventure-text-minimessage:4.2.0-SNAPSHOT"
+    implementation 'me.mohamad82:ruom:3.5.3:all'
+}
+
+shadowJar {
+    minimize()
+    relocate('me.mohamad82.ruom', 'ir.sayandevelopment.sayanvanish.ruom')
+    dependencies {
+        exclude(dependency('me.mohamad82.ruom.vector:.*'))
+        exclude(dependency('me.mohamad82.ruom.events:.*'))
+        exclude(dependency('me.mohamad82.ruom.areaselections:.*'))
+        exclude(dependency('me.mohamad82.ruom.hologram:.*'))
+        exclude(dependency('me.mohamad82.ruom.npc:.*'))
+        exclude(dependency('me.mohamad82.ruom.toast:.*'))
+        exclude(dependency('me.mohamad82.ruom.translators:.*'))
+        exclude(dependency('me.mohamad82.ruom.worldedit:.*'))
+    }
+    manifest {
+        attributes 'Main-Class': 'ir.sayandevelopment.sayanvanish.VelocityMain'
+    }
+}
+
+def targetJavaVersion = 8
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}
+
+compileJava.options.encoding = 'UTF-8'
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    if (targetJavaVersion >= 7 || JavaVersion.current().isJava10Compatible()) {
+        options.release = targetJavaVersion
+    }
+}
+
+def templateSource = file('src/main/templates')
+def templateDest = layout.buildDirectory.dir('generated/sources/templates')
+def generateTemplates = tasks.register('generateTemplates', Copy) { task ->
+    def props = [
+            'version': project.version
+    ]
+    task.inputs.properties props
+
+    task.from templateSource
+    task.into templateDest
+    task.expand props
+}
+
+sourceSets.main.java.srcDir(generateTemplates.map { it.outputs })
+
+rootProject.idea.project.settings.taskTriggers.afterSync generateTemplates
+project.eclipse.synchronizationTasks(generateTemplates)

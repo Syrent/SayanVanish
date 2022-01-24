@@ -1,0 +1,9 @@
+name: SayanVanish
+version: "1.0.0"
+main: ir.sayandevelopment.spigot.SpigotMain
+api-version: 1.13
+prefix: SayanVanish
+authors: [ Syrent ]
+description: Advanced vanish system
+website: sayandevelopment.ir
+softdepend: [PlaceholderAPI]

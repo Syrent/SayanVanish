@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 public class CommonUtils {
     public static boolean isPlayerVanished(Player player) {
         try {
-            return VelocityMain.SQL.getVanishedPlayer(player.getUniqueId()).isVanished();
+            return VelocityMain.SQL.getVanishedPlayers(player.getUniqueId()).isVanished();
         } catch (Exception e) {
             e.printStackTrace();
         }

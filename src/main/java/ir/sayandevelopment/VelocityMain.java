@@ -14,7 +14,7 @@ import ir.sayandevelopment.command.FindCommand;
 import ir.sayandevelopment.command.GListCommand;
 import ir.sayandevelopment.command.VanishCommand;
 import ir.sayandevelopment.database.MySQL;
-import ir.sayandevelopment.database.SQL;
+import ir.sayandevelopment.database.Database;
 import ir.sayandevelopment.listener.LoginListener;
 import ir.sayandevelopment.listener.ServerConnectedListener;
 import ir.sayandevelopment.listener.DisconnectListener;
@@ -40,7 +40,7 @@ public class VelocityMain {
     private Logger logger;
     public static VelocityMain INSTANCE;
     public static Gson GSON;
-    public static SQL SQL;
+    public static MySQL SQL;
     public static final ChannelIdentifier SAYANVANISH_CHANNEL = MinecraftChannelIdentifier.create("sayanvanish", "main");
     public static final String PREFIX = "<gradient:#FF0000:#FF2A00>Vanish</gradient> <color:#555197>| ";
     public static final String PROXY_PREFIX = "<gradient:#FF0000:#FF2A00>Proxy</gradient> <color:#555197>| ";
@@ -56,18 +56,12 @@ public class VelocityMain {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
-        String host = "localhost";
-        String database = "server";
-        String user = "server";
-        String pass = "yG%@NU6wz}i#)ZQN";
-        int port = 3306;
-
-        SQL = new MySQL(host, port, database, user, pass);
+        SQL = new MySQL();
 
         try {
             logger.info("Connecting to SQL...");
-            SQL.openConnection();
-            SQL.createTable();
+            SQL.connect();
+            SQL.init();
             logger.info("Connected to SQL.");
         } catch (Exception ex) {
             logger.error("Error while connecting to SQL.");
@@ -95,7 +89,7 @@ public class VelocityMain {
                 PlayerIdentity identity = response.getRequest().getIdentity();
                 if (identity != null) {
                     try {
-                        return this.replace(s, server.getPlayerCount() - VelocityMain.SQL.getVanishedPlayersCount());
+                        return this.replace(s, server.getPlayerCount() - VelocityMain.SQL.vanishedCount());
                     } catch (Exception e) {
                         e.printStackTrace();
                         return this.replace(s, server.getPlayerCount());
@@ -109,7 +103,7 @@ public class VelocityMain {
             public String replace(ServerListPlusCore core, String s) {
                 // Unknown player, so let's just replace it with something unknown
                 try {
-                    return String.valueOf(server.getPlayerCount() - VelocityMain.SQL.getVanishedPlayersCount());
+                    return String.valueOf(server.getPlayerCount() - VelocityMain.SQL.vanishedCount());
                 } catch (Exception e) {
                     e.printStackTrace();
                     return String.valueOf(server.getPlayerCount());
@@ -126,7 +120,7 @@ public class VelocityMain {
                     PlayerIdentity identity = response.getRequest().getIdentity();
                     if (identity != null) {
                         try {
-                            return this.replace(s, registeredServer.getPlayersConnected().size() - VelocityMain.SQL.getVanishedPlayersCount(name.toLowerCase()));
+                            return this.replace(s, registeredServer.getPlayersConnected().size() - VelocityMain.SQL.vanishedCount(name.toLowerCase()));
                         } catch (Exception e) {
                             e.printStackTrace();
                             return this.replace(s, registeredServer.getPlayersConnected().size());
@@ -140,7 +134,7 @@ public class VelocityMain {
                 public String replace(ServerListPlusCore core, String s) {
                     // Unknown player, so let's just replace it with something unknown
                     try {
-                        return String.valueOf(registeredServer.getPlayersConnected().size() - VelocityMain.SQL.getVanishedPlayersCount(name.toLowerCase()));
+                        return String.valueOf(registeredServer.getPlayersConnected().size() - VelocityMain.SQL.vanishedCount(name.toLowerCase()));
                     } catch (Exception e) {
                         e.printStackTrace();
                         return String.valueOf(registeredServer.getPlayersConnected().size());

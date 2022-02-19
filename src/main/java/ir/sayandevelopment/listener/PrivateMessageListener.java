@@ -13,11 +13,10 @@ public class PrivateMessageListener implements Listener {
     @EventHandler
     public void onPriavateMessage(PrivateMessageReceiveEvent event) {
         Player player = Bukkit.getPlayerExact(event.getSender());
-            if (event.getResult().equals(PrivateMessageResult.SUCCESSFULL) &&
-                    SpigotMain.vanishedPlayers.containsKey(event.getReceiver().getUniqueId()) &&
-                    SpigotMain.vanishedPlayers.get(event.getReceiver().getUniqueId()).isVanished()) {
-                if (player != null && player.hasPermission("sayanvanish.bypass.privatemessage")) return;
-                event.setResult(PrivateMessageResult.OFFLINE);
+        if (event.getResult().equals(PrivateMessageResult.SUCCESSFULL) &&
+                SpigotMain.vanishedPlayers.contains(event.getReceiver().getName())) {
+            if (player != null && player.hasPermission("sayanvanish.bypass.privatemessage")) return;
+            event.setResult(PrivateMessageResult.OFFLINE);
         }
     }
 }

@@ -11,7 +11,7 @@ public class PlayerMentionListener implements Listener {
     @EventHandler
     public void onMention(PlayerMentionEvent event) {
         Player target = event.getMentioned();
-        if (SpigotMain.vanishedPlayers.containsKey(target.getUniqueId()) && SpigotMain.vanishedPlayers.get(target.getUniqueId()).isVanished()) {
+        if (SpigotMain.vanishedPlayers.contains(target.getName())) {
             event.setCancelled(true);
         }
     }

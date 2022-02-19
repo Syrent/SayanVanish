@@ -9,7 +9,7 @@ public class ServerConnectedListener {
     @Subscribe
     public void onServerConnected(ServerConnectedEvent event) {
         try {
-            VelocityMain.SQL.setGameMode(event.getPlayer().getUniqueId().toString(), event.getServer().getServerInfo().getName());
+            VelocityMain.SQL.setGameMode(event.getPlayer().getUniqueId(), event.getServer().getServerInfo().getName());
         } catch (Exception e) {
             e.printStackTrace();
         }

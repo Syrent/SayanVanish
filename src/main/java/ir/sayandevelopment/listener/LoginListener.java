@@ -9,7 +9,7 @@ public class LoginListener {
     @Subscribe
     public void onConnect(LoginEvent event) {
         try {
-            VelocityMain.SQL.setOnline(event.getPlayer().getUniqueId().toString(), true);
+            VelocityMain.SQL.setOnline(event.getPlayer().getUniqueId(), true);
         } catch (Exception e) {
             e.printStackTrace();
         }

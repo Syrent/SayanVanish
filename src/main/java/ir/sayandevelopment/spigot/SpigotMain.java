@@ -1,28 +1,21 @@
 package ir.sayandevelopment.spigot;
 
 import ir.sayandevelopment.VanishManager;
-import ir.sayandevelopment.VanishedPlayer;
 import ir.sayandevelopment.database.MySQL;
-import ir.sayandevelopment.database.SQL;
 import ir.sayandevelopment.listener.AsyncPlayerChatListener;
 import ir.sayandevelopment.listener.PlayerMentionListener;
 import ir.sayandevelopment.listener.PrivateMessageListener;
 import ir.sayandevelopment.spigot.bridge.BukkitBridgeListener;
 import ir.sayandevelopment.spigot.dependency.PlaceholderAPI;
 import ir.sayandevelopment.spigot.listener.PlayerJoinListener;
-import ir.sayandevelopment.spigot.listener.PlayerQuitListener;
 import ir.sayandevelopment.spigot.listener.TabCompleteListener;
 import me.mohamad82.ruom.RUoMPlugin;
 import me.mohamad82.ruom.Ruom;
 import me.mohamad82.ruom.configuration.YamlConfig;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.event.server.TabCompleteEvent;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.HashSet;
+import java.util.Set;
 
 public class SpigotMain extends RUoMPlugin {
 
@@ -30,27 +23,20 @@ public class SpigotMain extends RUoMPlugin {
     public static SpigotMain getInstance() {
         return instance;
     }
-    public static Map<UUID, VanishedPlayer> vanishedPlayers = new HashMap<>();
+    public static Set<String> vanishedPlayers = new HashSet<>();
 
-    public static SQL SQL;
+    public static MySQL SQL;
     public YamlConfig configYML;
 
     @Override
     public void onEnable() {
         instance = this;
-
-        String host = "localhost";
-        String database = "server";
-        String user = "server";
-        String pass = "yG%@NU6wz}i#)ZQN";
-        int port = 3306;
-
-        SQL = new MySQL(host, port, database, user, pass);
+        SQL = new MySQL();
 
         try {
             this.getLogger().info("Connecting to SQL...");
-            SQL.openConnection();
-            SQL.createTable();
+            SQL.connect();
+            SQL.init();
             this.getLogger().info("Connected to SQL.");
         } catch (Exception ex) {
             this.getLogger().severe("Error while connecting to SQL.");
@@ -59,18 +45,15 @@ public class SpigotMain extends RUoMPlugin {
         }
 
         Ruom.runAsync(() -> {
-            Player syrent = Bukkit.getPlayerExact("Syrent231");
             vanishedPlayers.clear();
             try {
                 if (SQL.getVanishedPlayers() != null) {
-                    for (VanishedPlayer vanishedPlayer : SQL.getVanishedPlayers()) {
-                        vanishedPlayers.put(vanishedPlayer.getUuid(), vanishedPlayer);
-                    }
+                    vanishedPlayers.addAll(SQL.getVanishedPlayers());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }, 0, 1);
+        }, 0, 5);
 
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "sayanvanish:main");
         this.getServer().getMessenger().registerIncomingPluginChannel(this, "sayanvanish:main", new BukkitBridgeListener());
@@ -78,7 +61,6 @@ public class SpigotMain extends RUoMPlugin {
         new VanishManager();
 
         Ruom.registerListener(new PlayerJoinListener());
-        Ruom.registerListener(new PlayerQuitListener());
         Ruom.registerListener(new AsyncPlayerChatListener());
         Ruom.registerListener(new PrivateMessageListener());
         Ruom.registerListener(new PlayerMentionListener());
@@ -96,5 +78,6 @@ public class SpigotMain extends RUoMPlugin {
         //make sure to unregister the registered channels in case of a reload
         this.getServer().getMessenger().unregisterOutgoingPluginChannel(this);
         this.getServer().getMessenger().unregisterIncomingPluginChannel(this);
+        Ruom.shutdown();
     }
 }

@@ -1,23 +1,36 @@
 package ir.sayandevelopment.listener;
 
-import ir.sayandevelopment.spigot.SpigotMain;
-import me.sayandevelopment.sayanchat.api.event.PrivateMessageReceiveEvent;
+import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.proxy.Player;
+import ir.sayandevelopment.VelocityMain;
+import ir.sayandevelopment.command.VanishCommand;
+import me.sayandevelopment.sayanchat.bridge.proxy.velocity.VelocityPrivateMessageSendEvent;
 import me.sayandevelopment.sayanchat.enums.PrivateMessageResult;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 
-public class PrivateMessageListener implements Listener {
+import java.util.UUID;
 
-    @EventHandler
-    public void onPriavateMessage(PrivateMessageReceiveEvent event) {
-        Player player = Bukkit.getPlayerExact(event.getSender());
-            if (event.getResult().equals(PrivateMessageResult.SUCCESSFULL) &&
-                    SpigotMain.vanishedPlayers.containsKey(event.getReceiver().getUniqueId()) &&
-                    SpigotMain.vanishedPlayers.get(event.getReceiver().getUniqueId()).isVanished()) {
-                if (player != null && player.hasPermission("sayanvanish.bypass.privatemessage")) return;
+public class PrivateMessageListener {
+
+    @Subscribe
+    public void onPrivateMessage(VelocityPrivateMessageSendEvent event) {
+        UUID receiverUUID = null;
+        for (Player proxiedPlayer : VelocityMain.INSTANCE.getServer().getAllPlayers()) {
+            if (proxiedPlayer.getUsername().equals(event.getReceiverName())) {
+                receiverUUID = proxiedPlayer.getUniqueId();
+            }
+        }
+
+        if (receiverUUID == null) return;
+
+        if (event.getResult().equals(PrivateMessageResult.SUCCESSFULL) &&
+                VanishCommand.vanishedPlayers.containsKey(receiverUUID)) {
+            if (VanishCommand.vanishedPlayers.get(receiverUUID).isVanished()) {
+                Player sender = (Player) event.getSender();
+
+                if (sender.hasPermission("sayanvanish.bypass.privatemessage")) return;
+
                 event.setResult(PrivateMessageResult.OFFLINE);
+            }
         }
     }
 }

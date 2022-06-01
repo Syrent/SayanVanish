@@ -33,7 +33,7 @@ public class PlaceholderAPI extends PlaceholderExpansion {
     public String onRequest(OfflinePlayer player, String params) {
         int defaultPlayers = 0;
         try {
-            defaultPlayers = Ruom.getOnlinePlayers().size() - SpigotMain.SQL.getVanishedPlayersCount();
+            defaultPlayers = Ruom.getOnlinePlayers().size() - SpigotMain.SQL.vanishedCount();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -44,7 +44,7 @@ public class PlaceholderAPI extends PlaceholderExpansion {
             try {
                 return String.valueOf(Integer.parseInt(me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(
                         null, "%bungee_" + params + "%")) -
-                        (params.equalsIgnoreCase("total") ? SpigotMain.SQL.getVanishedPlayersCount() : SpigotMain.SQL.getVanishedPlayersCount(params)));
+                        (params.equalsIgnoreCase("total") ? SpigotMain.SQL.vanishedCount() : SpigotMain.SQL.vanishedCount(params)));
             } catch (Exception e) {
                 e.printStackTrace();
                 return me.clip.placeholderapi.PlaceholderAPI.setPlaceholders(null, "%bungee_" + params + "%");

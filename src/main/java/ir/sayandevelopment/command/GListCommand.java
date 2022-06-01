@@ -28,10 +28,6 @@ public class GListCommand implements SimpleCommand {
         HashMap<String, Collection<Player>> serverPlayerMap = new HashMap<>();
 
         for (RegisteredServer registeredServer : VelocityMain.INSTANCE.getServer().getAllServers()) {
-            /*List<Player> vanishedPlayers = registeredServer.getPlayersConnected().stream().filter(vanishedPlayer ->
-                            VanishCommand.vanishedPlayers.containsKey(vanishedPlayer.getUniqueId())
-                                    && VanishCommand.vanishedPlayers.get(vanishedPlayer.getUniqueId())
-                                    .isVanished()).collect(Collectors.toList());*/
             if (registeredServer.getPlayersConnected().size() > 0)
                 serverPlayerMap.put(registeredServer.getServerInfo().getName(), registeredServer.getPlayersConnected());
         }
@@ -52,11 +48,8 @@ public class GListCommand implements SimpleCommand {
                     "<reset><hover:show_text:'<color:#C1D6F1>▣ Players:<color:#929CCB>%s</color>'>" +
                             "<gray>[<gradient:#17FF00:#F3FF00:#FF1F00>%s</gradient><gray>] " +
                             "<dark_gray>(<gradient:#00E4FF:#0097FF>%s</gradient><dark_gray>) <white>« <aqua>%s",
-                     canSeeVanishedPlayers ? playerCount == 0 ?
-                                    " No one is playing on this server!" : formatPlayerList(players, true) :
-                            nonVanishedPlayerCount == 0 ?
-                            " No one is playing on this server!" : formatPlayerList(players, false),
-                    progress, canSeeVanishedPlayers ? playerCount : nonVanishedPlayerCount,
+                    canSeeVanishedPlayers ? playerCount == 0 ? " No one is playing on this server!" : formatPlayerList(players, true) : nonVanishedPlayerCount == 0 ?
+                            " No one is playing on this server!" : formatPlayerList(players, false), progress, canSeeVanishedPlayers ? playerCount : nonVanishedPlayerCount,
                     hasVanishedPlayer && canSeeVanishedPlayers ? "<yellow>" + gameModeName + "</yellow>" : gameModeName);
 
             player.sendMessage(miniMessage.deserialize(message));

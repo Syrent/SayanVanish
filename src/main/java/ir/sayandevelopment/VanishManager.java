@@ -43,12 +43,7 @@ public class VanishManager {
     }
 
     public boolean isInvisible(Player player) {
-        try {
-            return SpigotMain.SQL.getVanishedPlayer(player.getUniqueId()).isVanished();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
+        return SpigotMain.vanishedPlayers.contains(player.getName());
     }
 
     public void vanishPlayer(Player player) {
@@ -71,12 +66,14 @@ public class VanishManager {
             } catch (NoClassDefFoundError | NoSuchMethodError e) {
                 try {
                     player.spigot().setCollidesWithEntities(false);
-                } catch (NoClassDefFoundError | NoSuchMethodError ignored) {}
+                } catch (NoClassDefFoundError | NoSuchMethodError e1) {
+                    e.printStackTrace();
+                }
             }
 
             player.getWorld().getEntities().stream()
-                    .filter(ent -> ent instanceof Creature)
-                    .map(ent -> (Creature) ent)
+                    .filter(entity -> entity instanceof Creature)
+                    .map(entity -> (Creature) entity)
                     .filter(mob -> mob.getTarget() != null)
                     .filter(mob -> player.getUniqueId().equals(mob.getTarget().getUniqueId()))
                     .forEach(mob -> mob.setTarget(null));
@@ -100,7 +97,9 @@ public class VanishManager {
             } catch (NoClassDefFoundError | NoSuchMethodError e) {
                 try {
                     player.spigot().setCollidesWithEntities(true);
-                } catch (NoClassDefFoundError | NoSuchMethodError ignored) {}
+                } catch (NoClassDefFoundError | NoSuchMethodError e1) {
+                    e.printStackTrace();
+                }
             }
 
             removePotionEffects(player);
@@ -122,7 +121,7 @@ public class VanishManager {
             @Override
             public void run() {
                 try {
-                    if (!SpigotMain.SQL.getVanishedPlayer(player.getUniqueId()).isVanished()) {
+                    if (!SpigotMain.vanishedPlayers.contains(player.getName())) {
                         cancel();
                         return;
                     }

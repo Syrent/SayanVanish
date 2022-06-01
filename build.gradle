@@ -46,12 +46,14 @@ dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT'
     compileOnly 'com.github.MadMartian:hydrazine-path-finding:1.6.0'
     compileOnly 'me.clip:placeholderapi:2.11.1'
+    //compileOnly 'net.luckperms:api:5.4'
     compileOnly files('libs/ServerListPlus-3.5.0.jar')
     compileOnly files('libs/DBConnector-Velocity-1.0-all.jar')
-    compileOnly files('libs/SayanChat-2.2-all.jar')
+    compileOnly files('libs/SayanChat-2.8.0-all.jar')
     annotationProcessor 'com.velocitypowered:velocity-api:3.1.0'
+    implementation "net.kyori:adventure-api:4.10.1"
     implementation "net.kyori:adventure-text-minimessage:4.2.0-SNAPSHOT"
-    implementation 'me.mohamad82:ruom:3.5.3:all'
+    implementation 'me.mohamad82:ruom:3.6:all'
 }
 
 shadowJar {

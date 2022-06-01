@@ -15,19 +15,16 @@ public class PlayerQuitListener implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        Ruom.runAsync(() -> {
+        /*Ruom.runAsync(() -> {
             VanishedPlayer vanishedPlayer;
             try {
-                vanishedPlayer = SpigotMain.SQL.getVanishedPlayer(player.getUniqueId());
-                Ruom.runSync(() -> {
-                    if (vanishedPlayer != null && vanishedPlayer.isVanished()) {
-                        vanishedPlayer.setVanishSource(VanishSource.SERVER);
-                    }
-                });
+                if (SpigotMain) {
+                    vanishedPlayer.setVanishSource(VanishSource.SERVER);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-        });
+        });*/
     }
 }

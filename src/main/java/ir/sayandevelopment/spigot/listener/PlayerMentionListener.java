@@ -1,4 +1,4 @@
-package ir.sayandevelopment.listener;
+package ir.sayandevelopment.spigot.listener;
 
 import ir.sayandevelopment.spigot.SpigotMain;
 import me.sayandevelopment.sayanchat.api.event.PlayerMentionEvent;
@@ -11,7 +11,7 @@ public class PlayerMentionListener implements Listener {
     @EventHandler
     public void onMention(PlayerMentionEvent event) {
         Player target = event.getMentioned();
-        if (SpigotMain.vanishedPlayers.containsKey(target.getUniqueId()) && SpigotMain.vanishedPlayers.get(target.getUniqueId()).isVanished()) {
+        if (SpigotMain.vanishedPlayers.contains(target.getName())) {
             event.setCancelled(true);
         }
     }

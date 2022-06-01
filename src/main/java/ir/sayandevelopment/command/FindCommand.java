@@ -6,8 +6,10 @@ import ir.sayandevelopment.VelocityMain;
 import ir.sayandevelopment.utils.CommonUtils;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 public class FindCommand implements SimpleCommand {
 
@@ -40,16 +42,23 @@ public class FindCommand implements SimpleCommand {
 
     @Override
     public List<String> suggest(Invocation invocation) {
+        if (invocation.arguments().length == 1) {
+            return VelocityMain.INSTANCE.getServer().getAllPlayers().stream()
+                    .filter(player -> !VanishCommand.vanishedPlayers.containsKey(player.getUniqueId()))
+                    .map(Player::getUsername).collect(Collectors.toList());
+        }
         return SimpleCommand.super.suggest(invocation);
     }
 
     @Override
     public CompletableFuture<List<String>> suggestAsync(Invocation invocation) {
-        return SimpleCommand.super.suggestAsync(invocation);
-    }
+        CompletableFuture<List<String>> completableFuture = new CompletableFuture<>();
 
-    @Override
-    public boolean hasPermission(Invocation invocation) {
-        return SimpleCommand.super.hasPermission(invocation);
+        if (invocation.arguments().length == 1) {
+            completableFuture.complete(VelocityMain.INSTANCE.getServer().getAllPlayers().stream()
+                    .filter(player -> !VanishCommand.vanishedPlayers.containsKey(player.getUniqueId()))
+                    .map(Player::getUsername).collect(Collectors.toList()));
+        }
+        return completableFuture;
     }
 }

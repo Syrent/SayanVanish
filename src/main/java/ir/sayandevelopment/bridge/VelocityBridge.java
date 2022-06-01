@@ -7,12 +7,12 @@ import com.velocitypowered.api.proxy.Player;
 import ir.sayandevelopment.VanishedPlayer;
 import ir.sayandevelopment.VelocityMain;
 
-@SuppressWarnings("UnstableApiUsage")
 public class VelocityBridge {
 
     public static void sendVanishedPlayers(Player player, VanishedPlayer vanishedPlayer, VanishSource source) {
         ByteArrayDataOutput byteArrayDataOutput = ByteStreams.newDataOutput();
         JsonObject vanishedPlayerJson = new JsonObject();
+
         vanishedPlayerJson.addProperty("source", source.name());
         vanishedPlayerJson.addProperty("username", vanishedPlayer.getUserName());
         vanishedPlayerJson.addProperty("gamemode", vanishedPlayer.getGameMode());

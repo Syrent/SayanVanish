@@ -1,4 +1,4 @@
-package ir.sayandevelopment.listener;
+package ir.sayandevelopment.spigot.listener;
 
 import ir.sayandevelopment.spigot.SpigotMain;
 import me.mohamad82.ruom.utils.StringUtils;
@@ -13,8 +13,7 @@ public class AsyncPlayerChatListener implements Listener {
     public void onAsyncPlayerChat(AsyncPlayerChatEvent event) {
         String message = event.getMessage();
         Player player = event.getPlayer();
-        if (SpigotMain.vanishedPlayers.containsKey(player.getUniqueId()) &&
-        SpigotMain.vanishedPlayers.get(player.getUniqueId()).isVanished()) {
+        if (SpigotMain.vanishedPlayers.contains(player.getName())) {
             if (!message.startsWith("-")) {
                 event.setCancelled(true);
                 player.sendMessage(StringUtils.colorize("&cYou are in vanish mode. If you want want to chat please make sure to start your message with \"-\""));

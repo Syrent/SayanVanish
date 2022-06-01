@@ -27,6 +27,7 @@ public class VanishCommand implements SimpleCommand {
         VanishedPlayer vanishedPlayer = new VanishedPlayer(player.getUsername(),
                 player.getCurrentServer().get().getServerInfo().getName(), player.getUniqueId(), true);
         vanishedPlayer.setVanished(!vanishedPlayers.containsKey(player.getUniqueId()) || !vanishedPlayers.get(player.getUniqueId()).isVanished());
+        vanishedPlayer.setOnline(true);
         vanishedPlayers.put(player.getUniqueId(), vanishedPlayer);
 
 

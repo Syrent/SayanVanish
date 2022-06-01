@@ -15,10 +15,7 @@ import ir.sayandevelopment.command.GListCommand;
 import ir.sayandevelopment.command.VanishCommand;
 import ir.sayandevelopment.database.MySQL;
 import ir.sayandevelopment.database.Database;
-import ir.sayandevelopment.listener.LoginListener;
-import ir.sayandevelopment.listener.ServerConnectedListener;
-import ir.sayandevelopment.listener.DisconnectListener;
-import ir.sayandevelopment.listener.TabCompleteListener;
+import ir.sayandevelopment.listener.*;
 import net.minecrell.serverlistplus.core.ServerListPlusCore;
 import net.minecrell.serverlistplus.core.player.PlayerIdentity;
 import net.minecrell.serverlistplus.core.replacement.LiteralPlaceholder;
@@ -82,6 +79,7 @@ public class VelocityMain {
         server.getEventManager().register(this, new LoginListener());
         server.getEventManager().register(this, new ServerConnectedListener());
         server.getEventManager().register(this, new DisconnectListener());
+        server.getEventManager().register(this, new PrivateMessageListener());
 
         ReplacementManager.getDynamic().add(new LiteralPlaceholder("%sayanvanish_total%") {
             @Override

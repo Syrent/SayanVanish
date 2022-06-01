@@ -43,12 +43,7 @@ public class VanishManager {
     }
 
     public boolean isInvisible(Player player) {
-        try {
-            return SpigotMain.SQL.isVanished(player.getUniqueId());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
+        return SpigotMain.vanishedPlayers.contains(player.getName());
     }
 
     public void vanishPlayer(Player player) {

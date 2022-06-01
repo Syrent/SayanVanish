@@ -28,10 +28,6 @@ public class GListCommand implements SimpleCommand {
         HashMap<String, Collection<Player>> serverPlayerMap = new HashMap<>();
 
         for (RegisteredServer registeredServer : VelocityMain.INSTANCE.getServer().getAllServers()) {
-            /*List<Player> vanishedPlayers = registeredServer.getPlayersConnected().stream().filter(vanishedPlayer ->
-                            VanishCommand.vanishedPlayers.containsKey(vanishedPlayer.getUniqueId())
-                                    && VanishCommand.vanishedPlayers.get(vanishedPlayer.getUniqueId())
-                                    .isVanished()).collect(Collectors.toList());*/
             if (registeredServer.getPlayersConnected().size() > 0)
                 serverPlayerMap.put(registeredServer.getServerInfo().getName(), registeredServer.getPlayersConnected());
         }

@@ -14,22 +14,16 @@ public class PlayerJoinListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        if (!player.hasPermission("sayanvanish.seevanished")) {
-            for (Player player1 : Ruom.getOnlinePlayers()) {
-                Ruom.runAsync(() -> {
-                    if (VanishManager.getInstance().isInvisible(player1))
-                        Ruom.runSync(() -> player.hidePlayer(Ruom.getPlugin(), player1));
-                });
+        for (Player onlinePlayer : Ruom.getOnlinePlayers()) {
+            if (player == onlinePlayer) continue;
+            if (VanishManager.getInstance().isInvisible(onlinePlayer)) {
+                VanishManager.getInstance().vanishPlayer(onlinePlayer);
             }
         }
 
-        Ruom.runAsync(() -> {
-            if (VanishManager.getInstance().isInvisible(player)) {
-                    Ruom.runSync(() -> {
-                        VanishManager.getInstance().vanishPlayer(player);
-                        VanishManager.getInstance().sendVanishMessageToOthers(player.getName());
-                    });
-            }
-        });
+        if (VanishManager.getInstance().isInvisible(player)) {
+            VanishManager.getInstance().vanishPlayer(player);
+            VanishManager.getInstance().sendVanishMessageToOthers(player.getName());
+        }
     }
 }

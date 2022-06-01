@@ -42,6 +42,7 @@ public class MySQL implements Database {
 
         hikariConfig.setMaximumPoolSize(poolSize);
         hikariConfig.setMaxLifetime(maxLifetime * 1000L);
+        hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
 
         hikariConfig.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database);
 

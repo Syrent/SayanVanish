@@ -2,8 +2,8 @@ package ir.sayandevelopment.spigot;
 
 import ir.sayandevelopment.VanishManager;
 import ir.sayandevelopment.database.MySQL;
-import ir.sayandevelopment.listener.AsyncPlayerChatListener;
-import ir.sayandevelopment.listener.PlayerMentionListener;
+import ir.sayandevelopment.spigot.listener.AsyncPlayerChatListener;
+import ir.sayandevelopment.spigot.listener.PlayerMentionListener;
 import ir.sayandevelopment.listener.PrivateMessageListener;
 import ir.sayandevelopment.spigot.bridge.BukkitBridgeListener;
 import ir.sayandevelopment.spigot.dependency.PlaceholderAPI;
@@ -62,7 +62,7 @@ public class SpigotMain extends RUoMPlugin {
 
         Ruom.registerListener(new PlayerJoinListener());
         Ruom.registerListener(new AsyncPlayerChatListener());
-        Ruom.registerListener(new PrivateMessageListener());
+        //Ruom.registerListener(new PrivateMessageListener());
         Ruom.registerListener(new PlayerMentionListener());
         Ruom.registerListener(new TabCompleteListener());
 

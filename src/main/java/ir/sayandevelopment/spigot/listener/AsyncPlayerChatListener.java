@@ -1,4 +1,4 @@
-package ir.sayandevelopment.listener;
+package ir.sayandevelopment.spigot.listener;
 
 import ir.sayandevelopment.spigot.SpigotMain;
 import me.mohamad82.ruom.utils.StringUtils;

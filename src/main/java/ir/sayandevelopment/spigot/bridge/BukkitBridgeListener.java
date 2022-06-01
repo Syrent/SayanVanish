@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import ir.sayandevelopment.VanishManager;
 import ir.sayandevelopment.VanishedPlayer;
 import ir.sayandevelopment.bridge.VanishSource;
+import ir.sayandevelopment.spigot.SpigotMain;
 import me.mohamad82.ruom.utils.GsonUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -30,6 +31,12 @@ public class BukkitBridgeListener implements PluginMessageListener {
 
         VanishedPlayer vanishedPlayer = new VanishedPlayer(userName, gameMode, uuid, vanished);
         vanishedPlayer.setVanishSource(vanishSource);
+
+        if (vanished) {
+            SpigotMain.vanishedPlayers.add(userName);
+        } else {
+            SpigotMain.vanishedPlayers.remove(userName);
+        }
 
         if (vanishSource.equals(VanishSource.COMMAND)) {
             Player player = Bukkit.getPlayer(userName);

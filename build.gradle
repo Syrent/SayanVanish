@@ -88,10 +88,19 @@ processResources {
 shadowJar {
     minimize()
 
+    manifest {
+        attributes["Main-Class"] = 'ir.syrent.velocityvanish.VelocityVanish'
+    }
+
     relocate('me.mohamad82.ruom', 'ir.syrent.velocityvanish.ruom')
     relocate('com.cryptomorin.xseries', 'ir.syrent.velocityvanish.xseries')
     relocate('net.kyori.adventure', 'ir.syrent.velocityvanish.kyori.adventure')
     relocate('org.bstats', 'ir.syrent.velocityvanish.bstats')
+
+    // @see https://youtrack.jetbrains.com/issue/KT-25709
+    exclude '**/*.kotlin_metadata'
+    exclude '**/*.kotlin_module'
+    exclude '**/*.kotlin_builtins'
 
     archiveFileName = findProperty("plugin-name") + " v" + findProperty("version") + ".jar"
 }

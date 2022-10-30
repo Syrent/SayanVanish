@@ -1,9 +1,16 @@
-name: SayanVanish
-version: "1.0.0"
-main: ir.sayandevelopment.spigot.SpigotMain
+name: VelocityVanish
+version: '${version}'
+main: ir.syrent.velocityvanish.spigot.VelocityVanishSpigot
 api-version: 1.13
-prefix: SayanVanish
+prefix: VelocityVanish
 authors: [ Syrent ]
-description: Advanced vanish system
-website: sayandevelopment.ir
-softdepend: [PlaceholderAPI]
+description: Vanish plugin for velocity servers
+website: syrent.ir
+softdepend:
+  - 'ProtocolLib'
+commands:
+  vanish:
+    aliases:
+      - velocityvanish
+      - sayanvanish
+    description: Toggle vanish state

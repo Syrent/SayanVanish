@@ -1,0 +1,14 @@
+default_language: en_US
+# Enable this option if you're using plugin on a Velocity network
+velocity_support: false
+bstats: true
+sounds:
+    command: "ENTITY_EXPERIENCE_ORB_PICKUP"
+    vanish: "ENTITY_EXPERIENCE_ORB_PICKUP"
+    unvanish: "ENTITY_EXPERIENCE_ORB_PICKUP"
+vanish:
+    # Show players actionbar when they are vanished
+    actionbar: true
+    # Remember vanish data after switch servers?
+    # Note: Need Velocity as proxy server and `velocity_support` enabled
+    remember: true

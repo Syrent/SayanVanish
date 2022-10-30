@@ -9,12 +9,22 @@ import org.jetbrains.annotations.NotNull;
 public class PreVanishEvent extends Event implements Cancellable {
 
     private Boolean cancelled = false;
+    private Boolean sendQuitMessage;
     public Player player;
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    public PreVanishEvent(Player player) {
+    public PreVanishEvent(Player player, Boolean sendQuitMessage) {
         this.player = player;
+        this.sendQuitMessage = sendQuitMessage;
+    }
+
+    public Boolean getSendQuitMessage() {
+        return sendQuitMessage;
+    }
+
+    public void setSendQuitMessage(Boolean sendQuitMessage) {
+        this.sendQuitMessage = sendQuitMessage;
     }
 
     @Override

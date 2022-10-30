@@ -7,16 +7,22 @@ import org.jetbrains.annotations.NotNull;
 
 public class PostUnVanishEvent extends Event {
 
+    private Boolean sendJoinMessage;
     private Player player;
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    public PostUnVanishEvent(Player player) {
+    public PostUnVanishEvent(Player player, Boolean sendJoinMessage) {
         this.player = player;
+        this.sendJoinMessage = sendJoinMessage;
     }
 
     public Player getPlayer() {
         return player;
+    }
+
+    public Boolean getSendJoinMessage() {
+        return sendJoinMessage;
     }
 
     @NotNull

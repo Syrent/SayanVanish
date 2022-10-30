@@ -7,6 +7,7 @@ import ir.syrent.velocityvanish.spigot.storage.Message
 import ir.syrent.velocityvanish.spigot.storage.Settings
 import ir.syrent.velocityvanish.spigot.utils.Utils
 import ir.syrent.velocityvanish.utils.TextReplacement
+import ir.syrent.velocityvanish.utils.component
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 
@@ -24,6 +25,10 @@ class PostUnVanishListener(
         Utils.sendReportsActionbar(player)
         plugin.vanishedNames.remove(player.name)
         plugin.bridgeManager?.updateVanishedPlayersRequest(player, false)
-        Ruom.broadcast(Settings.formatMessage(Message.JOIN_MESSAGE, TextReplacement("player", player.name), TextReplacement("play_displayname", player.displayName)))
+
+        val joinMessage = Settings.formatMessage(Message.JOIN_MESSAGE, TextReplacement("player", player.name), TextReplacement("play_displayname", player.displayName))
+        if (joinMessage.isNotBlank() && joinMessage.isNotEmpty() && event.sendJoinMessage) {
+            Ruom.broadcast(joinMessage.component())
+        }
     }
 }

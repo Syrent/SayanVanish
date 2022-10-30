@@ -7,16 +7,22 @@ import org.jetbrains.annotations.NotNull;
 
 public class PostVanishEvent extends Event {
 
+    private Boolean sendQuitMessage;
     private Player player;
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    public PostVanishEvent(Player player) {
+    public PostVanishEvent(Player player, Boolean sendQuitMessage) {
         this.player = player;
+        this.sendQuitMessage = sendQuitMessage;
     }
 
     public Player getPlayer() {
         return player;
+    }
+
+    public Boolean getSendQuitMessage() {
+        return sendQuitMessage;
     }
 
     @NotNull

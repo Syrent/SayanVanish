@@ -9,12 +9,22 @@ import org.jetbrains.annotations.NotNull;
 public class PreUnVanishEvent extends Event implements Cancellable {
 
     private Boolean cancelled = false;
+    private Boolean sendJoinMessage;
     public Player player;
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    public PreUnVanishEvent(Player player) {
+    public PreUnVanishEvent(Player player, Boolean sendJoinMessage) {
         this.player = player;
+        this.sendJoinMessage = sendJoinMessage;
+    }
+
+    public Boolean getSendJoinMessage() {
+        return sendJoinMessage;
+    }
+
+    public void setSendJoinMessage(Boolean sendJoinMessage) {
+        this.sendJoinMessage = sendJoinMessage;
     }
 
     @Override

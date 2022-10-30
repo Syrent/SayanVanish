@@ -56,15 +56,6 @@ repositories {
     }
 }
 
-configurations.all {
-    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-        if (details.requested.group == 'me.mohamad82' && details.requested.name == 'velocity-ruom') {
-            details.useVersion '4.2.14'
-            details.because 'fixes critical bug in 4.1.0'
-        }
-    }
-}
-
 dependencies {
     compileOnly 'com.velocitypowered:velocity-api:3.1.1'
     compileOnly 'org.spigotmc:spigot-api:1.19-R0.1-SNAPSHOT'
@@ -72,11 +63,11 @@ dependencies {
 
     compileOnly files("libs/SayanChat-2.8.3.jar")
 
-    implementation 'com.zaxxer:HikariCP:4.0.3'
     implementation 'io.papermc:paperlib:1.0.7'
     implementation 'org.bstats:bstats-bukkit:3.0.0'
     implementation 'me.mohamad82:ruom-velocity:4.2.14'
     implementation 'com.github.cryptomorin:XSeries:9.1.0'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
 
     implementation 'net.kyori:adventure-api:4.11.0'
     implementation 'net.kyori:adventure-platform-bukkit:4.1.2'

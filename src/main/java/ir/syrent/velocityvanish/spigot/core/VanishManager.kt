@@ -111,12 +111,16 @@ class VanishManager(
     }
 
     fun vanish(player: Player) {
-        val preVanishEvent = PreVanishEvent(player)
+        vanish(player, true)
+    }
+
+    fun vanish(player: Player, sendQuitMessage: Boolean) {
+        val preVanishEvent = PreVanishEvent(player, sendQuitMessage)
         VelocityVanishSpigot.instance.server.pluginManager.callEvent(preVanishEvent)
 
         if (preVanishEvent.isCancelled) return
 
-        val postVanishEvent = PostVanishEvent(player)
+        val postVanishEvent = PostVanishEvent(player, preVanishEvent.sendQuitMessage)
         VelocityVanishSpigot.instance.server.pluginManager.callEvent(postVanishEvent)
 
         setMeta(player, true)
@@ -163,12 +167,16 @@ class VanishManager(
     }
 
     fun unVanish(player: Player) {
-        val preUnVanishEvent = PreUnVanishEvent(player)
+        unVanish(player, true)
+    }
+
+    fun unVanish(player: Player, sendJoinMessage: Boolean) {
+        val preUnVanishEvent = PreUnVanishEvent(player, sendJoinMessage)
         VelocityVanishSpigot.instance.server.pluginManager.callEvent(preUnVanishEvent)
 
         if (preUnVanishEvent.isCancelled) return
 
-        val postUnVanishEvent = PostUnVanishEvent(player)
+        val postUnVanishEvent = PostUnVanishEvent(player, preUnVanishEvent.sendJoinMessage)
         VelocityVanishSpigot.instance.server.pluginManager.callEvent(postUnVanishEvent)
 
         setMeta(player, false)

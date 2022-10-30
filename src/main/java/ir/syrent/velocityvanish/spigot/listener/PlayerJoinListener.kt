@@ -29,10 +29,10 @@ class PlayerJoinListener(
         if (!Settings.remember) return
 
         if (plugin.vanishedNames.contains(player.name)) {
-            plugin.vanishManager.vanish(player)
+            plugin.vanishManager.vanish(player, false)
             event.joinMessage = null
         } else {
-            plugin.vanishManager.unVanish(player)
+            plugin.vanishManager.unVanish(player, false)
         }
     }
 

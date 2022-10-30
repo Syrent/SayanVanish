@@ -24,12 +24,6 @@ class PlayerQuitListener(
             event.quitMessage = null
         }
         Utils.actionbarPlayers.remove(player)
-
-        if (!Settings.remember) return
-
-        if (plugin.vanishedNames.contains(player.name)) {
-            plugin.vanishManager.vanish(player)
-        }
     }
 
 }

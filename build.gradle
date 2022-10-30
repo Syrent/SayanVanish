@@ -1,23 +1,47 @@
 plugins {
     id 'java'
-    id 'eclipse'
-    id "org.jetbrains.gradle.plugin.idea-ext" version "1.0.1"
-    id 'com.github.johnrengelman.shadow' version '7.0.0'
+    id 'maven-publish'
+    id 'org.jetbrains.kotlin.jvm' version '1.7.20'
+    id 'com.github.johnrengelman.shadow' version '7.1.0'
+    id 'org.jetbrains.gradle.plugin.idea-ext' version '1.0.1'
 }
 
-group = 'ir.sayandevelopment'
-version = '1.0'
+group = 'ir.syrent.velocityvanish'
+version = findProperty("version")
 
 repositories {
-    mavenCentral()
     mavenLocal()
+    mavenCentral()
+
     maven {
-        url = uri('https://hub.spigotmc.org/nexus/content/repositories/snapshots/')
+        url = uri('https://repo.maven.apache.org/maven2/')
     }
+
+    // Velocity-API / PaperLib
     maven {
-        name = 'velocitypowered-repo'
-        url = 'https://nexus.velocitypowered.com/repository/maven-public/'
+        name 'papermc'
+        url 'https://repo.papermc.io/repository/maven-public/'
     }
+
+    // AdventureAPI/MiniMessage
+    maven {
+        name = "sonatype-oss-snapshots"
+        url = "https://oss.sonatype.org/content/repositories/snapshots/"
+    }
+
+    // SpigotAPI
+    maven {
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+
+        // As of Gradle 5.1, you can limit this to only those
+        // dependencies you expect from it
+        content {
+            includeGroup 'org.bukkit'
+            includeGroup 'org.spigotmc'
+        }
+    }
+
+    // VRuom
     maven {
         url = uri("https://maven.pkg.github.com/mohamad82bz/ruom")
         credentials {
@@ -25,53 +49,64 @@ repositories {
             password = project.findProperty("gpr.key")
         }
     }
+
+    // ProtocolLib
     maven {
-        url = uri('https://jitpack.io')
+        url "https://repo.dmulloy2.net/repository/public/"
     }
-    maven {
-        url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
-    }
-    maven {
-        name = 'minecrell'
-        url = 'https://repo.minecrell.net/releases'
-    }
-    maven {
-        name = "sonatype-oss-snapshots"
-        url = "https://oss.sonatype.org/content/repositories/snapshots/"
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        if (details.requested.group == 'me.mohamad82' && details.requested.name == 'velocity-ruom') {
+            details.useVersion '4.2.14'
+            details.because 'fixes critical bug in 4.1.0'
+        }
     }
 }
 
 dependencies {
-    compileOnly 'com.velocitypowered:velocity-api:3.1.0'
-    compileOnly 'org.spigotmc:spigot-api:1.18-R0.1-SNAPSHOT'
-    compileOnly 'com.github.MadMartian:hydrazine-path-finding:1.6.0'
-    compileOnly 'me.clip:placeholderapi:2.11.1'
-    //compileOnly 'net.luckperms:api:5.4'
-    compileOnly files('libs/ServerListPlus-3.5.0.jar')
-    compileOnly files('libs/DBConnector-Velocity-1.0-all.jar')
-    compileOnly files('libs/SayanChat-2.8.0-all.jar')
-    annotationProcessor 'com.velocitypowered:velocity-api:3.1.0'
-    implementation "net.kyori:adventure-api:4.10.1"
-    implementation "net.kyori:adventure-text-minimessage:4.2.0-SNAPSHOT"
-    implementation 'me.mohamad82:ruom:3.6:all'
+    compileOnly 'com.velocitypowered:velocity-api:3.1.1'
+    compileOnly 'org.spigotmc:spigot-api:1.19-R0.1-SNAPSHOT'
+    compileOnly 'com.comphenix.protocol:ProtocolLib:4.7.0'
+
+    compileOnly files("libs/SayanChat-2.8.3.jar")
+
+    implementation 'com.zaxxer:HikariCP:4.0.3'
+    implementation 'io.papermc:paperlib:1.0.7'
+    implementation 'org.bstats:bstats-bukkit:3.0.0'
+    implementation 'me.mohamad82:ruom-velocity:4.2.14'
+    implementation 'com.github.cryptomorin:XSeries:9.1.0'
+
+    implementation 'net.kyori:adventure-api:4.11.0'
+    implementation 'net.kyori:adventure-platform-bukkit:4.1.2'
+    implementation 'net.kyori:adventure-text-minimessage:4.11.0'
+
+    annotationProcessor 'com.velocitypowered:velocity-api:3.1.1'
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
 }
 
 shadowJar {
     minimize()
-    relocate('me.mohamad82.ruom', 'ir.sayandevelopment.sayanvanish.ruom')
-    dependencies {
-        exclude(dependency('me.mohamad82.ruom.vector:.*'))
-        exclude(dependency('me.mohamad82.ruom.events:.*'))
-        exclude(dependency('me.mohamad82.ruom.areaselections:.*'))
-        exclude(dependency('me.mohamad82.ruom.hologram:.*'))
-        exclude(dependency('me.mohamad82.ruom.npc:.*'))
-        exclude(dependency('me.mohamad82.ruom.toast:.*'))
-        exclude(dependency('me.mohamad82.ruom.translators:.*'))
-        exclude(dependency('me.mohamad82.ruom.worldedit:.*'))
-    }
-    manifest {
-        attributes 'Main-Class': 'ir.sayandevelopment.sayanvanish.VelocityMain'
-    }
+
+    relocate('me.mohamad82.ruom', 'ir.syrent.velocityvanish.ruom')
+    relocate('com.cryptomorin.xseries', 'ir.syrent.velocityvanish.xseries')
+    relocate('net.kyori.adventure', 'ir.syrent.velocityvanish.kyori.adventure')
+    relocate('org.bstats', 'ir.syrent.velocityvanish.bstats')
+
+    archiveFileName = findProperty("plugin-name") + " v" + findProperty("version") + ".jar"
+}
+
+jar {
+    archiveFileName = findProperty("plugin-name") + " v" + findProperty("version") + " " + "unshaded" + ".jar"
 }
 
 def targetJavaVersion = 8
@@ -84,13 +119,29 @@ java {
     }
 }
 
-compileJava.options.encoding = 'UTF-8'
-
 tasks.withType(JavaCompile).configureEach {
+    options.deprecation = true
     options.encoding = 'UTF-8'
-    if (targetJavaVersion >= 7 || JavaVersion.current().isJava10Compatible()) {
-        options.release = targetJavaVersion
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
+    kotlinOptions {
+        jvmTarget = "8"
+        freeCompilerArgs += ["-Xjvm-default=all"]
     }
+}
+
+compileJava.options.encoding = 'UTF-8'
+compileJava.dependsOn clean
+
+build.dependsOn shadowJar
+
+tasks.withType(Jar) {
+    destinationDirectory = file("$rootDir/bin/")
+}
+
+clean.doLast {
+    file("${rootDir}/bin").deleteDir()
 }
 
 def templateSource = file('src/main/templates')
@@ -105,8 +156,16 @@ def generateTemplates = tasks.register('generateTemplates', Copy) { task ->
     task.into templateDest
     task.expand props
 }
-
 sourceSets.main.java.srcDir(generateTemplates.map { it.outputs })
-
 rootProject.idea.project.settings.taskTriggers.afterSync generateTemplates
-project.eclipse.synchronizationTasks(generateTemplates)
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}

@@ -11,6 +11,10 @@ Once the plugin compiles, grab the jar from `/bin` folder.
 The precompiled JAR can be downloaded for free from:
 
 * GitHub releases: https://github.com/Syrent/VelocityVanish/releases
+* Modrinth (Recommended): https://modrinth.com/plugin/velocityvanish
+* Spigot: https://www.spigotmc.org/resources/velocityvanish-1-8-1-19-2-no-database-required.105992/
+* Polymart: https://polymart.org/resource/velocityvanish.3067
+* Paper's forum: https://forums.papermc.io/threads/velocityvanish-modern-vanish-system-for-your-server-with-velocity-support.552/
 
 Other links:
 

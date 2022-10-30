@@ -1,0 +1,22 @@
+general:
+    raw_prefix: "[VelocityVanish]"
+    prefix: "<gradient:dark_red:red>VelocityVanish</gradient> <gold>|</gold>"
+    console_prefix: "<gray>[<gradient:dark_red:red>VelocityVanish</gradient>]</gray>"
+    successful_prefix: "<dark_gray>[</dark_gray><dark_green><bold>✔</bold><dark_gray>]</dark_gray>"
+    warn_prefix: "<dark_gray>[</dark_gray><gold><bold>!</bold><dark_gray>]</dark_gray>"
+    error_prefix: "<dark_gray>[</dark_gray><dark_red><bold>✘</bold><dark_gray>]</dark_gray>"
+    only_players: "$error_prefix <gradient:dark_red:red>Only players can use this command."
+    unknown_message: "$error_prefix <gradient:dark_red:red>Unknown message!"
+command:
+    no_permission: "$error_prefix <gradient:dark_red:red>You don't have permission to use this command! <dark_gray>($permission)"
+    vanish:
+        reload:
+            use: "$successful_prefix <green>Plugin successfully reloaded!"
+        use_vanish: "$successful_prefix <gradient:dark_green:green>Successfully vanished!"
+        use_unvanish: "$successful_prefix <gradient:dark_green:green>Successfully unvanished!"
+vanish:
+    actionbar: "<dark_red>$animation <gradient:dark_purple:blue>You are invisible to other players!"
+    vanish_notify: "$warn_prefix <red>$player</red> Vanished!"
+    unvanish_notify: "$warn_prefix <red>$player</red> Unvanished!"
+    join_message: "<yellow>$player joined the game"
+    quit_message: "<yellow>$player left the game"

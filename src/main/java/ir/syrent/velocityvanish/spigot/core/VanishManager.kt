@@ -12,8 +12,7 @@ import ir.syrent.velocityvanish.spigot.event.PostUnVanishEvent
 import ir.syrent.velocityvanish.spigot.event.PostVanishEvent
 import ir.syrent.velocityvanish.spigot.event.PreUnVanishEvent
 import ir.syrent.velocityvanish.spigot.event.PreVanishEvent
-import ir.syrent.velocityvanish.spigot.hook.DependencyChecker
-import ir.syrent.velocityvanish.spigot.hook.ProtocolLibHook
+import ir.syrent.velocityvanish.spigot.hook.DependencyManager
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import ir.syrent.velocityvanish.spigot.utils.ServerVersion
 import ir.syrent.velocityvanish.spigot.utils.Utils
@@ -40,14 +39,14 @@ class VanishManager(
     }
 
     fun updateTabState(player: Player, state: GameMode) {
-        if (DependencyChecker.isRegistered("ProtocolLib")) {
+        if (DependencyManager.protocolLibHook.exists) {
             /*
             * Players can't receive packets from plugin on join
             * So we need to send packet after 1 tick
             * (2tick incase)
             */
             Ruom.runSync({
-                val tabPacket = ProtocolLibHook.protocolManager.createPacket(PacketType.Play.Server.PLAYER_INFO, true)
+                val tabPacket = DependencyManager.protocolLibHook.protocolManager.createPacket(PacketType.Play.Server.PLAYER_INFO, true)
                 val infoData = tabPacket?.playerInfoDataLists
                 val infoAction = tabPacket?.playerInfoAction
                 val playerInfo = infoData?.read(0)
@@ -64,12 +63,12 @@ class VanishManager(
                 infoData?.write(0, playerInfo)
                 infoAction?.write(0, EnumWrappers.PlayerInfoAction.UPDATE_GAME_MODE)
 
-                val newTabPacket = PacketContainer(PacketType.Play.Server.PLAYER_INFO, tabPacket.handle)
+                val newTabPacket = PacketContainer(PacketType.Play.Server.PLAYER_INFO, tabPacket?.handle)
 
                 for (onlinePlayer in Ruom.getOnlinePlayers()) {
                     if (onlinePlayer.hasPermission("velocityvanish.admin.seevanished")) {
                         if (onlinePlayer == player) continue
-                        ProtocolLibHook.protocolManager.sendServerPacket(onlinePlayer, newTabPacket)
+                        DependencyManager.protocolLibHook.protocolManager.sendServerPacket(onlinePlayer, newTabPacket)
                     }
                 }
             }, 2)

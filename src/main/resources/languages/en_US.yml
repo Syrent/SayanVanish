@@ -1,7 +1,7 @@
 general:
     raw_prefix: "[VelocityVanish]"
     prefix: "<gradient:dark_red:red>VelocityVanish</gradient> <gold>|</gold>"
-    console_prefix: "<gray>[<gradient:dark_red:red>VelocityVanish</gradient>]</gray>"
+    console_prefix: "<gray>[<dark_purple>VelocityVanish</dark_purple>]</gray>"
     successful_prefix: "<dark_gray>[</dark_gray><dark_green><bold>✔</bold><dark_gray>]</dark_gray>"
     warn_prefix: "<dark_gray>[</dark_gray><gold><bold>!</bold><dark_gray>]</dark_gray>"
     error_prefix: "<dark_gray>[</dark_gray><dark_red><bold>✘</bold><dark_gray>]</dark_gray>"

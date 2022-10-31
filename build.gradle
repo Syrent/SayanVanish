@@ -62,6 +62,7 @@ dependencies {
     compileOnly 'com.comphenix.protocol:ProtocolLib:4.7.0'
 
     compileOnly files("libs/SayanChat-2.8.3.jar")
+    compileOnly files('libs/ProCosmetics-13.7.jar')
 
     implementation 'io.papermc:paperlib:1.0.7'
     implementation 'org.bstats:bstats-bukkit:3.0.0'

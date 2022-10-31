@@ -2,6 +2,7 @@ package ir.syrent.velocityvanish.spigot.listener
 
 import ir.syrent.velocityvanish.spigot.VelocityVanishSpigot
 import ir.syrent.velocityvanish.spigot.event.PostUnVanishEvent
+import ir.syrent.velocityvanish.spigot.hook.DependencyManager
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import ir.syrent.velocityvanish.spigot.storage.Message
 import ir.syrent.velocityvanish.spigot.storage.Settings
@@ -29,6 +30,10 @@ class PostUnVanishListener(
         val joinMessage = Settings.formatMessage(Message.JOIN_MESSAGE, TextReplacement("player", player.name), TextReplacement("play_displayname", player.displayName))
         if (joinMessage.isNotBlank() && joinMessage.isNotEmpty() && event.sendJoinMessage) {
             Ruom.broadcast(joinMessage.component())
+        }
+
+        if (DependencyManager.proCosmeticsHook.exists) {
+            DependencyManager.proCosmeticsHook.proCosmetics.userManager.getUser(player.uniqueId).equipLastCosmetics(true)
         }
     }
 }

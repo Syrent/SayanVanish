@@ -8,6 +8,9 @@ description: Vanish plugin for velocity servers
 website: syrent.ir
 softdepend:
   - 'ProtocolLib'
+  - 'ProCosmetics'
+  - 'SayanChat'
+  - 'VelocityReport'
 commands:
   vanish:
     aliases:

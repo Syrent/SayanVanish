@@ -6,6 +6,8 @@ object DependencyManager {
 
     var protocolLibHook: ProtocolLibHook
         private set
+    var proCosmeticsHook: ProCosmeticsHook
+        private set
 
     init {
         ProtocolLibHook("ProtocolLib").apply {
@@ -19,6 +21,10 @@ object DependencyManager {
             if (Settings.velocitySupport) {
                 this.register()
             }
+        }
+        ProCosmeticsHook("ProCosmetics").apply {
+            this.register()
+            proCosmeticsHook = this
         }
     }
 

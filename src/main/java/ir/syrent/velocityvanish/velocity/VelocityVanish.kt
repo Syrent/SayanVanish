@@ -69,8 +69,9 @@ class VelocityVanish @Inject constructor(
         try {
             Class.forName("me.sayandevelopment.sayanchat.SayanChat")
             PrivateMessageListener(this)
+            VRuom.log("SayanChat found! hook enabled.")
         } catch (_: Exception) {
-            VRuom.warn("SayanChat not found! hook disabled.")
+            VRuom.log("SayanChat not found! hook disabled.")
         }
         TabCompleteListener(this)
     }

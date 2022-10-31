@@ -1,15 +1,12 @@
 package ir.syrent.velocityvanish.spigot
 
-import com.comphenix.protocol.ProtocolLibrary
-import com.comphenix.protocol.ProtocolManager
 import com.google.gson.JsonObject
 import io.papermc.lib.PaperLib
 import ir.syrent.velocityvanish.spigot.bridge.BukkitBridge
 import ir.syrent.velocityvanish.spigot.bridge.BukkitBridgeManager
 import ir.syrent.velocityvanish.spigot.command.vanish.VanishCommand
 import ir.syrent.velocityvanish.spigot.core.VanishManager
-import ir.syrent.velocityvanish.spigot.hook.DependencyChecker
-import ir.syrent.velocityvanish.spigot.hook.ProtocolLibHook.protocolManager
+import ir.syrent.velocityvanish.spigot.hook.DependencyManager
 import ir.syrent.velocityvanish.spigot.listener.*
 import ir.syrent.velocityvanish.spigot.ruom.RUoMPlugin
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
@@ -23,6 +20,7 @@ import ir.syrent.velocityvanish.spigot.utils.Utils
 import ir.syrent.velocityvanish.utils.component
 import org.bstats.bukkit.Metrics
 import org.bukkit.entity.Player
+import java.lang.Exception
 
 
 class VelocityVanishSpigot : RUoMPlugin() {
@@ -41,7 +39,6 @@ class VelocityVanishSpigot : RUoMPlugin() {
         resetData(true)
         sendFiglet()
         sendWarningMessages()
-        registerDependencies()
         initializeCommands()
         initializeListeners()
 
@@ -76,20 +73,19 @@ class VelocityVanishSpigot : RUoMPlugin() {
         }
 
         PaperLib.suggestPaper(this)
-    }
-
-    private fun registerDependencies() {
-        if (Ruom.hasPlugin("ProtocolLib")) {
-            DependencyChecker.register("ProtocolLib")
-        }
+        DependencyManager
     }
 
     private fun resetData(startup: Boolean) {
-        for (player in Ruom.getOnlinePlayers()) {
-            if (startup) {
-                Utils.sendReportsActionbar(player)
+        try {
+            for (player in Ruom.getOnlinePlayers()) {
+                if (startup) {
+                    Utils.sendReportsActionbar(player)
+                }
+                vanishManager.unVanish(player)
             }
-            vanishManager.unVanish(player)
+        } catch (_: Exception) {
+            Ruom.warn("Plugin didn't fully complete reset data task on plugin shutdown")
         }
     }
 
@@ -99,8 +95,8 @@ class VelocityVanishSpigot : RUoMPlugin() {
     }
 
     private fun initializeInstances() {
-        vanishManager = VanishManager(this)
         AdventureApi.initialize()
+        vanishManager = VanishManager(this)
 
         Settings
     }

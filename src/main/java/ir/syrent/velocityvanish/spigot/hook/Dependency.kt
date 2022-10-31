@@ -37,7 +37,7 @@ abstract class Dependency constructor(val name: String) {
             )
         } else {
             mutableListOf(
-                "<yellow>You may need to install <green>$name<green> to take full advantage of the plugin features."
+                "<yellow>You may need to install <green>$name</green> to take full advantage of the plugin features."
             )
         }.apply {
             if (features().isNotEmpty()) this.add("<white>$name advantages are listed below:")

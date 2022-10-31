@@ -8,6 +8,8 @@ import ir.syrent.velocityvanish.spigot.bridge.BukkitBridge
 import ir.syrent.velocityvanish.spigot.bridge.BukkitBridgeManager
 import ir.syrent.velocityvanish.spigot.command.vanish.VanishCommand
 import ir.syrent.velocityvanish.spigot.core.VanishManager
+import ir.syrent.velocityvanish.spigot.hook.DependencyChecker
+import ir.syrent.velocityvanish.spigot.hook.ProtocolLibHook.protocolManager
 import ir.syrent.velocityvanish.spigot.listener.*
 import ir.syrent.velocityvanish.spigot.ruom.RUoMPlugin
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
@@ -28,8 +30,6 @@ class VelocityVanishSpigot : RUoMPlugin() {
     var bridgeManager: BukkitBridgeManager? = null
     lateinit var vanishManager: VanishManager
         private set
-    lateinit var protocolManager: ProtocolManager
-        private set
 
     val vanishedNames = mutableSetOf<String>()
 
@@ -41,6 +41,7 @@ class VelocityVanishSpigot : RUoMPlugin() {
         resetData(true)
         sendFiglet()
         sendWarningMessages()
+        registerDependencies()
         initializeCommands()
         initializeListeners()
 
@@ -77,6 +78,12 @@ class VelocityVanishSpigot : RUoMPlugin() {
         PaperLib.suggestPaper(this)
     }
 
+    private fun registerDependencies() {
+        if (Ruom.hasPlugin("ProtocolLib")) {
+            DependencyChecker.register("ProtocolLib")
+        }
+    }
+
     private fun resetData(startup: Boolean) {
         for (player in Ruom.getOnlinePlayers()) {
             if (startup) {
@@ -92,7 +99,6 @@ class VelocityVanishSpigot : RUoMPlugin() {
     }
 
     private fun initializeInstances() {
-        protocolManager = ProtocolLibrary.getProtocolManager()
         vanishManager = VanishManager(this)
         AdventureApi.initialize()
 

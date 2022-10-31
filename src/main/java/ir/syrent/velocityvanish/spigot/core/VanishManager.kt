@@ -12,6 +12,8 @@ import ir.syrent.velocityvanish.spigot.event.PostUnVanishEvent
 import ir.syrent.velocityvanish.spigot.event.PostVanishEvent
 import ir.syrent.velocityvanish.spigot.event.PreUnVanishEvent
 import ir.syrent.velocityvanish.spigot.event.PreVanishEvent
+import ir.syrent.velocityvanish.spigot.hook.DependencyChecker
+import ir.syrent.velocityvanish.spigot.hook.ProtocolLibHook
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import ir.syrent.velocityvanish.spigot.utils.ServerVersion
 import ir.syrent.velocityvanish.spigot.utils.Utils
@@ -37,14 +39,14 @@ class VanishManager(
     }
 
     fun updateTabState(player: Player, state: NativeGameMode) {
-        if (Ruom.hasPlugin("ProtocolLib")) {
+        if (DependencyChecker.isRegistered("ProtocolLib")) {
             /*
             * Players can't receive packets from plugin on join
             * So we need to send packet after 1 tick
             * (2tick incase)
             */
             Ruom.runSync({
-                val tabPacket = plugin.protocolManager.createPacket(PacketType.Play.Server.PLAYER_INFO, true)
+                val tabPacket = ProtocolLibHook.protocolManager.createPacket(PacketType.Play.Server.PLAYER_INFO, true)
                 val infoData = tabPacket?.playerInfoDataLists
                 val infoAction = tabPacket?.playerInfoAction
                 val playerInfo = infoData?.read(0)
@@ -66,7 +68,7 @@ class VanishManager(
                 for (onlinePlayer in Ruom.getOnlinePlayers()) {
                     if (onlinePlayer.hasPermission("velocityvanish.admin.seevanished")) {
                         if (onlinePlayer == player) continue
-                        VelocityVanishSpigot.instance.protocolManager.sendServerPacket(onlinePlayer, newTabPacket)
+                        ProtocolLibHook.protocolManager.sendServerPacket(onlinePlayer, newTabPacket)
                     }
                 }
             }, 2)

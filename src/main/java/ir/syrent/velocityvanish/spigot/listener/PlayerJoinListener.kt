@@ -1,10 +1,10 @@
 package ir.syrent.velocityvanish.spigot.listener
 
-import com.comphenix.protocol.wrappers.EnumWrappers
 import ir.syrent.velocityvanish.spigot.VelocityVanishSpigot
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import ir.syrent.velocityvanish.spigot.storage.Settings
 import org.bukkit.Bukkit
+import org.bukkit.GameMode
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -23,7 +23,7 @@ class PlayerJoinListener(
 
         for (vanishedPlayer in plugin.vanishedNames.mapNotNull { Bukkit.getPlayerExact(it) }) {
             plugin.vanishManager.hidePlayer(vanishedPlayer)
-            plugin.vanishManager.updateTabState(vanishedPlayer, EnumWrappers.NativeGameMode.SPECTATOR)
+            plugin.vanishManager.updateTabState(vanishedPlayer, GameMode.SPECTATOR)
         }
 
         if (!Settings.remember) return

@@ -17,6 +17,7 @@ import ir.syrent.velocityvanish.spigot.hook.ProtocolLibHook
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import ir.syrent.velocityvanish.spigot.utils.ServerVersion
 import ir.syrent.velocityvanish.spigot.utils.Utils
+import org.bukkit.GameMode
 import org.bukkit.entity.Creature
 import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
@@ -38,7 +39,7 @@ class VanishManager(
         if (ServerVersion.supports(13)) potions.add(PotionEffect(PotionEffectType.WATER_BREATHING, Int.MAX_VALUE, 255, false, false))
     }
 
-    fun updateTabState(player: Player, state: NativeGameMode) {
+    fun updateTabState(player: Player, state: GameMode) {
         if (DependencyChecker.isRegistered("ProtocolLib")) {
             /*
             * Players can't receive packets from plugin on join
@@ -55,7 +56,7 @@ class VanishManager(
                     PlayerInfoData(
                         WrappedGameProfile.fromPlayer(player),
                         0,
-                        state,
+                        NativeGameMode.valueOf(state.name),
                         WrappedChatComponent.fromText(player.playerListName)
                     )
                 )
@@ -127,7 +128,7 @@ class VanishManager(
 
         setMeta(player, true)
 
-        updateTabState(player, NativeGameMode.SPECTATOR)
+        updateTabState(player, GameMode.SPECTATOR)
         hidePlayer(player)
 
         player.allowFlight = true
@@ -183,7 +184,8 @@ class VanishManager(
 
         setMeta(player, false)
 
-        updateTabState(player, NativeGameMode.SURVIVAL)
+        updateTabState(player, GameMode.SURVIVAL)
+
         for (onlinePlayer in Ruom.getOnlinePlayers()) onlinePlayer.showPlayer(Ruom.getPlugin(), player)
 
         player.isSleepingIgnored = false

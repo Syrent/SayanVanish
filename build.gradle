@@ -89,7 +89,7 @@ shadowJar {
     minimize()
 
     manifest {
-        attributes["Main-Class"] = 'ir.syrent.velocityvanish.VelocityVanish'
+        attributes["Main-Class"] = 'ir.syrent.velocityvanish.velocity.VelocityVanish'
     }
 
     relocate('me.mohamad82.ruom', 'ir.syrent.velocityvanish.ruom')

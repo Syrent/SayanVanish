@@ -9,10 +9,10 @@ import ir.syrent.velocityvanish.spigot.bridge.BukkitBridgeManager
 import ir.syrent.velocityvanish.spigot.command.vanish.VanishCommand
 import ir.syrent.velocityvanish.spigot.core.VanishManager
 import ir.syrent.velocityvanish.spigot.listener.*
-import ir.syrent.velocityvanish.spigot.ruom.messaging.BukkitMessagingEvent
 import ir.syrent.velocityvanish.spigot.ruom.RUoMPlugin
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import ir.syrent.velocityvanish.spigot.ruom.adventure.AdventureApi
+import ir.syrent.velocityvanish.spigot.ruom.messaging.BukkitMessagingEvent
 import ir.syrent.velocityvanish.spigot.storage.Settings
 import ir.syrent.velocityvanish.spigot.storage.Settings.bstats
 import ir.syrent.velocityvanish.spigot.storage.Settings.velocitySupport

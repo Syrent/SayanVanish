@@ -3,7 +3,9 @@ package ir.syrent.velocityvanish.spigot.storage
 import com.cryptomorin.xseries.XSound
 import ir.syrent.velocityvanish.spigot.configuration.YamlConfig
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
+import ir.syrent.velocityvanish.spigot.ruom.adventure.AdventureApi
 import ir.syrent.velocityvanish.utils.TextReplacement
+import ir.syrent.velocityvanish.utils.component
 import org.bukkit.Sound
 import org.bukkit.configuration.file.FileConfiguration
 import java.io.File
@@ -47,13 +49,15 @@ object Settings {
         settingsConfigVersion = settingsConfig.getInt("config_version", 1)
 
         if (settingsConfigVersion < latestSettingsConfigVersion) {
+            val backupFileName = "settings.yml-bak-${LocalDate.now()}"
             val settingsFile = File(Ruom.getPlugin().dataFolder, "settings.yml")
-            val backupFile = File(Ruom.getPlugin().dataFolder, "settings.yml-bak-${LocalDate.now()}")
+            val backupFile = File(Ruom.getPlugin().dataFolder, backupFileName)
             if (backupFile.exists()) backupFile.delete()
             Files.copy(settingsFile.toPath(), backupFile.toPath())
             settingsFile.delete()
             settings = YamlConfig(Ruom.getPlugin().dataFolder, "settings.yml")
             settingsConfig = settings.config
+            sendBackupMessage(backupFileName)
         }
 
         defaultLanguage = settingsConfig.getString("default_language") ?: "en_US"
@@ -125,5 +129,12 @@ object Settings {
 
     fun getConsolePrefix(): String {
         return getMessage(Message.CONSOLE_PREFIX)
+    }
+
+    private fun sendBackupMessage(fileName: String) {
+        AdventureApi.get().console().sendMessage("<red>=============================================================".component())
+        AdventureApi.get().console().sendMessage("<red>Config version updated to $settingsConfigVersion. Please set your prefred values again.".component())
+        AdventureApi.get().console().sendMessage("<gray>Previous values are still accessible via $fileName in plugin folder.".component())
+        AdventureApi.get().console().sendMessage("<red>=============================================================".component())
     }
 }

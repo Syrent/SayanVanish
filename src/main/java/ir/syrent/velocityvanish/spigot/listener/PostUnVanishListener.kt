@@ -31,9 +31,5 @@ class PostUnVanishListener(
         if (joinMessage.isNotBlank() && joinMessage.isNotEmpty() && event.sendJoinMessage) {
             Ruom.broadcast(joinMessage.component())
         }
-
-        if (DependencyManager.proCosmeticsHook.exists) {
-            DependencyManager.proCosmeticsHook.proCosmetics.userManager.getUser(player.uniqueId).equipLastCosmetics(true)
-        }
     }
 }

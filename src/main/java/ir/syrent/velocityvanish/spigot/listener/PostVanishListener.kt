@@ -31,9 +31,5 @@ class PostVanishListener(
         if (quitMessage.isNotBlank() && quitMessage.isNotEmpty() && event.sendQuitMessage) {
             Ruom.broadcast(quitMessage.component())
         }
-
-        if (DependencyManager.proCosmeticsHook.exists) {
-            DependencyManager.proCosmeticsHook.proCosmetics.userManager.getUser(player.uniqueId).unequipCosmetics(true)
-        }
     }
 }

@@ -79,7 +79,8 @@ class VanishManager(
 
     fun hidePlayer(player: Player) {
         for (onlinePlayer in Ruom.getOnlinePlayers().filter { !it.hasPermission("velocityvanish.admin.seevanished") }) {
-            onlinePlayer.hidePlayer(Ruom.getPlugin(), player)
+            @Suppress("DEPRECATION")
+            onlinePlayer.hidePlayer(player)
         }
     }
 
@@ -122,9 +123,6 @@ class VanishManager(
 
         if (preVanishEvent.isCancelled) return
 
-        val postVanishEvent = PostVanishEvent(player, preVanishEvent.sendQuitMessage)
-        VelocityVanishSpigot.instance.server.pluginManager.callEvent(postVanishEvent)
-
         setMeta(player, true)
 
         updateTabState(player, GameMode.SPECTATOR)
@@ -165,7 +163,18 @@ class VanishManager(
 
         addPotionEffects(player)
 
-        denyPush(player)
+        if (ServerVersion.supports(9)) {
+            denyPush(player)
+        }
+
+        if (DependencyManager.proCosmeticsHook.exists) {
+            Ruom.runSync({
+                DependencyManager.proCosmeticsHook.proCosmetics.userManager?.getUser(player.uniqueId)?.unequipCosmetics(true)
+            }, 20)
+        }
+
+        val postVanishEvent = PostVanishEvent(player, preVanishEvent.sendQuitMessage)
+        VelocityVanishSpigot.instance.server.pluginManager.callEvent(postVanishEvent)
     }
 
     fun unVanish(player: Player) {
@@ -178,14 +187,14 @@ class VanishManager(
 
         if (preUnVanishEvent.isCancelled) return
 
-        val postUnVanishEvent = PostUnVanishEvent(player, preUnVanishEvent.sendJoinMessage)
-        VelocityVanishSpigot.instance.server.pluginManager.callEvent(postUnVanishEvent)
-
         setMeta(player, false)
 
         updateTabState(player, GameMode.SURVIVAL)
 
-        for (onlinePlayer in Ruom.getOnlinePlayers()) onlinePlayer.showPlayer(Ruom.getPlugin(), player)
+        for (onlinePlayer in Ruom.getOnlinePlayers()) {
+            @Suppress("DEPRECATION")
+            onlinePlayer.showPlayer(player)
+        }
 
         player.isSleepingIgnored = false
 
@@ -215,7 +224,16 @@ class VanishManager(
 
         Utils.actionbarPlayers.remove(player)
 
-        allowPush(player)
+        if (ServerVersion.supports(9)) {
+            allowPush(player)
+        }
+
+        if (DependencyManager.proCosmeticsHook.exists) {
+            DependencyManager.proCosmeticsHook.proCosmetics.userManager?.getUser(player.uniqueId)?.equipLastCosmetics(true)
+        }
+
+        val postUnVanishEvent = PostUnVanishEvent(player, preUnVanishEvent.sendJoinMessage)
+        VelocityVanishSpigot.instance.server.pluginManager.callEvent(postUnVanishEvent)
     }
 
 }

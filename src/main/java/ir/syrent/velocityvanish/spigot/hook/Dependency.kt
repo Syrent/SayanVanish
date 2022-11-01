@@ -10,8 +10,10 @@ abstract class Dependency constructor(val name: String) {
     val exists = Ruom.hasPlugin(name)
 
     fun register() {
-        sendDescription()
-        sendFeatures()
+        if (Settings.showDependencySuggestions) {
+            sendDescription()
+            sendFeatures()
+        }
     }
 
     fun sendDescription() {

@@ -6,8 +6,13 @@ import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import ir.syrent.velocityvanish.utils.TextReplacement
 import org.bukkit.Sound
 import org.bukkit.configuration.file.FileConfiguration
+import java.io.File
+import java.nio.file.Files
+import java.time.LocalDate
 
 object Settings {
+
+    const val latestSettingsConfigVersion = 2
 
     lateinit var settings: YamlConfig
     lateinit var language: YamlConfig
@@ -16,8 +21,11 @@ object Settings {
 
     private val messages = mutableMapOf<Message, String>()
 
+    var settingsConfigVersion = 1
+
     lateinit var defaultLanguage: String
     var velocitySupport = false
+    var showDependencySuggestions = true
     var bstats = true
 
     lateinit var commandSound: Sound
@@ -26,6 +34,7 @@ object Settings {
 
     var actionbar = true
     var remember = false
+    var seeAsSpectator = true
 
     init {
         load()
@@ -35,8 +44,21 @@ object Settings {
         settings = YamlConfig(Ruom.getPlugin().dataFolder, "settings.yml")
         settingsConfig = settings.config
 
+        settingsConfigVersion = settingsConfig.getInt("config_version", 1)
+
+        if (settingsConfigVersion < latestSettingsConfigVersion) {
+            val settingsFile = File(Ruom.getPlugin().dataFolder, "settings.yml")
+            val backupFile = File(Ruom.getPlugin().dataFolder, "settings.yml-bak-${LocalDate.now()}")
+            if (backupFile.exists()) backupFile.delete()
+            Files.copy(settingsFile.toPath(), backupFile.toPath())
+            settingsFile.delete()
+            settings = YamlConfig(Ruom.getPlugin().dataFolder, "settings.yml")
+            settingsConfig = settings.config
+        }
+
         defaultLanguage = settingsConfig.getString("default_language") ?: "en_US"
         velocitySupport = settingsConfig.getBoolean("velocity_support")
+        showDependencySuggestions = settingsConfig.getBoolean("show_dependency_suggestions")
         bstats = settingsConfig.getBoolean("bstats")
 
         commandSound = XSound.valueOf(settingsConfig.getString("sounds.command") ?: "ENTITY_EXPERIENCE_ORB_PICKUP").parseSound()!!
@@ -45,6 +67,7 @@ object Settings {
 
         actionbar = settingsConfig.getBoolean("vanish.actionbar")
         remember = settingsConfig.getBoolean("vanish.remember")
+        seeAsSpectator = settingsConfig.getBoolean("vanish.see_as_spectator")
 
         language = YamlConfig(Ruom.getPlugin().dataFolder, "languages/$defaultLanguage.yml")
         languageConfig = language.config

@@ -14,6 +14,7 @@ import ir.syrent.velocityvanish.spigot.event.PreUnVanishEvent
 import ir.syrent.velocityvanish.spigot.event.PreVanishEvent
 import ir.syrent.velocityvanish.spigot.hook.DependencyManager
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
+import ir.syrent.velocityvanish.spigot.storage.Settings
 import ir.syrent.velocityvanish.spigot.utils.ServerVersion
 import ir.syrent.velocityvanish.spigot.utils.Utils
 import org.bukkit.GameMode
@@ -39,7 +40,7 @@ class VanishManager(
     }
 
     fun updateTabState(player: Player, state: GameMode) {
-        if (DependencyManager.protocolLibHook.exists) {
+        if (DependencyManager.protocolLibHook.exists && Settings.seeAsSpectator) {
             /*
             * Players can't receive packets from plugin on join
             * So we need to send packet after 1 tick

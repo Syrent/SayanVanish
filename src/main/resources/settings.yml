@@ -1,6 +1,12 @@
+#
+# Full wiki is available at https://github.com/Syrent/VelocityVanish/wiki
+#
+config_version: 2
 default_language: en_US
 # Enable this option if you're using plugin on a Velocity network
 velocity_support: false
+show_dependency_suggestions: true
+
 bstats: true
 sounds:
     command: "ENTITY_EXPERIENCE_ORB_PICKUP"
@@ -12,3 +18,6 @@ vanish:
     # Remember vanish data after switch servers?
     # Note: Need Velocity as proxy server and `velocity_support` enabled
     remember: true
+    # Should we change player type to spectator in tablist for players who have permission to see vanished players?
+    # Note: Requires ProtocolLib
+    see_as_spectator: true

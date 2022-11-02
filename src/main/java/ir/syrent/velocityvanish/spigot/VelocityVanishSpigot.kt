@@ -109,10 +109,10 @@ class VelocityVanishSpigot : RUoMPlugin() {
         PlayerJoinListener(this)
         PlayerQuitListener(this)
         PlayerInteractListener(this)
-        TabCompleteListener(this)
         PostVanishListener(this)
         PostUnVanishListener(this)
         PlayerTeleportListener(this)
+        if (ServerVersion.supports(12)) TabCompleteListener(this)
         if (ServerVersion.supports(19)) BlockReceiveGameListener(this)
     }
 

@@ -1,5 +1,6 @@
 package ir.syrent.velocityvanish.spigot.hook
 
+import ir.syrent.velocityvanish.spigot.VelocityVanishSpigot
 import ir.syrent.velocityvanish.spigot.storage.Settings
 
 object DependencyManager {
@@ -28,7 +29,7 @@ object DependencyManager {
             this.register()
             proCosmeticsHook = this
         }
-        PlaceholderAPIHook("PlaceholderAPI").apply {
+        PlaceholderAPIHook(VelocityVanishSpigot.instance, "PlaceholderAPI").apply {
             this.register()
             placeholderAPIHook = this
         }

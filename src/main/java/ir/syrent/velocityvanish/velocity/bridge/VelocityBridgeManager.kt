@@ -13,14 +13,6 @@ class VelocityBridgeManager(
     private val bridge: VelocityBridge
 ) {
 
-    fun sendVanishedPlayers(name: String) {
-        val messageJson = JsonObject()
-        messageJson.addProperty("type", "Vanish")
-        messageJson.addProperty("name", name)
-
-        sendPluginMessage(messageJson)
-    }
-
     fun sendVanishedPlayers(server: RegisteredServer) {
         val messageJson = JsonObject()
         messageJson.addProperty("type", "Vanish")
@@ -28,6 +20,19 @@ class VelocityBridgeManager(
         messageJson.add("vanished_players", jsonArray)
 
         sendPluginMessage(messageJson, server)
+    }
+
+    fun sendProxyPlayers() {
+        val messageJson = JsonObject()
+        messageJson.addProperty("type", "Players")
+
+        val jsonObject = JsonObject()
+        for (registeredServer in VRuom.getServer().allServers) {
+            jsonObject.add(registeredServer.serverInfo.name.lowercase(), GsonUtils.get().toJsonTree(registeredServer.playersConnected.map { it.username }).asJsonArray)
+            messageJson.add("servers", jsonObject)
+
+            sendPluginMessage(messageJson)
+        }
     }
 
     private fun sendPluginMessage(messageJson: JsonObject) {

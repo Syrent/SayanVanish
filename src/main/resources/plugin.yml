@@ -10,6 +10,7 @@ softdepend:
   - 'ProtocolLib'
   - 'ProCosmetics'
   - 'SayanChat'
+  - 'PlaceholderAPI'
 commands:
   vanish:
     aliases:

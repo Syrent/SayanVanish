@@ -27,7 +27,7 @@ class PostVanishListener(
         plugin.vanishedNames.add(player.name)
         plugin.bridgeManager?.updateVanishedPlayersRequest(player, true)
 
-        val quitMessage = Settings.formatMessage(Message.QUIT_MESSAGE, TextReplacement("player", player.name), TextReplacement("play_displayname", player.displayName))
+        val quitMessage = Settings.formatMessage(player, Message.QUIT_MESSAGE, TextReplacement("player", player.name), TextReplacement("play_displayname", player.displayName))
         if (quitMessage.isNotBlank() && quitMessage.isNotEmpty() && event.sendQuitMessage) {
             Ruom.broadcast(quitMessage.component())
         }

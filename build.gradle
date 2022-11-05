@@ -54,12 +54,18 @@ repositories {
     maven {
         url "https://repo.dmulloy2.net/repository/public/"
     }
+
+    // PlaceholderAPI
+    maven {
+        url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
+    }
 }
 
 dependencies {
     compileOnly 'com.velocitypowered:velocity-api:3.1.1'
     compileOnly 'org.spigotmc:spigot-api:1.19-R0.1-SNAPSHOT'
     compileOnly 'com.comphenix.protocol:ProtocolLib:4.7.0'
+    compileOnly 'me.clip:placeholderapi:2.11.2'
 
     compileOnly files("libs/SayanChat-2.8.3.jar")
     compileOnly files('libs/ProCosmetics-13.7.jar')

@@ -14,8 +14,8 @@ class VanishCommand(
 ) : PluginCommand("vanish", "velocityvanish.command.vanish", true) {
 
     init {
-        addSubcommand(ReloadSubcommand())
         this.register()
+        addSubcommand(ReloadSubcommand())
     }
 
     override fun onExecute(sender: CommandSender, args: List<String>) {

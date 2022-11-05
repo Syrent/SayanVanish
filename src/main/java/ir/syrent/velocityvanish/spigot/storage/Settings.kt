@@ -2,12 +2,16 @@ package ir.syrent.velocityvanish.spigot.storage
 
 import com.cryptomorin.xseries.XSound
 import ir.syrent.velocityvanish.spigot.configuration.YamlConfig
+import ir.syrent.velocityvanish.spigot.hook.DependencyManager
+import ir.syrent.velocityvanish.spigot.hook.PlaceholderAPIHook
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import ir.syrent.velocityvanish.spigot.ruom.adventure.AdventureApi
 import ir.syrent.velocityvanish.utils.TextReplacement
 import ir.syrent.velocityvanish.utils.component
+import me.clip.placeholderapi.PlaceholderAPI
 import org.bukkit.Sound
 import org.bukkit.configuration.file.FileConfiguration
+import org.bukkit.entity.Player
 import java.io.File
 import java.nio.file.Files
 import java.time.LocalDate
@@ -95,6 +99,15 @@ object Settings {
     }
 
 
+    fun formatMessage(player: Player, message: String, vararg replacements: TextReplacement): String {
+        var formattedMessage = formatMessage(message, *replacements)
+        if (DependencyManager.placeholderAPIHook.exists) {
+            formattedMessage = PlaceholderAPI.setPlaceholders(player, formattedMessage)
+        }
+        return formattedMessage
+    }
+
+
     fun formatMessage(message: String, vararg replacements: TextReplacement): String {
         var formattedMessage = message
             .replace("\$prefix", getMessage(Message.PREFIX))
@@ -105,6 +118,10 @@ object Settings {
             formattedMessage = formattedMessage.replace("\$${replacement.from}", replacement.to)
         }
         return formattedMessage
+    }
+
+    fun formatMessage(player: Player, message: Message, vararg replacements: TextReplacement): String {
+        return formatMessage(player, getMessage(message), *replacements)
     }
 
     fun formatMessage(message: Message, vararg replacements: TextReplacement): String {

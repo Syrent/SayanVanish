@@ -8,6 +8,8 @@ object DependencyManager {
         private set
     var proCosmeticsHook: ProCosmeticsHook
         private set
+    var placeholderAPIHook: PlaceholderAPIHook
+        private set
 
     init {
         ProtocolLibHook("ProtocolLib").apply {
@@ -25,6 +27,10 @@ object DependencyManager {
         ProCosmeticsHook("ProCosmetics").apply {
             this.register()
             proCosmeticsHook = this
+        }
+        PlaceholderAPIHook("PlaceholderAPI").apply {
+            this.register()
+            placeholderAPIHook = this
         }
     }
 

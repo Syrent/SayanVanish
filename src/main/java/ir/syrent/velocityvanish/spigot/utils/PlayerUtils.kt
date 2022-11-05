@@ -13,7 +13,7 @@ fun CommandSender.sendMessage(message: Message, vararg replacements: TextReplace
 }
 
 fun Player.sendMessage(message: Message, vararg replacements: TextReplacement) {
-    val formattedMessage = Settings.formatMessage(message, *replacements)
+    val formattedMessage = Settings.formatMessage(this, message, *replacements)
     if (formattedMessage.isBlank()) return
 
     this.playSound(this.location, Settings.commandSound, 1f, 1f)
@@ -21,9 +21,9 @@ fun Player.sendMessage(message: Message, vararg replacements: TextReplacement) {
 }
 
 fun Player.sendMessageOnly(message: Message, vararg replacements: TextReplacement) {
-    AdventureApi.get().sender(this).sendMessage(Settings.formatMessage(message, *replacements).component())
+    AdventureApi.get().sender(this).sendMessage(Settings.formatMessage(this, message, *replacements).component())
 }
 
 fun Player.sendActionbar(message: Message, vararg replacements: TextReplacement) {
-    AdventureApi.get().sender(this).sendActionBar(Settings.formatMessage(message, *replacements).component())
+    AdventureApi.get().sender(this).sendActionBar(Settings.formatMessage(this, message, *replacements).component())
 }

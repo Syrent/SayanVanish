@@ -37,6 +37,13 @@ class BukkitBridgeManager(
                 plugin.vanishedNames.clear()
                 plugin.vanishedNames.addAll(vanishedPlayers.map { it.asString })
             }
+            "Players" -> {
+                val servers = messageJson["servers"].asJsonObject
+                plugin.proxyPlayers.clear()
+                for (server in servers.keySet()) {
+                    plugin.proxyPlayers[server] = servers[server].asJsonArray.map { it.asString }.toList()
+                }
+            }
             else -> {
                 Ruom.warn("Unsupported plugin message received from internal channel: $type")
             }

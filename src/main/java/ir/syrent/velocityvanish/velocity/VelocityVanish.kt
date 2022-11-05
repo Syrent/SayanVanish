@@ -57,11 +57,10 @@ class VelocityVanish @Inject constructor(
         VRuom.runAsync({
             for (registeredServer in getServer().allServers) {
                 if (registeredServer.playersConnected.isNotEmpty()) {
-                    for (player in registeredServer.playersConnected) {
-                        bridgeManager.sendVanishedPlayers(registeredServer)
-                    }
+                    bridgeManager.sendVanishedPlayers(registeredServer)
                 }
             }
+            bridgeManager.sendProxyPlayers()
         }, 0, TimeUnit.SECONDS, 1, TimeUnit.SECONDS)
     }
 

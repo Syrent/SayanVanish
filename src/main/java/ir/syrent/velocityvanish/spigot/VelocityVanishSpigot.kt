@@ -29,6 +29,7 @@ class VelocityVanishSpigot : RUoMPlugin() {
     lateinit var vanishManager: VanishManager
         private set
 
+    val proxyPlayers = mutableMapOf<String, List<String>>()
     val vanishedNames = mutableSetOf<String>()
 
     override fun onEnable() {

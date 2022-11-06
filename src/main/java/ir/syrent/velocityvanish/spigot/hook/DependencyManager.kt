@@ -11,6 +11,8 @@ object DependencyManager {
         private set
     var placeholderAPIHook: PlaceholderAPIHook
         private set
+    var sayanChatHook: SayanChatHook
+        private set
 
     init {
         ProtocolLibHook("ProtocolLib").apply {
@@ -19,6 +21,7 @@ object DependencyManager {
         }
         SayanChatHook("SayanChat").apply {
             this.register()
+            sayanChatHook = this
         }
         EnhancedVelocityHook("EnhancedVelocity").apply {
             if (Settings.velocitySupport) {

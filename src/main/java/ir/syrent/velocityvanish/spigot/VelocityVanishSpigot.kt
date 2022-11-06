@@ -20,7 +20,6 @@ import ir.syrent.velocityvanish.spigot.utils.Utils
 import ir.syrent.velocityvanish.utils.component
 import org.bstats.bukkit.Metrics
 import org.bukkit.entity.Player
-import java.lang.Exception
 
 
 class VelocityVanishSpigot : RUoMPlugin() {
@@ -113,6 +112,9 @@ class VelocityVanishSpigot : RUoMPlugin() {
         PostVanishListener(this)
         PostUnVanishListener(this)
         PlayerTeleportListener(this)
+        PlayerDeathListener(this)
+        if (DependencyManager.sayanChatHook.exists) PlayerMentionListener(this)
+        if (DependencyManager.sayanChatHook.exists && velocitySupport) PrivateMessageListener(this)
         if (ServerVersion.supports(12)) TabCompleteListener(this)
         if (ServerVersion.supports(19)) BlockReceiveGameListener(this)
     }

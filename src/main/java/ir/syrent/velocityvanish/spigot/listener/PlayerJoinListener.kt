@@ -28,7 +28,7 @@ class PlayerJoinListener(
 
         if (!Settings.remember) return
 
-        if (plugin.vanishedNames.contains(player.name)) {
+        if (player.hasPermission("velocityvanish.action.vanish.onjoin") || plugin.vanishedNames.contains(player.name)) {
             plugin.vanishManager.vanish(player, false)
             event.joinMessage = null
         } else {

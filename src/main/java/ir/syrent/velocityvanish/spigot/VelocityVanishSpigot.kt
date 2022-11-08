@@ -20,6 +20,8 @@ import ir.syrent.velocityvanish.spigot.utils.Utils
 import ir.syrent.velocityvanish.utils.component
 import org.bstats.bukkit.Metrics
 import org.bukkit.entity.Player
+import xyz.jpenilla.squaremap.api.Squaremap
+import xyz.jpenilla.squaremap.api.SquaremapProvider
 
 
 class VelocityVanishSpigot : RUoMPlugin() {

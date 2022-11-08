@@ -13,6 +13,8 @@ object DependencyManager {
         private set
     var sayanChatHook: SayanChatHook
         private set
+    var squareMapHook: SquareMapHook
+        private set
 
     init {
         ProtocolLibHook("ProtocolLib").apply {
@@ -35,6 +37,10 @@ object DependencyManager {
         PlaceholderAPIHook(VelocityVanishSpigot.instance, "PlaceholderAPI").apply {
             this.register()
             placeholderAPIHook = this
+        }
+        SquareMapHook("squaremap").apply {
+            this.register()
+            squareMapHook = this
         }
     }
 

@@ -174,6 +174,10 @@ class VanishManager(
             }, 20)
         }
 
+        if (DependencyManager.squareMapHook.exists) {
+            DependencyManager.squareMapHook.squareMap.playerManager().hide(player.uniqueId, true)
+        }
+
         val postVanishEvent = PostVanishEvent(player, preVanishEvent.sendQuitMessage)
         VelocityVanishSpigot.instance.server.pluginManager.callEvent(postVanishEvent)
     }
@@ -231,6 +235,10 @@ class VanishManager(
 
         if (DependencyManager.proCosmeticsHook.exists) {
             DependencyManager.proCosmeticsHook.proCosmetics.userManager?.getUser(player.uniqueId)?.equipLastCosmetics(true)
+        }
+
+        if (DependencyManager.squareMapHook.exists) {
+            DependencyManager.squareMapHook.squareMap.playerManager().show(player.uniqueId, true)
         }
 
         val postUnVanishEvent = PostUnVanishEvent(player, preUnVanishEvent.sendJoinMessage)

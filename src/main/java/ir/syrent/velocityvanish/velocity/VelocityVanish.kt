@@ -48,8 +48,15 @@ class VelocityVanish @Inject constructor(
         initializeMessagingChannels()
         initializeListeners()
         createFolder()
-        initializeSLPPlaceholders()
         initializeCommands()
+
+        try {
+            Class.forName("net.minecrell.serverlistplus.core.ServerListPlusCore")
+            initializeSLPPlaceholders()
+            VRuom.log("ServerListPlus found! hook enabled.")
+        } catch (_: Exception) {
+            VRuom.log("ServerListPlus not found! hook disabled.")
+        }
     }
 
     private fun initializeSLPPlaceholders() {
@@ -78,6 +85,9 @@ class VelocityVanish @Inject constructor(
                 }
             })
         }
+
+        ServerListPlusCore.getInstance().reload()
+        VRuom.log("ServerListPlus placeholders have been initialized.")
     }
 
     private fun initializeCommands() {

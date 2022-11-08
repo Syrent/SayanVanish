@@ -103,7 +103,7 @@ shadowJar {
 
     relocate('me.mohamad82.ruom', 'ir.syrent.velocityvanish.ruom')
     relocate('com.cryptomorin.xseries', 'ir.syrent.velocityvanish.xseries')
-    relocate('net.kyori.adventure', 'ir.syrent.velocityvanish.kyori.adventure')
+//    relocate('net.kyori.adventure', 'ir.syrent.velocityvanish.kyori.adventure')
     relocate('org.bstats', 'ir.syrent.velocityvanish.bstats')
 
     // @see https://youtrack.jetbrains.com/issue/KT-25709

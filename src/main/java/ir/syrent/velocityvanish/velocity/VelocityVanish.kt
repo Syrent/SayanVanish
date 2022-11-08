@@ -49,6 +49,35 @@ class VelocityVanish @Inject constructor(
         initializeMessagingChannels()
         initializeListeners()
         createFolder()
+        initializeSLPPlaceholders()
+    }
+
+    private fun initializeSLPPlaceholders() {
+        ReplacementManager.getDynamic().add(object : LiteralPlaceholder("%velocityvanish_total%") {
+            override fun replace(response: StatusResponse, s: String?): String? {
+                return run {
+                    replace(s, (VRuom.getOnlinePlayers().size - vanishedPlayers.size).toString())
+                }
+            }
+
+            override fun replace(core: ServerListPlusCore?, s: String?): String? {
+                return replace(s, "0")
+            }
+        })
+
+        for (server in VRuom.getServer().allServers) {
+            ReplacementManager.getDynamic().add(object : LiteralPlaceholder("%velocityvanish_${server.serverInfo.name.lowercase()}%") {
+                override fun replace(response: StatusResponse, s: String?): String? {
+                    return run {
+                        replace(s, server.playersConnected.filter { !vanishedPlayers.contains(it.username) }.toString())
+                    }
+                }
+
+                override fun replace(core: ServerListPlusCore?, s: String?): String? {
+                    return replace(s, "0")
+                }
+            })
+        }
     }
 
     private fun initializeMessagingChannels() {

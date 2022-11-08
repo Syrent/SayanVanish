@@ -69,6 +69,7 @@ dependencies {
 
     compileOnly files("libs/SayanChat-2.8.3.jar")
     compileOnly files('libs/ProCosmetics-13.7.jar')
+    compileOnly files('libs/ServerListPlus-3.5.0-SNAPSHOT-Velocity.jar')
 
     implementation 'io.papermc:paperlib:1.0.7'
     implementation 'org.bstats:bstats-bukkit:3.0.0'

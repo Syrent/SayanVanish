@@ -10,14 +10,20 @@ import com.velocitypowered.api.proxy.messages.ChannelMessageSource
 import ir.syrent.velocityvanish.velocity.bridge.VelocityBridge
 import ir.syrent.velocityvanish.velocity.bridge.VelocityBridgeManager
 import ir.syrent.velocityvanish.velocity.listener.PrivateMessageListener
+import ir.syrent.velocityvanish.velocity.listener.ProxyPingListener
 import ir.syrent.velocityvanish.velocity.listener.TabCompleteListener
 import me.mohamad82.ruom.VRUoMPlugin
 import me.mohamad82.ruom.VRuom
 import me.mohamad82.ruom.messaging.VelocityMessagingEvent
+import net.minecrell.serverlistplus.core.ServerListPlusCore
+import net.minecrell.serverlistplus.core.player.PlayerIdentity
+import net.minecrell.serverlistplus.core.replacement.LiteralPlaceholder
+import net.minecrell.serverlistplus.core.replacement.ReplacementManager
+import net.minecrell.serverlistplus.core.status.StatusResponse
 import org.slf4j.Logger
 import java.io.File
-import java.lang.Exception
 import java.nio.file.Path
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 class VelocityVanish @Inject constructor(
@@ -73,6 +79,7 @@ class VelocityVanish @Inject constructor(
             VRuom.log("SayanChat not found! hook disabled.")
         }
         TabCompleteListener(this)
+        ProxyPingListener(this)
     }
 
     private fun createFolder() {

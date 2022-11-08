@@ -10,14 +10,20 @@ import com.velocitypowered.api.proxy.messages.ChannelMessageSource
 import ir.syrent.velocityvanish.velocity.bridge.VelocityBridge
 import ir.syrent.velocityvanish.velocity.bridge.VelocityBridgeManager
 import ir.syrent.velocityvanish.velocity.listener.PrivateMessageListener
+import ir.syrent.velocityvanish.velocity.listener.ProxyPingListener
 import ir.syrent.velocityvanish.velocity.listener.TabCompleteListener
 import me.mohamad82.ruom.VRUoMPlugin
 import me.mohamad82.ruom.VRuom
 import me.mohamad82.ruom.messaging.VelocityMessagingEvent
+import net.minecrell.serverlistplus.core.ServerListPlusCore
+import net.minecrell.serverlistplus.core.player.PlayerIdentity
+import net.minecrell.serverlistplus.core.replacement.LiteralPlaceholder
+import net.minecrell.serverlistplus.core.replacement.ReplacementManager
+import net.minecrell.serverlistplus.core.status.StatusResponse
 import org.slf4j.Logger
 import java.io.File
-import java.lang.Exception
 import java.nio.file.Path
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 class VelocityVanish @Inject constructor(
@@ -43,6 +49,35 @@ class VelocityVanish @Inject constructor(
         initializeMessagingChannels()
         initializeListeners()
         createFolder()
+        initializeSLPPlaceholders()
+    }
+
+    private fun initializeSLPPlaceholders() {
+        ReplacementManager.getDynamic().add(object : LiteralPlaceholder("%velocityvanish_total%") {
+            override fun replace(response: StatusResponse, s: String?): String? {
+                return run {
+                    replace(s, (VRuom.getOnlinePlayers().size - vanishedPlayers.size).toString())
+                }
+            }
+
+            override fun replace(core: ServerListPlusCore?, s: String?): String? {
+                return replace(s, "0")
+            }
+        })
+
+        for (server in VRuom.getServer().allServers) {
+            ReplacementManager.getDynamic().add(object : LiteralPlaceholder("%velocityvanish_${server.serverInfo.name.lowercase()}%") {
+                override fun replace(response: StatusResponse, s: String?): String? {
+                    return run {
+                        replace(s, server.playersConnected.filter { !vanishedPlayers.contains(it.username) }.toString())
+                    }
+                }
+
+                override fun replace(core: ServerListPlusCore?, s: String?): String? {
+                    return replace(s, "0")
+                }
+            })
+        }
     }
 
     private fun initializeMessagingChannels() {
@@ -73,6 +108,7 @@ class VelocityVanish @Inject constructor(
             VRuom.log("SayanChat not found! hook disabled.")
         }
         TabCompleteListener(this)
+        ProxyPingListener(this)
     }
 
     private fun createFolder() {

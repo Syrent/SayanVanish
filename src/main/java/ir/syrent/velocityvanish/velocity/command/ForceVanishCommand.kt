@@ -1,8 +1,7 @@
 package ir.syrent.velocityvanish.velocity.command
 
 import com.velocitypowered.api.command.SimpleCommand
-import com.velocitypowered.api.proxy.Player
-import ir.syrent.velocityvanish.spigot.ruom.Ruom
+import ir.syrent.velocityvanish.utils.component
 import ir.syrent.velocityvanish.velocity.VelocityVanish
 import me.mohamad82.ruom.VRuom
 
@@ -22,21 +21,17 @@ class ForceVanishCommand(
         val sender = invocation.source()
         val args = invocation.arguments()
 
-        if (sender is Player) {
-            return
-        }
-
         if (!sender.hasPermission("velocityvanish.command.forcevanish")) {
-            VRuom.log("You don't have permission to use this command.")
+            sender.sendMessage("<dark_red>You don't have permission to use this command!".component())
             return
         }
 
         if (args.isEmpty()) {
-            Ruom.log("Usage: /forcevanish <player>")
+            sender.sendMessage("<red>Usage: <gold>/forcevanish <player>".component())
             return
         }
 
         plugin.vanishedPlayers.add(args[0])
-        Ruom.log("Player ${args[0]} is now in vanished players list!")
+        sender.sendMessage("<green>Player <gold>${args[0]}</gold> is now in vanished players list!".component())
     }
 }

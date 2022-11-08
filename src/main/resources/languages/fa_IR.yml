@@ -15,7 +15,7 @@ command:
     use_vanish: "$successful_prefix <gradient:dark_green:green>Vanish Shodid."
     use_unvanish: "$successful_prefix <gradient:dark_green:green>Unvanish Shodid."
 vanish:
-  actionbar: "<dark_red>$animation <gradient:dark_purple:blue>Shoma Baraye Baghie Player Ha Hidden Hastid.!"
+  actionbar: "<dark_red>$animation <gradient:dark_purple:blue>Shoma Baraye Baghie Player Ha Hidden Hastid!"
   vanish_notify: "$warn_prefix <red>$player</red> Vanished!"
   unvanish_notify: "$warn_prefix <red>$player</red> Unvanished!"
   join_message: "<yellow>$player joined the game"

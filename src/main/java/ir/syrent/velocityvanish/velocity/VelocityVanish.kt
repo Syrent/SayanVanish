@@ -69,7 +69,7 @@ class VelocityVanish @Inject constructor(
             ReplacementManager.getDynamic().add(object : LiteralPlaceholder("%velocityvanish_${server.serverInfo.name.lowercase()}%") {
                 override fun replace(response: StatusResponse, s: String?): String? {
                     return run {
-                        replace(s, server.playersConnected.filter { !vanishedPlayers.contains(it.username) }.toString())
+                        replace(s, server.playersConnected.filter { !vanishedPlayers.contains(it.username) }.size.toString())
                     }
                 }
 

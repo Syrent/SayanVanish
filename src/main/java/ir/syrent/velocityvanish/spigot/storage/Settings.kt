@@ -34,9 +34,9 @@ object Settings {
     var showDependencySuggestions = true
     var bstats = true
 
-    lateinit var commandSound: Sound
-    lateinit var vanishSound: Sound
-    lateinit var unVanishSound: Sound
+    var commandSound: Sound? = null
+    var vanishSound: Sound? = null
+    var unVanishSound: Sound? = null
 
     var actionbar = true
     var remember = false
@@ -69,9 +69,9 @@ object Settings {
         showDependencySuggestions = settingsConfig.getBoolean("show_dependency_suggestions")
         bstats = settingsConfig.getBoolean("bstats")
 
-        commandSound = XSound.valueOf(settingsConfig.getString("sounds.command") ?: "ENTITY_EXPERIENCE_ORB_PICKUP").parseSound()!!
-        vanishSound = XSound.valueOf(settingsConfig.getString("sounds.vanish") ?: "ENTITY_EXPERIENCE_ORB_PICKUP").parseSound()!!
-        unVanishSound = XSound.valueOf(settingsConfig.getString("sounds.unvanish") ?: "ENTITY_EXPERIENCE_ORB_PICKUP").parseSound()!!
+        commandSound = XSound.valueOf(settingsConfig.getString("sounds.command")!!).parseSound()
+        vanishSound = XSound.valueOf(settingsConfig.getString("sounds.vanish")!!).parseSound()
+        unVanishSound = XSound.valueOf(settingsConfig.getString("sounds.unvanish")!!).parseSound()
 
         actionbar = settingsConfig.getBoolean("vanish.actionbar")
         remember = settingsConfig.getBoolean("vanish.remember")

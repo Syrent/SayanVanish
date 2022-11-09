@@ -16,7 +16,11 @@ fun Player.sendMessage(message: Message, vararg replacements: TextReplacement) {
     val formattedMessage = Settings.formatMessage(this, message, *replacements)
     if (formattedMessage.isBlank()) return
 
-    this.playSound(this.location, Settings.commandSound, 1f, 1f)
+    Settings.commandSound.let {
+        if (it != null) {
+            this.playSound(this.location, it, 1f, 1f)
+        }
+    }
     AdventureApi.get().sender(this).sendMessage(formattedMessage.component())
 }
 

@@ -178,6 +178,12 @@ class VanishManager(
             DependencyManager.squareMapHook.squareMap.playerManager().hide(player.uniqueId, true)
         }
 
+        Settings.vanishSound.let {
+            if (it != null) {
+                player.playSound(player.location, it, 1f, 1f)
+            }
+        }
+
         val postVanishEvent = PostVanishEvent(player, preVanishEvent.sendQuitMessage)
         VelocityVanishSpigot.instance.server.pluginManager.callEvent(postVanishEvent)
     }
@@ -239,6 +245,12 @@ class VanishManager(
 
         if (DependencyManager.squareMapHook.exists) {
             DependencyManager.squareMapHook.squareMap.playerManager().show(player.uniqueId, true)
+        }
+
+        Settings.unVanishSound.let {
+            if (it != null) {
+                player.playSound(player.location, it, 1f, 1f)
+            }
         }
 
         val postUnVanishEvent = PostUnVanishEvent(player, preUnVanishEvent.sendJoinMessage)

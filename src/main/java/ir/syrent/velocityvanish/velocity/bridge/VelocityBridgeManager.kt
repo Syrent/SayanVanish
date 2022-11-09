@@ -4,6 +4,8 @@ import com.google.common.io.ByteStreams
 import com.google.gson.JsonObject
 import com.velocitypowered.api.proxy.server.RegisteredServer
 import ir.syrent.velocityvanish.velocity.VelocityVanish
+import ir.syrent.velocityvanish.velocity.event.VelocityUnVanishEvent
+import ir.syrent.velocityvanish.velocity.event.VelocityVanishEvent
 import me.mohamad82.ruom.VRuom
 import me.mohamad82.ruom.utils.GsonUtils
 
@@ -57,8 +59,10 @@ class VelocityBridgeManager(
 
                 if (vanished) {
                     plugin.vanishedPlayers.add(name)
+                    VRuom.getServer().eventManager.fire(VelocityVanishEvent(VRuom.getPlayer(name).orElse(null), name))
                 } else {
                     plugin.vanishedPlayers.remove(name)
+                    VRuom.getServer().eventManager.fire(VelocityUnVanishEvent(VRuom.getPlayer(name).orElse(null), name))
                 }
             }
             else -> {

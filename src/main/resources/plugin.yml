@@ -11,6 +11,7 @@ softdepend:
   - 'ProCosmetics'
   - 'SayanChat'
   - 'PlaceholderAPI'
+  - 'squaremap'
 commands:
   vanish:
     aliases:

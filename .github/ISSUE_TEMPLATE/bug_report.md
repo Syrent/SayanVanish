@@ -4,24 +4,17 @@ labels: ["Bug"]
 body:
   - type: input
     attributes:
-      label: Server backend version
-      description: Version and type of used server software where VelocityVanish is installed.
-      placeholder: Spigot 1.19.2
-    validations:
-      required: true
-  - type: input
-    attributes:
-      label: Server Velocity version
-      description: Version and type of used server software where VelocityVanish is installed.
-      placeholder: Velocity 3.1.1 build 98
+      label: Server version
+      description: Version and type of used server software where TAB is installed.
+      placeholder: Spigot 1.18.1
     validations:
       required: true
 
   - type: input
     attributes:
-      label: VelocityVanish version
+      label: TAB version
       description: Full version in numbers, "latest" is not a version.
-      placeholder: 3.6.0
+      placeholder: 3.0.2
     validations:
       required: true
 
@@ -66,3 +59,5 @@ body:
           required: true
         - label: I ticked all of the boxes without actually reading them
           required: false
+        - label: I have read the Compatibility wiki page and am not trying to run the plugin on an unsupported server version / platform
+          required: true

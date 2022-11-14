@@ -1,38 +1,68 @@
----
-name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
+name: Bug Report
+description: Unwanted behavior that does not match configuration.
+labels: ["Bug"]
+body:
+  - type: input
+    attributes:
+      label: Server backend version
+      description: Version and type of used server software where VelocityVanish is installed.
+      placeholder: Spigot 1.19.2
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Server Velocity version
+      description: Version and type of used server software where VelocityVanish is installed.
+      placeholder: Velocity 3.1.1 build 98
+    validations:
+      required: true
 
----
+  - type: input
+    attributes:
+      label: VelocityVanish version
+      description: Full version in numbers, "latest" is not a version.
+      placeholder: 3.6.0
+    validations:
+      required: true
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+  - type: textarea
+    attributes:
+      label: Describe the bug
+      description: How the plugin behaves
+    validations:
+      required: true
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+  - type: textarea
+    attributes:
+      label: Expected behavior
+      description: How the plugin is supposed to behave instead with your configuration.
+    validations:
+      required: true
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      description: What to do in order to reproduce this issue
+      placeholder: |
+        Step 1: ..
+        Step 2: ..
+    validations:
+      required: true
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
-
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
-
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
-
-**Additional context**
-Add any other context about the problem here.
+  - type: textarea
+    attributes:
+      label: Additional info
+      description: Any other info you want to provide, such as screenshots.
+    validations:
+      required: false
+  - type: checkboxes
+    attributes:
+      label: Checklist
+      description: Let's make sure this report is valid
+      options:
+        - label: I am running latest version of the plugin
+          required: true
+        - label: I have read the wiki to make sure it's not an issue with configuration
+          required: true
+        - label: I ticked all of the boxes without actually reading them
+          required: false

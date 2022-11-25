@@ -18,8 +18,10 @@ class VelocityBridgeManager(
     fun sendVanishedPlayers(server: RegisteredServer) {
         val messageJson = JsonObject()
         messageJson.addProperty("type", "Vanish")
-        val jsonArray = GsonUtils.get().toJsonTree(plugin.vanishedPlayers).asJsonArray
-        messageJson.add("vanished_players", jsonArray)
+        val vanishedPlayersJson = GsonUtils.get().toJsonTree(plugin.vanishedPlayers).asJsonArray
+        val vanishedPlayersOnlineJson = GsonUtils.get().toJsonTree(plugin.vanishedPlayersOnline).asJsonArray
+        messageJson.add("vanished_players", vanishedPlayersJson)
+        messageJson.add("vanished_players_online", vanishedPlayersOnlineJson)
 
         sendPluginMessage(messageJson, server)
     }

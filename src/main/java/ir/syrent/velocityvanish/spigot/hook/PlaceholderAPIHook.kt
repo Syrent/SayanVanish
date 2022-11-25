@@ -50,26 +50,26 @@ class PlaceholderAPIHook constructor(plugin: VelocityVanishSpigot, name: String)
             }
 
             if (params.equals("count", true)) {
-                return plugin.vanishedNames.size.toString()
+                return plugin.vanishedNamesOnline.size.toString()
             }
 
             if (params.startsWith("online_")) {
                 val type = params.substring(7)
 
                 return if (type.equals("here", true)) {
-                    Ruom.getOnlinePlayers().filter { !plugin.vanishedNames.contains(it.name) }.size.toString()
+                    Ruom.getOnlinePlayers().filter { !plugin.vanishedNamesOnline.contains(it.name) }.size.toString()
                 } else if (type.equals("total", true)) {
                     val players = mutableListOf<String>()
                     for (serverPlayers in plugin.proxyPlayers.values.filter { it.isNotEmpty() }) {
                         players.addAll(serverPlayers)
                     }
-                    players.filter { !plugin.vanishedNames.contains(it) }.size.toString()
+                    players.filter { !plugin.vanishedNamesOnline.contains(it) }.size.toString()
                 } else {
                     if (!Settings.velocitySupport) {
                         warning("Plugin trying to get online players from other servers but Velocity support is disabled.")
-                        Ruom.getOnlinePlayers().filter { !plugin.vanishedNames.contains(it.name) }.size.toString()
+                        Ruom.getOnlinePlayers().filter { !plugin.vanishedNamesOnline.contains(it.name) }.size.toString()
                     } else {
-                        (plugin.proxyPlayers[type.lowercase()]?.filter { !plugin.vanishedNames.contains(it) }?.size ?: 0).toString()
+                        (plugin.proxyPlayers[type.lowercase()]?.filter { !plugin.vanishedNamesOnline.contains(it) }?.size ?: 0).toString()
                     }
                 }
             }

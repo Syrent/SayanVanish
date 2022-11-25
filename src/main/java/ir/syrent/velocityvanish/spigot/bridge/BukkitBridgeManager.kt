@@ -34,8 +34,13 @@ class BukkitBridgeManager(
         when (val type = messageJson["type"].asString) {
             "Vanish" -> {
                 val vanishedPlayers = messageJson["vanished_players"].asJsonArray
+                val vanishedPlayersOnline = messageJson["vanished_players_online"].asJsonArray
+
                 plugin.vanishedNames.clear()
+                plugin.vanishedNamesOnline.clear()
+
                 plugin.vanishedNames.addAll(vanishedPlayers.map { it.asString })
+                plugin.vanishedNamesOnline.addAll(vanishedPlayersOnline.map { it.asString })
             }
             "Players" -> {
                 val servers = messageJson["servers"].asJsonObject

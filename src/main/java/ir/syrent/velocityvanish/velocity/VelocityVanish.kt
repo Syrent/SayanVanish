@@ -36,6 +36,10 @@ class VelocityVanish @Inject constructor(
     val dataDirectory: Path
 
     var vanishedPlayers = mutableSetOf<String>()
+    var vanishedPlayersOnline = listOf<String>()
+        get() {
+            return vanishedPlayers.filter { !getServer().getPlayer(it).isPresent }
+        }
 
     init {
         this.dataDirectory = dataDirectory
@@ -63,7 +67,7 @@ class VelocityVanish @Inject constructor(
         ReplacementManager.getDynamic().add(object : LiteralPlaceholder("%velocityvanish_total%") {
             override fun replace(response: StatusResponse, s: String?): String? {
                 return run {
-                    replace(s, (VRuom.getOnlinePlayers().size - vanishedPlayers.size).toString())
+                    replace(s, (VRuom.getOnlinePlayers().size - vanishedPlayersOnline.size).toString())
                 }
             }
 
@@ -76,7 +80,7 @@ class VelocityVanish @Inject constructor(
             ReplacementManager.getDynamic().add(object : LiteralPlaceholder("%velocityvanish_${server.serverInfo.name.lowercase()}%") {
                 override fun replace(response: StatusResponse, s: String?): String? {
                     return run {
-                        replace(s, server.playersConnected.filter { !vanishedPlayers.contains(it.username) }.size.toString())
+                        replace(s, server.playersConnected.filter { !vanishedPlayersOnline.contains(it.username) }.size.toString())
                     }
                 }
 
@@ -115,7 +119,7 @@ class VelocityVanish @Inject constructor(
 
     private fun initializeListeners() {
         try {
-            Class.forName("me.sayandevelopment.sayanchat.SayanChat")
+            Class.forName("me.sayandevelopment.sayanchat.proxy.velocity.VelocitySayanChat")
             PrivateMessageListener(this)
             VRuom.log("SayanChat found! hook enabled.")
         } catch (_: Exception) {

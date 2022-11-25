@@ -20,7 +20,7 @@ class ProxyPingListener(
         val serverPing = event.ping
         if (serverPing.players.isPresent) {
             val onlinePlayers = serverPing.players.get().online
-            val playersPing = ServerPing.Players(onlinePlayers - plugin.vanishedPlayers.size, serverPing.asBuilder().maximumPlayers, serverPing.asBuilder().samplePlayers)
+            val playersPing = ServerPing.Players(onlinePlayers - plugin.vanishedPlayersOnline.size, serverPing.asBuilder().maximumPlayers, serverPing.asBuilder().samplePlayers)
             event.ping = ServerPing(
                 serverPing.version,
                 playersPing,

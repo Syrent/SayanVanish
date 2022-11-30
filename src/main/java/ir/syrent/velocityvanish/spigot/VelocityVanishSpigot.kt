@@ -20,8 +20,6 @@ import ir.syrent.velocityvanish.spigot.utils.Utils
 import ir.syrent.velocityvanish.utils.component
 import org.bstats.bukkit.Metrics
 import org.bukkit.entity.Player
-import xyz.jpenilla.squaremap.api.Squaremap
-import xyz.jpenilla.squaremap.api.SquaremapProvider
 
 
 class VelocityVanishSpigot : RUoMPlugin() {
@@ -118,6 +116,7 @@ class VelocityVanishSpigot : RUoMPlugin() {
         PlayerDeathListener(this)
         EntityDamageListener(this)
         PlayerItemPickupListener(this)
+        EntityTargetListener(this)
         if (DependencyManager.sayanChatHook.exists) {
             PlayerMentionListener(this)
             if (!velocitySupport) PrivateMessageListener(this)

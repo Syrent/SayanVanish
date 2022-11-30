@@ -35,6 +35,10 @@ class VelocityVanish @Inject constructor(
         private set
     val dataDirectory: Path
 
+    /*
+    * Note: This is not the best way to do this, but for time being it's fine.
+    * TODO: Create a VanishedPlayer object with serializer and deserializer.
+    */
     var vanishedPlayers = mutableSetOf<String>()
     var vanishedPlayersOnline = listOf<String>()
         get() {

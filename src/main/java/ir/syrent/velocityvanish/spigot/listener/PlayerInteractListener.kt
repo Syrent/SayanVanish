@@ -20,7 +20,7 @@ class PlayerInteractListener(
         val player = event.player
 
         if (!plugin.vanishedNames.contains(player.name)) return
-        if (event.action == Action.PHYSICAL || event.clickedBlock == null || !event.clickedBlock?.type?.name.equals("BIG_DRIPLEAF")) return
+        if (event.action == Action.PHYSICAL || event.clickedBlock != null || !event.clickedBlock?.type?.name.equals("BIG_DRIPLEAF")) return
 
         event.isCancelled = true
     }

@@ -42,6 +42,7 @@ object Settings {
     var remember = false
     var seeAsSpectator = true
     var invincible = true
+    var preventPickup = true
 
     init {
         load()
@@ -78,6 +79,7 @@ object Settings {
         remember = settingsConfig.getBoolean("vanish.remember")
         seeAsSpectator = settingsConfig.getBoolean("vanish.see_as_spectator")
         invincible = settingsConfig.getBoolean("vanish.invincible")
+        preventPickup = settingsConfig.getBoolean("vanish.prevent_pickup")
 
         language = YamlConfig(Ruom.getPlugin().dataFolder, "languages/$defaultLanguage.yml")
         languageConfig = language.config

@@ -41,6 +41,7 @@ object Settings {
     var actionbar = true
     var remember = false
     var seeAsSpectator = true
+    var invincible = true
 
     init {
         load()
@@ -76,6 +77,7 @@ object Settings {
         actionbar = settingsConfig.getBoolean("vanish.actionbar")
         remember = settingsConfig.getBoolean("vanish.remember")
         seeAsSpectator = settingsConfig.getBoolean("vanish.see_as_spectator")
+        invincible = settingsConfig.getBoolean("vanish.invincible")
 
         language = YamlConfig(Ruom.getPlugin().dataFolder, "languages/$defaultLanguage.yml")
         languageConfig = language.config

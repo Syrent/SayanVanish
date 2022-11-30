@@ -159,7 +159,7 @@ class VanishManager(
             .filter { entity -> entity is Creature }
             .map { entity -> entity as Creature }
             .filter { mob -> mob.target != null }
-            .filter { mob -> player.uniqueId == mob.target?.uniqueId }
+            .filter { mob -> player.uniqueId == mob.target!!.uniqueId }
             .forEach { mob -> mob.target = null }
 
         addPotionEffects(player)

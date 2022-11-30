@@ -23,3 +23,5 @@ vanish:
     # Should we change player type to spectator in tablist for players who have permission to see vanished players?
     # Note: Requires ProtocolLib
     see_as_spectator: true
+    # Should vanished players be protected from all damage sources?
+    invincible: true

@@ -5,9 +5,9 @@ import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.block.BlockReceiveGameEvent
+import org.bukkit.event.entity.EntityTargetEvent
 
-class BlockReceiveGameListener(
+class EntityTargetListener(
     private val plugin: VelocityVanishSpigot
 ) : Listener {
 
@@ -16,12 +16,12 @@ class BlockReceiveGameListener(
     }
 
     @EventHandler
-    private fun onBlockReceiveGameEvent(event: BlockReceiveGameEvent) {
-        val entity = event.entity
+    private fun onEntityTarget(event: EntityTargetEvent) {
+        val target = event.target
+        if (target !is Player) return
 
-        if (entity !is Player) return
-        if (!plugin.vanishedNames.contains(entity.name)) return
-
-        event.isCancelled = true
+        if (plugin.vanishedNames.contains(target.name)) {
+            event.target = null
+        }
     }
 }

@@ -7,6 +7,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 
+
 class PlayerInteractListener(
     private val plugin: VelocityVanishSpigot
 ) : Listener {
@@ -20,8 +21,11 @@ class PlayerInteractListener(
         val player = event.player
 
         if (!plugin.vanishedNames.contains(player.name)) return
-        if (event.action == Action.PHYSICAL || event.clickedBlock != null || !event.clickedBlock?.type?.name.equals("BIG_DRIPLEAF")) return
 
-        event.isCancelled = true
+        if (event.action == Action.PHYSICAL && event.clickedBlock != null) {
+            if (event.clickedBlock!!.type.toString().contains("PLATE")) {
+                event.isCancelled = true
+            }
+        }
     }
 }

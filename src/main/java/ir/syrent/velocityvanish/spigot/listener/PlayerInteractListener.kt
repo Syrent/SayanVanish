@@ -2,6 +2,7 @@ package ir.syrent.velocityvanish.spigot.listener
 
 import ir.syrent.velocityvanish.spigot.VelocityVanishSpigot
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
+import ir.syrent.velocityvanish.spigot.storage.Settings
 import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
@@ -39,6 +40,8 @@ class PlayerInteractListener(
      */
     @EventHandler
     fun onChestOpen(event: PlayerInteractEvent) {
+        if (!Settings.silenOpenContainer) return
+
         val block = event.clickedBlock ?: return
         val player = event.player
 

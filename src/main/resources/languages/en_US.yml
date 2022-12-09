@@ -15,7 +15,7 @@ command:
         use_vanish: "$successful_prefix <gradient:dark_green:green>Successfully vanished!"
         use_unvanish: "$successful_prefix <gradient:dark_green:green>Successfully unvanished!"
 vanish:
-    actionbar: "<dark_red>$animation <gradient:dark_purple:blue>You are invisible to other players!"
+    actionbar: "<white>$animation <gradient:gray:white>You are invisible to other players!"
     vanish_notify: "$warn_prefix <red>$player</red> Vanished!"
     unvanish_notify: "$warn_prefix <red>$player</red> Unvanished!"
     join_message: "<yellow>$player joined the game"

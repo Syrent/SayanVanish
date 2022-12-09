@@ -155,6 +155,7 @@ class VanishManager(
             }
         }
 
+        // TODO: mob.target is nullable
         player.world.entities.stream()
             .filter { entity -> entity is Creature }
             .map { entity -> entity as Creature }

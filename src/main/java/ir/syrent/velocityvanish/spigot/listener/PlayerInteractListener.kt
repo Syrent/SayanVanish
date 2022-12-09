@@ -19,18 +19,16 @@ class PlayerInteractListener(
         Ruom.registerListener(this)
     }
 
-    // TODO: Fix nested if statements
     @EventHandler
     private fun onActivePlate(event: PlayerInteractEvent) {
         val player = event.player
+        val block = event.clickedBlock ?: return
 
         if (!plugin.vanishedNames.contains(player.name)) return
+        if (event.action != Action.PHYSICAL && event.clickedBlock == null) return
+        if (!block.type.toString().contains("PLATE")) return
 
-        if (event.action == Action.PHYSICAL && event.clickedBlock != null) {
-            if (event.clickedBlock!!.type.toString().contains("PLATE")) {
-                event.isCancelled = true
-            }
-        }
+        event.isCancelled = true
     }
 
     private val silentInventoryMaterials = Material.values().filter { it.name.contains("CHEST") || it.name.contains("SHULKER_BOX") || it.name.contains("BARREL") }

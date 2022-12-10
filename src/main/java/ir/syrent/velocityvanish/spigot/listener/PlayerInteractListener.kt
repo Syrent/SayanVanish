@@ -40,6 +40,7 @@ class PlayerInteractListener(
     fun onChestOpen(event: PlayerInteractEvent) {
         if (!Settings.silenOpenContainer) return
 
+        if (event.action != Action.RIGHT_CLICK_BLOCK) return
         val block = event.clickedBlock ?: return
         val player = event.player
 
@@ -55,8 +56,14 @@ class PlayerInteractListener(
         if (!silentInventoryMaterials.contains(block.type)) return
 
         val gamemode = player.gameMode
+        val flight = player.allowFlight
+        val fly = player.isFlying
+        player.allowFlight = true
+        player.isFlying = true
         player.gameMode = GameMode.SPECTATOR
         Ruom.runSync({
             player.gameMode = gamemode
-        }, 2)
+            player.allowFlight = flight
+            player.isFlying = fly
+        }, 1)
     }}

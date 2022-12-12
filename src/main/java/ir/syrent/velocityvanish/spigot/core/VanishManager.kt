@@ -24,11 +24,18 @@ import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.scoreboard.Team
+import java.util.UUID
 
 
 class VanishManager(
     private val plugin: VelocityVanishSpigot
 ) {
+
+    // It's better to move this to a data object like VanishPlayer
+    // TODO: Move this to VanishPlayer
+    // Requirement: Create VanishPlayer object
+    val wasFlying = mutableMapOf<UUID, Boolean>()
+    val wasInvulnerable = mutableMapOf<UUID, Boolean>()
 
     private val potions = mutableSetOf(
         PotionEffect(PotionEffectType.NIGHT_VISION, Int.MAX_VALUE, 255, false, false),
@@ -135,7 +142,14 @@ class VanishManager(
         updateTabState(player, GameMode.SPECTATOR)
         hidePlayer(player)
 
+        wasFlying[player.uniqueId] = player.allowFlight
         player.allowFlight = true
+        player.isFlying = true
+
+        if (Settings.invincible) {
+            wasInvulnerable[player.uniqueId] = player.isInvulnerable
+            player.isInvulnerable = true
+        }
 
         player.isSleepingIgnored = true
 
@@ -207,6 +221,17 @@ class VanishManager(
         setMeta(player, false)
 
         updateTabState(player, GameMode.SURVIVAL)
+
+        if (wasFlying[player.uniqueId] == false) {
+            player.allowFlight = false
+            player.isFlying = false
+        }
+
+        if (Settings.invincible) {
+            if (wasInvulnerable[player.uniqueId] == false) {
+                player.isInvulnerable = false
+            }
+        }
 
         for (onlinePlayer in Ruom.getOnlinePlayers()) {
             @Suppress("DEPRECATION")

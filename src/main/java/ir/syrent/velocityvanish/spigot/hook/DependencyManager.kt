@@ -13,6 +13,8 @@ object DependencyManager {
         private set
     var sayanChatHook: SayanChatHook
         private set
+    var essentialsXHook: EssentialsXHook
+        private set
     var squareMapHook: SquareMapHook
         private set
 
@@ -24,6 +26,10 @@ object DependencyManager {
         SayanChatHook("SayanChat").apply {
             this.register()
             sayanChatHook = this
+        }
+        EssentialsXHook("Essentials").apply {
+            this.register()
+            essentialsXHook = this
         }
         EnhancedVelocityHook("EnhancedVelocity").apply {
             if (Settings.velocitySupport) {

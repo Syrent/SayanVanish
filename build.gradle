@@ -59,6 +59,11 @@ repositories {
     maven {
         url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
     }
+
+    // EssentialsX
+    maven {
+        url = 'https://repo.essentialsx.net/releases/'
+    }
 }
 
 dependencies {
@@ -67,6 +72,7 @@ dependencies {
     compileOnly 'com.comphenix.protocol:ProtocolLib:4.7.0'
     compileOnly 'me.clip:placeholderapi:2.11.2'
     compileOnly 'xyz.jpenilla:squaremap-api:1.1.8'
+    compileOnly 'net.essentialsx:EssentialsX:2.19.7'
 
     compileOnly files("libs/SayanChat-2.8.3.jar")
     compileOnly files('libs/ProCosmetics-13.7.jar')

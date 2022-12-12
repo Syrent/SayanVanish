@@ -9,7 +9,7 @@ show_dependency_suggestions: true
 
 bstats: true
 # Leave sounds blank to disable them
-# Ex: command: ""
+# Example: command: ""
 sounds:
     command: "ENTITY_EXPERIENCE_ORB_PICKUP"
     vanish: "ENTITY_EXPERIENCE_ORB_PICKUP"

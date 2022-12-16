@@ -24,6 +24,7 @@ import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.scoreboard.Team
+import java.lang.IllegalStateException
 import java.util.UUID
 
 
@@ -68,7 +69,11 @@ class VanishManager(
                     )
                 )
 
-                infoData?.write(0, playerInfo)
+                try {
+                    infoData?.write(0, playerInfo)
+                } catch (e: IllegalStateException) {
+                    infoData?.write(1, playerInfo)
+                }
                 infoAction?.write(0, EnumWrappers.PlayerInfoAction.UPDATE_GAME_MODE)
 
                 val newTabPacket = PacketContainer(PacketType.Play.Server.PLAYER_INFO, tabPacket?.handle)

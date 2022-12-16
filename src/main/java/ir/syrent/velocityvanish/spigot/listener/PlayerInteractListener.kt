@@ -58,12 +58,15 @@ class PlayerInteractListener(
         val gamemode = player.gameMode
         val flight = player.allowFlight
         val fly = player.isFlying
+
         player.allowFlight = true
         player.isFlying = true
         player.gameMode = GameMode.SPECTATOR
+
+        // TODO: Use Packet to open chest
         Ruom.runSync({
             player.gameMode = gamemode
             player.allowFlight = flight
             player.isFlying = fly
-        }, 1)
+        }, 2)
     }}

@@ -55,34 +55,36 @@ class VanishManager(
             * (2tick incase)
             */
             Ruom.runSync({
-                val tabPacket = DependencyManager.protocolLibHook.protocolManager.createPacket(PacketType.Play.Server.PLAYER_INFO, true)
-                val infoData = tabPacket?.playerInfoDataLists
-                val infoAction = tabPacket?.playerInfoAction
-                val playerInfo = infoData?.read(0)
-
-                playerInfo?.add(
-                    PlayerInfoData(
-                        WrappedGameProfile.fromPlayer(player),
-                        0,
-                        NativeGameMode.valueOf(state.name),
-                        WrappedChatComponent.fromText(player.playerListName)
-                    )
-                )
-
                 try {
+                    val tabPacket = DependencyManager.protocolLibHook.protocolManager.createPacket(PacketType.Play.Server.PLAYER_INFO, true)
+                    val infoData = tabPacket?.playerInfoDataLists
+                    val infoAction = tabPacket?.playerInfoAction
+
+                    val playerInfo = infoData?.read(0)
+
+                    playerInfo?.add(
+                        PlayerInfoData(
+                            WrappedGameProfile.fromPlayer(player),
+                            0,
+                            NativeGameMode.valueOf(state.name),
+                            WrappedChatComponent.fromText(player.playerListName)
+                        )
+                    )
+
                     infoData?.write(0, playerInfo)
-                } catch (e: IllegalStateException) {
-                    infoData?.write(1, playerInfo)
-                }
-                infoAction?.write(0, EnumWrappers.PlayerInfoAction.UPDATE_GAME_MODE)
+                    infoAction?.write(0, EnumWrappers.PlayerInfoAction.UPDATE_GAME_MODE)
 
-                val newTabPacket = PacketContainer(PacketType.Play.Server.PLAYER_INFO, tabPacket?.handle)
+                    val newTabPacket = PacketContainer(PacketType.Play.Server.PLAYER_INFO, tabPacket?.handle)
 
-                for (onlinePlayer in Ruom.getOnlinePlayers()) {
-                    if (onlinePlayer.hasPermission("velocityvanish.admin.seevanished")) {
-                        if (onlinePlayer == player) continue
-                        DependencyManager.protocolLibHook.protocolManager.sendServerPacket(onlinePlayer, newTabPacket)
+                    for (onlinePlayer in Ruom.getOnlinePlayers()) {
+                        if (onlinePlayer.hasPermission("velocityvanish.admin.seevanished")) {
+                            if (onlinePlayer == player) continue
+                            DependencyManager.protocolLibHook.protocolManager.sendServerPacket(onlinePlayer, newTabPacket)
+                        }
                     }
+                } catch (e: Exception) {
+                    // TODO: Fix it
+                    Ruom.warn("Failed to update tab state for ${player.name}, It might be a ProtocolLib issue. (Players who have `seevanished` permission can see this player in tab and game character as survival mode)")
                 }
             }, 2)
         } else {
@@ -151,8 +153,8 @@ class VanishManager(
         player.allowFlight = true
         player.isFlying = true
 
+        wasInvulnerable[player.uniqueId] = player.isInvulnerable
         if (Settings.invincible) {
-            wasInvulnerable[player.uniqueId] = player.isInvulnerable
             player.isInvulnerable = true
         }
 
@@ -195,7 +197,11 @@ class VanishManager(
 
         if (DependencyManager.proCosmeticsHook.exists) {
             Ruom.runSync({
-                DependencyManager.proCosmeticsHook.proCosmetics.userManager?.getUser(player.uniqueId)?.unequipCosmetics(true)
+                try {
+                    DependencyManager.proCosmeticsHook.proCosmetics.userManager?.getUser(player.uniqueId)?.unequipCosmetics(true)
+                } catch (e: Exception) {
+                    Ruom.warn("Failed to un-equip cosmetics for player ${player.name}, is ProCosmetics up to date?")
+                }
             }, 20)
         }
 
@@ -232,11 +238,7 @@ class VanishManager(
             player.isFlying = false
         }
 
-        if (Settings.invincible) {
-            if (wasInvulnerable[player.uniqueId] == false) {
-                player.isInvulnerable = false
-            }
-        }
+        player.isInvulnerable = wasInvulnerable[player.uniqueId] ?: player.isInvulnerable
 
         for (onlinePlayer in Ruom.getOnlinePlayers()) {
             @Suppress("DEPRECATION")
@@ -276,7 +278,11 @@ class VanishManager(
         }
 
         if (DependencyManager.proCosmeticsHook.exists) {
-            DependencyManager.proCosmeticsHook.proCosmetics.userManager?.getUser(player.uniqueId)?.equipLastCosmetics(true)
+            try {
+                DependencyManager.proCosmeticsHook.proCosmetics.userManager?.getUser(player.uniqueId)?.equipLastCosmetics(true)
+            } catch (e: Exception) {
+                Ruom.warn("Failed to equip cosmetics for player ${player.name}, is ProCosmetics up to date?")
+            }
         }
 
         if (DependencyManager.squareMapHook.exists) {

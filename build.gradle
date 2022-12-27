@@ -80,6 +80,10 @@ dependencies {
 
     implementation 'io.papermc:paperlib:1.0.7'
     implementation 'org.bstats:bstats-bukkit:3.0.0'
+
+    // gson is not exist in legacy minecraft version
+    implementation 'com.google.code.gson:gson:2.10'
+
     implementation 'me.mohamad82:ruom-velocity:4.2.14'
     implementation 'com.github.cryptomorin:XSeries:9.2.0'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
@@ -110,6 +114,8 @@ shadowJar {
     relocate('me.mohamad82.ruom', 'ir.syrent.velocityvanish.ruom')
     relocate('com.cryptomorin.xseries', 'ir.syrent.velocityvanish.xseries')
     relocate('kotlin', 'ir.syrent.velocityvanish.kotlin')
+
+    relocate('com.google', 'ir.syrent.velocityvanish.google')
 //    relocate('net.kyori.adventure', 'ir.syrent.velocityvanish.kyori.adventure')
     relocate('org.bstats', 'ir.syrent.velocityvanish.bstats')
 

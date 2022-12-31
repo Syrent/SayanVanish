@@ -27,8 +27,6 @@ import java.io.File
 import java.nio.file.Path
 import java.util.concurrent.TimeUnit
 
-@Plugin(id = "velocityvanish", name = "VelocityVanish", version = "3.11.1",
-    url = "https://syrent.ir", description = "Modern vanish system", authors = ["Syrent"])
 class VelocityVanish @Inject constructor(
     server: ProxyServer,
     logger: Logger,

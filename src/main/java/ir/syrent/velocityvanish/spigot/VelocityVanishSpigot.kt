@@ -1,6 +1,8 @@
 package ir.syrent.velocityvanish.spigot
 
 import com.google.gson.JsonObject
+import com.jeff_media.updatechecker.UpdateCheckSource
+import com.jeff_media.updatechecker.UpdateChecker
 import io.papermc.lib.PaperLib
 import ir.syrent.velocityvanish.spigot.bridge.BukkitBridge
 import ir.syrent.velocityvanish.spigot.bridge.BukkitBridgeManager
@@ -40,6 +42,7 @@ class VelocityVanishSpigot : RUoMPlugin() {
         resetData(true)
         sendFiglet()
         sendWarningMessages()
+        checkUpdate()
         initializeCommands()
         initializeListeners()
 
@@ -75,6 +78,24 @@ class VelocityVanishSpigot : RUoMPlugin() {
 
         PaperLib.suggestPaper(this)
         DependencyManager
+    }
+
+    private fun checkUpdate() {
+        Thread {
+            try {
+                UpdateChecker(this, UpdateCheckSource.SPIGOT, 105992.toString())
+                    .setDownloadLink("https://www.spigotmc.org/resources/velocityvanish-1-8-1-19-3-no-database-required.105992/")
+                    .checkEveryXHours(24.0)
+                    .setChangelogLink(105992.toString())
+                    .setNotifyOpsOnJoin(true)
+                    .setNotifyByPermissionOnJoin("velocityvanish.updatechecker")
+                    .setTimeout(30 * 1000)
+                    .setSupportLink("https://discord.gg/xZyYGU4EG4")
+                    .checkNow()
+            } catch (_: Exception) {
+                Ruom.warn("Could not check for updates, check your connection.")
+            }
+        }.start()
     }
 
     private fun resetData(startup: Boolean) {

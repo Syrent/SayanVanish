@@ -2,8 +2,10 @@ package ir.syrent.velocityvanish.velocity
 
 import com.google.gson.JsonObject
 import com.google.inject.Inject
+import com.google.inject.Provides
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
+import com.velocitypowered.api.plugin.Plugin
 import com.velocitypowered.api.plugin.annotation.DataDirectory
 import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.messages.ChannelMessageSource
@@ -25,6 +27,8 @@ import java.io.File
 import java.nio.file.Path
 import java.util.concurrent.TimeUnit
 
+@Plugin(id = "velocityvanish", name = "VelocityVanish", version = "3.11.1",
+    url = "https://syrent.ir", description = "Modern vanish system", authors = ["Syrent"])
 class VelocityVanish @Inject constructor(
     server: ProxyServer,
     logger: Logger,
@@ -124,7 +128,8 @@ class VelocityVanish @Inject constructor(
     private fun initializeListeners() {
         try {
             Class.forName("me.sayandevelopment.sayanchat.proxy.velocity.VelocitySayanChat")
-            PrivateMessageListener(this)
+            // TODO: Fix SayanChat kotlin shade
+//            PrivateMessageListener(this)
             VRuom.log("SayanChat found! hook enabled.")
         } catch (_: Exception) {
             VRuom.log("SayanChat not found! hook disabled.")

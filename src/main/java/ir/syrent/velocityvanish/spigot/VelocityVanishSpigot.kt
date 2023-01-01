@@ -171,7 +171,6 @@ class VelocityVanishSpigot : RUoMPlugin() {
 
     companion object {
         lateinit var instance: VelocityVanishSpigot
-            private set
     }
 
 }

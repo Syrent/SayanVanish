@@ -88,7 +88,7 @@ dependencies {
     implementation 'org.bstats:bstats-bukkit:3.0.0'
 
     // gson is not exist in legacy minecraft version
-//    implementation 'com.google.code.gson:gson:2.10'
+    implementation 'com.google.code.gson:gson:2.10'
 
     implementation 'me.mohamad82:ruom-velocity:4.2.14'
     implementation 'com.github.cryptomorin:XSeries:9.2.0'
@@ -123,7 +123,7 @@ shadowJar {
     relocate('kotlin', 'ir.syrent.velocityvanish.kotlin')
     relocate('com.jeff_media.updatechecker', 'ir.syrent.velocityvanish.updatechecker')
 
-//    relocate('com.google.gson', 'ir.syrent.velocityvanish.google.gson')
+    relocate('com.google.gson', 'ir.syrent.velocityvanish.google.gson')
 //    relocate('net.kyori.adventure', 'ir.syrent.velocityvanish.kyori.adventure')
     relocate('org.bstats', 'ir.syrent.velocityvanish.bstats')
 

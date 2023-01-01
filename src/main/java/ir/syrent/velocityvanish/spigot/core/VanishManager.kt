@@ -249,24 +249,12 @@ class VanishManager(
 
         try {
             player.isCollidable = true
-        } catch (e: NoClassDefFoundError) {
-            try {
-                @Suppress("DEPRECATION")
-                player.spigot().collidesWithEntities = true
-            } catch (e1: NoClassDefFoundError) {
-                e.printStackTrace()
-            } catch (e1: NoSuchMethodError) {
-                e.printStackTrace()
-            }
-        } catch (e: NoSuchMethodError) {
-            try {
-                @Suppress("DEPRECATION")
-                player.spigot().collidesWithEntities = true
-            } catch (e1: NoClassDefFoundError) {
-                e.printStackTrace()
-            } catch (e1: NoSuchMethodError) {
-                e.printStackTrace()
-            }
+        } catch (_: NoClassDefFoundError) {
+            @Suppress("DEPRECATION")
+            player.spigot().collidesWithEntities = true
+        } catch (_: NoSuchMethodError) {
+            @Suppress("DEPRECATION")
+            player.spigot().collidesWithEntities = true
         }
 
         removePotionEffects(player)

@@ -17,6 +17,8 @@ class VanishCommand(
     init {
         this.register()
         addSubcommand(ReloadSubcommand())
+        addSubcommand(OnSubcommand(plugin))
+        addSubcommand(OffSubcommand(plugin))
     }
 
     override fun onExecute(sender: CommandSender, args: List<String>) {

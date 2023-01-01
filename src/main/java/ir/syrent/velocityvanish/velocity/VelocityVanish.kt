@@ -149,7 +149,6 @@ class VelocityVanish @Inject constructor(
 
     companion object {
         lateinit var instance: VelocityVanish
-            private set
     }
 
 }

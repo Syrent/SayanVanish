@@ -7,6 +7,7 @@ enum class Message(val path: String) {
     SUCCESSFUL_PREFIX("general.successful_prefix"),
     WARN_PREFIX("general.warn_prefix"),
     ERROR_PREFIX("general.error_prefix"),
+    PLAYER_NOT_FOUND("general.player_not_found"),
     ONLY_PLAYERS("general.only_players"),
     UNKNOWN_MESSAGE("general.unknown_message"),
     NO_PERMISSION("command.no_permission"),

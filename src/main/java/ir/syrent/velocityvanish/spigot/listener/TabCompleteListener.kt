@@ -20,12 +20,13 @@ class TabCompleteListener(
         if (event.sender !is Player) return
         if (event.completions.isEmpty()) return
 
-        val newCompletions = event.completions.apply {
-            this.removeIf {
-                plugin.vanishedNames.contains(it)
-            }
+        val newCollection = mutableListOf<String>()
+
+        for (completion in event.completions) {
+            if (plugin.vanishedNames.contains(completion)) continue
+            newCollection.add(completion)
         }
 
-        event.completions = newCompletions
+        event.completions = newCollection
     }
 }

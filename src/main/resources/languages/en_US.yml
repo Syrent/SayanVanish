@@ -7,6 +7,7 @@ general:
     error_prefix: "<dark_gray>[</dark_gray><dark_red><bold>✘</bold><dark_gray>]</dark_gray>"
     only_players: "$error_prefix <gradient:dark_red:red>Only players can use this command."
     unknown_message: "$error_prefix <gradient:dark_red:red>Unknown message!"
+    player_not_found: "$error_prefix <gradient:dark_red:red>Player not found!"
 command:
     no_permission: "$error_prefix <gradient:dark_red:red>You don't have permission to use this command! <dark_gray>($permission)"
     vanish:

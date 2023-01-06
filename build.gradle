@@ -88,7 +88,7 @@ dependencies {
     implementation 'org.bstats:bstats-bukkit:3.0.0'
 
     // gson is not exist in legacy minecraft version
-    implementation 'com.google.code.gson:gson:2.10'
+    implementation 'com.google.code.gson:gson:2.10.1'
 
     implementation 'me.mohamad82:ruom-velocity:4.2.14'
     implementation 'com.github.cryptomorin:XSeries:9.2.0'

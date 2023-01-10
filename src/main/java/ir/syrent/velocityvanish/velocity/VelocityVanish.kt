@@ -42,10 +42,9 @@ class VelocityVanish @Inject constructor(
     * TODO: Create a VanishedPlayer object with serializer and deserializer.
     */
     var vanishedPlayers = mutableSetOf<String>()
-    var vanishedPlayersOnline = listOf<String>()
-        get() {
-            return vanishedPlayers.filter { !getServer().getPlayer(it).isPresent }
-        }
+    fun vanishedPlayersOnline(): List<String> {
+        return vanishedPlayers.filter { getServer().getPlayer(it).isPresent }
+    }
 
     init {
         this.dataDirectory = dataDirectory
@@ -73,7 +72,7 @@ class VelocityVanish @Inject constructor(
         ReplacementManager.getDynamic().add(object : LiteralPlaceholder("%velocityvanish_total%") {
             override fun replace(response: StatusResponse, s: String?): String? {
                 return run {
-                    replace(s, (VRuom.getOnlinePlayers().size - vanishedPlayersOnline.size).toString())
+                    replace(s, (VRuom.getOnlinePlayers().size - vanishedPlayersOnline().size).toString())
                 }
             }
 
@@ -86,7 +85,7 @@ class VelocityVanish @Inject constructor(
             ReplacementManager.getDynamic().add(object : LiteralPlaceholder("%velocityvanish_${server.serverInfo.name.lowercase()}%") {
                 override fun replace(response: StatusResponse, s: String?): String? {
                     return run {
-                        replace(s, server.playersConnected.filter { !vanishedPlayersOnline.contains(it.username) }.size.toString())
+                        replace(s, server.playersConnected.filter { !vanishedPlayersOnline().contains(it.username) }.size.toString())
                     }
                 }
 

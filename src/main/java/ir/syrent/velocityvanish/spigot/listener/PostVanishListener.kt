@@ -2,7 +2,6 @@ package ir.syrent.velocityvanish.spigot.listener
 
 import ir.syrent.velocityvanish.spigot.VelocityVanishSpigot
 import ir.syrent.velocityvanish.spigot.event.PostVanishEvent
-import ir.syrent.velocityvanish.spigot.hook.DependencyManager
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import ir.syrent.velocityvanish.spigot.storage.Message
 import ir.syrent.velocityvanish.spigot.storage.Settings
@@ -23,7 +22,7 @@ class PostVanishListener(
     @EventHandler
     private fun onPostVanish(event: PostVanishEvent) {
         val player = event.player
-        Utils.sendReportsActionbar(player)
+        Utils.sendVanishActionbar(player)
         plugin.vanishedNames.add(player.name)
         plugin.bridgeManager?.updateVanishedPlayersRequest(player, true)
 

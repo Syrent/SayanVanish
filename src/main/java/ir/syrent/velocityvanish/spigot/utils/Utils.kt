@@ -24,7 +24,7 @@ object Utils {
         }, 0, 30)
     }
 
-    fun sendReportsActionbar(player: Player) {
+    fun sendVanishActionbar(player: Player) {
         if (actionbarPlayers.contains(player)) return
 
         if (Settings.actionbar && player.hasPermission("velocityvanish.admin.actionbar")) {

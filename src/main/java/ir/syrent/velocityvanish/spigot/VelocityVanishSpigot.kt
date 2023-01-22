@@ -102,7 +102,7 @@ class VelocityVanishSpigot : RUoMPlugin() {
         try {
             for (player in Ruom.getOnlinePlayers()) {
                 if (startup) {
-                    Utils.sendReportsActionbar(player)
+                    Utils.sendVanishActionbar(player)
                 }
                 vanishManager.unVanish(player)
             }

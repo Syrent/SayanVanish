@@ -32,12 +32,6 @@ class VanishManager(
     private val plugin: VelocityVanishSpigot
 ) {
 
-    // It's better to move this to a data object like VanishPlayer
-    // TODO: Move this to VanishPlayer
-    // Requirement: Create VanishPlayer object
-    val wasFlying = mutableMapOf<UUID, Boolean>()
-    val wasInvulnerable = mutableMapOf<UUID, Boolean>()
-
     private val potions = mutableSetOf(
         PotionEffect(PotionEffectType.NIGHT_VISION, Int.MAX_VALUE, 255, false, false),
         PotionEffect(PotionEffectType.FIRE_RESISTANCE, Int.MAX_VALUE, 255, false, false),
@@ -149,13 +143,13 @@ class VanishManager(
         updateTabState(player, GameMode.SPECTATOR)
         hidePlayer(player)
 
-        wasFlying[player.uniqueId] = player.allowFlight
         player.allowFlight = true
         player.isFlying = true
 
-        wasInvulnerable[player.uniqueId] = player.isInvulnerable
-        if (Settings.invincible) {
-            player.isInvulnerable = true
+        if (ServerVersion.supports(9)) {
+            if (Settings.invincible) {
+                player.isInvulnerable = true
+            }
         }
 
         player.isSleepingIgnored = true
@@ -233,12 +227,14 @@ class VanishManager(
 
         updateTabState(player, GameMode.SURVIVAL)
 
-        if (wasFlying[player.uniqueId] == false) {
+        if (!player.isOp) {
             player.allowFlight = false
             player.isFlying = false
         }
 
-        player.isInvulnerable = wasInvulnerable[player.uniqueId] ?: player.isInvulnerable
+        if (ServerVersion.supports(9)) {
+            player.isInvulnerable = false
+        }
 
         for (onlinePlayer in Ruom.getOnlinePlayers()) {
             @Suppress("DEPRECATION")

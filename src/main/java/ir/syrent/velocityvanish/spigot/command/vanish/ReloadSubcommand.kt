@@ -12,4 +12,5 @@ class ReloadSubcommand : SubCommand("reload", "velocityvanish.command.reload", f
         Settings.load()
         sender.sendMessage(Message.RELOAD_USE)
     }
+
 }

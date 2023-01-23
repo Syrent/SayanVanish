@@ -14,7 +14,7 @@ class OffSubcommand(
     override fun onExecute(sender: CommandSender, args: List<String>) {
         val player = sender as? Player ?: return
 
-        plugin.vanishManager.unVanish(player, false)
+        plugin.vanishManager.unVanish(player, true)
         if (plugin.vanishedNames.contains(player.name)) {
             player.sendMessage(Message.VANISH_USE_UNVANISH)
         }

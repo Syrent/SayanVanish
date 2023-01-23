@@ -41,6 +41,9 @@ class VanishManager(
         if (ServerVersion.supports(13)) potions.add(PotionEffect(PotionEffectType.WATER_BREATHING, Int.MAX_VALUE, 255, false, false))
     }
 
+    val flyPlayers = mutableSetOf<UUID>()
+    val invulnerablePlayers = mutableSetOf<UUID>()
+
     fun updateTabState(player: Player, state: GameMode) {
         if (DependencyManager.protocolLibHook.exists && Settings.seeAsSpectator) {
             /*
@@ -89,9 +92,12 @@ class VanishManager(
     fun hidePlayer(player: Player) {
         val vanishLevel = player.effectivePermissions.map { it.permission }
             .filter { it.startsWith("velocityvanish.level.") }.maxOfOrNull { it.split(".")[2].toInt() } ?: 0
+
         for (onlinePlayer in Ruom.getOnlinePlayers().filter { !it.hasPermission("velocityvanish.admin.seevanished") }) {
+
             val onlinePlayerVanishLevel = onlinePlayer.effectivePermissions.map { it.permission }
                 .filter { it.startsWith("velocityvanish.level.") }.maxOfOrNull { it.split(".")[2].toInt() } ?: 0
+
             if (onlinePlayerVanishLevel > vanishLevel) continue
 
             @Suppress("DEPRECATION")
@@ -143,10 +149,18 @@ class VanishManager(
         updateTabState(player, GameMode.SPECTATOR)
         hidePlayer(player)
 
+        if (player.allowFlight) {
+            flyPlayers.add(player.uniqueId)
+        }
+
         player.allowFlight = true
         player.isFlying = true
 
         if (ServerVersion.supports(9)) {
+            if (player.isInvulnerable) {
+                invulnerablePlayers.add(player.uniqueId)
+            }
+
             if (Settings.invincible) {
                 player.isInvulnerable = true
             }
@@ -228,12 +242,12 @@ class VanishManager(
         updateTabState(player, GameMode.SURVIVAL)
 
         if (!player.isOp) {
-            player.allowFlight = false
-            player.isFlying = false
+            player.allowFlight = flyPlayers.contains(player.uniqueId)
+            player.isFlying = flyPlayers.contains(player.uniqueId)
         }
 
         if (ServerVersion.supports(9)) {
-            player.isInvulnerable = false
+            player.isInvulnerable = false /*invulnerablePlayers.contains(player.uniqueId)*/
         }
 
         for (onlinePlayer in Ruom.getOnlinePlayers()) {

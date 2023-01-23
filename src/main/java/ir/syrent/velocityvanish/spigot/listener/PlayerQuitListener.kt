@@ -21,6 +21,7 @@ class PlayerQuitListener(
         val player = event.player
 
         if (plugin.vanishedNames.contains(player.name)) {
+            player.isInvulnerable = false
             event.quitMessage = null
         }
         Utils.actionbarPlayers.remove(player)

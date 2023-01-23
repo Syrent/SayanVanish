@@ -19,4 +19,5 @@ class OnSubcommand(
             player.sendMessage(Message.VANISH_USE_VANISH)
         }
     }
+
 }

@@ -11,7 +11,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 fun CommandSender.sendMessage(message: Message, vararg replacements: TextReplacement) {
-    val formattedMessage =Settings.formatMessage(message, *replacements)
+    val formattedMessage = Settings.formatMessage(message, *replacements)
     if (formattedMessage.isBlank()) return
 
     val serializedMessage = MiniMessage.miniMessage().serialize(LegacyComponentSerializer.legacyAmpersand().deserialize(formattedMessage)).replace("\\<", "<")

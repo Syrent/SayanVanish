@@ -5,11 +5,17 @@ import ir.syrent.velocityvanish.spigot.storage.Message
 import ir.syrent.velocityvanish.spigot.storage.Settings
 import ir.syrent.velocityvanish.utils.TextReplacement
 import ir.syrent.velocityvanish.utils.component
+import net.kyori.adventure.text.minimessage.MiniMessage
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 fun CommandSender.sendMessage(message: Message, vararg replacements: TextReplacement) {
-    AdventureApi.get().sender(this).sendMessage(Settings.formatMessage(message, *replacements).component())
+    val formattedMessage =Settings.formatMessage(message, *replacements)
+    if (formattedMessage.isBlank()) return
+
+    val serializedMessage = MiniMessage.miniMessage().serialize(LegacyComponentSerializer.legacyAmpersand().deserialize(formattedMessage)).replace("\\<", "<")
+    AdventureApi.get().sender(this).sendMessage(serializedMessage.component())
 }
 
 fun Player.sendMessage(message: Message, vararg replacements: TextReplacement) {
@@ -21,13 +27,17 @@ fun Player.sendMessage(message: Message, vararg replacements: TextReplacement) {
             this.playSound(this.location, it, 1f, 1f)
         }
     }
-    AdventureApi.get().sender(this).sendMessage(formattedMessage.component())
+
+    val serializedMessage = MiniMessage.miniMessage().serialize(LegacyComponentSerializer.legacyAmpersand().deserialize(formattedMessage)).replace("\\<", "<")
+    AdventureApi.get().sender(this).sendMessage(serializedMessage.component())
 }
 
 fun Player.sendMessageOnly(message: Message, vararg replacements: TextReplacement) {
-    AdventureApi.get().sender(this).sendMessage(Settings.formatMessage(this, message, *replacements).component())
+    val serializedMessage = MiniMessage.miniMessage().serialize(LegacyComponentSerializer.legacyAmpersand().deserialize(Settings.formatMessage(this, message, *replacements))).replace("\\<", "<")
+    AdventureApi.get().sender(this).sendMessage(serializedMessage.component())
 }
 
 fun Player.sendActionbar(message: Message, vararg replacements: TextReplacement) {
-    AdventureApi.get().sender(this).sendActionBar(Settings.formatMessage(this, message, *replacements).component())
+    val serializedMessage = MiniMessage.miniMessage().serialize(LegacyComponentSerializer.legacyAmpersand().deserialize(Settings.formatMessage(this, message, *replacements))).replace("\\<", "<")
+    AdventureApi.get().sender(this).sendActionBar(serializedMessage.component())
 }

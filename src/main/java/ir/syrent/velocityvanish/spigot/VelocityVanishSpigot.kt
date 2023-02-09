@@ -142,6 +142,7 @@ class VelocityVanishSpigot : RUoMPlugin() {
         EntityDamageListener(this)
         PlayerItemPickupListener(this)
         EntityTargetListener(this)
+        PlayerChangedWorldListener(this)
         if (DependencyManager.sayanChatHook.exists) {
             PlayerMentionListener(this)
             if (!velocitySupport) PrivateMessageListener(this)

@@ -112,7 +112,7 @@ class VanishManager(
         player.setMetadata("vanished", FixedMetadataValue(Ruom.getPlugin(), meta))
     }
 
-    private fun addPotionEffects(player: Player) {
+    fun addPotionEffects(player: Player) {
         for (potionEffect in potions) {
             try {
                 Ruom.runSync({
@@ -133,7 +133,7 @@ class VanishManager(
         }
     }
 
-    private fun removePotionEffects(player: Player) {
+    fun removePotionEffects(player: Player) {
         for (potionEffect in potions) {
             try {
                 Ruom.runSync({

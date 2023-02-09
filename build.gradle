@@ -4,6 +4,7 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.7.20'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
     id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.7'
+    id 'org.screamingsandals.nms-mapper' version '1.4.2'
 }
 
 group = 'ir.syrent.velocityvanish'
@@ -101,6 +102,8 @@ dependencies {
     implementation 'com.jeff_media:SpigotUpdateChecker:3.0.0'
 
     annotationProcessor 'com.velocitypowered:velocity-api:3.1.1'
+
+    compileOnly 'org.spigotmc:spigot:1.19.3-R0.1-SNAPSHOT:remapped-mojang'
 }
 
 processResources {
@@ -199,4 +202,48 @@ compileTestKotlin {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+}
+
+/* First add a new source set. Don't use your main source set for generated stuff. */
+sourceSets.main.java.srcDirs = ['src/generated/java', 'src/main/java']
+
+/* All other things will be set inside the nmsGen method, */
+nmsGen {
+    basePackage = "ir.syrent.nms.accessors" // All generated classes will be in this package.
+    sourceSet = "src/generated/java" // All generated classes will be part of this source set.
+    minMinecraftVersion = '1.8'
+
+    /* This means that the folder will be cleared before generation.
+     *
+     * If this value is false, old and no longer used classes won't be removed.
+     */
+    cleanOnRebuild = true
+
+    /* Here we can define the classes */
+    var ServerGamePacketListenerImpl = reqClass("net.minecraft.server.network.ServerGamePacketListenerImpl")
+    var ClientboundUpdateMobEffectPacket = reqClass("net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket")
+    var ClientboundRemoveMobEffectPacket = reqClass("net.minecraft.network.protocol.game.ClientboundRemoveMobEffectPacket")
+
+    var ServerPlayer = reqClass("net.minecraft.server.level.ServerPlayer")
+    var Packet = reqClass("net.minecraft.network.protocol.Packet")
+
+    var MobEffect = reqClass("net.minecraft.world.effect.MobEffect")
+    var MobEffectInstance = reqClass("net.minecraft.world.effect.MobEffectInstance")
+
+    ServerGamePacketListenerImpl
+            .reqMethod("send", Packet)
+            .reqField("connection")
+    ClientboundUpdateMobEffectPacket
+            .reqConstructor(int, MobEffectInstance)
+    ClientboundRemoveMobEffectPacket
+            .reqConstructor(int, MobEffect)
+
+    ServerPlayer
+            .reqField("connection")
+
+    MobEffect
+            .reqMethod("byId", int)
+    MobEffectInstance
+            .reqConstructor(MobEffect, int, int, boolean, boolean, boolean)
+            .reqField("effect")
 }

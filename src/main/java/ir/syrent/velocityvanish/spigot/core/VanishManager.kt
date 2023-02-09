@@ -2,11 +2,12 @@ package ir.syrent.velocityvanish.spigot.core
 
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.events.PacketContainer
-import com.comphenix.protocol.wrappers.EnumWrappers
+import com.comphenix.protocol.wrappers.*
 import com.comphenix.protocol.wrappers.EnumWrappers.NativeGameMode
-import com.comphenix.protocol.wrappers.PlayerInfoData
-import com.comphenix.protocol.wrappers.WrappedChatComponent
-import com.comphenix.protocol.wrappers.WrappedGameProfile
+import ir.syrent.nms.accessors.ClientboundRemoveMobEffectPacketAccessor
+import ir.syrent.nms.accessors.ClientboundUpdateMobEffectPacketAccessor
+import ir.syrent.nms.accessors.MobEffectAccessor
+import ir.syrent.nms.accessors.MobEffectInstanceAccessor
 import ir.syrent.velocityvanish.spigot.VelocityVanishSpigot
 import ir.syrent.velocityvanish.spigot.event.PostUnVanishEvent
 import ir.syrent.velocityvanish.spigot.event.PostVanishEvent
@@ -15,8 +16,11 @@ import ir.syrent.velocityvanish.spigot.event.PreVanishEvent
 import ir.syrent.velocityvanish.spigot.hook.DependencyManager
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import ir.syrent.velocityvanish.spigot.storage.Settings
+import ir.syrent.velocityvanish.spigot.utils.NMSUtils
 import ir.syrent.velocityvanish.spigot.utils.ServerVersion
 import ir.syrent.velocityvanish.spigot.utils.Utils
+import net.minecraft.network.protocol.game.ClientboundRemoveMobEffectPacket
+import net.minecraft.world.effect.MobEffect
 import org.bukkit.GameMode
 import org.bukkit.entity.Creature
 import org.bukkit.entity.Player
@@ -24,8 +28,7 @@ import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.scoreboard.Team
-import java.lang.IllegalStateException
-import java.util.UUID
+import java.util.*
 
 
 class VanishManager(
@@ -111,13 +114,35 @@ class VanishManager(
 
     private fun addPotionEffects(player: Player) {
         for (potionEffect in potions) {
-            player.addPotionEffect(potionEffect)
+            try {
+                Ruom.runSync({
+                    val mobEffect = MobEffectInstanceAccessor.getConstructor0().newInstance(
+                        MobEffectAccessor.getMethodById1().invoke(null, potionEffect.type.id),
+                        1,
+                        potionEffect.amplifier,
+                        potionEffect.isAmbient,
+                        potionEffect.hasParticles(),
+                        potionEffect.hasIcon()
+                    )
+                    NMSUtils.sendPacket(player, ClientboundUpdateMobEffectPacketAccessor.getConstructor0().newInstance(player.entityId, mobEffect))
+                }, 2)
+            } catch (e: Exception) {
+                player.addPotionEffect(potionEffect)
+                Ruom.warn("Added effects using bukkit method (Server version: ${ServerVersion.getVersion()})")
+            }
         }
     }
 
     private fun removePotionEffects(player: Player) {
         for (potionEffect in potions) {
-            player.removePotionEffect(potionEffect.type)
+            try {
+                Ruom.runSync({
+                    NMSUtils.sendPacket(player, ClientboundRemoveMobEffectPacketAccessor.getConstructor0().newInstance(player.entityId, MobEffectAccessor.getMethodById1().invoke(null, potionEffect.type.id)))
+                }, 2)
+            } catch (e: Exception) {
+                player.removePotionEffect(potionEffect.type)
+                Ruom.warn("Removed effects using bukkit method (Server version: ${ServerVersion.getVersion()})")
+            }
         }
     }
 
@@ -199,6 +224,10 @@ class VanishManager(
 
         addPotionEffects(player)
 
+        if (DependencyManager.essentialsXHook.exists) {
+            DependencyManager.essentialsXHook.vanish(player, false)
+        }
+
         if (ServerVersion.supports(9)) {
             denyPush(player)
         }
@@ -268,6 +297,10 @@ class VanishManager(
         }
 
         removePotionEffects(player)
+
+        if (DependencyManager.essentialsXHook.exists) {
+            DependencyManager.essentialsXHook.vanish(player, false)
+        }
 
         Utils.actionbarPlayers.remove(player)
 

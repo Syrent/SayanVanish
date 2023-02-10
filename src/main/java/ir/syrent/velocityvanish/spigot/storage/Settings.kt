@@ -30,8 +30,10 @@ object Settings {
     var settingsConfigVersion = 1
 
     lateinit var defaultLanguage: String
-    var velocitySupport = false
+    var velocitySupport = true
+
     var showDependencySuggestions = true
+    var supportLegacyColorCodes = false
     var bstats = true
 
     var commandSound: Sound? = null
@@ -70,6 +72,7 @@ object Settings {
         defaultLanguage = settingsConfig.getString("default_language") ?: "en_US"
         velocitySupport = settingsConfig.getBoolean("velocity_support")
         showDependencySuggestions = settingsConfig.getBoolean("show_dependency_suggestions")
+        supportLegacyColorCodes = settingsConfig.getBoolean("support_legacy_color_codes")
         bstats = settingsConfig.getBoolean("bstats")
 
         commandSound = XSound.valueOf(settingsConfig.getString("sounds.command")!!).parseSound()
@@ -110,7 +113,7 @@ object Settings {
         if (DependencyManager.placeholderAPIHook.exists) {
             formattedMessage = PlaceholderAPI.setPlaceholders(player, formattedMessage)
         }
-        return formattedMessage.replace("§", "&")
+        return formattedMessage
     }
 
 
@@ -120,7 +123,6 @@ object Settings {
             .replace("\$successful_prefix", getMessage(Message.SUCCESSFUL_PREFIX))
             .replace("\$warn_prefix", getMessage(Message.WARN_PREFIX))
             .replace("\$error_prefix", getMessage(Message.ERROR_PREFIX))
-            .replace("§", "&")
         for (replacement in replacements) {
             formattedMessage = formattedMessage.replace("\$${replacement.from}", replacement.to)
         }

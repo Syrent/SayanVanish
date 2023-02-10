@@ -1,11 +1,11 @@
 #
 # Full wiki is available at https://github.com/Syrent/VelocityVanish/wiki
 #
-config_version: 3
+config_version: 4
 default_language: en_US
-# Enable this option if you're using plugin on a Velocity network
-velocity_support: false
 show_dependency_suggestions: true
+# NOT RECOMMENDED, Legacy code support is extremely discouraged. It affects performance, and it does not contain the new minecraft chat features.
+support_legacy_color_codes: false
 
 bstats: true
 # Leave sounds blank to disable them

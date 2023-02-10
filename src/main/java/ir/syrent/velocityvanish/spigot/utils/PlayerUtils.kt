@@ -14,7 +14,7 @@ fun CommandSender.sendMessage(message: Message, vararg replacements: TextReplace
     val formattedMessage = Settings.formatMessage(message, *replacements)
     if (formattedMessage.isBlank()) return
 
-    val serializedMessage = MiniMessage.miniMessage().serialize(LegacyComponentSerializer.legacyAmpersand().deserialize(formattedMessage)).replace("\\<", "<")
+    val serializedMessage = getSerializedMessage(formattedMessage)
     AdventureApi.get().sender(this).sendMessage(serializedMessage.component())
 }
 
@@ -28,16 +28,26 @@ fun Player.sendMessage(message: Message, vararg replacements: TextReplacement) {
         }
     }
 
-    val serializedMessage = MiniMessage.miniMessage().serialize(LegacyComponentSerializer.legacyAmpersand().deserialize(formattedMessage)).replace("\\<", "<")
+    val serializedMessage = getSerializedMessage(formattedMessage)
     AdventureApi.get().sender(this).sendMessage(serializedMessage.component())
 }
 
 fun Player.sendMessageOnly(message: Message, vararg replacements: TextReplacement) {
-    val serializedMessage = MiniMessage.miniMessage().serialize(LegacyComponentSerializer.legacyAmpersand().deserialize(Settings.formatMessage(this, message, *replacements))).replace("\\<", "<")
+    val serializedMessage = getSerializedMessage(Settings.formatMessage(this, message, *replacements))
     AdventureApi.get().sender(this).sendMessage(serializedMessage.component())
 }
 
 fun Player.sendActionbar(message: Message, vararg replacements: TextReplacement) {
-    val serializedMessage = MiniMessage.miniMessage().serialize(LegacyComponentSerializer.legacyAmpersand().deserialize(Settings.formatMessage(this, message, *replacements))).replace("\\<", "<")
+    val serializedMessage = getSerializedMessage(Settings.formatMessage(this, message, *replacements))
     AdventureApi.get().sender(this).sendActionBar(serializedMessage.component())
+}
+
+fun getSerializedMessage(message: String): String {
+    return if (Settings.supportLegacyColorCodes) {
+        var legacyMessage = message.replace("&", "§")
+        legacyMessage = MiniMessage.miniMessage().serialize(LegacyComponentSerializer.legacySection().deserialize(legacyMessage)).replace("\\<", "<")
+        legacyMessage
+    } else {
+        message
+    }
 }

@@ -26,7 +26,7 @@ class PostUnVanishListener(
         plugin.vanishedNames.remove(player.name)
         plugin.bridgeManager?.updateVanishedPlayersRequest(player, false)
 
-        val joinMessage = Settings.formatMessage(player, Message.JOIN_MESSAGE, TextReplacement("player", player.name), TextReplacement("play_displayname", player.displayName))
+        val joinMessage = Utils.getSerializedMessage(Settings.formatMessage(player, Message.JOIN_MESSAGE, TextReplacement("player", player.name), TextReplacement("play_displayname", player.displayName)))
         if (joinMessage.isNotBlank() && joinMessage.isNotEmpty() && event.sendJoinMessage) {
             Ruom.broadcast(joinMessage.component())
         }

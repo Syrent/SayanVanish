@@ -4,10 +4,7 @@ import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.events.PacketContainer
 import com.comphenix.protocol.wrappers.*
 import com.comphenix.protocol.wrappers.EnumWrappers.NativeGameMode
-import ir.syrent.nms.accessors.ClientboundRemoveMobEffectPacketAccessor
-import ir.syrent.nms.accessors.ClientboundUpdateMobEffectPacketAccessor
-import ir.syrent.nms.accessors.MobEffectAccessor
-import ir.syrent.nms.accessors.MobEffectInstanceAccessor
+import ir.syrent.nms.accessors.*
 import ir.syrent.velocityvanish.spigot.VelocityVanishSpigot
 import ir.syrent.velocityvanish.spigot.event.PostUnVanishEvent
 import ir.syrent.velocityvanish.spigot.event.PostVanishEvent
@@ -19,8 +16,8 @@ import ir.syrent.velocityvanish.spigot.storage.Settings
 import ir.syrent.velocityvanish.spigot.utils.NMSUtils
 import ir.syrent.velocityvanish.spigot.utils.ServerVersion
 import ir.syrent.velocityvanish.spigot.utils.Utils
-import net.minecraft.network.protocol.game.ClientboundRemoveMobEffectPacket
-import net.minecraft.world.effect.MobEffect
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
 import org.bukkit.GameMode
 import org.bukkit.entity.Creature
 import org.bukkit.entity.Player
@@ -76,15 +73,27 @@ class VanishManager(
 
                     val newTabPacket = PacketContainer(PacketType.Play.Server.PLAYER_INFO, tabPacket?.handle)
 
-                    for (onlinePlayer in Ruom.getOnlinePlayers()) {
-                        if (onlinePlayer.hasPermission("velocityvanish.admin.seevanished")) {
-                            if (onlinePlayer == player) continue
-                            DependencyManager.protocolLibHook.protocolManager.sendServerPacket(onlinePlayer, newTabPacket)
-                        }
+                    for (onlinePlayer in Ruom.getOnlinePlayers().filter { it.hasPermission("velocityvanish.admin.seevanished") }.filter { it != player }) {
+                        DependencyManager.protocolLibHook.protocolManager.sendServerPacket(onlinePlayer, newTabPacket)
                     }
                 } catch (e: Exception) {
-                    // TODO: Fix it
-                    Ruom.warn("Failed to update tab state for ${player.name}, It might be a ProtocolLib issue. (Players who have `seevanished` permission can see this player in tab and game character as survival mode)")
+                    /*val removePacket = ClientboundPlayerInfoRemovePacketAccessor.getConstructor0().newInstance(
+                        ClientboundPlayerInfoRemovePacketAccessor.getFieldProfileIds(),
+                    )
+
+                    val addPacket = ClientboundPlayerInfoUpdatePacketAccessor.getConstructor0().newInstance(
+                        ClientboundPlayerInfoUpdatePacket_i_ActionAccessor.getFieldADD_PLAYER(),
+                        NMSUtils.getServerPlayer(player)
+                    )
+
+                    val packet = ClientboundPlayerInfoUpdatePacketAccessor.getConstructor0().newInstance(
+                        ClientboundPlayerInfoUpdatePacket_i_ActionAccessor.getFieldUPDATE_GAME_MODE(),
+                        NMSUtils.getServerPlayer(player)
+                    )
+
+                    for (onlinePlayer in Ruom.getOnlinePlayers().filter { it.hasPermission("velocityvanish.admin.seevanished") }.filter { it != player }) {
+                        NMSUtils.sendPacket(onlinePlayer, packet)
+                    }*/
                 }
             }, 2)
         } else {
@@ -225,7 +234,7 @@ class VanishManager(
         addPotionEffects(player)
 
         if (DependencyManager.essentialsXHook.exists) {
-            DependencyManager.essentialsXHook.vanish(player, false)
+            DependencyManager.essentialsXHook.vanish(player, true)
         }
 
         if (ServerVersion.supports(9)) {

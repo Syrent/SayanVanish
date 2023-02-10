@@ -110,7 +110,7 @@ object Settings {
         if (DependencyManager.placeholderAPIHook.exists) {
             formattedMessage = PlaceholderAPI.setPlaceholders(player, formattedMessage)
         }
-        return formattedMessage
+        return formattedMessage.replace("§", "&")
     }
 
 
@@ -120,6 +120,7 @@ object Settings {
             .replace("\$successful_prefix", getMessage(Message.SUCCESSFUL_PREFIX))
             .replace("\$warn_prefix", getMessage(Message.WARN_PREFIX))
             .replace("\$error_prefix", getMessage(Message.ERROR_PREFIX))
+            .replace("§", "&")
         for (replacement in replacements) {
             formattedMessage = formattedMessage.replace("\$${replacement.from}", replacement.to)
         }

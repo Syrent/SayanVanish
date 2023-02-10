@@ -223,6 +223,9 @@ nmsGen {
     var ServerGamePacketListenerImpl = reqClass("net.minecraft.server.network.ServerGamePacketListenerImpl")
     var ClientboundUpdateMobEffectPacket = reqClass("net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket")
     var ClientboundRemoveMobEffectPacket = reqClass("net.minecraft.network.protocol.game.ClientboundRemoveMobEffectPacket")
+    var ClientboundPlayerInfoUpdatePacket = reqClass("net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket")
+    var ClientboundPlayerInfoUpdatePacketAction = reqClass("net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket\$Action")
+    var ClientboundPlayerInfoRemovePacket = reqClass("net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket")
 
     var ServerPlayer = reqClass("net.minecraft.server.level.ServerPlayer")
     var Packet = reqClass("net.minecraft.network.protocol.Packet")
@@ -237,6 +240,15 @@ nmsGen {
             .reqConstructor(int, MobEffectInstance)
     ClientboundRemoveMobEffectPacket
             .reqConstructor(int, MobEffect)
+    ClientboundPlayerInfoUpdatePacket
+            .reqConstructor(ClientboundPlayerInfoUpdatePacketAction, ServerPlayer)
+    ClientboundPlayerInfoUpdatePacketAction
+            .reqField("UPDATE_GAME_MODE")
+            .reqField("ADD_PLAYER")
+            .reqField("ADD_PLAYER")
+    ClientboundPlayerInfoRemovePacket
+            .reqConstructor(List)
+            .reqField("profileIds")
 
     ServerPlayer
             .reqField("connection")

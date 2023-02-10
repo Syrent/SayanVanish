@@ -6,6 +6,8 @@ import ir.syrent.velocityvanish.spigot.ruom.string.CharAnimation
 import ir.syrent.velocityvanish.spigot.storage.Message
 import ir.syrent.velocityvanish.spigot.storage.Settings
 import ir.syrent.velocityvanish.utils.TextReplacement
+import net.kyori.adventure.text.minimessage.MiniMessage
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.scheduler.BukkitRunnable
@@ -40,6 +42,16 @@ object Utils {
                     player.sendActionbar(Message.VANISH_ACTIONBAR, TextReplacement("animation", lastChar))
                 }
             }.runTaskTimer(VelocityVanishSpigot.instance, 0, 20)
+        }
+    }
+
+    fun getSerializedMessage(message: String): String {
+        return if (Settings.supportLegacyColorCodes) {
+            var legacyMessage = message.replace("&", "§")
+            legacyMessage = MiniMessage.miniMessage().serialize(LegacyComponentSerializer.legacySection().deserialize(legacyMessage)).replace("\\<", "<")
+            legacyMessage
+        } else {
+            message
         }
     }
 

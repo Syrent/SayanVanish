@@ -18,7 +18,7 @@ import java.time.LocalDate
 
 object Settings {
 
-    const val latestSettingsConfigVersion = 2
+    const val latestSettingsConfigVersion = 4
 
     lateinit var settings: YamlConfig
     lateinit var language: YamlConfig
@@ -159,7 +159,7 @@ object Settings {
 
     private fun sendBackupMessage(fileName: String) {
         AdventureApi.get().console().sendMessage("<red>=============================================================".component())
-        AdventureApi.get().console().sendMessage("<red>Config version updated to $settingsConfigVersion. Please set your prefred values again.".component())
+        AdventureApi.get().console().sendMessage("<red>Config version updated to $latestSettingsConfigVersion. Please set your prefred values again.".component())
         AdventureApi.get().console().sendMessage("<gray>Previous values are still accessible via $fileName in plugin folder.".component())
         AdventureApi.get().console().sendMessage("<red>=============================================================".component())
     }

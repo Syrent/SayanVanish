@@ -3,6 +3,7 @@ package ir.syrent.velocityvanish.spigot.utils
 import ir.syrent.velocityvanish.spigot.ruom.adventure.AdventureApi
 import ir.syrent.velocityvanish.spigot.storage.Message
 import ir.syrent.velocityvanish.spigot.storage.Settings
+import ir.syrent.velocityvanish.spigot.utils.Utils.getSerializedMessage
 import ir.syrent.velocityvanish.utils.TextReplacement
 import ir.syrent.velocityvanish.utils.component
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -40,14 +41,4 @@ fun Player.sendMessageOnly(message: Message, vararg replacements: TextReplacemen
 fun Player.sendActionbar(message: Message, vararg replacements: TextReplacement) {
     val serializedMessage = getSerializedMessage(Settings.formatMessage(this, message, *replacements))
     AdventureApi.get().sender(this).sendActionBar(serializedMessage.component())
-}
-
-fun getSerializedMessage(message: String): String {
-    return if (Settings.supportLegacyColorCodes) {
-        var legacyMessage = message.replace("&", "§")
-        legacyMessage = MiniMessage.miniMessage().serialize(LegacyComponentSerializer.legacySection().deserialize(legacyMessage)).replace("\\<", "<")
-        legacyMessage
-    } else {
-        message
-    }
 }

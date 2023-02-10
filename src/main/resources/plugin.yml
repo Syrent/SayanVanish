@@ -12,6 +12,7 @@ softdepend:
   - 'SayanChat'
   - 'PlaceholderAPI'
   - 'squaremap'
+  - 'Essentials'
 commands:
   vanish:
     aliases:

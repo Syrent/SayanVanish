@@ -3,7 +3,6 @@ package ir.syrent.velocityvanish.spigot.storage
 import com.cryptomorin.xseries.XSound
 import ir.syrent.velocityvanish.spigot.configuration.YamlConfig
 import ir.syrent.velocityvanish.spigot.hook.DependencyManager
-import ir.syrent.velocityvanish.spigot.hook.PlaceholderAPIHook
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import ir.syrent.velocityvanish.spigot.ruom.adventure.AdventureApi
 import ir.syrent.velocityvanish.utils.TextReplacement

@@ -24,7 +24,7 @@ class VanishCommand(
     override fun onExecute(sender: CommandSender, args: List<String>) {
         sender as Player
 
-        if (args.size <= 1) {
+        if (args.isEmpty()) {
             if (plugin.vanishedNames.contains(sender.name)) {
                 sender.sendMessage(Message.VANISH_USE_UNVANISH)
                 plugin.vanishManager.unVanish(sender)
@@ -41,7 +41,7 @@ class VanishCommand(
                 }
             }
         } else {
-            val target = Bukkit.getPlayerExact(args[1])
+            val target = Bukkit.getPlayerExact(args[0])
 
             if (target == null) {
                 sender.sendMessage(Message.PLAYER_NOT_FOUND)

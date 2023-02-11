@@ -33,6 +33,7 @@ object Settings {
 
     var showDependencySuggestions = true
     var supportLegacyColorCodes = false
+    var forceVanishIfFirst = true
     var bstats = true
 
     var commandSound: Sound? = null
@@ -44,7 +45,7 @@ object Settings {
     var seeAsSpectator = true
     var invincible = true
     var preventPickup = true
-    var silenOpenContainer = true
+    var silentOpenContainer = true
 
     init {
         load()
@@ -72,6 +73,7 @@ object Settings {
         velocitySupport = settingsConfig.getBoolean("velocity_support")
         showDependencySuggestions = settingsConfig.getBoolean("show_dependency_suggestions")
         supportLegacyColorCodes = settingsConfig.getBoolean("support_legacy_color_codes")
+        forceVanishIfFirst = settingsConfig.getBoolean("force_vanish_if_first")
         bstats = settingsConfig.getBoolean("bstats")
 
         commandSound = XSound.valueOf(settingsConfig.getString("sounds.command")!!).parseSound()
@@ -83,7 +85,7 @@ object Settings {
         seeAsSpectator = settingsConfig.getBoolean("vanish.see_as_spectator")
         invincible = settingsConfig.getBoolean("vanish.invincible")
         preventPickup = settingsConfig.getBoolean("vanish.prevent_pickup")
-        silenOpenContainer = settingsConfig.getBoolean("vanish.silent_open_container")
+        silentOpenContainer = settingsConfig.getBoolean("vanish.silent_open_container")
 
         language = YamlConfig(Ruom.getPlugin().dataFolder, "languages/$defaultLanguage.yml")
         languageConfig = language.config

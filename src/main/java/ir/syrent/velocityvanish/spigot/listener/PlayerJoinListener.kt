@@ -2,7 +2,11 @@ package ir.syrent.velocityvanish.spigot.listener
 
 import ir.syrent.velocityvanish.spigot.VelocityVanishSpigot
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
+import ir.syrent.velocityvanish.spigot.storage.Message
 import ir.syrent.velocityvanish.spigot.storage.Settings
+import ir.syrent.velocityvanish.spigot.utils.Utils
+import ir.syrent.velocityvanish.utils.TextReplacement
+import ir.syrent.velocityvanish.utils.component
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.event.EventHandler
@@ -35,6 +39,20 @@ class PlayerJoinListener(
             if (player.hasPermission("velocityvanish.action.vanish.onjoin")) {
                 plugin.vanishManager.vanish(player, false)
                 event.joinMessage = null
+            } else if ((player.hasPermission("velocityvanish.action.vanish.force") || player.isOp) && Settings.forceVanishIfFirst && Ruom.getOnlinePlayers().size <= 1) {
+                plugin.vanishManager.vanish(player, false)
+                event.joinMessage = null
+
+                Ruom.runSync({
+                     if (!plugin.vanishedNames.contains(player.name)) {
+                         plugin.vanishManager.unVanish(player, false)
+                     }
+
+                    val joinMessage = Utils.getSerializedMessage(Settings.formatMessage(player, Message.JOIN_MESSAGE, TextReplacement("player", player.name), TextReplacement("play_displayname", player.displayName)))
+                    if (joinMessage.isNotBlank() && joinMessage.isNotEmpty()) {
+                        Ruom.broadcast(joinMessage.component())
+                    }
+                }, 40)
             } else {
                 plugin.vanishManager.unVanish(player, false)
             }

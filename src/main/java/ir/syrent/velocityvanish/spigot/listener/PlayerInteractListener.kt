@@ -38,7 +38,7 @@ class PlayerInteractListener(
      */
     @EventHandler
     fun onChestOpen(event: PlayerInteractEvent) {
-        if (!Settings.silenOpenContainer) return
+        if (!Settings.silentOpenContainer) return
 
         if (event.action != Action.RIGHT_CLICK_BLOCK) return
         val block = event.clickedBlock ?: return

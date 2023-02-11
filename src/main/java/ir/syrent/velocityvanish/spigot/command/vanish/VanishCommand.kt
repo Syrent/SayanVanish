@@ -12,7 +12,7 @@ import org.bukkit.entity.Player
 
 class VanishCommand(
     private val plugin: VelocityVanishSpigot
-) : PluginCommand("vanish", "velocityvanish.command.vanish", true) {
+) : PluginCommand("vanish", "velocityvanish.command.vanish", false) {
 
     init {
         this.register()
@@ -22,9 +22,13 @@ class VanishCommand(
     }
 
     override fun onExecute(sender: CommandSender, args: List<String>) {
-        sender as Player
 
         if (args.isEmpty()) {
+            if (sender !is Player) {
+                sender.sendMessage(Message.ONLY_PLAYERS)
+                return
+            }
+
             if (plugin.vanishedNames.contains(sender.name)) {
                 sender.sendMessage(Message.VANISH_USE_UNVANISH)
                 plugin.vanishManager.unVanish(sender)
@@ -41,6 +45,7 @@ class VanishCommand(
                 }
             }
         } else {
+            sender as Player
             val target = Bukkit.getPlayerExact(args[0])
 
             if (target == null) {

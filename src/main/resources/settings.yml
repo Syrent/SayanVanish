@@ -6,6 +6,11 @@ default_language: en_US
 show_dependency_suggestions: true
 # NOT RECOMMENDED, Legacy code support is extremely discouraged. It affects performance, and it does not contain the new minecraft chat features.
 support_legacy_color_codes: false
+# If you are the first player to join the server, the Vanish data may not be synchronized correctly,
+# and you will not be in vanish mode. This option allows you to enter vanish mode if you have operator privileges
+# or the "velocityvanish.action.vanish.force" permission. If you were not previously in vanish mode,
+# it will unvanish you after a few seconds.
+force_vanish_if_first: true
 
 bstats: true
 # Leave sounds blank to disable them

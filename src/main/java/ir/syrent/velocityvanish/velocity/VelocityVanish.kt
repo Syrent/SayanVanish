@@ -2,17 +2,14 @@ package ir.syrent.velocityvanish.velocity
 
 import com.google.gson.JsonObject
 import com.google.inject.Inject
-import com.google.inject.Provides
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
-import com.velocitypowered.api.plugin.Plugin
 import com.velocitypowered.api.plugin.annotation.DataDirectory
 import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.messages.ChannelMessageSource
 import ir.syrent.velocityvanish.velocity.bridge.VelocityBridge
 import ir.syrent.velocityvanish.velocity.bridge.VelocityBridgeManager
 import ir.syrent.velocityvanish.velocity.command.ForceVanishCommand
-import ir.syrent.velocityvanish.velocity.listener.PrivateMessageListener
 import ir.syrent.velocityvanish.velocity.listener.ProxyPingListener
 import ir.syrent.velocityvanish.velocity.listener.TabCompleteListener
 import me.mohamad82.ruom.VRUoMPlugin

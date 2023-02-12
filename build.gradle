@@ -71,6 +71,9 @@ repositories {
         name = "jeff-media-public"
         url = 'https://hub.jeff-media.com/nexus/repository/jeff-media-public/'
     }
+
+    // DiscordSRV
+    maven { url 'https://nexus.scarsz.me/content/groups/public/' }
 }
 
 dependencies {
@@ -80,6 +83,7 @@ dependencies {
     compileOnly 'me.clip:placeholderapi:2.11.2'
     compileOnly 'xyz.jpenilla:squaremap-api:1.1.9'
     compileOnly 'net.essentialsx:EssentialsX:2.19.7'
+    compileOnly 'com.discordsrv:discordsrv:1.26.0'
 
     compileOnly files("libs/SayanChat-2.8.1-all.jar")
     compileOnly files('libs/ProCosmetics.jar')

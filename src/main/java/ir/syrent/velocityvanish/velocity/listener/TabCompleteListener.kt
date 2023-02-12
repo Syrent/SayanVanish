@@ -15,6 +15,8 @@ class TabCompleteListener(
 
     @Subscribe
     private fun onTabComplete(event: TabCompleteEvent) {
+        if (event.player.hasPermission("velocityvanish.bypass.tabcompleter")) return
+        
         event.suggestions.removeIf {
             plugin.vanishedPlayers.contains(it)
         }

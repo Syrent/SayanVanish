@@ -22,7 +22,7 @@ class PlayerInteractListener(
     @EventHandler
     private fun preventInteract(event: PlayerInteractEvent) {
         val player = event.player
-        if (plugin.vanishedNames.contains(player.name) && Settings.preventInteract) event.isCancelled = true
+        if (plugin.vanishedNames.contains(player.name) && Settings.preventInteract && !player.hasPermission("velocityvanish.bypass.prevention.interact")) event.isCancelled = true
     }
 
     @EventHandler

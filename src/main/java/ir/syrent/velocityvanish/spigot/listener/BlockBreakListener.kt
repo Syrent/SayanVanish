@@ -13,6 +13,6 @@ class BlockBreakListener(
     @EventHandler
     private fun onBlockBreak(event: BlockBreakEvent) {
         val player = event.player
-        if (plugin.vanishedNames.contains(player.name) && Settings.preventBlockBreak) event.isCancelled = true
+        if (plugin.vanishedNames.contains(player.name) && Settings.preventBlockBreak && !player.hasPermission("velocityvanish.bypass.prevention.block_break")) event.isCancelled = true
     }
 }

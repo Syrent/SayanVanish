@@ -16,8 +16,6 @@ import ir.syrent.velocityvanish.spigot.storage.Settings
 import ir.syrent.velocityvanish.spigot.utils.NMSUtils
 import ir.syrent.velocityvanish.spigot.utils.ServerVersion
 import ir.syrent.velocityvanish.spigot.utils.Utils
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
 import org.bukkit.GameMode
 import org.bukkit.entity.Creature
 import org.bukkit.entity.Player
@@ -127,7 +125,7 @@ class VanishManager(
                 Ruom.runSync({
                     val mobEffect = MobEffectInstanceAccessor.getConstructor0().newInstance(
                         MobEffectAccessor.getMethodById1().invoke(null, potionEffect.type.id),
-                        1,
+                        60,
                         potionEffect.amplifier,
                         potionEffect.isAmbient,
                         potionEffect.hasParticles(),

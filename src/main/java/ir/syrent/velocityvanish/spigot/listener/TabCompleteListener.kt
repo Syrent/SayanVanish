@@ -18,6 +18,7 @@ class TabCompleteListener(
     @EventHandler
     private fun onTabComplete(event: TabCompleteEvent) {
         if (event.sender !is Player) return
+        if (event.sender.hasPermission("velocityvanish.bypass.tabcompleter")) return
         if (event.completions.isEmpty()) return
 
         val newCollection = mutableListOf<String>()

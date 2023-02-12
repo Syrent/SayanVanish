@@ -47,6 +47,10 @@ object Settings {
     var preventPickup = true
     var silentOpenContainer = true
 
+    var preventBlockBreak = false
+    var preventBlockPlace = false
+    var preventInteract = false
+
     init {
         load()
     }
@@ -86,6 +90,10 @@ object Settings {
         invincible = settingsConfig.getBoolean("vanish.invincible")
         preventPickup = settingsConfig.getBoolean("vanish.prevent_pickup")
         silentOpenContainer = settingsConfig.getBoolean("vanish.silent_open_container")
+
+        preventBlockBreak = settingsConfig.getBoolean("vanish.prevent.block_break")
+        preventBlockPlace = settingsConfig.getBoolean("vanish.prevent.block_place")
+        preventInteract = settingsConfig.getBoolean("vanish.prevent.interact")
 
         language = YamlConfig(Ruom.getPlugin().dataFolder, "languages/$defaultLanguage.yml")
         languageConfig = language.config

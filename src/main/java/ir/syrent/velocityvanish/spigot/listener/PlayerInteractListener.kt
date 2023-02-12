@@ -20,6 +20,12 @@ class PlayerInteractListener(
     }
 
     @EventHandler
+    private fun preventInteract(event: PlayerInteractEvent) {
+        val player = event.player
+        if (plugin.vanishedNames.contains(player.name) && Settings.preventInteract) event.isCancelled = true
+    }
+
+    @EventHandler
     private fun onActivePlate(event: PlayerInteractEvent) {
         val player = event.player
         val block = event.clickedBlock ?: return

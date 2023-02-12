@@ -17,7 +17,7 @@ import java.time.LocalDate
 
 object Settings {
 
-    const val latestSettingsConfigVersion = 4
+    const val latestSettingsConfigVersion = 5
 
     lateinit var settings: YamlConfig
     lateinit var language: YamlConfig

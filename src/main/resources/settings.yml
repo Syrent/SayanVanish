@@ -34,3 +34,7 @@ vanish:
     prevent_pickup: true
     # Note: Not working when some ProCosmetics cosmetics are enabled!
     silent_open_container: true
+    prevent:
+        block_break: false
+        block_place: false
+        interact: false

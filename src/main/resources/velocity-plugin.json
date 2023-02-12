@@ -1,1 +1,1 @@
-{"id":"velocityvanish","name":"VelocityVanish","version":"3.16.1","description":"Vanish plugin for velocity servers","url":"syrent.ir","authors":["Syrent"],"dependencies":[],"main":"ir.syrent.velocityvanish.velocity.VelocityVanish"}
+{"id":"velocityvanish","name":"VelocityVanish","version":"3.17.0","description":"Vanish plugin for velocity servers","url":"syrent.ir","authors":["Syrent"],"dependencies":[],"main":"ir.syrent.velocityvanish.velocity.VelocityVanish"}

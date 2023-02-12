@@ -125,7 +125,7 @@ class VanishManager(
                 Ruom.runSync({
                     val mobEffect = MobEffectInstanceAccessor.getConstructor0().newInstance(
                         MobEffectAccessor.getMethodById1().invoke(null, potionEffect.type.id),
-                        60,
+                        Int.MAX_VALUE,
                         potionEffect.amplifier,
                         potionEffect.isAmbient,
                         potionEffect.hasParticles(),
@@ -185,8 +185,10 @@ class VanishManager(
             flyPlayers.add(player.uniqueId)
         }
 
-        player.allowFlight = true
-        player.isFlying = true
+        if (player.hasPermission("velocityvanish.action.fly.onvanish")) {
+            player.allowFlight = true
+            player.isFlying = true
+        }
 
         if (ServerVersion.supports(9)) {
             if (player.isInvulnerable) {

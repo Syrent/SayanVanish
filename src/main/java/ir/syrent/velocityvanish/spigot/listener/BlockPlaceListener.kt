@@ -14,6 +14,6 @@ class BlockPlaceListener(
     @EventHandler
     private fun onBlockBreak(event: BlockPlaceEvent) {
         val player = event.player
-        if (plugin.vanishedNames.contains(player.name) && Settings.preventBlockPlace) event.isCancelled = true
+        if (plugin.vanishedNames.contains(player.name) && Settings.preventBlockPlace && !player.hasPermission("velocityvanish.bypass.prevention.block_place")) event.isCancelled = true
     }
 }

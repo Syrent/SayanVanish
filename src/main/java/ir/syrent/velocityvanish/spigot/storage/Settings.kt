@@ -74,7 +74,7 @@ object Settings {
         }
 
         defaultLanguage = settingsConfig.getString("default_language") ?: "en_US"
-        velocitySupport = settingsConfig.getBoolean("velocity_support")
+//        velocitySupport = settingsConfig.getBoolean("velocity_support")
         showDependencySuggestions = settingsConfig.getBoolean("show_dependency_suggestions")
         supportLegacyColorCodes = settingsConfig.getBoolean("support_legacy_color_codes")
         forceVanishIfFirst = settingsConfig.getBoolean("force_vanish_if_first")

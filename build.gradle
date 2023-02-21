@@ -83,7 +83,7 @@ dependencies {
     compileOnly 'me.clip:placeholderapi:2.11.2'
     compileOnly 'xyz.jpenilla:squaremap-api:1.1.9'
     compileOnly 'net.essentialsx:EssentialsX:2.19.7'
-    compileOnly 'com.discordsrv:discordsrv:1.26.0'
+    compileOnly 'com.discordsrv:discordsrv:1.26.1'
 
     compileOnly files("libs/SayanChat-2.8.1-all.jar")
     compileOnly files('libs/ProCosmetics.jar')

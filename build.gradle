@@ -96,7 +96,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.10.1'
 
     implementation 'me.mohamad82:ruom-velocity:4.2.14'
-    implementation 'com.github.cryptomorin:XSeries:9.2.0'
+    implementation 'com.github.cryptomorin:XSeries:9.3.0'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
 
     implementation 'net.kyori:adventure-api:4.12.0'

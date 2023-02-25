@@ -120,9 +120,9 @@ class VanishManager(
     }
 
     fun addPotionEffects(player: Player) {
-        for (potionEffect in potions) {
-            try {
-                Ruom.runSync({
+        Ruom.runSync({
+            for (potionEffect in potions) {
+                try {
                     val mobEffect = MobEffectInstanceAccessor.getConstructor0().newInstance(
                         MobEffectAccessor.getMethodById1().invoke(null, potionEffect.type.id),
                         Int.MAX_VALUE,
@@ -132,25 +132,25 @@ class VanishManager(
                         potionEffect.hasIcon()
                     )
                     NMSUtils.sendPacket(player, ClientboundUpdateMobEffectPacketAccessor.getConstructor0().newInstance(player.entityId, mobEffect))
-                }, 2)
-            } catch (e: Exception) {
-                player.addPotionEffect(potionEffect)
-                Ruom.warn("Added effects using bukkit method (Server version: ${ServerVersion.getVersion()})")
+                } catch (e: Exception) {
+                    player.addPotionEffect(potionEffect)
+                    Ruom.warn("Added effects using bukkit method (Server version: ${ServerVersion.getVersion()})")
+                }
             }
-        }
+        }, 2)
     }
 
     fun removePotionEffects(player: Player) {
-        for (potionEffect in potions) {
-            try {
-                Ruom.runSync({
+        Ruom.runSync({
+            for (potionEffect in potions) {
+                try {
                     NMSUtils.sendPacket(player, ClientboundRemoveMobEffectPacketAccessor.getConstructor0().newInstance(player.entityId, MobEffectAccessor.getMethodById1().invoke(null, potionEffect.type.id)))
-                }, 2)
-            } catch (e: Exception) {
-                player.removePotionEffect(potionEffect.type)
-                Ruom.warn("Removed effects using bukkit method (Server version: ${ServerVersion.getVersion()})")
+                } catch (e: Exception) {
+                    player.removePotionEffect(potionEffect.type)
+                    Ruom.warn("Removed effects using bukkit method (Server version: ${ServerVersion.getVersion()})")
+                }
             }
-        }
+        }, 2)
     }
 
     fun denyPush(player: Player) {

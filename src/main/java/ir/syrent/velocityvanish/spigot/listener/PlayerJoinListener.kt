@@ -39,7 +39,7 @@ class PlayerJoinListener(
             if (player.hasPermission("velocityvanish.action.vanish.onjoin")) {
                 plugin.vanishManager.vanish(player, false)
                 event.joinMessage = null
-            } else if ((player.hasPermission("velocityvanish.action.vanish.force") || player.isOp) && Settings.forceVanishIfFirst && Ruom.getOnlinePlayers().size <= 1) {
+            } else if (player.hasPermission("velocityvanish.action.vanish.force") && Settings.forceVanishIfFirst && Ruom.getOnlinePlayers().size <= 1) {
                 plugin.vanishManager.vanish(player, false)
                 event.joinMessage = null
 

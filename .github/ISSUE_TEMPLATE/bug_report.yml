@@ -60,7 +60,7 @@ body:
       label: Checklist
       description: Let's make sure this report is valid
       options:
-        - label: I am running latest version of the plugin
+        - label: I am running latest version of the plugin on both Velocity and Spigot
           required: true
         - label: I have read the wiki to make sure it's not an issue with configuration
           required: true

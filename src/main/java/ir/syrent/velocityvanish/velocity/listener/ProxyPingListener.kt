@@ -15,7 +15,7 @@ class ProxyPingListener(
         VRuom.registerListener(this)
     }
 
-    @Subscribe
+    @Subscribe(order = PostOrder.EARLY)
     private fun onProxyPing(event: ProxyPingEvent) {
         val serverPing = event.ping
         if (serverPing.players.isPresent) {

@@ -134,7 +134,6 @@ class VanishManager(
                     NMSUtils.sendPacket(player, ClientboundUpdateMobEffectPacketAccessor.getConstructor0().newInstance(player.entityId, mobEffect))
                 } catch (e: Exception) {
                     player.addPotionEffect(potionEffect)
-                    Ruom.warn("Added effects using bukkit method (Server version: ${ServerVersion.getVersion()})")
                 }
             }
         }, 2)
@@ -147,7 +146,6 @@ class VanishManager(
                     NMSUtils.sendPacket(player, ClientboundRemoveMobEffectPacketAccessor.getConstructor0().newInstance(player.entityId, MobEffectAccessor.getMethodById1().invoke(null, potionEffect.type.id)))
                 } catch (e: Exception) {
                     player.removePotionEffect(potionEffect.type)
-                    Ruom.warn("Removed effects using bukkit method (Server version: ${ServerVersion.getVersion()})")
                 }
             }
         }, 2)

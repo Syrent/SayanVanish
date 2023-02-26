@@ -37,7 +37,9 @@ class PlayerJoinListener(
             event.joinMessage = null
         } else {
             if (player.hasPermission("velocityvanish.action.vanish.onjoin")) {
-                plugin.vanishManager.vanish(player, false)
+                Ruom.runSync({
+                    plugin.vanishManager.vanish(player, false)
+                }, 1)
                 event.joinMessage = null
             } else if (player.hasPermission("velocityvanish.action.vanish.force") && Settings.forceVanishIfFirst && Ruom.getOnlinePlayers().size <= 1) {
                 plugin.vanishManager.vanish(player, false)

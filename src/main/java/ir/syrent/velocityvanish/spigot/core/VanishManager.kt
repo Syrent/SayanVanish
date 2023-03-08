@@ -12,10 +12,13 @@ import ir.syrent.velocityvanish.spigot.event.PreUnVanishEvent
 import ir.syrent.velocityvanish.spigot.event.PreVanishEvent
 import ir.syrent.velocityvanish.spigot.hook.DependencyManager
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
+import ir.syrent.velocityvanish.spigot.storage.Message
 import ir.syrent.velocityvanish.spigot.storage.Settings
 import ir.syrent.velocityvanish.spigot.utils.NMSUtils
 import ir.syrent.velocityvanish.spigot.utils.ServerVersion
 import ir.syrent.velocityvanish.spigot.utils.Utils
+import ir.syrent.velocityvanish.utils.TextReplacement
+import ir.syrent.velocityvanish.utils.component
 import org.bukkit.GameMode
 import org.bukkit.entity.Creature
 import org.bukkit.entity.Player
@@ -164,11 +167,7 @@ class VanishManager(
         player.scoreboard.getTeam("Vanished")?.removeEntry(player.name)
     }
 
-    fun vanish(player: Player) {
-        vanish(player, true)
-    }
-
-    fun vanish(player: Player, sendQuitMessage: Boolean) {
+    fun vanish(player: Player, sendQuitMessage: Boolean = true, callPostEvent: Boolean = false) {
         val preVanishEvent = PreVanishEvent(player, sendQuitMessage)
         VelocityVanishSpigot.instance.server.pluginManager.callEvent(preVanishEvent)
 
@@ -259,15 +258,22 @@ class VanishManager(
             }
         }
 
-        val postVanishEvent = PostVanishEvent(player, preVanishEvent.sendQuitMessage)
-        VelocityVanishSpigot.instance.server.pluginManager.callEvent(postVanishEvent)
+        Utils.sendVanishActionbar(player)
+        plugin.vanishedNames.add(player.name)
+        plugin.bridgeManager?.updateVanishedPlayersRequest(player, true)
+
+        val quitMessage = Utils.getSerializedMessage(Settings.formatMessage(player, Message.QUIT_MESSAGE, TextReplacement("player", player.name), TextReplacement("play_displayname", player.displayName)))
+        if (quitMessage.isNotBlank() && quitMessage.isNotEmpty() && sendQuitMessage) {
+            Ruom.broadcast(quitMessage.component())
+        }
+
+        if (callPostEvent) {
+            val postVanishEvent = PostVanishEvent(player, preVanishEvent.sendQuitMessage)
+            VelocityVanishSpigot.instance.server.pluginManager.callEvent(postVanishEvent)
+        }
     }
 
-    fun unVanish(player: Player) {
-        unVanish(player, true)
-    }
-
-    fun unVanish(player: Player, sendJoinMessage: Boolean) {
+    fun unVanish(player: Player, sendJoinMessage: Boolean = true, callPostEvent: Boolean = false) {
         val preUnVanishEvent = PreUnVanishEvent(player, sendJoinMessage)
         VelocityVanishSpigot.instance.server.pluginManager.callEvent(preUnVanishEvent)
 
@@ -333,8 +339,19 @@ class VanishManager(
             }
         }
 
-        val postUnVanishEvent = PostUnVanishEvent(player, preUnVanishEvent.sendJoinMessage)
-        VelocityVanishSpigot.instance.server.pluginManager.callEvent(postUnVanishEvent)
+        Utils.sendVanishActionbar(player)
+        plugin.vanishedNames.remove(player.name)
+        plugin.bridgeManager?.updateVanishedPlayersRequest(player, false)
+
+        val joinMessage = Utils.getSerializedMessage(Settings.formatMessage(player, Message.JOIN_MESSAGE, TextReplacement("player", player.name), TextReplacement("player_displayname", player.displayName)))
+        if (joinMessage.isNotBlank() && joinMessage.isNotEmpty() && sendJoinMessage) {
+            Ruom.broadcast(joinMessage.component())
+        }
+
+        if (callPostEvent) {
+            val postUnVanishEvent = PostUnVanishEvent(player, preUnVanishEvent.sendJoinMessage)
+            VelocityVanishSpigot.instance.server.pluginManager.callEvent(postUnVanishEvent)
+        }
     }
 
 }

@@ -135,8 +135,6 @@ class VelocityVanishSpigot : RUoMPlugin() {
         PlayerJoinListener(this)
         PlayerQuitListener(this)
         PlayerInteractListener(this)
-        PostVanishListener(this)
-        PostUnVanishListener(this)
         PlayerTeleportListener(this)
         PlayerDeathListener(this)
         EntityDamageListener(this)

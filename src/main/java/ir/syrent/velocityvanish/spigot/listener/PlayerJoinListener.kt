@@ -33,21 +33,21 @@ class PlayerJoinListener(
         if (!Settings.remember) return
 
         if (plugin.vanishedNames.contains(player.name)) {
-            plugin.vanishManager.vanish(player, false)
+            plugin.vanishManager.vanish(player, sendQuitMessage = false, callPostEvent = true)
             event.joinMessage = null
         } else {
             if (player.hasPermission("velocityvanish.action.vanish.onjoin")) {
                 Ruom.runSync({
-                    plugin.vanishManager.vanish(player, false)
+                    plugin.vanishManager.vanish(player, sendQuitMessage = false, callPostEvent = true)
                 }, 1)
                 event.joinMessage = null
             } else if (player.hasPermission("velocityvanish.action.vanish.force") && Settings.forceVanishIfFirst && Ruom.getOnlinePlayers().size <= 1) {
-                plugin.vanishManager.vanish(player, false)
+                plugin.vanishManager.vanish(player, sendQuitMessage = false, callPostEvent = true)
                 event.joinMessage = null
 
                 Ruom.runSync({
                      if (!plugin.vanishedNames.contains(player.name)) {
-                         plugin.vanishManager.unVanish(player, false)
+                         plugin.vanishManager.unVanish(player, sendJoinMessage = false, callPostEvent = true)
                      }
 
                     val joinMessage = Utils.getSerializedMessage(Settings.formatMessage(player, Message.JOIN_MESSAGE, TextReplacement("player", player.name), TextReplacement("play_displayname", player.displayName)))
@@ -56,7 +56,7 @@ class PlayerJoinListener(
                     }
                 }, 40)
             } else {
-                plugin.vanishManager.unVanish(player, false)
+                plugin.vanishManager.unVanish(player, sendJoinMessage = false, callPostEvent = false)
             }
         }
     }

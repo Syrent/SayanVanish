@@ -31,10 +31,10 @@ class VanishCommand(
 
             if (plugin.vanishedNames.contains(sender.name)) {
                 sender.sendMessage(Message.VANISH_USE_UNVANISH)
-                plugin.vanishManager.unVanish(sender)
+                plugin.vanishManager.unVanish(sender, callPostEvent = true)
             } else {
                 sender.sendMessage(Message.VANISH_USE_VANISH)
-                plugin.vanishManager.vanish(sender)
+                plugin.vanishManager.vanish(sender, callPostEvent = true)
             }
 
             for (staff in Ruom.getOnlinePlayers().filter { it.hasPermission("velocityvanish.admin.notify") && it != sender }) {
@@ -55,10 +55,10 @@ class VanishCommand(
 
             if (plugin.vanishedNames.contains(target.name)) {
                 target.sendMessage(Message.VANISH_USE_UNVANISH)
-                plugin.vanishManager.unVanish(target)
+                plugin.vanishManager.unVanish(target, callPostEvent = true)
             } else {
                 target.sendMessage(Message.VANISH_USE_VANISH)
-                plugin.vanishManager.vanish(target)
+                plugin.vanishManager.vanish(target, callPostEvent = true)
             }
 
             for (staff in Ruom.getOnlinePlayers().filter { it.hasPermission("velocityvanish.admin.notify") && it != target }) {

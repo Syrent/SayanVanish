@@ -90,7 +90,7 @@ dependencies {
     compileOnly files('libs/ServerListPlus-3.5.0-SNAPSHOT-Velocity.jar')
 
     implementation 'io.papermc:paperlib:1.0.8'
-    implementation 'org.bstats:bstats-bukkit:3.0.1'
+    implementation 'org.bstats:bstats-bukkit:3.0.2'
 
     // gson is not exist in legacy minecraft version
     implementation 'com.google.code.gson:gson:2.10.1'

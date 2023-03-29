@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id 'java'
     id 'maven-publish'
@@ -162,7 +164,7 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
+tasks.withType(KotlinCompile).configureEach {
     kotlinOptions {
         jvmTarget = "8"
         freeCompilerArgs += ["-Xjvm-default=all"]
@@ -174,7 +176,7 @@ compileJava.dependsOn clean
 
 build.dependsOn shadowJar
 
-tasks.withType(Jar) {
+tasks.withType(Jar).configureEach {
     destinationDirectory = file("$rootDir/bin/")
 }
 

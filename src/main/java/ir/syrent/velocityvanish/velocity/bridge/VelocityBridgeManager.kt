@@ -6,8 +6,8 @@ import com.velocitypowered.api.proxy.server.RegisteredServer
 import ir.syrent.velocityvanish.velocity.VelocityVanish
 import ir.syrent.velocityvanish.velocity.event.VelocityUnVanishEvent
 import ir.syrent.velocityvanish.velocity.event.VelocityVanishEvent
-import me.mohamad82.ruom.VRuom
-import me.mohamad82.ruom.utils.GsonUtils
+import ir.syrent.velocityvanish.velocity.vruom.VRuom
+import ir.syrent.velocityvanish.velocity.vruom.utils.GsonUtils
 
 @Suppress("UnstableApiUsage")
 class VelocityBridgeManager(

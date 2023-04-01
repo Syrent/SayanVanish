@@ -3,7 +3,7 @@ package ir.syrent.velocityvanish.velocity.command
 import com.velocitypowered.api.command.SimpleCommand
 import ir.syrent.velocityvanish.utils.component
 import ir.syrent.velocityvanish.velocity.VelocityVanish
-import me.mohamad82.ruom.VRuom
+import ir.syrent.velocityvanish.velocity.vruom.VRuom
 
 class ForceVanishCommand(
     private val plugin: VelocityVanish

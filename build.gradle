@@ -20,7 +20,7 @@ repositories {
         url = uri('https://repo.maven.apache.org/maven2/')
     }
 
-    // Velocity-API / PaperLib
+    // Velocity-API / PaperLib / Folia
     maven {
         name 'papermc'
         url 'https://repo.papermc.io/repository/maven-public/'
@@ -45,13 +45,13 @@ repositories {
     }
 
     // VRuom
-    maven {
+    /*maven {
         url = uri("https://maven.pkg.github.com/mohamad82bz/ruom")
         credentials {
             username = project.findProperty("gpr.user")
             password = project.findProperty("gpr.key")
         }
-    }
+    }*/
 
     // ProtocolLib
     maven {
@@ -86,6 +86,7 @@ dependencies {
     compileOnly 'xyz.jpenilla:squaremap-api:1.1.9'
     compileOnly 'net.essentialsx:EssentialsX:2.19.7'
     compileOnly 'com.discordsrv:discordsrv:1.26.0'
+    compileOnly 'org.spongepowered:configurate-yaml:4.0.0'
 
     compileOnly files("libs/SayanChat-2.8.1-all.jar")
     compileOnly files('libs/ProCosmetics.jar')
@@ -97,7 +98,7 @@ dependencies {
     // gson is not exist in legacy minecraft version
     implementation 'com.google.code.gson:gson:2.10'
 
-    implementation 'me.mohamad82:ruom-velocity:4.2.14'
+//    implementation 'me.mohamad82:ruom-velocity:4.2.14'
     implementation 'com.github.cryptomorin:XSeries:9.2.0'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
 

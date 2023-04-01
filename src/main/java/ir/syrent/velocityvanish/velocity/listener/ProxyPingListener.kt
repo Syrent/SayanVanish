@@ -5,7 +5,7 @@ import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyPingEvent
 import com.velocitypowered.api.proxy.server.ServerPing
 import ir.syrent.velocityvanish.velocity.VelocityVanish
-import me.mohamad82.ruom.VRuom
+import ir.syrent.velocityvanish.velocity.vruom.VRuom
 
 class ProxyPingListener(
     private val plugin: VelocityVanish

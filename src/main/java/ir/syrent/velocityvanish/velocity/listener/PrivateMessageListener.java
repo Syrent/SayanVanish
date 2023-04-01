@@ -3,7 +3,7 @@ package ir.syrent.velocityvanish.velocity.listener;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.proxy.Player;
 import ir.syrent.velocityvanish.velocity.VelocityVanish;
-import me.mohamad82.ruom.VRuom;
+import ir.syrent.velocityvanish.velocity.vruom.VRuom;
 import me.sayandevelopment.sayanchat.bridge.proxy.velocity.VelocityPrivateMessageSendEvent;
 import me.sayandevelopment.sayanchat.enums.PrivateMessageResult;
 

@@ -20,7 +20,7 @@ repositories {
         url = uri('https://repo.maven.apache.org/maven2/')
     }
 
-    // Velocity-API / PaperLib
+    // Velocity-API / PaperLib / Folia
     maven {
         name 'papermc'
         url 'https://repo.papermc.io/repository/maven-public/'
@@ -45,13 +45,13 @@ repositories {
     }
 
     // VRuom
-    maven {
+    /*maven {
         url = uri("https://maven.pkg.github.com/mohamad82bz/ruom")
         credentials {
             username = project.findProperty("gpr.user")
             password = project.findProperty("gpr.key")
         }
-    }
+    }*/
 
     // ProtocolLib
     maven {
@@ -85,6 +85,7 @@ dependencies {
     compileOnly 'me.clip:placeholderapi:2.11.3'
     compileOnly 'xyz.jpenilla:squaremap-api:1.1.13'
     compileOnly 'net.essentialsx:EssentialsX:2.19.7'
+    compileOnly 'org.spongepowered:configurate-yaml:4.0.0'
     compileOnly 'com.discordsrv:discordsrv:1.26.2'
 
     compileOnly files("libs/SayanChat-2.8.1-all.jar")

@@ -2,8 +2,8 @@ package ir.syrent.velocityvanish.velocity.bridge
 
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.server.RegisteredServer
-import me.mohamad82.ruom.VRuom
-import me.mohamad82.ruom.messaging.VelocityMessagingChannel
+import ir.syrent.velocityvanish.velocity.vruom.VRuom
+import ir.syrent.velocityvanish.velocity.vruom.messaging.VelocityMessagingChannel
 
 class VelocityBridge: Bridge, VelocityMessagingChannel("velocityvanish", "main") {
 

@@ -12,9 +12,9 @@ import ir.syrent.velocityvanish.velocity.bridge.VelocityBridgeManager
 import ir.syrent.velocityvanish.velocity.command.ForceVanishCommand
 import ir.syrent.velocityvanish.velocity.listener.ProxyPingListener
 import ir.syrent.velocityvanish.velocity.listener.TabCompleteListener
-import me.mohamad82.ruom.VRUoMPlugin
-import me.mohamad82.ruom.VRuom
-import me.mohamad82.ruom.messaging.VelocityMessagingEvent
+import ir.syrent.velocityvanish.velocity.vruom.VRUoMPlugin
+import ir.syrent.velocityvanish.velocity.vruom.VRuom
+import ir.syrent.velocityvanish.velocity.vruom.messaging.VelocityMessagingEvent
 import net.minecrell.serverlistplus.core.ServerListPlusCore
 import net.minecrell.serverlistplus.core.replacement.LiteralPlaceholder
 import net.minecrell.serverlistplus.core.replacement.ReplacementManager
@@ -28,11 +28,10 @@ class VelocityVanish @Inject constructor(
     server: ProxyServer,
     logger: Logger,
     @DataDirectory dataDirectory: Path
-) : VRUoMPlugin(server, logger) {
+) : VRUoMPlugin(server, logger, dataDirectory) {
 
     lateinit var bridgeManager: VelocityBridgeManager
         private set
-    val dataDirectory: Path
 
     /*
     * Note: This is not the best way to do this, but for time being it's fine.
@@ -41,10 +40,6 @@ class VelocityVanish @Inject constructor(
     var vanishedPlayers = mutableSetOf<String>()
     fun vanishedPlayersOnline(): List<String> {
         return vanishedPlayers.filter { getServer().getPlayer(it).isPresent }
-    }
-
-    init {
-        this.dataDirectory = dataDirectory
     }
 
     @Subscribe
@@ -133,7 +128,7 @@ class VelocityVanish @Inject constructor(
     }
 
     private fun createFolder() {
-        val dataFile = dataDirectory.toFile()
+        val dataFile = VRUoMPlugin.getDataDirectory().toFile()
         if (!dataFile.exists()) {
             dataFile.mkdir()
         }

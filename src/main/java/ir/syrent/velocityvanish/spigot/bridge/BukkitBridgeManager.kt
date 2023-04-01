@@ -5,7 +5,7 @@ import com.google.gson.JsonObject
 import ir.syrent.velocityvanish.spigot.VelocityVanishSpigot
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import ir.syrent.velocityvanish.velocity.bridge.Bridge
-import me.mohamad82.ruom.utils.GsonUtils
+import ir.syrent.velocityvanish.velocity.vruom.utils.GsonUtils
 import org.bukkit.entity.Player
 
 @Suppress("UnstableApiUsage")

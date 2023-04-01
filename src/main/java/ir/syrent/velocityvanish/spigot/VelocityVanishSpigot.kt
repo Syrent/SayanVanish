@@ -22,8 +22,6 @@ import ir.syrent.velocityvanish.spigot.storage.Settings.velocitySupport
 import ir.syrent.velocityvanish.spigot.utils.ServerVersion
 import ir.syrent.velocityvanish.spigot.utils.Utils
 import ir.syrent.velocityvanish.utils.component
-import net.minecraft.world.effect.MobEffect
-import net.minecraft.world.effect.MobEffectInstance
 import org.bstats.bukkit.Metrics
 import org.bukkit.entity.Player
 

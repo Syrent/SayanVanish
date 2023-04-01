@@ -7,8 +7,6 @@ object DependencyManager {
 
     var protocolLibHook: ProtocolLibHook
         private set
-    var proCosmeticsHook: ProCosmeticsHook
-        private set
     var placeholderAPIHook: PlaceholderAPIHook
         private set
     var sayanChatHook: SayanChatHook
@@ -35,10 +33,6 @@ object DependencyManager {
             if (Settings.velocitySupport) {
                 this.register()
             }
-        }
-        ProCosmeticsHook("ProCosmetics").apply {
-            this.register()
-            proCosmeticsHook = this
         }
         PlaceholderAPIHook(VelocityVanishSpigot.instance, "PlaceholderAPI").apply {
             this.register()

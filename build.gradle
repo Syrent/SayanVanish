@@ -80,16 +80,13 @@ repositories {
 
 dependencies {
     compileOnly 'com.velocitypowered:velocity-api:3.1.1'
-    compileOnly 'org.spigotmc:spigot-api:1.19-R0.1-SNAPSHOT'
+    compileOnly 'org.spigotmc:spigot-api:1.19.4-R0.1-SNAPSHOT'
     compileOnly 'com.comphenix.protocol:ProtocolLib:4.8.0'
     compileOnly 'me.clip:placeholderapi:2.11.3'
     compileOnly 'xyz.jpenilla:squaremap-api:1.1.13'
     compileOnly 'net.essentialsx:EssentialsX:2.19.7'
-    compileOnly 'org.spongepowered:configurate-yaml:4.0.0'
+    compileOnly 'org.spongepowered:configurate-yaml:4.1.2'
     compileOnly 'com.discordsrv:discordsrv:1.26.2'
-
-    compileOnly files("libs/SayanChat-2.8.1-all.jar")
-    compileOnly files('libs/ProCosmetics.jar')
     compileOnly files('libs/ServerListPlus-3.5.0-SNAPSHOT-Velocity.jar')
 
     implementation 'io.papermc:paperlib:1.0.8'
@@ -98,7 +95,6 @@ dependencies {
     // gson is not exist in legacy minecraft version
     implementation 'com.google.code.gson:gson:2.10.1'
 
-    implementation 'me.mohamad82:ruom-velocity:4.2.14'
     implementation 'com.github.cryptomorin:XSeries:9.3.1'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
 
@@ -110,7 +106,7 @@ dependencies {
 
     annotationProcessor 'com.velocitypowered:velocity-api:3.1.1'
 
-    compileOnly 'org.spigotmc:spigot:1.19.3-R0.1-SNAPSHOT:remapped-mojang'
+    compileOnly 'org.spigotmc:spigot-api:1.19.4-R0.1-SNAPSHOT'
 }
 
 processResources {
@@ -129,7 +125,6 @@ shadowJar {
         attributes["Main-Class"] = 'ir.syrent.velocityvanish.velocity.VelocityVanish'
     }
 
-    relocate('me.mohamad82.ruom', 'ir.syrent.velocityvanish.ruom')
     relocate('com.cryptomorin.xseries', 'ir.syrent.velocityvanish.xseries')
     relocate('kotlin', 'ir.syrent.velocityvanish.kotlin')
     relocate('com.jeff_media.updatechecker', 'ir.syrent.velocityvanish.updatechecker')
@@ -150,7 +145,7 @@ jar {
     archiveFileName = findProperty("plugin-name") + " v" + findProperty("version") + " " + "unshaded" + ".jar"
 }
 
-def targetJavaVersion = 11
+def targetJavaVersion = 8
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = 8
@@ -167,7 +162,7 @@ tasks.withType(JavaCompile).configureEach {
 
 tasks.withType(KotlinCompile).configureEach {
     kotlinOptions {
-        jvmTarget = "8"
+        jvmTarget = "11"
         freeCompilerArgs += ["-Xjvm-default=all"]
     }
 }

@@ -7,6 +7,7 @@ general:
     error_prefix: "<dark_gray>[</dark_gray><dark_red><bold>✘</bold><dark_gray>]</dark_gray>"
     only_players: "$error_prefix <gradient:dark_red:red>Faghat player ha mitonan in command ro ejra konan."
     unknown_message: "$error_prefix <gradient:dark_red:red>Message namoshakhas mibashad."
+    player_not_found: "$error_prefix <gradient:dark_red:red>Player peyda nashod!"
 command:
     no_permission: "$error_prefix <gradient:dark_red:red>Shoma permission estefade az in dastoor ra nadarid. <dark_gray>($permission)"
     vanish:

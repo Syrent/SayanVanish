@@ -44,9 +44,9 @@ class PlaceholderAPIHook constructor(plugin: VelocityVanishSpigot, name: String)
             return true
         }
 
-        override fun onRequest(player: OfflinePlayer, params: String): String? {
+        override fun onRequest(player: OfflinePlayer?, params: String): String? {
             if (params.equals("vanished", true)) {
-                return if (plugin.vanishedNames.contains(player.name)) "true" else "false"
+                return if (plugin.vanishedNames.contains(player?.name)) "true" else "false"
             }
 
             if (params.equals("count", true)) {

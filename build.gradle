@@ -98,7 +98,7 @@ dependencies {
     // gson is not exist in legacy minecraft version
     implementation 'com.google.code.gson:gson:2.10.1'
 
-    implementation 'me.mohamad82:ruom-velocity:4.2.14'
+//    implementation 'me.mohamad82:ruom-velocity:4.2.14'
     implementation 'com.github.cryptomorin:XSeries:9.3.1'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
 
@@ -165,13 +165,6 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
-tasks.withType(KotlinCompile).configureEach {
-    kotlinOptions {
-        jvmTarget = "8"
-        freeCompilerArgs += ["-Xjvm-default=all"]
-    }
-}
-
 compileJava.options.encoding = 'UTF-8'
 compileJava.dependsOn clean
 
@@ -199,17 +192,6 @@ def generateTemplates = tasks.register('generateTemplates', Copy) { task ->
 }
 sourceSets.main.java.srcDir(generateTemplates.map { it.outputs })
 rootProject.idea.project.settings.taskTriggers.afterSync generateTemplates
-
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-}
-compileTestKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-}
 
 /* First add a new source set. Don't use your main source set for generated stuff. */
 sourceSets.main.java.srcDirs = ['src/generated/java', 'src/main/java']

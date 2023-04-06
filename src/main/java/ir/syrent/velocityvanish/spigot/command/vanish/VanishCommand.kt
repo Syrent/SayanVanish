@@ -45,7 +45,6 @@ class VanishCommand(
                 }
             }
         } else {
-            sender as Player
             val target = Bukkit.getPlayerExact(args[0])
 
             if (target == null) {

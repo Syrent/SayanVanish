@@ -14,8 +14,8 @@ softdepend:
   - 'squaremap'
   - 'Essentials'
 commands:
-  vanish:
+  velocityvanish:
     aliases:
-      - velocityvanish
+      - vanish
       - sayanvanish
     description: Toggle vanish state

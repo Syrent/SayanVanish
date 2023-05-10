@@ -343,7 +343,7 @@ class VanishManager(
         plugin.vanishedNames.remove(player.name)
         plugin.bridgeManager?.updateVanishedPlayersRequest(player, false)
 
-        val joinMessage = Utils.getSerializedMessage(Settings.formatMessage(player, Message.JOIN_MESSAGE, TextReplacement("player", player.name), TextReplacement("player_displayname", player.displayName)))
+        val joinMessage = Utils.getSerializedMessage(Settings.formatMessage(player, Message.JOIN_MESSAGE, TextReplacement("player_displayname", player.displayName), TextReplacement("player", player.name)))
         if (joinMessage.isNotBlank() && joinMessage.isNotEmpty() && sendJoinMessage) {
             Ruom.broadcast(joinMessage.component())
         }

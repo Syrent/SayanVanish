@@ -89,7 +89,7 @@ dependencies {
     // gson is not exist in legacy minecraft version
     implementation 'com.google.code.gson:gson:2.10.1'
 
-    implementation 'com.github.cryptomorin:XSeries:9.3.1'
+    implementation 'com.github.cryptomorin:XSeries:9.4.0'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
 
     implementation 'net.kyori:adventure-api:4.14.0'

@@ -44,15 +44,6 @@ repositories {
         }
     }
 
-    // VRuom
-    /*maven {
-        url = uri("https://maven.pkg.github.com/mohamad82bz/ruom")
-        credentials {
-            username = project.findProperty("gpr.user")
-            password = project.findProperty("gpr.key")
-        }
-    }*/
-
     // ProtocolLib
     maven {
         url "https://repo.dmulloy2.net/repository/public/"
@@ -98,7 +89,6 @@ dependencies {
     // gson is not exist in legacy minecraft version
     implementation 'com.google.code.gson:gson:2.10.1'
 
-//    implementation 'me.mohamad82:ruom-velocity:4.2.14'
     implementation 'com.github.cryptomorin:XSeries:9.3.1'
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
 

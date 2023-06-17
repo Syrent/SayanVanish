@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
  * <p>
  * This class is a reflection accessor for net.minecraft.world.effect.MobEffect
  *
- * @since 2023-04-01 20:04:12
+ * @since 2023-06-17 13:51:22
  */
 public class MobEffectAccessor {
   /**
@@ -24,11 +24,11 @@ public class MobEffectAccessor {
           /* SEARGE */
           mapper.map("SEARGE", "1.8.8", "net.minecraft.potion.Potion"); // 1.8.8 - 1.13.2
           mapper.map("SEARGE", "1.14", "net.minecraft.potion.Effect"); // 1.14 - 1.16.5
-          mapper.map("SEARGE", "1.17", "net.minecraft.src.C_496_"); // 1.17 - 1.19.3
+          mapper.map("SEARGE", "1.17", "net.minecraft.src.C_496_"); // 1.17 - 1.20.1
 
           /* SPIGOT */
           mapper.map("SPIGOT", "1.8.8", "net.minecraft.server.${V}.MobEffectList"); // 1.8.8 - 1.16.5
-          mapper.map("SPIGOT", "1.17", "net.minecraft.world.effect.MobEffectList"); // 1.17 - 1.19.3
+          mapper.map("SPIGOT", "1.17", "net.minecraft.world.effect.MobEffectList"); // 1.17 - 1.20.1
 
         });
   }
@@ -48,11 +48,11 @@ public class MobEffectAccessor {
 
           /* SEARGE */
           mapper.map("SEARGE", "1.9", "func_188412_a"); // 1.9 - 1.16.5
-          mapper.map("SEARGE", "1.17", "m_19453_"); // 1.17 - 1.19.3
+          mapper.map("SEARGE", "1.17", "m_19453_"); // 1.17 - 1.20.1
 
           /* SPIGOT */
           mapper.map("SPIGOT", "1.9", "fromId"); // 1.9 - 1.17.1
-          mapper.map("SPIGOT", "1.18", "a"); // 1.18 - 1.19.3
+          mapper.map("SPIGOT", "1.18", "a"); // 1.18 - 1.20.1
 
         }, int.class);
   }

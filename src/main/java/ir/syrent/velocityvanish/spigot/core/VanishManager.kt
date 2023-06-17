@@ -201,25 +201,8 @@ class VanishManager(
 
         try {
             player.isCollidable = false
-        } catch (e: NoClassDefFoundError) {
-            try {
-                @Suppress("DEPRECATION")
-                player.spigot().collidesWithEntities = false
-            } catch (e1: NoClassDefFoundError) {
-                e.printStackTrace()
-            } catch (e1: NoSuchMethodError) {
-                e.printStackTrace()
-            }
-        } catch (e: NoSuchMethodError) {
-            try {
-                @Suppress("DEPRECATION")
-                player.spigot().collidesWithEntities = false
-            } catch (e1: NoClassDefFoundError) {
-                e.printStackTrace()
-            } catch (e1: NoSuchMethodError) {
-                e.printStackTrace()
-            }
-        }
+        } catch (_: NoClassDefFoundError) {
+        } catch (_: NoSuchMethodError) { }
 
         player.world.entities.stream()
             .filter { entity -> entity is Creature }
@@ -302,12 +285,7 @@ class VanishManager(
         try {
             player.isCollidable = true
         } catch (_: NoClassDefFoundError) {
-            @Suppress("DEPRECATION")
-            player.spigot().collidesWithEntities = true
-        } catch (_: NoSuchMethodError) {
-            @Suppress("DEPRECATION")
-            player.spigot().collidesWithEntities = true
-        }
+        } catch (_: NoSuchMethodError) { }
 
         removePotionEffects(player)
 

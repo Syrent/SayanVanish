@@ -2,11 +2,10 @@ pluginManagement {
     repositories {
         mavenCentral()
         maven {
-            url = "https://repo.screamingsandals.org/public/"
+            url = uri("https://repo.screamingsandals.org/public/")
         }
-
         gradlePluginPortal()
     }
 }
 
-rootProject.name = 'VelocityVanish'
+rootProject.name = "VelocityVanish"

@@ -217,6 +217,10 @@ class VanishManager(
             DependencyManager.essentialsXHook.vanish(player, true)
         }
 
+        if (DependencyManager.sunlightHook.exists) {
+            DependencyManager.sunlightHook.vanish(player, true)
+        }
+
         if (ServerVersion.supports(9)) {
             denyPush(player)
         }
@@ -291,6 +295,10 @@ class VanishManager(
 
         if (DependencyManager.essentialsXHook.exists) {
             DependencyManager.essentialsXHook.vanish(player, false)
+        }
+
+        if (DependencyManager.sunlightHook.exists) {
+            DependencyManager.sunlightHook.vanish(player, false)
         }
 
         Utils.actionbarPlayers.remove(player)

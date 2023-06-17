@@ -15,4 +15,5 @@ class AfkStatusChangeListener(
 
         event.isCancelled = true
     }
+
 }

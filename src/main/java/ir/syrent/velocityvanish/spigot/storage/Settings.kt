@@ -47,6 +47,8 @@ object Settings {
     var preventPickup = true
     var silentOpenContainer = true
 
+    var forcePreventPrivateMessages = true
+
     var preventBlockBreak = false
     var preventBlockPlace = false
     var preventInteract = false
@@ -112,6 +114,8 @@ object Settings {
         preventBlockBreak = settingsConfig.getBoolean("vanish.prevent.block_break")
         preventBlockPlace = settingsConfig.getBoolean("vanish.prevent.block_place")
         preventInteract = settingsConfig.getBoolean("vanish.prevent.interact")
+
+        forcePreventPrivateMessages = settingsConfig.getBoolean("hooks.essentials.force_prevent_private_messages")
 
         language = YamlConfig(Ruom.getPlugin().dataFolder, "languages/$defaultLanguage.yml")
         languageConfig = language.config

@@ -38,3 +38,6 @@ vanish:
         block_break: false
         block_place: false
         interact: false
+hooks:
+    essentials:
+        force_prevent_private_messages: false

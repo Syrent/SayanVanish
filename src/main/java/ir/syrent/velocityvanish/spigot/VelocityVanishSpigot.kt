@@ -147,6 +147,7 @@ class VelocityVanishSpigot : RUoMPlugin() {
         if (ServerVersion.supports(19)) BlockReceiveGameListener(this)
         if (DependencyManager.essentialsXHook.exists) {
             AfkStatusChangeListener(this)
+            PrivateMessagePreSendListener(this)
         }
     }
 

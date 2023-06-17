@@ -8,7 +8,7 @@ import java.util.concurrent.Executors
 plugins {
     kotlin("jvm") version "1.8.22"
     id("java")
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
     id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.7"
     id("org.screamingsandals.nms-mapper") version "1.4.5"
     id("xyz.jpenilla.run-paper") version "2.1.0"

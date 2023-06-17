@@ -60,7 +60,7 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.3")
     compileOnly("xyz.jpenilla:squaremap-api:1.1.14")
     compileOnly("net.essentialsx:EssentialsX:2.20.0")
-    compileOnly("org.spongepowered:configurate-yaml:4.0.0")
+    compileOnly("org.spongepowered:configurate-yaml:4.2.0-yamlbranch-4")
     compileOnly("com.discordsrv:discordsrv:1.26.2")
 
     // SayanChat 2.8.1

@@ -4,8 +4,6 @@ import com.google.gson.JsonObject
 import com.jeff_media.updatechecker.UpdateCheckSource
 import com.jeff_media.updatechecker.UpdateChecker
 import io.papermc.lib.PaperLib
-import ir.syrent.nms.accessors.MobEffectAccessor
-import ir.syrent.nms.accessors.MobEffectInstanceAccessor
 import ir.syrent.velocityvanish.spigot.bridge.BukkitBridge
 import ir.syrent.velocityvanish.spigot.bridge.BukkitBridgeManager
 import ir.syrent.velocityvanish.spigot.command.vanish.VanishCommand
@@ -22,8 +20,6 @@ import ir.syrent.velocityvanish.spigot.storage.Settings.velocitySupport
 import ir.syrent.velocityvanish.spigot.utils.ServerVersion
 import ir.syrent.velocityvanish.spigot.utils.Utils
 import ir.syrent.velocityvanish.utils.component
-import net.minecraft.world.effect.MobEffect
-import net.minecraft.world.effect.MobEffectInstance
 import org.bstats.bukkit.Metrics
 import org.bukkit.entity.Player
 

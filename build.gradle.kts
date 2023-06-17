@@ -66,6 +66,7 @@ dependencies {
     // SayanChat 2.8.1
     // ProCosmetics
     // ServerListPlus 3.5.0 SNAPSHOT
+    // NexEngine and SunLight
     compileOnly(fileTree("libs"))
 
     implementation("io.papermc:paperlib:1.0.8")

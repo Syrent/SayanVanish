@@ -15,6 +15,8 @@ object DependencyManager {
         private set
     var essentialsXHook: EssentialsXHook
         private set
+    var sunlightHook: SunlightHook
+        private set
     var squareMapHook: SquareMapHook
         private set
 
@@ -30,6 +32,10 @@ object DependencyManager {
         EssentialsXHook("Essentials").apply {
             this.register()
             essentialsXHook = this
+        }
+        SunlightHook("SunLight").apply {
+            this.register()
+            sunlightHook = this
         }
         EnhancedVelocityHook("EnhancedVelocity").apply {
             if (Settings.velocitySupport) {

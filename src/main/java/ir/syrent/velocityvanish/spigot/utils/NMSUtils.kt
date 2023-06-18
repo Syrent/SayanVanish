@@ -1,10 +1,14 @@
 package ir.syrent.velocityvanish.spigot.utils
 
 import com.cryptomorin.xseries.ReflectionUtils
+import com.mojang.authlib.GameProfile
 import ir.syrent.nms.accessors.ServerGamePacketListenerImplAccessor
 import ir.syrent.nms.accessors.ServerPlayerAccessor
+import me.sayandevelopment.sayanchat.ruom.nmsaccessors.ServerPlayerGameModeAccessor
+import org.bukkit.World
 import org.bukkit.entity.Player
 import java.lang.reflect.Method
+import java.util.*
 
 
 object NMSUtils {
@@ -12,6 +16,7 @@ object NMSUtils {
     private var CRAFT_PLAYER: Class<*>? = null
 
     private var CRAFT_PLAYER_GET_HANDLE_METHOD: Method? = null
+    private var CRAFT_WORLD_GET_HANDLE_METHOD: Method? = null
 
     init {
         try {
@@ -50,6 +55,36 @@ object NMSUtils {
         } catch (e: Exception) {
             e.printStackTrace()
             throw Error(e)
+        }
+    }
+
+    fun getServerLevel(world: World): Any? {
+        return try {
+            CRAFT_WORLD_GET_HANDLE_METHOD!!.invoke(world)
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    fun createServerPlayerObject(name: String, world: World, skin: Optional<MinecraftSkin>): Any? {
+        return try {
+            val serverLevel: Any = getServerLevel(world)
+            val profile = GameProfile(UUID.randomUUID(), name)
+            val entity: Any
+            entity = ServerPlayerAccessor.getConstructor2().newInstance(
+                    NMSUtils.getDedicatedServer(),
+                    serverLevel,
+                    profile,
+                    null
+                )
+            if (skin.isPresent()) {
+                skin.get().apply(entity)
+            }
+            entity
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+            null
         }
     }
 }

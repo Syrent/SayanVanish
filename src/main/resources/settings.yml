@@ -32,6 +32,7 @@ vanish:
     invincible: true
     # Prevent vanished players from pickup items
     prevent_pickup: true
+    # Note: Not working when some ProCosmetics cosmetics are enabled!
     silent_open_container: true
     prevent:
         block_break: false

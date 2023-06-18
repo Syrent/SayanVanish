@@ -19,8 +19,6 @@ import ir.syrent.velocityvanish.spigot.utils.ServerVersion
 import ir.syrent.velocityvanish.spigot.utils.Utils
 import ir.syrent.velocityvanish.utils.TextReplacement
 import ir.syrent.velocityvanish.utils.component
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
-import net.minecraft.server.level.ServerPlayer
 import org.bukkit.GameMode
 import org.bukkit.entity.Creature
 import org.bukkit.entity.Player
@@ -80,31 +78,23 @@ class VanishManager(
                         DependencyManager.protocolLibHook.protocolManager.sendServerPacket(onlinePlayer, newTabPacket)
                     }
                 } catch (e: Exception) {
-                    val removePacket = ClientboundPlayerInfoRemovePacketAccessor.getConstructor0().newInstance(
-                        listOf(EntityAccessor.getMethodGetUUID1().invoke(NMSUtils.getServerPlayer(player))),
+                    /*val removePacket = ClientboundPlayerInfoRemovePacketAccessor.getConstructor0().newInstance(
+                        ClientboundPlayerInfoRemovePacketAccessor.getFieldProfileIds(),
                     )
 
-                    val addPacket = ClientboundPlayerInfoUpdatePacketAccessor.getMethodCreatePlayerInitializing1().invoke(
-                        null,
-                        listOf(NMSUtils.getServerPlayer(player))
+                    val addPacket = ClientboundPlayerInfoUpdatePacketAccessor.getConstructor0().newInstance(
+                        ClientboundPlayerInfoUpdatePacket_i_ActionAccessor.getFieldADD_PLAYER(),
+                        NMSUtils.getServerPlayer(player)
                     )
 
-                    val updateGamemodePacket = ClientboundPlayerInfoUpdatePacketAccessor.getConstructor0().newInstance(
+                    val packet = ClientboundPlayerInfoUpdatePacketAccessor.getConstructor0().newInstance(
                         ClientboundPlayerInfoUpdatePacket_i_ActionAccessor.getFieldUPDATE_GAME_MODE(),
                         NMSUtils.getServerPlayer(player)
                     )
-                    ClientboundPlayerInfoUpdatePacket.Action.UPDATE_GAME_MODE
-
-
-//                    val updateGamemodePacket = ClientboundPlayerInfoUpdatePacket_i_ActionAccessor.getFieldWriter().
 
                     for (onlinePlayer in Ruom.getOnlinePlayers().filter { it.hasPermission("velocityvanish.admin.seevanished") }.filter { it != player }) {
-                        NMSUtils.sendPacket(onlinePlayer, updateGamemodePacket)
-                    }
-
-                    for (onlinePlayer in Ruom.getOnlinePlayers().filter { !it.hasPermission("velocityvanish.admin.seevanished") }.filter { it != player }) {
-                        NMSUtils.sendPacket(onlinePlayer, removePacket)
-                    }
+                        NMSUtils.sendPacket(onlinePlayer, packet)
+                    }*/
                 }
             }, 2)
         } else {

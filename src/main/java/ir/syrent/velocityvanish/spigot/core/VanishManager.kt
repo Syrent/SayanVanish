@@ -2,8 +2,12 @@ package ir.syrent.velocityvanish.spigot.core
 
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.events.PacketContainer
-import com.comphenix.protocol.wrappers.*
+import com.comphenix.protocol.wrappers.EnumWrappers
 import com.comphenix.protocol.wrappers.EnumWrappers.NativeGameMode
+import com.comphenix.protocol.wrappers.PlayerInfoData
+import com.comphenix.protocol.wrappers.WrappedChatComponent
+import com.comphenix.protocol.wrappers.WrappedGameProfile
+import com.mojang.authlib.GameProfile
 import ir.syrent.nms.accessors.*
 import ir.syrent.velocityvanish.spigot.VelocityVanishSpigot
 import ir.syrent.velocityvanish.spigot.event.PostUnVanishEvent
@@ -46,59 +50,40 @@ class VanishManager(
     val invulnerablePlayers = mutableSetOf<UUID>()
 
     fun updateTabState(player: Player, state: GameMode) {
-        if (DependencyManager.protocolLibHook.exists && Settings.seeAsSpectator) {
-            /*
-            * Players can't receive packets from plugin on join
-            * So we need to send packet after 1 tick
-            * (2tick incase)
-            */
-            Ruom.runSync({
-                try {
-                    val tabPacket = DependencyManager.protocolLibHook.protocolManager.createPacket(PacketType.Play.Server.PLAYER_INFO, true)
-                    val infoData = tabPacket?.playerInfoDataLists
-                    val infoAction = tabPacket?.playerInfoAction
+        if (Settings.seeAsSpectator) {
+            if (ServerVersion.supports(19)) {
+                updateTabStateViaPacket(player, state)
+            } else {
+                if (DependencyManager.protocolLibHook.exists) {
+                    try {
+                        val tabPacket = DependencyManager.protocolLibHook.protocolManager.createPacket(PacketType.Play.Server.PLAYER_INFO, true)
+                        val infoData = tabPacket?.playerInfoDataLists
+                        val infoAction = tabPacket?.playerInfoAction
 
-                    val playerInfo = infoData?.read(0)
+                        val playerInfo = infoData?.read(0)
 
-                    playerInfo?.add(
-                        PlayerInfoData(
-                            WrappedGameProfile.fromPlayer(player),
-                            0,
-                            NativeGameMode.valueOf(state.name),
-                            WrappedChatComponent.fromText(player.playerListName)
+                        playerInfo?.add(
+                            PlayerInfoData(
+                                WrappedGameProfile.fromPlayer(player),
+                                0,
+                                NativeGameMode.valueOf(state.name),
+                                WrappedChatComponent.fromText(player.playerListName)
+                            )
                         )
-                    )
 
-                    infoData?.write(0, playerInfo)
-                    infoAction?.write(0, EnumWrappers.PlayerInfoAction.UPDATE_GAME_MODE)
+                        infoData?.write(0, playerInfo)
+                        infoAction?.write(0, EnumWrappers.PlayerInfoAction.UPDATE_GAME_MODE)
 
-                    val newTabPacket = PacketContainer(PacketType.Play.Server.PLAYER_INFO, tabPacket?.handle)
+                        val newTabPacket = PacketContainer(PacketType.Play.Server.PLAYER_INFO, tabPacket?.handle)
 
-                    for (onlinePlayer in Ruom.getOnlinePlayers().filter { it.hasPermission("velocityvanish.admin.seevanished") }.filter { it != player }) {
-                        DependencyManager.protocolLibHook.protocolManager.sendServerPacket(onlinePlayer, newTabPacket)
+                        for (onlinePlayer in Ruom.getOnlinePlayers().filter { it.hasPermission("velocityvanish.admin.seevanished") }.filter { it != player }) {
+                            DependencyManager.protocolLibHook.protocolManager.sendServerPacket(onlinePlayer, newTabPacket)
+                        }
+                    } catch (_: Exception) {
+                        Ruom.warn("Couldn't vanish player using ProtocolLib, Is you server/plugins up-to-date?")
                     }
-                } catch (e: Exception) {
-                    /*val removePacket = ClientboundPlayerInfoRemovePacketAccessor.getConstructor0().newInstance(
-                        ClientboundPlayerInfoRemovePacketAccessor.getFieldProfileIds(),
-                    )
-
-                    val addPacket = ClientboundPlayerInfoUpdatePacketAccessor.getConstructor0().newInstance(
-                        ClientboundPlayerInfoUpdatePacket_i_ActionAccessor.getFieldADD_PLAYER(),
-                        NMSUtils.getServerPlayer(player)
-                    )
-
-                    val packet = ClientboundPlayerInfoUpdatePacketAccessor.getConstructor0().newInstance(
-                        ClientboundPlayerInfoUpdatePacket_i_ActionAccessor.getFieldUPDATE_GAME_MODE(),
-                        NMSUtils.getServerPlayer(player)
-                    )
-
-                    for (onlinePlayer in Ruom.getOnlinePlayers().filter { it.hasPermission("velocityvanish.admin.seevanished") }.filter { it != player }) {
-                        NMSUtils.sendPacket(onlinePlayer, packet)
-                    }*/
                 }
-            }, 2)
-        } else {
-            hidePlayer(player)
+            }
         }
     }
 
@@ -111,7 +96,7 @@ class VanishManager(
             val onlinePlayerVanishLevel = onlinePlayer.effectivePermissions.map { it.permission }
                 .filter { it.startsWith("velocityvanish.level.") }.maxOfOrNull { it.split(".")[2].toInt() } ?: 0
 
-            if (onlinePlayerVanishLevel > vanishLevel) continue
+            if (onlinePlayerVanishLevel >= vanishLevel) continue
 
             @Suppress("DEPRECATION")
             onlinePlayer.hidePlayer(player)
@@ -337,6 +322,42 @@ class VanishManager(
         if (callPostEvent) {
             val postUnVanishEvent = PostUnVanishEvent(player, preUnVanishEvent.sendJoinMessage)
             VelocityVanishSpigot.instance.server.pluginManager.callEvent(postUnVanishEvent)
+        }
+    }
+
+    fun updateTabStateViaPacket(player: Player, gameMode: GameMode, exceptSelf: Boolean = true) {
+        try {
+
+            val profile = GameProfile(player.uniqueId, player.name)
+            val serverPlayer = NMSUtils.getServerPlayer(player)
+
+            val packet = ClientboundPlayerInfoUpdatePacketAccessor.getConstructor0().newInstance(
+                ClientboundPlayerInfoUpdatePacket_i_ActionAccessor.getFieldUPDATE_GAME_MODE(),
+                serverPlayer
+            )
+            val list: MutableList<Any> = (ClientboundPlayerInfoUpdatePacketAccessor.getMethodEntries1().invoke(packet) as List<Any>).toMutableList()
+            list.add(
+                ClientboundPlayerInfoUpdatePacket_i_EntryAccessor.getConstructor0().newInstance(
+                    player.uniqueId,
+                    profile,
+                    true,
+                    0,
+                    GameTypeAccessor.getMethodByName1().invoke(null, gameMode.name.lowercase()),
+                    null,
+                    null
+                )
+            )
+            ClientboundPlayerInfoUpdatePacketAccessor.getFieldEntries().set(
+                packet,
+                list.toList()
+            )
+
+            for (onlinePlayer in Ruom.getOnlinePlayers().filter { it.hasPermission("velocityvanish.admin.seevanished") }) {
+                if (exceptSelf && onlinePlayer == player) continue
+                NMSUtils.sendPacket(onlinePlayer, packet)
+            }
+        } catch (_: Exception) {
+            Ruom.warn("Couldn't update player state in tab via packets.")
         }
     }
 

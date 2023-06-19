@@ -28,6 +28,9 @@ class PlayerJoinListener(
         for (vanishedPlayer in plugin.vanishedNames.mapNotNull { Bukkit.getPlayerExact(it) }) {
             plugin.vanishManager.hidePlayer(vanishedPlayer)
             plugin.vanishManager.updateTabState(vanishedPlayer, GameMode.SPECTATOR)
+            Ruom.runSync({
+                plugin.vanishManager.updateTabState(vanishedPlayer, GameMode.SPECTATOR)
+            }, 1)
         }
 
         if (!Settings.remember) return

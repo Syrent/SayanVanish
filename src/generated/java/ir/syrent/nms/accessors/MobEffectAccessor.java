@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
  * <p>
  * This class is a reflection accessor for net.minecraft.world.effect.MobEffect
  *
- * @since 2023-06-17 13:51:22
+ * @since 2023-06-19 13:43:36
  */
 public class MobEffectAccessor {
   /**

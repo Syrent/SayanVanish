@@ -9,7 +9,7 @@ import java.lang.reflect.Field;
  * <p>
  * This class is a reflection accessor for net.minecraft.world.effect.MobEffectInstance
  *
- * @since 2023-06-17 13:51:22
+ * @since 2023-06-19 13:43:36
  */
 public class MobEffectInstanceAccessor {
   /**

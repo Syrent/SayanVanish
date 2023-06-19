@@ -235,7 +235,7 @@ class VanishManager(
         plugin.bridgeManager?.updateVanishedPlayersRequest(player, true)
 
         val quitMessage = Utils.getSerializedMessage(Settings.formatMessage(player, Message.QUIT_MESSAGE, TextReplacement("player", player.name), TextReplacement("play_displayname", player.displayName)))
-        if (quitMessage.isNotBlank() && quitMessage.isNotEmpty() && sendQuitMessage) {
+        if (quitMessage.isNotBlank() && quitMessage.isNotEmpty() && sendQuitMessage && Settings.fakeJoinLeaveMessage) {
             Ruom.broadcast(quitMessage.component())
         }
 
@@ -315,7 +315,7 @@ class VanishManager(
         plugin.bridgeManager?.updateVanishedPlayersRequest(player, false)
 
         val joinMessage = Utils.getSerializedMessage(Settings.formatMessage(player, Message.JOIN_MESSAGE, TextReplacement("player_displayname", player.displayName), TextReplacement("player", player.name)))
-        if (joinMessage.isNotBlank() && joinMessage.isNotEmpty() && sendJoinMessage) {
+        if (joinMessage.isNotBlank() && joinMessage.isNotEmpty() && sendJoinMessage && Settings.fakeJoinLeaveMessage) {
             Ruom.broadcast(joinMessage.component())
         }
 

@@ -1,44 +1,54 @@
-#
 # Full wiki is available at https://github.com/Syrent/VelocityVanish/wiki
-#
-config_version: 5
+config_version: 6
 default_language: en_US
 show_dependency_suggestions: true
-# NOT RECOMMENDED, Legacy code support is extremely discouraged. It affects performance, and it does not contain the new minecraft chat features.
+
+# IMPORTANT: Legacy code support is strongly discouraged. It adversely affects performance and lacks new Minecraft chat features.
 support_legacy_color_codes: false
-# If you are the first player to join the server, the Vanish data may not be synchronized correctly,
-# and you will not be in vanish mode. This option allows you to enter vanish mode if you have operator privileges
-# or the "velocityvanish.action.vanish.force" permission. If you were not previously in vanish mode,
-# it will unvanish you after a few seconds.
+
+# If you're the first player to join the server, Vanish data may not synchronize correctly,
+# and you may not enter vanish mode. With this option enabled, you can still enter vanish mode
+# if you have operator privileges or the "velocityvanish.action.vanish.force" permission.
+# If you weren't previously in vanish mode, you'll be unvanished after a few seconds.
 force_vanish_if_first: true
 
 bstats: true
+
 # Leave sounds blank to disable them
 # Example: command: ""
 sounds:
     command: "ENTITY_EXPERIENCE_ORB_PICKUP"
     vanish: "ENTITY_EXPERIENCE_ORB_PICKUP"
     unvanish: "ENTITY_EXPERIENCE_ORB_PICKUP"
+
 vanish:
-    # Show players actionbar when they are vanished
+    # Show players an actionbar when they are vanished
     actionbar: true
-    # Remember vanish data after switch servers?
-    # Note: Need Velocity as proxy server
+
+    # Remember vanish data after switching servers?
+    # Note: Requires Velocity as a proxy server
     remember: true
+
     # Should we change player type to spectator in tablist for players who have permission to see vanished players?
-    # Note: Requires ProtocolLib
+    # Note: Requires ProtocolLib in versions lower than 1.19
     see_as_spectator: true
+
     # Should vanished players be protected from all damage sources?
     invincible: true
-    # Prevent vanished players from pickup items
+
+    # Prevent vanished players from picking up items
     prevent_pickup: true
-    # You can also achieve this with set fake join/leave message to blank in language file
+
+    # You can also achieve this by setting the fake join/leave message to blank in the language file
     fake_join_leave_message: true
+
     silent_open_container: true
+
     prevent:
         block_break: false
         block_place: false
         interact: false
+
 hooks:
     essentials:
         force_prevent_private_messages: false

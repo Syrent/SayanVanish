@@ -105,9 +105,11 @@ tasks {
     }
 
     val relocate = task<ConfigureShadowRelocation>("relocateShadowJar") {
-        println(actions)
         target = shadowJar.get()
         prefix = "ir.syrent.velocityvanish"
+        this.target.apply {
+            relocate("net.kyori.", "net.kyori.")
+        }
     }
 
 

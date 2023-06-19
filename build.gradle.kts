@@ -3,6 +3,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocatio
 import org.jetbrains.gradle.ext.settings
 import org.jetbrains.gradle.ext.taskTriggers
 import java.net.URL
+import java.util.*
 import java.util.concurrent.Executors
 
 plugins {
@@ -85,7 +86,7 @@ dependencies {
 
     annotationProcessor("com.velocitypowered:velocity-api:3.1.1")
 
-//    compileOnly("org.spigotmc:spigot:1.20.1-R0.1-SNAPSHOT:remapped-mojang")
+    compileOnly("org.spigotmc:spigot:1.20.1-R0.1-SNAPSHOT:remapped-mojang")
 }
 
 val extraDependencies = emptyMap<String, String>()
@@ -199,13 +200,37 @@ nmsGen {
     val ClientboundRemoveMobEffectPacket = reqClass("net.minecraft.network.protocol.game.ClientboundRemoveMobEffectPacket")
     val ClientboundPlayerInfoUpdatePacket = reqClass("net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket")
     val ClientboundPlayerInfoUpdatePacketAction = reqClass("net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket\$Action")
+    val ClientboundPlayerInfoUpdatePacketEntry = reqClass("net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket\$Entry")
     val ClientboundPlayerInfoRemovePacket = reqClass("net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket")
 
     val ServerPlayer = reqClass("net.minecraft.server.level.ServerPlayer")
+    val Entity = reqClass("net.minecraft.world.entity.Entity")
+    val GameType = reqClass("net.minecraft.world.level.GameType")
+    val Component = reqClass("net.minecraft.network.chat.Component")
+    val RemoteChatSessionData = reqClass("net.minecraft.network.chat.RemoteChatSession\$Data")
     val Packet = reqClass("net.minecraft.network.protocol.Packet")
+
 
     val MobEffect = reqClass("net.minecraft.world.effect.MobEffect")
     val MobEffectInstance = reqClass("net.minecraft.world.effect.MobEffectInstance")
+
+
+
+    ServerPlayer
+        .reqField("connection")
+    Entity
+        .reqMethod("getUUID")
+    GameType
+        .reqEnumField("SURVIVAL")
+        .reqEnumField("CREATIVE")
+        .reqEnumField("SPECTATOR")
+        .reqEnumField("ADVENTURE")
+        .reqMethod("byName", String::class)
+    MobEffect
+        .reqMethod("byId", Int::class)
+    MobEffectInstance
+        .reqConstructor(MobEffect, Int::class, Int::class, Boolean::class, Boolean::class, Boolean::class)
+        .reqField("effect")
 
     ServerGamePacketListenerImpl
         .reqMethod("send", Packet)
@@ -216,20 +241,14 @@ nmsGen {
         .reqConstructor(Int::class, MobEffect)
     ClientboundPlayerInfoUpdatePacket
         .reqConstructor(ClientboundPlayerInfoUpdatePacketAction, ServerPlayer)
+        .reqField("entries")
+        .reqMethod("entries")
     ClientboundPlayerInfoUpdatePacketAction
-        .reqField("UPDATE_GAME_MODE")
-        .reqField("ADD_PLAYER")
-        .reqField("ADD_PLAYER")
+        .reqEnumField("UPDATE_GAME_MODE")
+        .reqEnumField("ADD_PLAYER")
+    ClientboundPlayerInfoUpdatePacketEntry
+        .reqConstructor(UUID::class, "com.mojang.authlib.GameProfile", Boolean::class, Int::class, GameType, Component, RemoteChatSessionData)
     ClientboundPlayerInfoRemovePacket
         .reqConstructor(List::class)
         .reqField("profileIds")
-
-    ServerPlayer
-        .reqField("connection")
-
-    MobEffect
-        .reqMethod("byId", Int::class)
-    MobEffectInstance
-        .reqConstructor(MobEffect, Int::class, Int::class, Boolean::class, Boolean::class, Boolean::class)
-        .reqField("effect")
 }

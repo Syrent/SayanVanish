@@ -2,7 +2,6 @@ package ir.syrent.velocityvanish.spigot.listener
 
 import ir.syrent.velocityvanish.spigot.VelocityVanishSpigot
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
-import ir.syrent.velocityvanish.spigot.storage.Settings
 import ir.syrent.velocityvanish.spigot.utils.ServerVersion
 import ir.syrent.velocityvanish.spigot.utils.Utils
 import org.bukkit.event.EventHandler

@@ -21,3 +21,8 @@ vanish:
     unvanish_notify: "$warn_prefix <red>$player</red> Unvanished!"
     join_message: "<yellow>$player joined the game"
     quit_message: "<yellow>$player left the game"
+    join_message_sent: "$successful_prefix Fake join message for <gold>$player</gold> has been sent."
+    quit_message_sent: "$successful_prefix Fake quit message for <gold>$player</gold> has been sent."
+    level:
+        set: "$successful_prefix Level <gold>$level</gold> has been set for <gold>$player</gold>"
+        get: "$successful_prefix <gold>$player</gold> vanish level is: <gold>$level</gold>"

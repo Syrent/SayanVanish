@@ -73,7 +73,7 @@ dependencies {
     implementation("io.papermc:paperlib:1.0.8")
     implementation("org.bstats:bstats-bukkit:3.0.2")
 
-    // gson is not exist in legacy minecraft version
+    // gson does not exist in legacy minecraft version
     implementation("com.google.code.gson:gson:2.10.1")
 
     implementation("com.github.cryptomorin:XSeries:9.4.0") { isTransitive = false }
@@ -81,6 +81,9 @@ dependencies {
     implementation("net.kyori:adventure-api:4.14.0")
     implementation("net.kyori:adventure-platform-bukkit:4.3.0")
     implementation("net.kyori:adventure-text-minimessage:4.14.0")
+
+    implementation("cloud.commandframework:cloud-paper:1.9.0-SNAPSHOT")
+    implementation("cloud.commandframework:cloud-minecraft-extras:1.9.0-SNAPSHOT")
 
     implementation("com.jeff_media:SpigotUpdateChecker:3.0.3")
 
@@ -94,7 +97,7 @@ val extraDependencies = emptyMap<String, String>()
 tasks {
     runServer {
         minecraftVersion("1.20.1")
-        serverJar(file("run/paper-1.20.1-20.jar"))
+        serverJar(file("run/paper-1.20.1-48.jar"))
     }
 
     kotlin {
@@ -213,8 +216,6 @@ nmsGen {
 
     val MobEffect = reqClass("net.minecraft.world.effect.MobEffect")
     val MobEffectInstance = reqClass("net.minecraft.world.effect.MobEffectInstance")
-
-
 
     ServerPlayer
         .reqField("connection")

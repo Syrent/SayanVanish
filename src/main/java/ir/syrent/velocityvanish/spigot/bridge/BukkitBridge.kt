@@ -1,7 +1,7 @@
 package ir.syrent.velocityvanish.spigot.bridge
 
-import ir.syrent.velocityvanish.velocity.bridge.Bridge
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
+import ir.syrent.velocityvanish.velocity.bridge.Bridge
 import ir.syrent.velocityvanish.spigot.ruom.messaging.BukkitMessagingChannel
 import org.bukkit.entity.Player
 

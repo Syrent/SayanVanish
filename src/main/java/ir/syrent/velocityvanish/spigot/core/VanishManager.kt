@@ -88,19 +88,18 @@ class VanishManager(
     }
 
     fun hidePlayer(player: Player) {
-        val vanishLevel = player.effectivePermissions.map { it.permission }
-            .filter { it.startsWith("velocityvanish.level.") }.maxOfOrNull { it.split(".")[2].toInt() } ?: 0
-
         for (onlinePlayer in Ruom.getOnlinePlayers().filter { !it.hasPermission("velocityvanish.admin.seevanished") }) {
-
-            val onlinePlayerVanishLevel = onlinePlayer.effectivePermissions.map { it.permission }
-                .filter { it.startsWith("velocityvanish.level.") }.maxOfOrNull { it.split(".")[2].toInt() } ?: 0
-
-            if (onlinePlayerVanishLevel >= vanishLevel) continue
+            val onlinePlayerVanishLevel = getVanishLevel(onlinePlayer)
+            if (onlinePlayerVanishLevel >= getVanishLevel(player)) continue
 
             @Suppress("DEPRECATION")
             onlinePlayer.hidePlayer(player)
         }
+    }
+
+    fun getVanishLevel(player: Player): Int {
+        return player.effectivePermissions.map { it.permission }
+            .filter { it.startsWith("velocityvanish.level.") }.maxOfOrNull { it.split(".")[2].toInt() } ?: 0
     }
 
     private fun setMeta(player: Player, meta: Boolean) {

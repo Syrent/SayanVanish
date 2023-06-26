@@ -4,9 +4,9 @@ import com.google.gson.JsonObject
 import com.jeff_media.updatechecker.UpdateCheckSource
 import com.jeff_media.updatechecker.UpdateChecker
 import io.papermc.lib.PaperLib
+import ir.syrent.velocityvanish.command.VanishCommand
 import ir.syrent.velocityvanish.spigot.bridge.BukkitBridge
 import ir.syrent.velocityvanish.spigot.bridge.BukkitBridgeManager
-import ir.syrent.velocityvanish.spigot.command.vanish.VanishCommand
 import ir.syrent.velocityvanish.spigot.core.VanishManager
 import ir.syrent.velocityvanish.spigot.hook.DependencyManager
 import ir.syrent.velocityvanish.spigot.listener.*

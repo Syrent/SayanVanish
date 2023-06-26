@@ -18,6 +18,10 @@ enum class Message(val path: String) {
     VANISH_NOTIFY("vanish.vanish_notify"),
     UNVANISH_NOTIFY("vanish.unvanish_notify"),
     JOIN_MESSAGE("vanish.join_message"),
+    JOIN_MESSAGE_SENT("vanish.join_message_sent"),
     QUIT_MESSAGE("vanish.quit_message"),
+    QUIT_MESSAGE_SENT("vanish.quit_message_sent"),
+    LEVEL_SET("vanish.level.set"),
+    LEVEL_GET("vanish.level.get"),
     EMPTY("");
 }

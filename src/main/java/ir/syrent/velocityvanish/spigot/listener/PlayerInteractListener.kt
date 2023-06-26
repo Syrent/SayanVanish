@@ -1,18 +1,10 @@
 package ir.syrent.velocityvanish.spigot.listener
 
-import com.mojang.authlib.GameProfile
-import ir.syrent.nms.accessors.ClientboundPlayerInfoUpdatePacketAccessor
-import ir.syrent.nms.accessors.ClientboundPlayerInfoUpdatePacket_i_ActionAccessor
-import ir.syrent.nms.accessors.ClientboundPlayerInfoUpdatePacket_i_EntryAccessor
-import ir.syrent.nms.accessors.GameTypeAccessor
 import ir.syrent.velocityvanish.spigot.VelocityVanishSpigot
-import ir.syrent.velocityvanish.spigot.core.VanishManager
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import ir.syrent.velocityvanish.spigot.storage.Settings
-import ir.syrent.velocityvanish.spigot.utils.NMSUtils
 import org.bukkit.GameMode
 import org.bukkit.Material
-import org.bukkit.block.Chest
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action

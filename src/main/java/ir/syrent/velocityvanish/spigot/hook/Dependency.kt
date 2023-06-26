@@ -5,7 +5,7 @@ import ir.syrent.velocityvanish.spigot.ruom.adventure.AdventureApi
 import ir.syrent.velocityvanish.spigot.storage.Settings
 import ir.syrent.velocityvanish.utils.component
 
-abstract class Dependency constructor(val name: String) {
+abstract class Dependency(val name: String) {
 
     val exists = Ruom.hasPlugin(name)
 

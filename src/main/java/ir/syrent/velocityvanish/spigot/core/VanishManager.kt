@@ -23,6 +23,9 @@ import ir.syrent.velocityvanish.spigot.utils.ServerVersion
 import ir.syrent.velocityvanish.spigot.utils.Utils
 import ir.syrent.velocityvanish.utils.TextReplacement
 import ir.syrent.velocityvanish.utils.component
+import me.sayandevelopment.sayanchat.ruom.nmsaccessors.ClientboundPlayerInfoPacketAccessor
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
 import org.bukkit.GameMode
 import org.bukkit.entity.Creature
 import org.bukkit.entity.Player
@@ -92,8 +95,12 @@ class VanishManager(
             val onlinePlayerVanishLevel = getVanishLevel(onlinePlayer)
             if (onlinePlayerVanishLevel >= getVanishLevel(player)) continue
 
-            @Suppress("DEPRECATION")
-            onlinePlayer.hidePlayer(player)
+            try {
+                onlinePlayer.hidePlayer(Ruom.getPlugin(), player)
+            } catch (e: NoSuchMethodException) {
+                @Suppress("DEPRECATION")
+                onlinePlayer.hidePlayer(player)
+            }
         }
     }
 
@@ -223,6 +230,10 @@ class VanishManager(
             DependencyManager.squareMapHook.squareMap.playerManager().hide(player.uniqueId, true)
         }
 
+        if (DependencyManager.discordSRVHook.exists) {
+            DependencyManager.discordSRVHook.discordSRV.sendLeaveMessage(player, Settings.formatMessage(Message.DISCORDSRV_QUIT_MESSAGE))
+        }
+
         Settings.vanishSound.let {
             if (it != null) {
                 player.playSound(player.location, it, 1f, 1f)
@@ -264,8 +275,12 @@ class VanishManager(
         }
 
         for (onlinePlayer in Ruom.getOnlinePlayers()) {
-            @Suppress("DEPRECATION")
-            onlinePlayer.showPlayer(player)
+            try {
+                onlinePlayer.showPlayer(Ruom.getPlugin(), player)
+            } catch (e: NoSuchMethodException) {
+                @Suppress("DEPRECATION")
+                onlinePlayer.showPlayer(player)
+            }
         }
 
         player.isSleepingIgnored = false
@@ -303,6 +318,10 @@ class VanishManager(
             DependencyManager.squareMapHook.squareMap.playerManager().show(player.uniqueId, true)
         }
 
+        if (DependencyManager.discordSRVHook.exists) {
+            DependencyManager.discordSRVHook.discordSRV.sendJoinMessage(player, Settings.formatMessage(Message.DISCORDSRV_JOIN_MESSAGE))
+        }
+
         Settings.unVanishSound.let {
             if (it != null) {
                 player.playSound(player.location, it, 1f, 1f)
@@ -324,9 +343,8 @@ class VanishManager(
         }
     }
 
-    fun updateTabStateViaPacket(player: Player, gameMode: GameMode, exceptSelf: Boolean = true) {
+    fun  updateTabStateViaPacket(player: Player, gameMode: GameMode, exceptSelf: Boolean = true) {
         try {
-
             val profile = GameProfile(player.uniqueId, player.name)
             val serverPlayer = NMSUtils.getServerPlayer(player)
 
@@ -354,6 +372,18 @@ class VanishManager(
             for (onlinePlayer in Ruom.getOnlinePlayers().filter { it.hasPermission("velocityvanish.admin.seevanished") }) {
                 if (exceptSelf && onlinePlayer == player) continue
                 NMSUtils.sendPacket(onlinePlayer, packet)
+            }
+
+            if (gameMode == GameMode.SPECTATOR) {
+                for (onlinePlayer in Ruom.getOnlinePlayers().filter { !it.hasPermission("velocityvanish.admin.seevanished") }) {
+                    if (onlinePlayer == player) continue
+                    NMSUtils.sendPacket(onlinePlayer, ClientboundPlayerInfoRemovePacketAccessor.getConstructor0().newInstance(listOf(EntityAccessor.getMethodGetUUID1().invoke(serverPlayer))))
+                }
+            } else {
+                for (onlinePlayer in Ruom.getOnlinePlayers().filter { !it.hasPermission("velocityvanish.admin.seevanished") }) {
+                    if (onlinePlayer == player) continue
+                    NMSUtils.sendPacket(onlinePlayer, ClientboundPlayerInfoUpdatePacketAccessor.getMethodCreatePlayerInitializing1().invoke(null, listOf(serverPlayer)))
+                }
             }
         } catch (_: Exception) {
             Ruom.warn("Couldn't update player state in tab via packets.")

@@ -19,6 +19,8 @@ object DependencyManager {
         private set
     var squareMapHook: SquareMapHook
         private set
+    var discordSRVHook: DiscordSRVHook
+        private set
 
     init {
         ProtocolLibHook("ProtocolLib").apply {
@@ -53,6 +55,10 @@ object DependencyManager {
         SquareMapHook("squaremap").apply {
             this.register()
             squareMapHook = this
+        }
+        DiscordSRVHook("DiscordSRV").apply {
+            this.register()
+            discordSRVHook = this
         }
     }
 

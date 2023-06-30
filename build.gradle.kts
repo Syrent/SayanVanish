@@ -32,12 +32,9 @@ repositories {
     maven("https://oss.sonatype.org/content/repositories/snapshots/")
 
     // Spigot
-    maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/") {
-        content {
-            includeGroup("org.bukkit")
-            includeGroup("org.spigotmc")
-        }
-    }
+    maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
+    maven("https://oss.sonatype.org/content/repositories/snapshots")
+    maven("https://oss.sonatype.org/content/repositories/central")
 
     // ProtocolLib
     maven("https://repo.dmulloy2.net/repository/public/")

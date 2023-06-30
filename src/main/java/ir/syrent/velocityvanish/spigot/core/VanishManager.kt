@@ -23,9 +23,6 @@ import ir.syrent.velocityvanish.spigot.utils.ServerVersion
 import ir.syrent.velocityvanish.spigot.utils.Utils
 import ir.syrent.velocityvanish.utils.TextReplacement
 import ir.syrent.velocityvanish.utils.component
-import me.sayandevelopment.sayanchat.ruom.nmsaccessors.ClientboundPlayerInfoPacketAccessor
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket
 import org.bukkit.GameMode
 import org.bukkit.entity.Creature
 import org.bukkit.entity.Player

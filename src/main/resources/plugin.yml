@@ -7,15 +7,10 @@ authors: [ Syrent ]
 description: Vanish plugin for velocity servers
 website: syrent.ir
 softdepend:
+  - 'DiscordSRV'
   - 'ProtocolLib'
   - 'ProCosmetics'
   - 'SayanChat'
   - 'PlaceholderAPI'
   - 'squaremap'
   - 'Essentials'
-commands:
-  velocityvanish:
-    aliases:
-      - vanish
-      - sayanvanish
-    description: Toggle vanish state

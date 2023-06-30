@@ -7,6 +7,7 @@ import java.util.*
 import java.util.concurrent.Executors
 
 plugins {
+    `maven-publish`
     kotlin("jvm") version "1.8.22"
     id("java")
     id("com.github.johnrengelman.shadow") version "7.1.2"
@@ -64,6 +65,7 @@ dependencies {
     compileOnly("org.spongepowered:configurate-yaml:4.0.0")
     compileOnly("com.discordsrv:discordsrv:1.26.2")
 
+
     // SayanChat 2.8.1
     // ProCosmetics
     // ServerListPlus 3.5.0 SNAPSHOT
@@ -92,6 +94,33 @@ dependencies {
     compileOnly("org.spigotmc:spigot:1.20.1-R0.1-SNAPSHOT:remapped-mojang")
 }
 
+
+
+publishing {
+    publications {
+        register<MavenPublication>("maven") {
+            groupId = project.group.toString()
+            version = project.version.toString()
+            artifactId = rootProject.name
+
+            artifact(tasks.shadowJar.get().archiveFile)
+        }
+    }
+
+    publishing {
+        repositories {
+            maven {
+                name = "syrent"
+                url = uri("https://jitpack.io")
+            }
+        }
+    }
+
+    tasks.withType<PublishToMavenLocal> {
+        dependsOn(tasks.shadowJar)
+    }
+}
+
 val extraDependencies = emptyMap<String, String>()
 
 tasks {
@@ -115,7 +144,6 @@ tasks {
             relocate("net.kyori.", "net.kyori.")
         }
     }
-
 
     shadowJar {
         dependsOn(relocate)
@@ -212,10 +240,14 @@ nmsGen {
     val Component = reqClass("net.minecraft.network.chat.Component")
     val RemoteChatSessionData = reqClass("net.minecraft.network.chat.RemoteChatSession\$Data")
     val Packet = reqClass("net.minecraft.network.protocol.Packet")
+    val Connection = reqClass("net.minecraft.network.Connection")
 
 
     val MobEffect = reqClass("net.minecraft.world.effect.MobEffect")
     val MobEffectInstance = reqClass("net.minecraft.world.effect.MobEffectInstance")
+
+    Connection
+        .reqField("channel")
 
     ServerPlayer
         .reqField("connection")
@@ -242,6 +274,7 @@ nmsGen {
         .reqConstructor(Int::class, MobEffect)
     ClientboundPlayerInfoUpdatePacket
         .reqConstructor(ClientboundPlayerInfoUpdatePacketAction, ServerPlayer)
+        .reqMethod("createPlayerInitializing", Collection::class)
         .reqField("entries")
         .reqMethod("entries")
     ClientboundPlayerInfoUpdatePacketAction

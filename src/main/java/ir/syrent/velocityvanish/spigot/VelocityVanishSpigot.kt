@@ -1,5 +1,13 @@
 package ir.syrent.velocityvanish.spigot
 
+import com.comphenix.protocol.PacketType
+import com.comphenix.protocol.ProtocolLibrary
+import com.comphenix.protocol.events.ListenerOptions
+import com.comphenix.protocol.events.ListenerPriority
+import com.comphenix.protocol.events.PacketAdapter
+import com.comphenix.protocol.events.PacketEvent
+import com.comphenix.protocol.wrappers.WrappedGameProfile
+import com.comphenix.protocol.wrappers.WrappedServerPing
 import com.google.gson.JsonObject
 import com.jeff_media.updatechecker.UpdateCheckSource
 import com.jeff_media.updatechecker.UpdateChecker
@@ -20,8 +28,10 @@ import ir.syrent.velocityvanish.spigot.storage.Settings.velocitySupport
 import ir.syrent.velocityvanish.spigot.utils.ServerVersion
 import ir.syrent.velocityvanish.spigot.utils.Utils
 import ir.syrent.velocityvanish.utils.component
+import net.minecraft.world.level.block.entity.SignBlockEntity
 import org.bstats.bukkit.Metrics
 import org.bukkit.entity.Player
+import java.util.*
 
 
 class VelocityVanishSpigot : RUoMPlugin() {
@@ -53,6 +63,20 @@ class VelocityVanishSpigot : RUoMPlugin() {
         if (bstats) {
             enableMetrics()
         }
+
+        DependencyManager.protocolLibHook.protocolManager.addPacketListener(
+            object : PacketAdapter(this, ListenerPriority.NORMAL, listOf(PacketType.Status.Server.SERVER_INFO), ListenerOptions.ASYNC) {
+                override fun onPacketSending(event: PacketEvent?) {
+                    event?.packet?.serverPings?.let { serverPing ->
+                        serverPing.read(0).setPlayers(
+                            Ruom.getOnlinePlayers().filter { player -> !vanishedNames.contains(player.name) }.map { player ->
+                                WrappedGameProfile(player.uniqueId, player.name)
+                            }
+                        )
+                    }
+                }
+            }
+        )
     }
 
     private fun sendFiglet() {

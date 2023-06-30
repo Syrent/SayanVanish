@@ -1,13 +1,11 @@
 package ir.syrent.velocityvanish.spigot
 
 import com.comphenix.protocol.PacketType
-import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.events.ListenerOptions
 import com.comphenix.protocol.events.ListenerPriority
 import com.comphenix.protocol.events.PacketAdapter
 import com.comphenix.protocol.events.PacketEvent
 import com.comphenix.protocol.wrappers.WrappedGameProfile
-import com.comphenix.protocol.wrappers.WrappedServerPing
 import com.google.gson.JsonObject
 import com.jeff_media.updatechecker.UpdateCheckSource
 import com.jeff_media.updatechecker.UpdateChecker
@@ -28,10 +26,8 @@ import ir.syrent.velocityvanish.spigot.storage.Settings.velocitySupport
 import ir.syrent.velocityvanish.spigot.utils.ServerVersion
 import ir.syrent.velocityvanish.spigot.utils.Utils
 import ir.syrent.velocityvanish.utils.component
-import net.minecraft.world.level.block.entity.SignBlockEntity
 import org.bstats.bukkit.Metrics
 import org.bukkit.entity.Player
-import java.util.*
 
 
 class VelocityVanishSpigot : RUoMPlugin() {

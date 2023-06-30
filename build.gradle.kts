@@ -7,8 +7,8 @@ import java.util.*
 import java.util.concurrent.Executors
 
 plugins {
-    `maven-publish`
     kotlin("jvm") version "1.8.22"
+    id("maven-publish")
     id("java")
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.7"

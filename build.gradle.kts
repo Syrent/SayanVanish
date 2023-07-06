@@ -7,7 +7,7 @@ import java.util.*
 import java.util.concurrent.Executors
 
 plugins {
-    kotlin("jvm") version "1.8.22"
+    kotlin("jvm") version "1.9.0"
     id("maven-publish")
     id("java")
     id("com.github.johnrengelman.shadow") version "7.1.2"

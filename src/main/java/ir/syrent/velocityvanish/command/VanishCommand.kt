@@ -9,6 +9,7 @@ import ir.syrent.velocityvanish.command.library.interfaces.ISender
 import ir.syrent.velocityvanish.spigot.VelocityVanishSpigot
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import ir.syrent.velocityvanish.spigot.storage.Message
+import ir.syrent.velocityvanish.spigot.storage.Settings
 import ir.syrent.velocityvanish.spigot.utils.sendMessage
 import ir.syrent.velocityvanish.utils.TextReplacement
 import org.bukkit.Bukkit
@@ -38,6 +39,17 @@ class VanishCommand(
                 context.sender.getSender().sendMessage(Message.JOIN_MESSAGE_SENT, TextReplacement("player", forPlayer?.name ?: forPlayerName))
             }
         saveCommand(fakeJoinLiteral)
+
+        val reloadLiteral = addLiteral("reload", ArgumentDescription.of("Reload plugin's configuration files"))
+            .permission(getPermission("reload"))
+            .handler { context ->
+                Settings.settings.saveConfig()
+                Settings.settings.reloadConfig()
+                Settings.language.saveConfig()
+                Settings.language.reloadConfig()
+                context.sender.getSender().sendMessage(Message.RELOAD_USE)
+            }
+        saveCommand(reloadLiteral)
 
         val fakeQuit = addLiteral("fakequit", ArgumentDescription.of("Send a fake quit message"))
             .permission(getPermission("fakequit"))

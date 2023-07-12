@@ -93,7 +93,7 @@ class VanishManager(
 
             try {
                 onlinePlayer.hidePlayer(Ruom.getPlugin(), player)
-            } catch (e: NoSuchMethodException) {
+            } catch (e: NoSuchMethodError) {
                 @Suppress("DEPRECATION")
                 onlinePlayer.hidePlayer(player)
             }
@@ -270,7 +270,7 @@ class VanishManager(
         for (onlinePlayer in Ruom.getOnlinePlayers()) {
             try {
                 onlinePlayer.showPlayer(Ruom.getPlugin(), player)
-            } catch (e: NoSuchMethodException) {
+            } catch (e: NoSuchMethodError) {
                 @Suppress("DEPRECATION")
                 onlinePlayer.showPlayer(player)
             }

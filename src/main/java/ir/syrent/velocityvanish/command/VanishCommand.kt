@@ -43,10 +43,7 @@ class VanishCommand(
         val reloadLiteral = addLiteral("reload", ArgumentDescription.of("Reload plugin's configuration files"))
             .permission(getPermission("reload"))
             .handler { context ->
-                Settings.settings.saveConfig()
-                Settings.settings.reloadConfig()
-                Settings.language.saveConfig()
-                Settings.language.reloadConfig()
+                Settings.load()
                 context.sender.getSender().sendMessage(Message.RELOAD_USE)
             }
         saveCommand(reloadLiteral)

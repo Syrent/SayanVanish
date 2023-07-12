@@ -60,19 +60,21 @@ class VelocityVanishSpigot : RUoMPlugin() {
             enableMetrics()
         }
 
-        DependencyManager.protocolLibHook.protocolManager.addPacketListener(
-            object : PacketAdapter(this, ListenerPriority.NORMAL, listOf(PacketType.Status.Server.SERVER_INFO), ListenerOptions.ASYNC) {
-                override fun onPacketSending(event: PacketEvent?) {
-                    event?.packet?.serverPings?.let { serverPing ->
-                        serverPing.read(0).setPlayers(
-                            Ruom.getOnlinePlayers().filter { player -> !vanishedNames.contains(player.name) }.map { player ->
-                                WrappedGameProfile(player.uniqueId, player.name)
-                            }
-                        )
+        if (DependencyManager.protocolLibHook.exists) {
+            DependencyManager.protocolLibHook.protocolManager.addPacketListener(
+                object : PacketAdapter(this, ListenerPriority.NORMAL, listOf(PacketType.Status.Server.SERVER_INFO), ListenerOptions.ASYNC) {
+                    override fun onPacketSending(event: PacketEvent?) {
+                        event?.packet?.serverPings?.let { serverPing ->
+                            serverPing.read(0).setPlayers(
+                                Ruom.getOnlinePlayers().filter { player -> !vanishedNames.contains(player.name) }.map { player ->
+                                    WrappedGameProfile(player.uniqueId, player.name)
+                                }
+                            )
+                        }
                     }
                 }
-            }
-        )
+            )
+        }
     }
 
     private fun sendFiglet() {

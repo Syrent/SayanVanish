@@ -46,7 +46,6 @@ class VanishManager(
         if (ServerVersion.supports(13)) potions.add(PotionEffect(PotionEffectType.WATER_BREATHING, Int.MAX_VALUE, 255, false, false))
     }
 
-    val flyPlayers = mutableSetOf<UUID>()
     val invulnerablePlayers = mutableSetOf<UUID>()
 
     fun updateTabState(player: Player, state: GameMode) {
@@ -107,7 +106,7 @@ class VanishManager(
     }
 
     private fun setMeta(player: Player, meta: Boolean) {
-        player.setMetadata("vanished", FixedMetadataValue(Ruom.getPlugin(), meta))
+        player.setMetadata("vanished", FixedMetadataValue(plugin, meta))
     }
 
     fun addPotionEffects(player: Player) {
@@ -166,10 +165,6 @@ class VanishManager(
         updateTabState(player, GameMode.SPECTATOR)
         hidePlayer(player)
 
-        if (player.allowFlight) {
-            flyPlayers.add(player.uniqueId)
-        }
-
         if (player.hasPermission("velocityvanish.action.fly.onvanish")) {
             player.allowFlight = true
             player.isFlying = true
@@ -227,8 +222,10 @@ class VanishManager(
             DependencyManager.squareMapHook.squareMap.playerManager().hide(player.uniqueId, true)
         }
 
-        if (DependencyManager.discordSRVHook.exists) {
-            DependencyManager.discordSRVHook.discordSRV.sendLeaveMessage(player, Settings.formatMessage(Message.DISCORDSRV_QUIT_MESSAGE))
+        if (sendQuitMessage) {
+            if (DependencyManager.discordSRVHook.exists) {
+                DependencyManager.discordSRVHook.discordSRV.sendLeaveMessage(player, Settings.formatMessage(Message.DISCORDSRV_QUIT_MESSAGE))
+            }
         }
 
         Settings.vanishSound.let {
@@ -262,10 +259,9 @@ class VanishManager(
 
         updateTabState(player, GameMode.SURVIVAL)
 
-        if (!player.isOp) {
-            player.allowFlight = flyPlayers.contains(player.uniqueId)
-            player.isFlying = flyPlayers.contains(player.uniqueId)
-        }
+        val canFly = (player.allowFlight && player.hasPermission("velocityvanish.action.fly.onvanish")) || player.isOp
+        player.allowFlight = canFly
+        player.isFlying = canFly
 
         if (ServerVersion.supports(9)) {
             player.isInvulnerable = false /*invulnerablePlayers.contains(player.uniqueId)*/
@@ -315,8 +311,10 @@ class VanishManager(
             DependencyManager.squareMapHook.squareMap.playerManager().show(player.uniqueId, true)
         }
 
-        if (DependencyManager.discordSRVHook.exists) {
-            DependencyManager.discordSRVHook.discordSRV.sendJoinMessage(player, Settings.formatMessage(Message.DISCORDSRV_JOIN_MESSAGE))
+        if (sendJoinMessage) {
+            if (DependencyManager.discordSRVHook.exists) {
+                DependencyManager.discordSRVHook.discordSRV.sendJoinMessage(player, Settings.formatMessage(Message.DISCORDSRV_JOIN_MESSAGE))
+            }
         }
 
         Settings.unVanishSound.let {
@@ -355,7 +353,7 @@ class VanishManager(
                     player.uniqueId,
                     profile,
                     true,
-                    0,
+                    player.ping,
                     GameTypeAccessor.getMethodByName1().invoke(null, gameMode.name.lowercase()),
                     null,
                     null

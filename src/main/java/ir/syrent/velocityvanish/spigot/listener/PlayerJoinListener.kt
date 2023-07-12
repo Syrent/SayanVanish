@@ -1,6 +1,5 @@
 package ir.syrent.velocityvanish.spigot.listener
 
-import github.scarsz.discordsrv.DiscordSRV
 import ir.syrent.velocityvanish.spigot.VelocityVanishSpigot
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import ir.syrent.velocityvanish.spigot.storage.Message
@@ -11,8 +10,10 @@ import ir.syrent.velocityvanish.utils.component
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.metadata.FixedMetadataValue
 
 class PlayerJoinListener(
     private val plugin: VelocityVanishSpigot
@@ -22,9 +23,12 @@ class PlayerJoinListener(
         Ruom.registerListener(this)
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     private fun onPlayerJoin(event: PlayerJoinEvent) {
         val player = event.player
+
+        // Note: DiscordSRV support
+        player.setMetadata("vanished", FixedMetadataValue(plugin, true))
 
         for (vanishedPlayer in plugin.vanishedNames.mapNotNull { Bukkit.getPlayerExact(it) }) {
             plugin.vanishManager.hidePlayer(vanishedPlayer)

@@ -91,8 +91,6 @@ dependencies {
     implementation("com.jeff_media:SpigotUpdateChecker:3.0.3")
 
     annotationProcessor("com.velocitypowered:velocity-api:3.1.1")
-
-//    compileOnly("org.spigotmc:spigot:1.20.1-R0.1-SNAPSHOT:remapped-mojang")
 }
 
 
@@ -131,7 +129,7 @@ tasks {
     }
 
     kotlin {
-        jvmToolchain(17)
+        jvmToolchain(11)
     }
 
     jar {
@@ -151,13 +149,11 @@ tasks {
         archiveClassifier.set("")
         exclude("META-INF/**")
         minimize()
-
-        destinationDirectory.set(file("run/plugins"))
     }
 
     compileJava {
         options.encoding = Charsets.UTF_8.name()
-        options.release.set(17)
+        options.release.set(11)
     }
 
     processResources {
@@ -192,7 +188,7 @@ tasks {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(11))
 }
 
 val templateSource = file("src/main/templates")

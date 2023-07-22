@@ -338,7 +338,7 @@ class VanishManager(
         }
     }
 
-    fun  updateTabStateViaPacket(player: Player, gameMode: GameMode, exceptSelf: Boolean = true) {
+    fun updateTabStateViaPacket(player: Player, gameMode: GameMode, exceptSelf: Boolean = true) {
         try {
             val profile = GameProfile(player.uniqueId, player.name)
             val serverPlayer = NMSUtils.getServerPlayer(player)

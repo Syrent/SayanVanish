@@ -3,7 +3,6 @@ package ir.syrent.velocityvanish.spigot.event;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
 
 public class PostVanishEvent extends Event {
 
@@ -25,7 +24,6 @@ public class PostVanishEvent extends Event {
         return sendQuitMessage;
     }
 
-    @NotNull
     @Override
     public HandlerList getHandlers() {
         return HANDLERS;

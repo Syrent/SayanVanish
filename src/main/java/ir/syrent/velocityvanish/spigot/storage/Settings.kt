@@ -83,26 +83,14 @@ object Settings {
         forceVanishIfFirst = settingsConfig.getBoolean("force_vanish_if_first")
         bstats = settingsConfig.getBoolean("bstats")
 
-        commandSound = settingsConfig.getString("sounds.command").let {
-            if (it == null) {
-                null
-            } else {
-                XSound.valueOf(it).parseSound()
-            }
+        commandSound = settingsConfig.getString("sounds.command")?.let {
+            runCatching { XSound.valueOf(it).parseSound() }.getOrNull()
         }
-        vanishSound = settingsConfig.getString("sounds.vanish").let {
-            if (it == null) {
-                null
-            } else {
-                XSound.valueOf(it).parseSound()
-            }
+        vanishSound = settingsConfig.getString("sounds.vanish")?.let {
+            runCatching { XSound.valueOf(it).parseSound() }.getOrNull()
         }
-        unVanishSound = settingsConfig.getString("sounds.unvanish").let {
-            if (it == null) {
-                null
-            } else {
-                XSound.valueOf(it).parseSound()
-            }
+        unVanishSound = settingsConfig.getString("sounds.unvanish")?.let {
+            runCatching { XSound.valueOf(it).parseSound() }.getOrNull()
         }
 
         actionbar = settingsConfig.getBoolean("vanish.actionbar")

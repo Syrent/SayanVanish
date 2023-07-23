@@ -1,5 +1,7 @@
 package ir.syrent.velocityvanish.spigot.core
 
+import com.Zrips.CMI.CMI
+import com.Zrips.CMI.commands.list.vanishedit
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.events.PacketContainer
 import com.comphenix.protocol.wrappers.EnumWrappers
@@ -89,14 +91,10 @@ class VanishManager(
     fun hidePlayer(player: Player) {
         for (onlinePlayer in Ruom.getOnlinePlayers().filter { !it.hasPermission("velocityvanish.admin.seevanished") }) {
             val onlinePlayerVanishLevel = getVanishLevel(onlinePlayer)
-            if (onlinePlayerVanishLevel >= getVanishLevel(player)) continue
+            if (onlinePlayerVanishLevel >= getVanishLevel(player) && getVanishLevel(player) != 0) continue
 
-            try {
-                onlinePlayer.hidePlayer(Ruom.getPlugin(), player)
-            } catch (e: NoSuchMethodError) {
-                @Suppress("DEPRECATION")
-                onlinePlayer.hidePlayer(player)
-            }
+            @Suppress("DEPRECATION")
+            onlinePlayer.hidePlayer(player)
         }
     }
 
@@ -196,6 +194,15 @@ class VanishManager(
 
         addPotionEffects(player)
 
+        if (DependencyManager.cmiHook.exists) {
+            val cmiUser = CMI.getInstance().playerManager.getUser(player)
+            cmiUser.isVanished = true
+            CMI.getInstance().vanishManager.addPlayer(cmiUser)
+            cmiUser.vanish.set(vanishedit.VanishAction.isVanished, true)
+            cmiUser.vanish.set(vanishedit.VanishAction.informOnJoin, false)
+            cmiUser.updateVanishMode()
+        }
+
         if (DependencyManager.essentialsXHook.exists) {
             DependencyManager.essentialsXHook.vanish(player, true)
         }
@@ -291,6 +298,15 @@ class VanishManager(
 
         if (DependencyManager.sunlightHook.exists) {
             DependencyManager.sunlightHook.vanish(player, false)
+        }
+
+        if (DependencyManager.cmiHook.exists) {
+            val cmiUser = CMI.getInstance().playerManager.getUser(player)
+            cmiUser.isVanished = false
+            CMI.getInstance().vanishManager.removePlayer(cmiUser)
+            cmiUser.vanish.set(vanishedit.VanishAction.isVanished, false)
+            cmiUser.vanish.set(vanishedit.VanishAction.informOnJoin, true)
+            cmiUser.updateVanishMode()
         }
 
         Utils.actionbarPlayers.remove(player)

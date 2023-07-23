@@ -120,16 +120,14 @@ publishing {
     }
 }
 
-val extraDependencies = emptyMap<String, String>()
+val extraDependencies = mapOf(
+    "CMI.jar" to "https://www.zrips.net/wp-content/uploads/2021/09/CMI9.0.0.0API.jar"
+)
 
 tasks {
     runServer {
         minecraftVersion("1.20.1")
         serverJar(file("run/paper-1.20.1-48.jar"))
-    }
-
-    kotlin {
-        jvmToolchain(11)
     }
 
     jar {
@@ -153,7 +151,6 @@ tasks {
 
     compileJava {
         options.encoding = Charsets.UTF_8.name()
-        options.release.set(11)
     }
 
     processResources {
@@ -188,7 +185,7 @@ tasks {
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(11))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
 val templateSource = file("src/main/templates")

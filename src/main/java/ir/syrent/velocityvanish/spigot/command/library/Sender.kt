@@ -1,6 +1,6 @@
-package ir.syrent.velocityvanish.command.library
+package ir.syrent.velocityvanish.spigot.command.library
 
-import ir.syrent.velocityvanish.command.library.interfaces.ISender
+import ir.syrent.velocityvanish.spigot.command.library.interfaces.ISender
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import ir.syrent.velocityvanish.spigot.ruom.adventure.AdventureApi
 import ir.syrent.velocityvanish.spigot.storage.Message

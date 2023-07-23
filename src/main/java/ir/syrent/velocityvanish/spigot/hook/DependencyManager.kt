@@ -21,6 +21,8 @@ object DependencyManager {
         private set
     var discordSRVHook: DiscordSRVHook
         private set
+    var cmiHook: CMIHook
+        private set
 
     init {
         ProtocolLibHook("ProtocolLib").apply {
@@ -59,6 +61,10 @@ object DependencyManager {
         DiscordSRVHook("DiscordSRV").apply {
             this.register()
             discordSRVHook = this
+        }
+        CMIHook("CMI").apply {
+            this.register()
+            cmiHook = this
         }
     }
 

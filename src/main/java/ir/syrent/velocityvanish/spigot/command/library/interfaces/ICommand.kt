@@ -1,4 +1,4 @@
-package ir.syrent.velocityvanish.command.library.interfaces
+package ir.syrent.velocityvanish.spigot.command.library.interfaces
 
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
 

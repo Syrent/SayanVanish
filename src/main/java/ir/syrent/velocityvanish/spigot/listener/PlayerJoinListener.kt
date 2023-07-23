@@ -1,6 +1,9 @@
 package ir.syrent.velocityvanish.spigot.listener
 
+import com.Zrips.CMI.CMI
+import com.Zrips.CMI.commands.list.vanishedit
 import ir.syrent.velocityvanish.spigot.VelocityVanishSpigot
+import ir.syrent.velocityvanish.spigot.hook.DependencyManager
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import ir.syrent.velocityvanish.spigot.storage.Message
 import ir.syrent.velocityvanish.spigot.storage.Settings

@@ -69,8 +69,10 @@ dependencies {
 
     // SayanChat 2.8.1
     // ProCosmetics
-    // ServerListPlus 3.5.0 SNAPSHOT
-    // NexEngine and SunLight
+    // ServerListPlus Velocity (From extradeps)
+    // SunLight
+    // NexEngine (From extradeps)
+    // CMI (From extradeps)
     compileOnly(fileTree("libs"))
 
     implementation("io.papermc:paperlib:1.0.8")
@@ -121,7 +123,9 @@ publishing {
 }
 
 val extraDependencies = mapOf(
-    "CMI.jar" to "https://www.zrips.net/wp-content/uploads/2021/09/CMI9.0.0.0API.jar"
+    "CMI.jar" to "https://www.zrips.net/wp-content/uploads/2021/09/CMI9.0.0.0API.jar",
+    "NexEngine.jar" to "https://github.com/nulli0n/NexEngine-spigot/releases/download/v2.2.11/NexEngine.jar",
+    "ServerListPlus.jar" to "https://ci.codemc.io/job/Minecrell/job/ServerListPlus/lastSuccessfulBuild/artifact/Velocity/build/libs/ServerListPlus-3.5.1-SNAPSHOT-Velocity.jar",
 )
 
 tasks {

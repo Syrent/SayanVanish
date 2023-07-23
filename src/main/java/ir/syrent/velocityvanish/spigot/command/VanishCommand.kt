@@ -1,11 +1,11 @@
-package ir.syrent.velocityvanish.command
+package ir.syrent.velocityvanish.spigot.command
 
 import cloud.commandframework.ArgumentDescription
 import cloud.commandframework.arguments.flags.CommandFlag
 import cloud.commandframework.arguments.standard.IntegerArgument
 import cloud.commandframework.arguments.standard.StringArgument
-import ir.syrent.velocityvanish.command.library.Command
-import ir.syrent.velocityvanish.command.library.interfaces.ISender
+import ir.syrent.velocityvanish.spigot.command.library.Command
+import ir.syrent.velocityvanish.spigot.command.library.interfaces.ISender
 import ir.syrent.velocityvanish.spigot.VelocityVanishSpigot
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import ir.syrent.velocityvanish.spigot.storage.Message

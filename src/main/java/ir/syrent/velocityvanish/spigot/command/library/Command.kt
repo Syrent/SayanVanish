@@ -1,4 +1,4 @@
-package ir.syrent.velocityvanish.command.library
+package ir.syrent.velocityvanish.spigot.command.library
 
 import cloud.commandframework.ArgumentDescription
 import cloud.commandframework.CloudCapability
@@ -11,8 +11,8 @@ import cloud.commandframework.meta.CommandMeta
 import cloud.commandframework.minecraft.extras.MinecraftExceptionHandler
 import cloud.commandframework.minecraft.extras.MinecraftHelp
 import cloud.commandframework.paper.PaperCommandManager
-import ir.syrent.velocityvanish.command.library.interfaces.ICommand
-import ir.syrent.velocityvanish.command.library.interfaces.ISender
+import ir.syrent.velocityvanish.spigot.command.library.interfaces.ICommand
+import ir.syrent.velocityvanish.spigot.command.library.interfaces.ISender
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import ir.syrent.velocityvanish.utils.component
 import net.kyori.adventure.platform.bukkit.BukkitAudiences

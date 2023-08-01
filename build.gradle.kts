@@ -134,10 +134,6 @@ tasks {
         serverJar(file("run/paper-1.20.1-48.jar"))
     }
 
-    jar {
-        enabled = false
-    }
-
     val relocate = task<ConfigureShadowRelocation>("relocateShadowJar") {
         target = shadowJar.get()
         prefix = "ir.syrent.velocityvanish"
@@ -148,7 +144,6 @@ tasks {
 
     shadowJar {
         dependsOn(relocate)
-        archiveClassifier.set("")
         exclude("META-INF/**")
         minimize()
     }
@@ -182,10 +177,10 @@ tasks {
         ex.awaitTermination(10, TimeUnit.SECONDS)
     }
 
-    build {
+    /*build {
         dependsOn(extraDeps)
         dependsOn(shadowJar)
-    }
+    }*/
 }
 
 java {

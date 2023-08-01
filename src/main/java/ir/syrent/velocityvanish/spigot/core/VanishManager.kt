@@ -111,7 +111,7 @@ class VanishManager(
         Ruom.runSync({
             for (potionEffect in potions) {
                 try {
-                    val mobEffect = MobEffectInstanceAccessor.getConstructor0().newInstance(
+                    @Suppress("DEPRECATION") val mobEffect = MobEffectInstanceAccessor.getConstructor0().newInstance(
                         MobEffectAccessor.getMethodById1().invoke(null, potionEffect.type.id),
                         Int.MAX_VALUE,
                         potionEffect.amplifier,
@@ -131,7 +131,7 @@ class VanishManager(
         Ruom.runSync({
             for (potionEffect in potions) {
                 try {
-                    NMSUtils.sendPacket(player, ClientboundRemoveMobEffectPacketAccessor.getConstructor0().newInstance(player.entityId, MobEffectAccessor.getMethodById1().invoke(null, potionEffect.type.id)))
+                    @Suppress("DEPRECATION") NMSUtils.sendPacket(player, ClientboundRemoveMobEffectPacketAccessor.getConstructor0().newInstance(player.entityId, MobEffectAccessor.getMethodById1().invoke(null, potionEffect.type.id)))
                 } catch (e: Exception) {
                     player.removePotionEffect(potionEffect.type)
                 }

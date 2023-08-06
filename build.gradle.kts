@@ -58,7 +58,7 @@ repositories {
 dependencies {
     compileOnly("com.velocitypowered:velocity-api:3.1.1")
     compileOnly("org.spigotmc:spigot-api:1.20.1-R0.1-SNAPSHOT")
-    compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0")
+    compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
     compileOnly("me.clip:placeholderapi:2.11.3")
     compileOnly("xyz.jpenilla:squaremap-api:1.1.14")
     compileOnly("net.essentialsx:EssentialsX:2.20.0")

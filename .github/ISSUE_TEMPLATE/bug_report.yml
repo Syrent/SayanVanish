@@ -1,5 +1,5 @@
 name: Bug Report
-description: Unwanted behavior that does not match configuration.
+description: Unwanted behavior that does not match the configuration.
 labels: ["Bug"]
 body:
   - type: input
@@ -115,7 +115,7 @@ body:
       label: Checklist
       description: Let's make sure this report is valid
       options:
-        - label: I am running latest version of the plugin on both Velocity and Spigot
+        - label: I am running the latest version of the plugin on both Velocity and Spigot
           required: true
         - label: I have read the wiki to make sure it's not an issue with configuration
           required: true

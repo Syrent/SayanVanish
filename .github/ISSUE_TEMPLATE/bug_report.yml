@@ -119,7 +119,7 @@ body:
           required: true
         - label: I have read the wiki to make sure it's not an issue with configuration
           required: true
-        - label: I tried the plugin on a fresh server and it didn't work (Or it worked but I know excatly which plugin it's incompatible with it)
+        - label: I tried the plugin on a fresh server and it didn't work (Or it worked but I know exactly which plugin it's incompatible with)
           required: true
         - label: I ticked all of the boxes without actually reading them
           required: false

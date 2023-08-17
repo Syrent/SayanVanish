@@ -5,7 +5,7 @@ import com.cryptomorin.xseries.ReflectionUtils;
 public class ServerVersion {
 
     public static int getVersion() {
-        return ReflectionUtils.PATCH_NUMBER;
+        return ReflectionUtils.MINOR_NUMBER;
     }
 
     /**

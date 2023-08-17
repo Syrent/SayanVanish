@@ -1,5 +1,5 @@
 # Full wiki is available at https://github.com/Syrent/VelocityVanish/wiki
-config_version: 6
+config_version: 7
 default_language: en_US
 show_dependency_suggestions: true
 
@@ -36,18 +36,18 @@ vanish:
     # Should vanished players be protected from all damage sources?
     invincible: true
 
-    # Prevent vanished players from picking up items
-    prevent_pickup: true
-
     # You can also achieve this by setting the fake join/leave message to blank in the language file
     fake_join_leave_message: true
 
     silent_open_container: true
 
     prevent:
+        pickup: true
         block_break: false
         block_place: false
         interact: false
+        # Only works on PaperMC servers (Paper, Purpur, Pufferfish, etc...)
+        advancement: true
 
 hooks:
     essentials:

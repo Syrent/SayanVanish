@@ -24,7 +24,6 @@ object NMSUtils {
         }
     }
 
-
     fun getServerPlayer(player: Player?): Any? {
         return try {
             CRAFT_PLAYER_GET_HANDLE_METHOD!!.invoke(player)

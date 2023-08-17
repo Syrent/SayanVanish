@@ -17,7 +17,7 @@ import java.time.LocalDate
 
 object Settings {
 
-    const val latestSettingsConfigVersion = 6
+    const val latestSettingsConfigVersion = 7
 
     lateinit var settings: YamlConfig
     lateinit var language: YamlConfig
@@ -44,15 +44,16 @@ object Settings {
     var remember = false
     var seeAsSpectator = true
     var invincible = true
-    var preventPickup = true
     var silentOpenContainer = true
     var fakeJoinLeaveMessage = true
 
     var forcePreventPrivateMessages = true
 
+    var preventPickup = true
     var preventBlockBreak = false
     var preventBlockPlace = false
     var preventInteract = false
+    var preventAdvancement = false
 
     init {
         load()
@@ -97,13 +98,14 @@ object Settings {
         remember = settingsConfig.getBoolean("vanish.remember")
         seeAsSpectator = settingsConfig.getBoolean("vanish.see_as_spectator")
         invincible = settingsConfig.getBoolean("vanish.invincible")
-        preventPickup = settingsConfig.getBoolean("vanish.prevent_pickup")
         silentOpenContainer = settingsConfig.getBoolean("vanish.silent_open_container")
         fakeJoinLeaveMessage = settingsConfig.getBoolean("vanish.fake_join_leave_message")
 
+        preventPickup = settingsConfig.getBoolean("vanish.prevent.pickup")
         preventBlockBreak = settingsConfig.getBoolean("vanish.prevent.block_break")
         preventBlockPlace = settingsConfig.getBoolean("vanish.prevent.block_place")
         preventInteract = settingsConfig.getBoolean("vanish.prevent.interact")
+        preventAdvancement = settingsConfig.getBoolean("vanish.prevent.advancement")
 
         forcePreventPrivateMessages = settingsConfig.getBoolean("hooks.essentials.force_prevent_private_messages")
 

@@ -6,9 +6,11 @@ import com.comphenix.protocol.events.ListenerPriority
 import com.comphenix.protocol.events.PacketAdapter
 import com.comphenix.protocol.events.PacketEvent
 import com.comphenix.protocol.wrappers.WrappedGameProfile
+import com.cryptomorin.xseries.ReflectionUtils
 import com.google.gson.JsonObject
 import com.jeff_media.updatechecker.UpdateCheckSource
 import com.jeff_media.updatechecker.UpdateChecker
+import io.netty.util.internal.ReflectionUtil
 import io.papermc.lib.PaperLib
 import ir.syrent.velocityvanish.spigot.command.VanishCommand
 import ir.syrent.velocityvanish.spigot.bridge.BukkitBridge
@@ -28,6 +30,7 @@ import ir.syrent.velocityvanish.spigot.utils.Utils
 import ir.syrent.velocityvanish.utils.component
 import org.bstats.bukkit.Metrics
 import org.bukkit.entity.Player
+import su.nightexpress.sunlight.api.event.PlayerTeleportRequestEvent
 
 
 class VelocityVanishSpigot : RUoMPlugin() {
@@ -166,7 +169,10 @@ class VelocityVanishSpigot : RUoMPlugin() {
             PlayerMentionListener(this)
             if (!velocitySupport) PrivateMessageListener(this)
         }
-        if (ServerVersion.supports(12)) TabCompleteListener(this)
+        if (ServerVersion.supports(12)) {
+            TabCompleteListener(this)
+            PlayerAdvancementDoneListener(this)
+        }
         if (ServerVersion.supports(19)) BlockReceiveGameListener(this)
         if (DependencyManager.essentialsXHook.exists) {
             AfkStatusChangeListener(this)

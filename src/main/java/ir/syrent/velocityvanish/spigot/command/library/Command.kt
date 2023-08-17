@@ -1,13 +1,9 @@
 package ir.syrent.velocityvanish.spigot.command.library
 
 import cloud.commandframework.ArgumentDescription
-import cloud.commandframework.CloudCapability
 import cloud.commandframework.Command
-import cloud.commandframework.arguments.StaticArgument
-import cloud.commandframework.bukkit.BukkitCommandManager
 import cloud.commandframework.bukkit.BukkitCommandManager.BrigadierFailureException
 import cloud.commandframework.execution.CommandExecutionCoordinator
-import cloud.commandframework.meta.CommandMeta
 import cloud.commandframework.minecraft.extras.MinecraftExceptionHandler
 import cloud.commandframework.minecraft.extras.MinecraftHelp
 import cloud.commandframework.paper.PaperCommandManager
@@ -27,9 +23,9 @@ abstract class Command(
 
     var ERROR_PREFIX = "<dark_gray>[</dark_gray><dark_red><bold>✘</bold></dark_red><dark_gray>]</dark_gray><gradient:dark_red:red>"
 
-    lateinit var manager: PaperCommandManager<ISender>
-    lateinit var builder: Command.Builder<ISender>
-    lateinit var help: MinecraftHelp<ISender>
+    var manager: PaperCommandManager<ISender>
+    var builder: Command.Builder<ISender>
+    var help: MinecraftHelp<ISender>
 
     init {
         val senderMapper = { commandSender: CommandSender -> Sender(commandSender) }

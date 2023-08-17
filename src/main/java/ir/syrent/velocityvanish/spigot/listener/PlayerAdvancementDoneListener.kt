@@ -4,6 +4,7 @@ import io.papermc.lib.PaperLib
 import ir.syrent.velocityvanish.spigot.VelocityVanishSpigot
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import ir.syrent.velocityvanish.spigot.storage.Settings
+import ir.syrent.velocityvanish.spigot.utils.ServerVersion
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -19,7 +20,7 @@ class PlayerAdvancementDoneListener(
 
     @EventHandler
     private fun onPlayerAdvancementDone(event: PlayerAdvancementDoneEvent) {
-        if (PaperLib.isPaper() && Settings.preventAdvancement) {
+        if (ServerVersion.supports(16) && PaperLib.isPaper() && Settings.preventAdvancement) {
             val player = event.player
             if (!plugin.vanishedNames.contains(player.name)) return
             val advancement = event.advancement

@@ -20,7 +20,7 @@ class PlayerAdvancementDoneListener(
 
     @EventHandler
     private fun onPlayerAdvancementDone(event: PlayerAdvancementDoneEvent) {
-        if (ServerVersion.supports(16) && PaperLib.isPaper() && Settings.preventAdvancement) {
+        if (PaperLib.isPaper() && Settings.preventAdvancement) {
             val player = event.player
             if (!plugin.vanishedNames.contains(player.name)) return
             val advancement = event.advancement

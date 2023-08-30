@@ -100,33 +100,6 @@ dependencies {
     annotationProcessor("com.velocitypowered:velocity-api:3.1.1")
 }
 
-
-
-publishing {
-    publications {
-        register<MavenPublication>("maven") {
-            groupId = project.group.toString()
-            version = project.version.toString()
-            artifactId = rootProject.name
-
-            artifact(tasks.shadowJar.get().archiveFile)
-        }
-    }
-
-    publishing {
-        repositories {
-            maven {
-                name = "syrent"
-                url = uri("https://jitpack.io")
-            }
-        }
-    }
-
-    tasks.withType<PublishToMavenLocal> {
-        dependsOn(tasks.shadowJar)
-    }
-}
-
 val extraDependencies = mapOf(
     "CMI.jar" to "https://www.zrips.net/wp-content/uploads/2021/09/CMI9.0.0.0API.jar",
     "NexEngine.jar" to "https://github.com/nulli0n/NexEngine-spigot/releases/download/v2.2.11/NexEngine.jar",
@@ -139,6 +112,7 @@ tasks {
         minecraftVersion("1.20.1")
         serverJar(file("run/paper-1.20.1-48.jar"))
     }
+
     runPaper {
         folia.registerTask()
     }
@@ -199,8 +173,8 @@ tasks {
     build {
         dependsOn(shadowJar)
     }
-}
 
+}
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))
@@ -242,12 +216,12 @@ hangarPublish {
 
         platforms {
             register(Platforms.PAPER) {
-                jar.set(tasks.shadowJar.flatMap { it.archiveFile })
+                jar.set(tasks.shadowJar.get().archiveFile)
                 platformVersions.set((property("paperVersion") as String).split(",").map { it.trim() })
             }
 
             register(Platforms.VELOCITY) {
-                jar.set(tasks.shadowJar.flatMap { it.archiveFile })
+                jar.set(tasks.shadowJar.get().archiveFile)
                 platformVersions.set((property("velocityVersion") as String).split(",").map { it.trim() })
             }
         }

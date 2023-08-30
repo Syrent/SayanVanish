@@ -239,12 +239,12 @@ hangarPublish {
 
         platforms {
             register(Platforms.PAPER) {
-                jar.set(tasks.shadowJar.flatMap { it.archiveFile })
+                jar.set(tasks.jar.flatMap { it.archiveFile })
                 platformVersions.set((property("paperVersion") as String).split(",").map { it.trim() })
             }
 
             register(Platforms.VELOCITY) {
-                jar.set(tasks.shadowJar.flatMap { it.archiveFile })
+                jar.set(tasks.jar.flatMap { it.archiveFile })
                 platformVersions.set((property("velocityVersion") as String).split(",").map { it.trim() })
             }
         }

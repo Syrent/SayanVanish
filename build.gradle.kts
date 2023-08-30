@@ -177,11 +177,6 @@ tasks {
         ex.awaitTermination(10, TimeUnit.SECONDS)
     }
 
-
-    publishAllPublicationsToHangar {
-        dependsOn(shadowJar)
-    }
-
     shadowJar {
         dependsOn(extraDeps)
         archiveClassifier.set("")
@@ -206,9 +201,12 @@ tasks {
     }
 }
 
+
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
+
+artifacts.archives(tasks.shadowJar)
 
 fun executeGitCommand(vararg command: String): String {
     val byteOut = ByteArrayOutputStream()

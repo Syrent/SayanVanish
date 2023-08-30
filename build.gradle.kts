@@ -232,7 +232,7 @@ fun latestCommitMessage(): String {
 }
 
 val versionString: String = version as String
-val isRelease: Boolean = !versionString.contains('-')
+val isRelease: Boolean = (System.getenv("HANGAR_BUILD_CHANNEL") ?: "Snapshot") == "Release"
 
 val suffixedVersion: String = if (isRelease) {
     versionString

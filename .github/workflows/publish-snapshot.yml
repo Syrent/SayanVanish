@@ -1,4 +1,4 @@
-name: Publish to Hangar
+name: Publish Snapshots
 on:
   push:
     branches:

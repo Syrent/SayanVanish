@@ -1,3 +1,4 @@
+/*
 package ir.syrent.velocityvanish.velocity.listener;
 
 import com.velocitypowered.api.event.Subscribe;
@@ -32,3 +33,4 @@ public class PrivateMessageListener {
 
 
 }
+*/

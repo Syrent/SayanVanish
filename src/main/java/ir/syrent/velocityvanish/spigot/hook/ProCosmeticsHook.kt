@@ -1,3 +1,4 @@
+/*
 package ir.syrent.velocityvanish.spigot.hook
 
 import se.file14.procosmetics.ProCosmetics
@@ -21,4 +22,4 @@ class ProCosmeticsHook constructor(name: String) : Dependency(name) {
         )
     }
 
-}
+}*/

@@ -1,4 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
 import io.papermc.hangarpublishplugin.model.Platforms
 import org.jetbrains.gradle.ext.settings
 import org.jetbrains.gradle.ext.taskTriggers
@@ -8,10 +7,10 @@ import java.util.concurrent.Executors
 import java.io.ByteArrayOutputStream
 
 plugins {
-    kotlin("jvm") version "1.9.0"
+    kotlin("jvm") version "1.9.10"
     id("maven-publish")
     id("java")
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
     id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.7"
     id("org.screamingsandals.nms-mapper") version "1.4.5"
     id("xyz.jpenilla.run-paper") version "2.1.0"
@@ -96,6 +95,8 @@ dependencies {
 
     implementation("com.jeff_media:SpigotUpdateChecker:3.0.3")
 
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+
     annotationProcessor("com.velocitypowered:velocity-api:3.1.1")
 }
 
@@ -129,6 +130,7 @@ publishing {
 val extraDependencies = mapOf(
     "CMI.jar" to "https://www.zrips.net/wp-content/uploads/2021/09/CMI9.0.0.0API.jar",
     "NexEngine.jar" to "https://github.com/nulli0n/NexEngine-spigot/releases/download/v2.2.11/NexEngine.jar",
+    "SunLight.jar" to "https://www.dropbox.com/scl/fi/mmu7g32vj6oitkja65cws/SunLight-3.9.4.jar?rlkey=tqxgcy80yccxh80yzl24ubs7b&dl=1",
     "ServerListPlus.jar" to "https://ci.codemc.io/job/Minecrell/job/ServerListPlus/lastSuccessfulBuild/artifact/Velocity/build/libs/ServerListPlus-3.5.1-SNAPSHOT-Velocity.jar",
 )
 
@@ -139,20 +141,6 @@ tasks {
     }
     runPaper {
         folia.registerTask()
-    }
-
-    val relocate = task<ConfigureShadowRelocation>("relocateShadowJar") {
-        target = shadowJar.get()
-        prefix = "ir.syrent.velocityvanish"
-        this.target.apply {
-            relocate("net.kyori.", "net.kyori.")
-        }
-    }
-
-    shadowJar {
-        dependsOn(relocate)
-        exclude("META-INF/**")
-        minimize()
     }
 
     compileJava {
@@ -189,15 +177,36 @@ tasks {
         ex.awaitTermination(10, TimeUnit.SECONDS)
     }
 
-    /*build {
+    shadowJar {
         dependsOn(extraDeps)
+        archiveClassifier.set("")
+        exclude("META-INF/**")
+        from("LICENSE")
+        minimize()
+
+        relocate("io.papermc.lib", "ir.syrent.velocityvanish.dependencies.io.papermc.lib")
+        relocate("io.leangen", "ir.syrent.velocityvanish.dependencies.io.leangen")
+        relocate("org.bstats", "ir.syrent.velocityvanish.dependencies.org.bstats")
+        relocate("com.google.code.gson", "ir.syrent.velocityvanish.dependencies.com.google.code.gson")
+        relocate("com.cryptomorin", "ir.syrent.velocityvanish.dependencies.com.github.cryptomorin")
+        relocate("cloud.commandframework", "ir.syrent.velocityvanish.dependencies.cloud.commandframework")
+        relocate("kotlin", "ir.syrent.velocityvanish.dependencies.kotlin")
+        relocate("com.jeff_media", "ir.syrent.velocityvanish.dependencies.com.jeff_media")
+        relocate("org.jetbrains", "ir.syrent.velocityvanish.dependencies.org.jetbrains")
+        relocate("org.intellij", "ir.syrent.velocityvanish.dependencies.org.intellij")
+    }
+
+    build {
         dependsOn(shadowJar)
-    }*/
+    }
 }
+
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
+
+artifacts.archives(tasks.shadowJar)
 
 fun executeGitCommand(vararg command: String): String {
     val byteOut = ByteArrayOutputStream()
@@ -227,7 +236,7 @@ hangarPublish {
     publications.register("plugin") {
         version.set(suffixedVersion)
         channel.set(System.getenv("HANGAR_BUILD_CHANNEL") ?: "Snapshot")
-        changelog.set(changelogContent)
+        changelog.set(System.getenv("HANGAR_CHANGELOG") ?: changelogContent)
         id.set(slug)
         apiKey.set(System.getenv("HANGAR_API_TOKEN"))
 

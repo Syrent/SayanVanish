@@ -20,6 +20,8 @@ jobs:
           java-version: 17
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
+      - name: Generate NMS Components
+        run: ./gradlew generateNmsComponents
       - name: Cache Gradle dependencies
         uses: actions/cache@v2
         with:
@@ -31,6 +33,6 @@ jobs:
         run: ./gradlew build
       - name: Publish
         env:
-          HANGAR_TOKEN: ${{ secrets.HANGAR_API_TOKEN }}
+          HANGAR_API_TOKEN: ${{ secrets.HANGAR_API_TOKEN }}
           HANGAR_BUILD_CHANNEL: Snapshot
         run: ./gradlew build publishPluginPublicationToHangar --stacktrace

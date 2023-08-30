@@ -124,14 +124,14 @@ class VanishCommand(
                 if (state.isPresent) {
                     when (state.get()) {
                         "on" -> {
-                            plugin.vanishManager.vanish(player, callPostEvent = true)
+                            plugin.vanishManager.vanish(player, callPostEvent = true, notifyAdmins = true)
                             if (plugin.vanishedNames.contains(player.name)) {
                                 player.sendMessage(Message.VANISH_USE_VANISH)
                             }
                             return@handler
                         }
                         "off" -> {
-                            plugin.vanishManager.unVanish(player, callPostEvent = true, sendJoinMessage = !silent)
+                            plugin.vanishManager.unVanish(player, callPostEvent = true, sendJoinMessage = !silent, notifyAdmins = true)
                             if (plugin.vanishedNames.contains(player.name)) {
                                 player.sendMessage(Message.VANISH_USE_UNVANISH)
                             }
@@ -142,21 +142,34 @@ class VanishCommand(
 
                 if (plugin.vanishedNames.contains(player.name)) {
                     player.sendMessage(Message.VANISH_USE_UNVANISH)
-                    plugin.vanishManager.unVanish(player, callPostEvent = true, sendJoinMessage = !silent)
+                    plugin.vanishManager.unVanish(player, callPostEvent = true, sendJoinMessage = !silent, notifyAdmins = true)
                 } else {
                     player.sendMessage(Message.VANISH_USE_VANISH)
-                    plugin.vanishManager.vanish(player, callPostEvent = true, sendQuitMessage = !silent)
-                }
-
-                for (staff in Ruom.getOnlinePlayers().filter { it.hasPermission("velocityvanish.admin.notify") && it != player }) {
-                    if (!plugin.vanishedNames.contains(player.name)) {
-                        staff.sendMessage(Message.UNVANISH_NOTIFY, TextReplacement("player", player.name))
-                    } else {
-                        staff.sendMessage(Message.VANISH_NOTIFY, TextReplacement("player", player.name))
-                    }
+                    plugin.vanishManager.vanish(player, callPostEvent = true, sendQuitMessage = !silent, notifyAdmins = true)
                 }
             }
-
         saveCommand(vanishCommand)
+
+        val setStateCommand = builder
+            .literal("setstate", ArgumentDescription.of("Set vanish state"))
+            .argument(
+                StringArgument.builder<ISender?>("state").asOptional().withSuggestionsProvider { _, _ -> listOf("on", "off") },
+                ArgumentDescription.of("The state of vanish (on/off)")
+            )
+            .flag(CommandFlag.builder("silent").withAliases("s"))
+            .handler { context ->
+                val player = context.sender.player() ?: return@handler
+                val state = context.get<String>("state")
+                val silent = context.flags().hasFlag("silent").or(false)
+
+                if (state == "off") {
+                    player.sendMessage(Message.VANISH_USE_UNVANISH)
+                    plugin.vanishManager.unVanish(player, callPostEvent = true, sendJoinMessage = !silent, notifyAdmins = true)
+                } else {
+                    player.sendMessage(Message.VANISH_USE_VANISH)
+                    plugin.vanishManager.vanish(player, callPostEvent = true, sendQuitMessage = !silent, notifyAdmins = true)
+                }
+            }
+        saveCommand(setStateCommand)
     }
 }

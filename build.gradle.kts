@@ -177,6 +177,11 @@ tasks {
         ex.awaitTermination(10, TimeUnit.SECONDS)
     }
 
+
+    publishAllPublicationsToHangar {
+        dependsOn(shadowJar)
+    }
+
     shadowJar {
         dependsOn(extraDeps)
         archiveClassifier.set("")

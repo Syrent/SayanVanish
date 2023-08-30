@@ -24,4 +24,4 @@ jobs:
         env:
           HANGAR_TOKEN: ${{ secrets.HANGAR_API_TOKEN }}
           HANGAR_BUILD_CHANNEL: Snapshot
-        run: ./gradlew build publishPluginPublicationToHangar --stacktrace
+        run: ./gradlew build publishPluginPublicationToHangar --stacktrace --debug --info --scan

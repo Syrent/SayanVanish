@@ -10,6 +10,7 @@ import com.cryptomorin.xseries.ReflectionUtils
 import com.google.gson.JsonObject
 import com.jeff_media.updatechecker.UpdateCheckSource
 import com.jeff_media.updatechecker.UpdateChecker
+import com.jeff_media.updatechecker.UserAgentBuilder
 import io.netty.util.internal.ReflectionUtil
 import io.papermc.lib.PaperLib
 import ir.syrent.velocityvanish.spigot.command.VanishCommand
@@ -108,15 +109,16 @@ class VelocityVanishSpigot : RUoMPlugin() {
     private fun checkUpdate() {
         Thread {
             try {
-                UpdateChecker(this, UpdateCheckSource.SPIGOT, 105992.toString())
-                    .setDownloadLink("https://www.spigotmc.org/resources/velocityvanish-1-8-1-19-3-no-database-required.105992/")
-                    .checkEveryXHours(24.0)
-                    .setChangelogLink(105992.toString())
-                    .setNotifyOpsOnJoin(true)
-                    .setNotifyByPermissionOnJoin("velocityvanish.updatechecker")
-                    .setTimeout(30 * 1000)
-                    .setSupportLink("https://discord.gg/xZyYGU4EG4")
-                    .checkNow()
+                val updateChecker = UpdateChecker(this, UpdateCheckSource.HANGAR, "Syrent/VelocityVanish/Release")
+                updateChecker.checkNow().onSuccess { _, _ ->
+                    updateChecker.setDownloadLink("https://hangar.papermc.io/Syrent/VelocityVanish")
+                    updateChecker.checkEveryXHours(24.0)
+                    updateChecker.setChangelogLink("https://hangar.papermc.io/Syrent/VelocityVanish/versions/${updateChecker.latestVersion}")
+                    updateChecker.setNotifyOpsOnJoin(true)
+                    updateChecker.setNotifyByPermissionOnJoin("velocityvanish.updatechecker")
+                    updateChecker.setTimeout(30 * 1000)
+                    updateChecker.setSupportLink("https://discord.gg/xZyYGU4EG4")
+                }
             } catch (_: Exception) {
                 Ruom.warn("Could not check for updates, check your connection.")
             }

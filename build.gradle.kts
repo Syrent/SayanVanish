@@ -20,7 +20,7 @@ plugins {
 
 val slug = "velocityvanish"
 group = "ir.syrent.velocityvanish"
-version = "${project.version}"
+version = findProperty("version")!!
 
 repositories {
     mavenLocal()
@@ -147,13 +147,13 @@ tasks {
 
     compileJava {
         options.encoding = Charsets.UTF_8.name()
+        dependsOn(clean)
     }
 
     processResources {
-        filteringCharset = Charsets.UTF_8.name()
         filesMatching(listOf("**plugin.yml", "**plugin.json")) {
             expand(
-                "version" to project.version,
+                "version" to project.version as String,
                 "slug" to slug,
                 "name" to rootProject.name,
                 "description" to project.description

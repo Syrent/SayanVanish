@@ -20,6 +20,15 @@ jobs:
           java-version: 17
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.OS }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: |
+            ${{ runner.OS }}-gradle-
+      - name: Build with Gradle
+        run: ./gradlew build
       - name: Publish
         env:
           HANGAR_TOKEN: ${{ secrets.HANGAR_API_TOKEN }}

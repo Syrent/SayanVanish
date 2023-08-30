@@ -154,8 +154,11 @@ tasks {
 
     processResources {
         filteringCharset = Charsets.UTF_8.name()
-        filesMatching("plugin.yml") {
-            expand("version" to version)
+        filesMatching(listOf("**plugin.yml")) {
+            expand(
+                "version" to project.version,
+                "pluginName" to rootProject.name
+            )
         }
     }
 

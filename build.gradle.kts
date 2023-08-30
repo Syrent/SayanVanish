@@ -1,10 +1,11 @@
-//import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
 import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
+import io.papermc.hangarpublishplugin.model.Platforms
 import org.jetbrains.gradle.ext.settings
 import org.jetbrains.gradle.ext.taskTriggers
 import java.net.URL
 import java.util.*
 import java.util.concurrent.Executors
+import java.io.ByteArrayOutputStream
 
 plugins {
     kotlin("jvm") version "1.9.0"
@@ -14,6 +15,7 @@ plugins {
     id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.7"
     id("org.screamingsandals.nms-mapper") version "1.4.5"
     id("xyz.jpenilla.run-paper") version "2.1.0"
+    id("io.papermc.hangar-publish-plugin") version "0.1.0"
 }
 
 val slug = "velocityvanish"
@@ -195,6 +197,52 @@ tasks {
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+}
+
+fun executeGitCommand(vararg command: String): String {
+    val byteOut = ByteArrayOutputStream()
+    exec {
+        commandLine = listOf("git", *command)
+        standardOutput = byteOut
+    }
+    return byteOut.toString(Charsets.UTF_8.name()).trim()
+}
+
+fun latestCommitMessage(): String {
+    return executeGitCommand("log", "-1", "--pretty=%B")
+}
+
+val versionString: String = version as String
+val isRelease: Boolean = !versionString.contains('-')
+
+val suffixedVersion: String = if (isRelease) {
+    versionString
+} else {
+    versionString + "+" + System.getenv("GITHUB_RUN_NUMBER")
+}
+
+val changelogContent: String = latestCommitMessage()
+
+hangarPublish {
+    publications.register("plugin") {
+        version.set(suffixedVersion)
+        channel.set(if (isRelease) "Release" else "Snapshot")
+        changelog.set(changelogContent)
+        id.set(slug)
+        apiKey.set(System.getenv("HANGAR_API_TOKEN"))
+
+        platforms {
+            register(Platforms.PAPER) {
+                jar.set(tasks.shadowJar.flatMap { it.archiveFile })
+                platformVersions.set((property("paperVersion") as String).split(",").map { it.trim() })
+            }
+
+            register(Platforms.VELOCITY) {
+                jar.set(tasks.shadowJar.flatMap { it.archiveFile })
+                platformVersions.set((property("velocityVersion") as String).split(",").map { it.trim() })
+            }
+        }
+    }
 }
 
 val templateSource = file("src/main/templates")

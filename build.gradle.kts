@@ -139,6 +139,7 @@ tasks {
         minecraftVersion("1.20.1")
         serverJar(file("run/paper-1.20.1-48.jar"))
     }
+
     runPaper {
         folia.registerTask()
     }
@@ -179,7 +180,7 @@ tasks {
 
     shadowJar {
         dependsOn(extraDeps)
-        archiveClassifier.set("")
+        archiveFileName.set("${rootProject.name}_${project.version}.jar")
         exclude("META-INF/**")
         from("LICENSE")
         minimize()
@@ -198,6 +199,15 @@ tasks {
 
     build {
         dependsOn(shadowJar)
+    }
+
+    jar {
+        enabled = true
+    }
+
+    publishAllPublicationsToHangar {
+        this.dependsOn(shadowJar)
+        this.mustRunAfter(shadowJar)
     }
 }
 
@@ -222,7 +232,7 @@ fun latestCommitMessage(): String {
 }
 
 val versionString: String = version as String
-val isRelease: Boolean = !versionString.contains('-')
+val isRelease: Boolean = (System.getenv("HANGAR_BUILD_CHANNEL") ?: "Snapshot") == "Release"
 
 val suffixedVersion: String = if (isRelease) {
     versionString

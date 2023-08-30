@@ -33,7 +33,7 @@ jobs:
       - name: Publish
         env:
           HANGAR_API_TOKEN: ${{ secrets.HANGAR_API_TOKEN }}
-          HANGAR_BUILD_CHANNEL: Snapshot
+          HANGAR_BUILD_CHANNEL: Release
           HANGAR_CHANGELOG: ${{ github.event.release.body }}
         run: ./gradlew build publishPluginPublicationToHangar --stacktrace
               # Attach output to release

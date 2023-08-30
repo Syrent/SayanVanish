@@ -24,6 +24,6 @@ jobs:
         run: ./gradlew generateNmsComponents
       - name: Publish
         env:
-          HANGAR_TOKEN: ${{ secrets.HANGAR_API_TOKEN }}
+          HANGAR_API_TOKEN: ${{ secrets.HANGAR_API_TOKEN }}
           HANGAR_BUILD_CHANNEL: Snapshot
         run: ./gradlew build publishPluginPublicationToHangar --stacktrace

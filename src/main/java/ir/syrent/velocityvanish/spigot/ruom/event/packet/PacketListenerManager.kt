@@ -63,7 +63,7 @@ class PacketListenerManager : Listener {
                             e.printStackTrace()
                             Ruom.error(
                                 "An error occured while handling (reading) a packet. Please report this error to the plugin's author(s): " +
-                                        Ruom.getPlugin().getDescription().getAuthors()
+                                        Ruom.plugin.getDescription().getAuthors()
                             )
                         }
                     }
@@ -82,7 +82,7 @@ class PacketListenerManager : Listener {
                             e.printStackTrace()
                             Ruom.error(
                                 "An error occured while handling (writing) a packet. Please report this error to the plugin's author(s): " +
-                                        Ruom.getPlugin().getDescription().getAuthors()
+                                        Ruom.plugin.getDescription().getAuthors()
                             )
                         }
                     }
@@ -101,7 +101,7 @@ class PacketListenerManager : Listener {
             val pipeline: ChannelPipeline = NMSUtils.getChannel(player)!!.pipeline()
             pipeline.addBefore(
                 "packet_handler",
-                java.lang.String.format("%s_%s", Ruom.getPlugin().getDescription().getName(), player.name),
+                java.lang.String.format("%s_%s", Ruom.plugin.getDescription().getName(), player.name),
                 channelDuplexHandler
             )
         } catch (e: Exception) {
@@ -116,7 +116,7 @@ class PacketListenerManager : Listener {
                 channel.pipeline().remove(
                     java.lang.String.format(
                         "%s_%s",
-                        Ruom.getPlugin().getDescription().getName(),
+                        Ruom.plugin.getDescription().getName(),
                         player.name
                     )
                 )
@@ -138,7 +138,7 @@ class PacketListenerManager : Listener {
         fun initialize() {
             if (INSTANCE == null) {
                 INSTANCE = PacketListenerManager()
-                Ruom.getOnlinePlayers().forEach { player: Player ->
+                Ruom.onlinePlayers.forEach { player: Player ->
                     INSTANCE!!.injectPlayer(
                         player
                     )
@@ -150,7 +150,7 @@ class PacketListenerManager : Listener {
         fun shutdown() {
             if (INSTANCE != null) {
                 Ruom.unregisterListener(INSTANCE)
-                Ruom.getOnlinePlayers().forEach { player: Player ->
+                Ruom.onlinePlayers.forEach { player: Player ->
                     INSTANCE!!.removePlayer(
                         player
                     )

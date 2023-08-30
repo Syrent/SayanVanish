@@ -14,7 +14,7 @@ interface ICommand {
      * @return The permission string.
      */
     fun getPermission(literal: String): String {
-        return "${Ruom.getPlugin().name}.commands.$literal"
+        return "${Ruom.plugin.name}.commands.$literal"
     }
 
     /**

@@ -10,6 +10,7 @@ import com.comphenix.protocol.wrappers.PlayerInfoData
 import com.comphenix.protocol.wrappers.WrappedChatComponent
 import com.comphenix.protocol.wrappers.WrappedGameProfile
 import com.mojang.authlib.GameProfile
+import io.papermc.paper.threadedregions.scheduler.EntityScheduler
 import ir.syrent.nms.accessors.*
 import ir.syrent.velocityvanish.spigot.VelocityVanishSpigot
 import ir.syrent.velocityvanish.spigot.event.PostUnVanishEvent
@@ -78,7 +79,7 @@ class VanishManager(
 
                         val newTabPacket = PacketContainer(PacketType.Play.Server.PLAYER_INFO, tabPacket?.handle)
 
-                        for (onlinePlayer in Ruom.getOnlinePlayers().filter { it.hasPermission("velocityvanish.admin.seevanished") }.filter { it != player }) {
+                        for (onlinePlayer in Ruom.onlinePlayers.filter { it.hasPermission("velocityvanish.admin.seevanished") }.filter { it != player }) {
                             DependencyManager.protocolLibHook.protocolManager.sendServerPacket(onlinePlayer, newTabPacket)
                         }
                     } catch (_: Exception) {
@@ -90,7 +91,7 @@ class VanishManager(
     }
 
     fun hidePlayer(player: Player) {
-        for (onlinePlayer in Ruom.getOnlinePlayers().filter { !it.hasPermission("velocityvanish.admin.seevanished") }) {
+        for (onlinePlayer in Ruom.onlinePlayers.filter { !it.hasPermission("velocityvanish.admin.seevanished") }) {
             val onlinePlayerVanishLevel = getVanishLevel(onlinePlayer)
             if (onlinePlayerVanishLevel >= getVanishLevel(player) && getVanishLevel(player) != 0) continue
 
@@ -190,12 +191,24 @@ class VanishManager(
         } catch (_: NoClassDefFoundError) {
         } catch (_: NoSuchMethodError) { }
 
-        player.world.entities.stream()
-            .filter { entity -> entity is Creature }
-            .map { entity -> entity as Creature }
-            .filter { mob -> mob.target != null }
-            .filter { mob -> player.uniqueId == mob.target?.uniqueId }
-            .forEach { mob -> mob.target = null }
+        if (Ruom.isFolia) {
+            player.world.entities
+                .filterIsInstance<Creature>()
+                .forEach { creature ->
+                    creature.scheduler.run(Ruom.plugin, {
+                        if (creature.target?.uniqueId == player.uniqueId) {
+                            creature.target = null
+                        }
+                    }, {})
+                }
+        } else {
+            player.world.entities.stream()
+                .filter { entity -> entity is Creature }
+                .map { entity -> entity as Creature }
+                .filter { mob -> mob.target != null }
+                .filter { mob -> player.uniqueId == mob.target?.uniqueId }
+                .forEach { mob -> mob.target = null }
+        }
 
         addPotionEffects(player)
 
@@ -261,7 +274,7 @@ class VanishManager(
         }
 
         if (notifyAdmins) {
-            for (staff in Ruom.getOnlinePlayers().filter { it.hasPermission("velocityvanish.admin.notify") && it != player }) {
+            for (staff in Ruom.onlinePlayers.filter { it.hasPermission("velocityvanish.admin.notify") && it != player }) {
                 staff.sendMessage(Message.VANISH_NOTIFY, TextReplacement("player", player.name))
             }
         }
@@ -290,9 +303,9 @@ class VanishManager(
             player.isInvulnerable = false /*invulnerablePlayers.contains(player.uniqueId)*/
         }
 
-        for (onlinePlayer in Ruom.getOnlinePlayers()) {
+        for (onlinePlayer in Ruom.onlinePlayers) {
             try {
-                onlinePlayer.showPlayer(Ruom.getPlugin(), player)
+                onlinePlayer.showPlayer(Ruom.plugin, player)
             } catch (e: NoSuchMethodError) {
                 @Suppress("DEPRECATION")
                 onlinePlayer.showPlayer(player)
@@ -370,7 +383,7 @@ class VanishManager(
         }
 
         if (notifyAdmins) {
-            for (staff in Ruom.getOnlinePlayers().filter { it.hasPermission("velocityvanish.admin.notify") && it != player }) {
+            for (staff in Ruom.onlinePlayers.filter { it.hasPermission("velocityvanish.admin.notify") && it != player }) {
                 staff.sendMessage(Message.UNVANISH_NOTIFY, TextReplacement("player", player.name))
             }
         }
@@ -402,18 +415,18 @@ class VanishManager(
                 list.toList()
             )
 
-            for (onlinePlayer in Ruom.getOnlinePlayers().filter { it.hasPermission("velocityvanish.admin.seevanished") }) {
+            for (onlinePlayer in Ruom.onlinePlayers.filter { it.hasPermission("velocityvanish.admin.seevanished") }) {
                 if (exceptSelf && onlinePlayer == player) continue
                 NMSUtils.sendPacket(onlinePlayer, packet)
             }
 
             if (gameMode == GameMode.SPECTATOR) {
-                for (onlinePlayer in Ruom.getOnlinePlayers().filter { !it.hasPermission("velocityvanish.admin.seevanished") }) {
+                for (onlinePlayer in Ruom.onlinePlayers.filter { !it.hasPermission("velocityvanish.admin.seevanished") }) {
                     if (onlinePlayer == player) continue
                     NMSUtils.sendPacket(onlinePlayer, ClientboundPlayerInfoRemovePacketAccessor.getConstructor0().newInstance(listOf(EntityAccessor.getMethodGetUUID1().invoke(serverPlayer))))
                 }
             } else {
-                for (onlinePlayer in Ruom.getOnlinePlayers().filter { !it.hasPermission("velocityvanish.admin.seevanished") }) {
+                for (onlinePlayer in Ruom.onlinePlayers.filter { !it.hasPermission("velocityvanish.admin.seevanished") }) {
                     if (onlinePlayer == player) continue
                     NMSUtils.sendPacket(onlinePlayer, ClientboundPlayerInfoUpdatePacketAccessor.getMethodCreatePlayerInitializing1().invoke(null, listOf(serverPlayer)))
                 }

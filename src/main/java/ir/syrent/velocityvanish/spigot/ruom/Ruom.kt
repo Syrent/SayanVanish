@@ -1,154 +1,188 @@
-package ir.syrent.velocityvanish.spigot.ruom;
+package ir.syrent.velocityvanish.spigot.ruom
 
-import ir.syrent.velocityvanish.spigot.ruom.adventure.AdventureApi;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.bukkit.Server;
-import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
-import org.bukkit.scheduler.BukkitTask;
+import com.comphenix.protocol.scheduler.FoliaScheduler
+import ir.syrent.velocityvanish.spigot.ruom.adventure.AdventureApi
+import net.kyori.adventure.text.Component
+import org.bukkit.Bukkit
+import org.bukkit.Server
+import org.bukkit.command.ConsoleCommandSender
+import org.bukkit.entity.Player
+import org.bukkit.event.HandlerList
+import org.bukkit.event.Listener
+import org.bukkit.scheduler.BukkitTask
+import java.util.concurrent.TimeUnit
 
-import java.util.HashSet;
-import java.util.Set;
+object Ruom {
 
-public class Ruom {
-
-    private final static Set<String> recordedHasPluginSet = new HashSet<>();
-
-    private static boolean debug = false;
-
-    public static RUoMPlugin getPlugin() {
-        return RUoMPlugin.get();
+    val isFolia = try {
+        Class.forName("io.papermc.paper.threadedregions.RegionizedServer")
+        true
+    } catch (ex: Exception) {
+        false
     }
 
-    public static Server getServer() {
-        return getPlugin().getServer();
-    }
+    private val recordedHasPluginSet: MutableSet<String> = HashSet()
+    private var debug = false
 
-    public static ConsoleCommandSender getConsoleSender() {
-        return getServer().getConsoleSender();
-    }
+    @JvmStatic
+    val plugin: RUoMPlugin
+        get() = RUoMPlugin.get()
 
-    public static boolean hasPlugin(String plugin) {
-        if (recordedHasPluginSet.contains(plugin))
-            return true;
-        else {
-            if (getServer().getPluginManager().getPlugin(plugin) != null &&
-                    getServer().getPluginManager().isPluginEnabled(plugin)) {
-                recordedHasPluginSet.add(plugin);
-                return true;
-            }
-            else
-                return false;
+    @JvmStatic
+    val server: Server
+        get() = plugin.server
+
+    val consoleSender: ConsoleCommandSender
+        get() = server.consoleSender
+
+    fun hasPlugin(plugin: String): Boolean {
+        return if (recordedHasPluginSet.contains(plugin)) true else {
+            if (server.pluginManager.getPlugin(plugin) != null &&
+                server.pluginManager.isPluginEnabled(plugin)
+            ) {
+                recordedHasPluginSet.add(plugin)
+                true
+            } else false
         }
     }
 
-    public static Set<Player> getOnlinePlayers() {
-        return new HashSet<>(getServer().getOnlinePlayers());
+    val onlinePlayers: Set<Player>
+        get() = HashSet(server.onlinePlayers)
+
+    fun setDebug(debug: Boolean) {
+        Ruom.debug = debug
     }
 
-    public static void setDebug(boolean debug) {
-        Ruom.debug = debug;
+    fun registerListener(listener: Listener?) {
+        RUoMPlugin.get().server.pluginManager.registerEvents(listener!!, RUoMPlugin.get())
     }
 
-    public static void registerListener(Listener listener) {
-        RUoMPlugin.get().getServer().getPluginManager().registerEvents(listener, RUoMPlugin.get());
+    fun unregisterListener(listener: Listener?) {
+        HandlerList.unregisterAll(listener!!)
     }
 
-    public static void unregisterListener(Listener listener) {
-        HandlerList.unregisterAll(listener);
-    }
-
-    public static void initializeAdventure() {
-        AdventureApi.initialize();
+    @JvmStatic
+    fun initializeAdventure() {
+        AdventureApi.initialize()
     }
 
     /*public static void initializeGUI() {
         RUoMPlugin.get().getServer().getPluginManager().registerEvents(new GUIListener(), RUoMPlugin.get());
     }*/
-
-//    public static void initializePacketListener() {
-//        PacketListenerManager.initialize();
-//    }
-
-    public static void broadcast(String message) {
-        Bukkit.broadcastMessage(message);
+    //    public static void initializePacketListener() {
+    //        PacketListenerManager.initialize();
+    //    }
+    fun broadcast(message: String?) {
+        Bukkit.broadcastMessage(message!!)
     }
 
-    public static void broadcast(Component message) {
-        AdventureApi.get().players().sendMessage(message);
+    fun broadcast(message: Component?) {
+        AdventureApi.get().players().sendMessage(message!!)
     }
 
-    public static void log(String message) {
-        RUoMPlugin.get().getLogger().info(message);
+    fun log(message: String?) {
+        RUoMPlugin.get().logger.info(message)
     }
 
-    public static void debug(String message) {
+    fun debug(message: String) {
         if (debug) {
-            log("[Debug] " + message);
+            log("[Debug] $message")
         }
     }
 
-    public static void warn(String message) {
-        RUoMPlugin.get().getLogger().warning(message);
+    fun warn(message: String?) {
+        RUoMPlugin.get().logger.warning(message)
     }
 
-    public static void error(String message) {
-        RUoMPlugin.get().getLogger().severe(message);
+    fun error(message: String?) {
+        RUoMPlugin.get().logger.severe(message)
     }
 
-    public static BukkitTask runSync(Runnable runnable) {
-        return Bukkit.getScheduler().runTask(getPlugin(), runnable);
+    fun runSync(runnable: Runnable) {
+        if (isFolia) {
+            plugin.server.globalRegionScheduler.run(plugin) { runnable.run() }
+        } else {
+            Bukkit.getScheduler().runTask(plugin, runnable)
+        }
     }
 
-    public static BukkitTask runSync(Runnable runnable, int delay) {
-        return Bukkit.getScheduler().runTaskLater(getPlugin(), runnable, delay);
+    fun runSync(runnable: Runnable, delay: Long) {
+        if (isFolia) {
+            plugin.server.globalRegionScheduler.runDelayed(plugin, {
+                runnable.run()
+            }, delay)
+        } else {
+            Bukkit.getScheduler().runTaskLater(plugin, runnable, delay)
+        }
     }
 
-    public static BukkitTask runSync(Runnable runnable, int delay, int period) {
-        return Bukkit.getScheduler().runTaskTimer(getPlugin(), runnable, delay, period);
+    fun runSync(runnable: Runnable, delay: Long, period: Long) {
+        if (isFolia) {
+            plugin.server.globalRegionScheduler.runAtFixedRate(plugin, {
+                runnable.run()
+            }, delay.coerceAtLeast(1), period)
+        } else {
+            Bukkit.getScheduler().runTaskTimer(plugin, runnable, delay, period)
+        }
     }
 
-    public static BukkitTask runAsync(Runnable runnable) {
-        return Bukkit.getScheduler().runTaskAsynchronously(getPlugin(), runnable);
+    fun runAsync(runnable: Runnable) {
+        if (isFolia) {
+            plugin.server.asyncScheduler.runNow(plugin) {
+                runnable.run()
+            }
+        } else {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, runnable)
+        }
     }
 
-    public static BukkitTask runAsync(Runnable runnable, int delay) {
-        return Bukkit.getScheduler().runTaskLaterAsynchronously(getPlugin(), runnable, delay);
+    fun runAsync(runnable: Runnable, delay: Long) {
+        if (isFolia) {
+            plugin.server.asyncScheduler.runDelayed(plugin, {
+                runnable.run()
+            }, delay * 50, TimeUnit.MILLISECONDS)
+        } else {
+            Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, runnable, delay)
+        }
     }
 
-    public static BukkitTask runAsync(Runnable runnable, int delay, int period) {
-        return Bukkit.getScheduler().runTaskTimerAsynchronously(getPlugin(), runnable, delay, period);
+    fun runAsync(runnable: Runnable, delay: Long, period: Long) {
+        if (isFolia) {
+            plugin.server.asyncScheduler.runAtFixedRate(plugin, {
+                runnable.run()
+            }, delay * 50, period * 50, TimeUnit.MILLISECONDS)
+        } else {
+            Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, runnable, delay, period)
+        }
     }
 
-    public static void run(RunnableExc runnable) {
+    fun run(runnable: RunnableExc) {
         try {
-            runnable.run();
-        } catch (Exception e) {
-            e.printStackTrace();
+            runnable.run()
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
-    @FunctionalInterface public interface RunnableExc {
-        void run() throws Exception;
-    }
-
-    public static void shutdown() {
-        recordedHasPluginSet.clear();
+    fun shutdown() {
+        recordedHasPluginSet.clear()
         try {
             if (AdventureApi.get() != null) {
-                AdventureApi.get().close();
+                AdventureApi.get().close()
             }
-        } catch (Exception ignore) {}
+        } catch (ignore: Exception) {
+        }
         /*try {
             PacketListenerManager.shutdown();
-        } catch (Exception ignore) {}*/
-        try {
-            getServer().getMessenger().unregisterOutgoingPluginChannel(getPlugin());
-            getServer().getMessenger().unregisterIncomingPluginChannel(getPlugin());
-        } catch (Exception ignore) {}
+        } catch (Exception ignore) {}*/try {
+            server.messenger.unregisterOutgoingPluginChannel(plugin)
+            server.messenger.unregisterIncomingPluginChannel(plugin)
+        } catch (ignore: Exception) {
+        }
     }
 
+    fun interface RunnableExc {
+        @Throws(Exception::class)
+        fun run()
+    }
 }

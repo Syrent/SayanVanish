@@ -1,11 +1,12 @@
-name: '${pluginName}'
+name: '${name}'
 version: '${version}'
 main: ir.syrent.velocityvanish.spigot.VelocityVanishSpigot
 api-version: '1.19'
 prefix: VelocityVanish
 authors: [ Syrent ]
-description: Vanish plugin for velocity servers
+description: '${description}'
 website: syrent.ir
+folia-supported: true
 dependencies:
   server:
     DiscordSRV:

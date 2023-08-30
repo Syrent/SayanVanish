@@ -1,5 +1,7 @@
 package ir.syrent.velocityvanish.spigot.utils
 
+import com.velocitypowered.api.scheduler.ScheduledTask
+import com.velocitypowered.api.scheduler.TaskStatus
 import ir.syrent.velocityvanish.spigot.VelocityVanishSpigot
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import ir.syrent.velocityvanish.spigot.ruom.string.CharAnimation
@@ -30,18 +32,31 @@ object Utils {
         if (actionbarPlayers.contains(player)) return
 
         if (Settings.actionbar && player.hasPermission("velocityvanish.admin.actionbar")) {
-            object : BukkitRunnable() {
-                override fun run() {
+            if (Ruom.isFolia) {
+                Ruom.plugin.server.globalRegionScheduler.runAtFixedRate(Ruom.plugin, {
                     if (Bukkit.getPlayer(player.uniqueId) == null) {
-                        cancel()
-                        return
+                        it.cancel()
+                        return@runAtFixedRate
                     }
 
-                    if (!VelocityVanishSpigot.instance.vanishedNames.contains(player.name)) return
+                    if (!VelocityVanishSpigot.instance.vanishedNames.contains(player.name)) return@runAtFixedRate
 
                     player.sendActionbar(Message.VANISH_ACTIONBAR, TextReplacement("animation", lastChar))
-                }
-            }.runTaskTimer(VelocityVanishSpigot.instance, 0, 20)
+                }, 1, 20)
+            } else {
+                object : BukkitRunnable() {
+                    override fun run() {
+                        if (Bukkit.getPlayer(player.uniqueId) == null) {
+                            cancel()
+                            return
+                        }
+
+                        if (!VelocityVanishSpigot.instance.vanishedNames.contains(player.name)) return
+
+                        player.sendActionbar(Message.VANISH_ACTIONBAR, TextReplacement("animation", lastChar))
+                    }
+                }.runTaskTimer(VelocityVanishSpigot.instance, 0, 20)
+            }
         }
     }
 

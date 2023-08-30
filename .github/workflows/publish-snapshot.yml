@@ -39,5 +39,6 @@ jobs:
       - name: Publish to Modrinth
         run: ./gradlew modrinth
         env:
+          MODRINTH_BUILD_CHANNEL: beta
           MODRINTH_API_TOKEN: ${{ secrets.MODRINTH_API_TOKEN }}
           MODRINTH_CHANGELOG: ${{ github.event.release.body }}

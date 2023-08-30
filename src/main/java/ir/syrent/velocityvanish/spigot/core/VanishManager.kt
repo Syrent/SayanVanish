@@ -23,6 +23,7 @@ import ir.syrent.velocityvanish.spigot.storage.Settings
 import ir.syrent.velocityvanish.spigot.utils.NMSUtils
 import ir.syrent.velocityvanish.spigot.utils.ServerVersion
 import ir.syrent.velocityvanish.spigot.utils.Utils
+import ir.syrent.velocityvanish.spigot.utils.sendMessage
 import ir.syrent.velocityvanish.utils.TextReplacement
 import ir.syrent.velocityvanish.utils.component
 import org.bukkit.GameMode
@@ -153,6 +154,10 @@ class VanishManager(
     }
 
     fun vanish(player: Player, sendQuitMessage: Boolean = true, callPostEvent: Boolean = false) {
+        vanish(player, sendQuitMessage, callPostEvent, false)
+    }
+
+    fun vanish(player: Player, sendQuitMessage: Boolean = true, callPostEvent: Boolean = false, notifyAdmins: Boolean = false) {
         val preVanishEvent = PreVanishEvent(player, sendQuitMessage)
         VelocityVanishSpigot.instance.server.pluginManager.callEvent(preVanishEvent)
 
@@ -254,9 +259,20 @@ class VanishManager(
             val postVanishEvent = PostVanishEvent(player, preVanishEvent.sendQuitMessage)
             VelocityVanishSpigot.instance.server.pluginManager.callEvent(postVanishEvent)
         }
+
+        if (notifyAdmins) {
+            for (staff in Ruom.getOnlinePlayers().filter { it.hasPermission("velocityvanish.admin.notify") && it != player }) {
+                staff.sendMessage(Message.VANISH_NOTIFY, TextReplacement("player", player.name))
+            }
+        }
     }
 
+
     fun unVanish(player: Player, sendJoinMessage: Boolean = true, callPostEvent: Boolean = false) {
+        unVanish(player, sendJoinMessage, callPostEvent, false)
+    }
+
+    fun unVanish(player: Player, sendJoinMessage: Boolean = true, callPostEvent: Boolean = false, notifyAdmins: Boolean = false) {
         val preUnVanishEvent = PreUnVanishEvent(player, sendJoinMessage)
         VelocityVanishSpigot.instance.server.pluginManager.callEvent(preUnVanishEvent)
 
@@ -351,6 +367,12 @@ class VanishManager(
         if (callPostEvent) {
             val postUnVanishEvent = PostUnVanishEvent(player, preUnVanishEvent.sendJoinMessage)
             VelocityVanishSpigot.instance.server.pluginManager.callEvent(postUnVanishEvent)
+        }
+
+        if (notifyAdmins) {
+            for (staff in Ruom.getOnlinePlayers().filter { it.hasPermission("velocityvanish.admin.notify") && it != player }) {
+                staff.sendMessage(Message.UNVANISH_NOTIFY, TextReplacement("player", player.name))
+            }
         }
     }
 

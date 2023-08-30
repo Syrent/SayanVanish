@@ -25,15 +25,15 @@ class PlaceholderAPIHook constructor(plugin: VelocityVanishSpigot, name: String)
         private val plugin: VelocityVanishSpigot
     ) : PlaceholderExpansion() {
         override fun getIdentifier(): String {
-            return Ruom.getPlugin().description.name.lowercase()
+            return Ruom.plugin.description.name.lowercase()
         }
 
         override fun getAuthor(): String {
-            return Ruom.getPlugin().description.authors.joinToString(", ")
+            return Ruom.plugin.description.authors.joinToString(", ")
         }
 
         override fun getVersion(): String {
-            return Ruom.getPlugin().description.version
+            return Ruom.plugin.description.version
         }
 
         override fun persist(): Boolean {
@@ -57,7 +57,7 @@ class PlaceholderAPIHook constructor(plugin: VelocityVanishSpigot, name: String)
                 val type = params.substring(7)
 
                 return if (type.equals("here", true)) {
-                    Ruom.getOnlinePlayers().filter { !plugin.vanishedNamesOnline.contains(it.name) }.size.toString()
+                    Ruom.onlinePlayers.filter { !plugin.vanishedNamesOnline.contains(it.name) }.size.toString()
                 } else if (type.equals("total", true)) {
                     val players = mutableListOf<String>()
                     for (serverPlayers in plugin.proxyPlayers.values.filter { it.isNotEmpty() }) {
@@ -67,7 +67,7 @@ class PlaceholderAPIHook constructor(plugin: VelocityVanishSpigot, name: String)
                 } else {
                     if (!Settings.velocitySupport) {
                         warning("Plugin trying to get online players from other servers but Velocity support is disabled.")
-                        Ruom.getOnlinePlayers().filter { !plugin.vanishedNamesOnline.contains(it.name) }.size.toString()
+                        Ruom.onlinePlayers.filter { !plugin.vanishedNamesOnline.contains(it.name) }.size.toString()
                     } else {
                         (plugin.proxyPlayers[type.lowercase()]?.filter { !plugin.vanishedNamesOnline.contains(it) }?.size ?: 0).toString()
                     }

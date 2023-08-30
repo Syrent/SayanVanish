@@ -26,7 +26,7 @@ open class Sender(
     }
 
     override fun audience(): Audience {
-        return BukkitAudiences.create(Ruom.getPlugin()).sender(commandSender)
+        return BukkitAudiences.create(Ruom.plugin).sender(commandSender)
     }
 
     override fun setSender(sender: CommandSender) {

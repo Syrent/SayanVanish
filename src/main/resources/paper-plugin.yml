@@ -1,0 +1,35 @@
+name: '${name}'
+version: '${version}'
+main: ir.syrent.velocityvanish.spigot.VelocityVanishSpigot
+api-version: '1.19'
+prefix: VelocityVanish
+authors: [ Syrent ]
+description: '${description}'
+website: syrent.ir
+folia-supported: true
+dependencies:
+  server:
+    DiscordSRV:
+      load: AFTER
+      required: false
+    ProtocolLib:
+      load: AFTER
+      required: false
+    ProCosmetics:
+      load: AFTER
+      required: false
+    SayanChat:
+      load: AFTER
+      required: false
+    PlaceholderAPI:
+      load: AFTER
+      required: false
+    squaremap:
+      load: AFTER
+      required: false
+    Essentials:
+      load: AFTER
+      required: false
+    CMI:
+      load: AFTER
+      required: false

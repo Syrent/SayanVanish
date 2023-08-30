@@ -61,19 +61,19 @@ object Settings {
     }
 
     fun load() {
-        settings = YamlConfig(Ruom.getPlugin().dataFolder, "settings.yml")
+        settings = YamlConfig(Ruom.plugin.dataFolder, "settings.yml")
         settingsConfig = settings.config
 
         settingsConfigVersion = settingsConfig.getInt("config_version", 1)
 
         if (settingsConfigVersion < latestSettingsConfigVersion) {
             val backupFileName = "settings.yml-bak-${LocalDate.now()}"
-            val settingsFile = File(Ruom.getPlugin().dataFolder, "settings.yml")
-            val backupFile = File(Ruom.getPlugin().dataFolder, backupFileName)
+            val settingsFile = File(Ruom.plugin.dataFolder, "settings.yml")
+            val backupFile = File(Ruom.plugin.dataFolder, backupFileName)
             if (backupFile.exists()) backupFile.delete()
             Files.copy(settingsFile.toPath(), backupFile.toPath())
             settingsFile.delete()
-            settings = YamlConfig(Ruom.getPlugin().dataFolder, "settings.yml")
+            settings = YamlConfig(Ruom.plugin.dataFolder, "settings.yml")
             settingsConfig = settings.config
             sendBackupMessage(backupFileName)
         }
@@ -110,7 +110,7 @@ object Settings {
 
         forcePreventPrivateMessages = settingsConfig.getBoolean("hooks.essentials.force_prevent_private_messages")
 
-        language = YamlConfig(Ruom.getPlugin().dataFolder, "languages/$defaultLanguage.yml")
+        language = YamlConfig(Ruom.plugin.dataFolder, "languages/$defaultLanguage.yml")
         languageConfig = language.config
 
         messages.apply {

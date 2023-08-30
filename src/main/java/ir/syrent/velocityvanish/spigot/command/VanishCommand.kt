@@ -22,8 +22,8 @@ class VanishCommand(
     init {
         val fakeJoinLiteral = addLiteral("fakejoin", ArgumentDescription.of("Send a fake join message"))
             .permission(getPermission("fakejoin"))
-            .argument(StringArgument.builder<ISender?>("for").withSuggestionsProvider { _, _ -> Ruom.getOnlinePlayers().map { it.name } })
-            .argument(StringArgument.builder<ISender?>("to").asOptional().withSuggestionsProvider { _, _ -> Ruom.getOnlinePlayers().map { it.name } })
+            .argument(StringArgument.builder<ISender?>("for").withSuggestionsProvider { _, _ -> Ruom.onlinePlayers.map { it.name } })
+            .argument(StringArgument.builder<ISender?>("to").asOptional().withSuggestionsProvider { _, _ -> Ruom.onlinePlayers.map { it.name } })
             .handler { context ->
                 val forPlayerName = context.get<String>("for")
                 val forPlayer = Bukkit.getPlayerExact(forPlayerName)
@@ -32,7 +32,7 @@ class VanishCommand(
                 if (player != null) {
                     player.sendMessage(Message.JOIN_MESSAGE, TextReplacement("player_displayname", forPlayer?.displayName ?: forPlayerName), TextReplacement("player", forPlayer?.name ?: forPlayerName))
                 } else {
-                    Ruom.getOnlinePlayers().forEach {
+                    Ruom.onlinePlayers.forEach {
                         it.sendMessage(Message.JOIN_MESSAGE, TextReplacement("player_displayname", forPlayer?.displayName ?: forPlayerName), TextReplacement("player", forPlayer?.name ?: forPlayerName))
                     }
                 }
@@ -50,8 +50,8 @@ class VanishCommand(
 
         val fakeQuit = addLiteral("fakequit", ArgumentDescription.of("Send a fake quit message"))
             .permission(getPermission("fakequit"))
-            .argument(StringArgument.builder<ISender?>("for").withSuggestionsProvider { _, _ -> Ruom.getOnlinePlayers().map { it.name } })
-            .argument(StringArgument.builder<ISender?>("to").asOptional().withSuggestionsProvider { _, _ -> Ruom.getOnlinePlayers().map { it.name } })
+            .argument(StringArgument.builder<ISender?>("for").withSuggestionsProvider { _, _ -> Ruom.onlinePlayers.map { it.name } })
+            .argument(StringArgument.builder<ISender?>("to").asOptional().withSuggestionsProvider { _, _ -> Ruom.onlinePlayers.map { it.name } })
             .handler { context ->
                 val forPlayerName = context.get<String>("for")
                 val forPlayer = Bukkit.getPlayerExact(forPlayerName)
@@ -60,7 +60,7 @@ class VanishCommand(
                 if (player != null) {
                     player.sendMessage(Message.QUIT_MESSAGE, TextReplacement("player_displayname", forPlayer?.displayName ?: forPlayerName), TextReplacement("player", forPlayer?.name ?: forPlayerName))
                 } else {
-                    Ruom.getOnlinePlayers().forEach {
+                    Ruom.onlinePlayers.forEach {
                         it.sendMessage(Message.QUIT_MESSAGE, TextReplacement("player_displayname", forPlayer?.displayName ?: forPlayerName), TextReplacement("player", forPlayer?.name ?: forPlayerName))
                     }
                 }
@@ -70,7 +70,7 @@ class VanishCommand(
 
         val setLevel = addLiteral("setlevel", ArgumentDescription.of("Set the vanish level of specific player"))
             .permission(getPermission("setlevel"))
-            .argument(StringArgument.builder<ISender?>("player").withSuggestionsProvider { _, _ -> Ruom.getOnlinePlayers().map { it.name } })
+            .argument(StringArgument.builder<ISender?>("player").withSuggestionsProvider { _, _ -> Ruom.onlinePlayers.map { it.name } })
             .argument(IntegerArgument.builder<ISender?>("level").withMin(0))
             .handler { context ->
                 val player = Bukkit.getPlayerExact(context.get("player")) ?: let {
@@ -79,7 +79,7 @@ class VanishCommand(
                 }
                 val level = context.get<Int>("level")
 
-                val addAttachment = player.addAttachment(Ruom.getPlugin())
+                val addAttachment = player.addAttachment(Ruom.plugin)
                 addAttachment.setPermission("velocityvanish.level.$level", true)
                 context.sender.getSender().sendMessage(Message.LEVEL_SET, TextReplacement("level", level.toString()), TextReplacement("player", player.name))
             }
@@ -87,7 +87,7 @@ class VanishCommand(
 
         val getLevel = addLiteral("getlevel", ArgumentDescription.of("Get the vanish level of specific player"))
             .permission(getPermission("getlevel"))
-            .argument(StringArgument.builder<ISender?>("player").withSuggestionsProvider { _, _ -> Ruom.getOnlinePlayers().map { it.name } })
+            .argument(StringArgument.builder<ISender?>("player").withSuggestionsProvider { _, _ -> Ruom.onlinePlayers.map { it.name } })
             .handler { context ->
                 val player = Bukkit.getPlayerExact(context.get("player")) ?: let {
                     context.sender.getSender().sendMessage(Message.PLAYER_NOT_FOUND)
@@ -100,7 +100,7 @@ class VanishCommand(
 
         val vanishCommand = builder
             .argument(
-                StringArgument.builder<ISender?>("player").asOptional().withSuggestionsProvider { _, _ -> Ruom.getOnlinePlayers().map { it.name } },
+                StringArgument.builder<ISender?>("player").asOptional().withSuggestionsProvider { _, _ -> Ruom.onlinePlayers.map { it.name } },
                 ArgumentDescription.of("The player you want to vanish/unvanish")
             )
             .flag(CommandFlag.builder("state").withAliases("s").withArgument(
@@ -150,10 +150,10 @@ class VanishCommand(
             }
         saveCommand(vanishCommand)
 
-        val setStateCommand = builder
-            .literal("setstate", ArgumentDescription.of("Set vanish state"))
+        val setStateCommand = addLiteral("setstate", ArgumentDescription.of("Set vanish state"))
+            .permission(getPermission("setstate"))
             .argument(
-                StringArgument.builder<ISender?>("state").asOptional().withSuggestionsProvider { _, _ -> listOf("on", "off") },
+                StringArgument.builder<ISender?>("state").withSuggestionsProvider { _, _ -> listOf("on", "off") },
                 ArgumentDescription.of("The state of vanish (on/off)")
             )
             .flag(CommandFlag.builder("silent").withAliases("s"))

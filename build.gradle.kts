@@ -16,6 +16,7 @@ plugins {
     id("xyz.jpenilla.run-paper") version "2.1.0"
 }
 
+val slug = "velocityvanish"
 group = "ir.syrent.velocityvanish"
 version = "${project.version}"
 
@@ -58,6 +59,7 @@ repositories {
 dependencies {
     compileOnly("com.velocitypowered:velocity-api:3.1.1")
     compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
+    compileOnly("dev.folia:folia-api:1.20.1-R0.1-SNAPSHOT")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
     compileOnly("me.clip:placeholderapi:2.11.3")
     compileOnly("xyz.jpenilla:squaremap-api:1.1.16")
@@ -133,6 +135,9 @@ tasks {
         minecraftVersion("1.20.1")
         serverJar(file("run/paper-1.20.1-48.jar"))
     }
+    runPaper {
+        folia.registerTask()
+    }
 
     val relocate = task<ConfigureShadowRelocation>("relocateShadowJar") {
         target = shadowJar.get()
@@ -154,8 +159,13 @@ tasks {
 
     processResources {
         filteringCharset = Charsets.UTF_8.name()
-        filesMatching("plugin.yml") {
-            expand("version" to version)
+        filesMatching(listOf("**plugin.yml", "**plugin.json")) {
+            expand(
+                "version" to project.version,
+                "slug" to slug,
+                "name" to rootProject.name,
+                "description" to project.description
+            )
         }
     }
 

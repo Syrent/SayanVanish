@@ -11,7 +11,7 @@ class BukkitBridge : Bridge, BukkitMessagingChannel("velocityvanish", "main") {
         if (sender !is Player) {
             throw IllegalArgumentException("Given object is not a bukkit player")
         }
-        sender.sendPluginMessage(Ruom.getPlugin(), "velocityvanish:main", messageByte)
+        sender.sendPluginMessage(Ruom.plugin, "velocityvanish:main", messageByte)
     }
 
     override fun sendPluginMessage(messageByte: ByteArray) {

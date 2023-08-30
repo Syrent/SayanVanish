@@ -30,10 +30,10 @@ abstract class Command(
     init {
         val senderMapper = { commandSender: CommandSender -> Sender(commandSender) }
         val backwardsMapper = { sayanSender: ISender -> sayanSender.getSender() }
-        val audienceMapper = { sayanSender: ISender -> BukkitAudiences.create(Ruom.getPlugin()).sender(sayanSender.getSender()) }
+        val audienceMapper = { sayanSender: ISender -> BukkitAudiences.create(Ruom.plugin).sender(sayanSender.getSender()) }
 
         manager = PaperCommandManager(
-            Ruom.getPlugin(),
+            Ruom.plugin,
             CommandExecutionCoordinator.simpleCoordinator(),
             senderMapper,
             backwardsMapper

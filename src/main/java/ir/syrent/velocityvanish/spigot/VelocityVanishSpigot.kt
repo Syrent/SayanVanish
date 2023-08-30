@@ -69,7 +69,7 @@ class VelocityVanishSpigot : RUoMPlugin() {
                     override fun onPacketSending(event: PacketEvent?) {
                         event?.packet?.serverPings?.let { serverPing ->
                             serverPing.read(0).setPlayers(
-                                Ruom.getOnlinePlayers().filter { player -> !vanishedNames.contains(player.name) }.map { player ->
+                                Ruom.onlinePlayers.filter { player -> !vanishedNames.contains(player.name) }.map { player ->
                                     WrappedGameProfile(player.uniqueId, player.name)
                                 }
                             )
@@ -88,7 +88,7 @@ class VelocityVanishSpigot : RUoMPlugin() {
         sendConsoleMessage("<dark_purple>   \\  /  __/ | (_) | (__| | |_| |_| |\\  / (_| | | | | \\__ \\ | | |")
         sendConsoleMessage("<dark_purple>    \\/ \\___|_|\\___/ \\___|_|\\__|\\__, | \\/ \\__,_|_| |_|_|___/_| |_|")
         sendConsoleMessage("<dark_purple>                                __/ |                            ")
-        sendConsoleMessage("<dark_purple>                               |___/                             v${Ruom.getServer().pluginManager.getPlugin("VelocityVanish")?.description?.version ?: " Unknown"}")
+        sendConsoleMessage("<dark_purple>                               |___/                             v${Ruom.server.pluginManager.getPlugin("VelocityVanish")?.description?.version ?: " Unknown"}")
         sendConsoleMessage(" ")
         sendConsoleMessage("<white>Wiki: <blue><u>https://github.com/Syrent/VelocityVanish/wiki</u></blue>")
         sendConsoleMessage(" ")
@@ -125,7 +125,7 @@ class VelocityVanishSpigot : RUoMPlugin() {
 
     private fun resetData(startup: Boolean) {
         try {
-            for (player in Ruom.getOnlinePlayers()) {
+            for (player in Ruom.onlinePlayers) {
                 if (startup) {
                     Utils.sendVanishActionbar(player)
                 }

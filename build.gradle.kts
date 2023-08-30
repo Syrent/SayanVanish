@@ -1,4 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
 import io.papermc.hangarpublishplugin.model.Platforms
 import org.jetbrains.gradle.ext.settings
 import org.jetbrains.gradle.ext.taskTriggers
@@ -8,10 +7,10 @@ import java.util.concurrent.Executors
 import java.io.ByteArrayOutputStream
 
 plugins {
-    kotlin("jvm") version "1.9.0"
+    kotlin("jvm") version "1.9.10"
     id("maven-publish")
     id("java")
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
     id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.7"
     id("org.screamingsandals.nms-mapper") version "1.4.5"
     id("xyz.jpenilla.run-paper") version "2.1.0"
@@ -142,14 +141,6 @@ tasks {
         folia.registerTask()
     }
 
-    val relocate = task<ConfigureShadowRelocation>("relocateShadowJar") {
-        target = shadowJar.get()
-        prefix = "ir.syrent.velocityvanish"
-        this.target.apply {
-            relocate("net.kyori.", "net.kyori.")
-        }
-    }
-
     compileJava {
         options.encoding = Charsets.UTF_8.name()
     }
@@ -186,9 +177,17 @@ tasks {
 
     shadowJar {
         dependsOn(extraDeps)
-        dependsOn(relocate)
+        archiveClassifier.set("")
         exclude("META-INF/**")
+        from("LICENSE")
         minimize()
+
+        relocate("io.papermc.lib", "ir.syrent.velocityvanish.dependencies.io.papermc.lib")
+        relocate("org.bstats", "ir.syrent.velocityvanish.dependencies.org.bstats")
+        relocate("com.google.code.gson", "ir.syrent.velocityvanish.dependencies.com.google.code.gson")
+        relocate("com.github.cryptomorin", "ir.syrent.velocityvanish.dependencies.com.github.cryptomorin")
+        relocate("cloud.commandframework", "ir.syrent.velocityvanish.dependencies.cloud.commandframework")
+        relocate("com.jeff_media", "ir.syrent.velocityvanish.dependencies.com.jeff_media")
     }
 
     build {

@@ -233,7 +233,7 @@ class VanishManager(
             denyPush(player)
         }
 
-        if (DependencyManager.proCosmeticsHook.exists) {
+        /*if (DependencyManager.proCosmeticsHook.exists) {
             Ruom.runSync({
                 try {
                     DependencyManager.proCosmeticsHook.proCosmetics.userManager?.getUser(player.uniqueId)?.unequipCosmetics(true)
@@ -241,7 +241,7 @@ class VanishManager(
                     Ruom.warn("Failed to un-equip cosmetics for player ${player.name}, is ProCosmetics up to date?")
                 }
             }, 20)
-        }
+        }*/
 
         if (DependencyManager.squareMapHook.exists) {
             DependencyManager.squareMapHook.squareMap.playerManager().hide(player.uniqueId, true)
@@ -344,13 +344,13 @@ class VanishManager(
             allowPush(player)
         }
 
-        if (DependencyManager.proCosmeticsHook.exists) {
+        /*if (DependencyManager.proCosmeticsHook.exists) {
             try {
                 DependencyManager.proCosmeticsHook.proCosmetics.userManager?.getUser(player.uniqueId)?.equipLastCosmetics(true)
             } catch (e: Exception) {
                 Ruom.warn("Failed to equip cosmetics for player ${player.name}, is ProCosmetics up to date?")
             }
-        }
+        }*/
 
         if (DependencyManager.squareMapHook.exists) {
             DependencyManager.squareMapHook.squareMap.playerManager().show(player.uniqueId, true)

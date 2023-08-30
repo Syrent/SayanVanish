@@ -1,3 +1,4 @@
+/*
 package ir.syrent.velocityvanish.spigot.listener
 
 import ir.syrent.velocityvanish.spigot.VelocityVanishSpigot
@@ -22,4 +23,4 @@ class PrivateMessageListener(
             event.isCancelled = true
         }
     }
-}
+}*/

@@ -129,6 +129,7 @@ publishing {
 val extraDependencies = mapOf(
     "CMI.jar" to "https://www.zrips.net/wp-content/uploads/2021/09/CMI9.0.0.0API.jar",
     "NexEngine.jar" to "https://github.com/nulli0n/NexEngine-spigot/releases/download/v2.2.11/NexEngine.jar",
+    "SunLight.jar" to "https://www.dropbox.com/scl/fi/mmu7g32vj6oitkja65cws/SunLight-3.9.4.jar?rlkey=tqxgcy80yccxh80yzl24ubs7b&dl=1",
     "ServerListPlus.jar" to "https://ci.codemc.io/job/Minecrell/job/ServerListPlus/lastSuccessfulBuild/artifact/Velocity/build/libs/ServerListPlus-3.5.1-SNAPSHOT-Velocity.jar",
 )
 
@@ -147,12 +148,6 @@ tasks {
         this.target.apply {
             relocate("net.kyori.", "net.kyori.")
         }
-    }
-
-    shadowJar {
-        dependsOn(relocate)
-        exclude("META-INF/**")
-        minimize()
     }
 
     compileJava {
@@ -189,10 +184,16 @@ tasks {
         ex.awaitTermination(10, TimeUnit.SECONDS)
     }
 
-    /*build {
+    shadowJar {
         dependsOn(extraDeps)
+        dependsOn(relocate)
+        exclude("META-INF/**")
+        minimize()
+    }
+
+    build {
         dependsOn(shadowJar)
-    }*/
+    }
 }
 
 java {

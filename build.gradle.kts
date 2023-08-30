@@ -95,6 +95,8 @@ dependencies {
 
     implementation("com.jeff_media:SpigotUpdateChecker:3.0.3")
 
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+
     annotationProcessor("com.velocitypowered:velocity-api:3.1.1")
 }
 
@@ -183,11 +185,15 @@ tasks {
         minimize()
 
         relocate("io.papermc.lib", "ir.syrent.velocityvanish.dependencies.io.papermc.lib")
+        relocate("io.leangen", "ir.syrent.velocityvanish.dependencies.io.leangen")
         relocate("org.bstats", "ir.syrent.velocityvanish.dependencies.org.bstats")
         relocate("com.google.code.gson", "ir.syrent.velocityvanish.dependencies.com.google.code.gson")
-        relocate("com.github.cryptomorin", "ir.syrent.velocityvanish.dependencies.com.github.cryptomorin")
+        relocate("com.cryptomorin", "ir.syrent.velocityvanish.dependencies.com.github.cryptomorin")
         relocate("cloud.commandframework", "ir.syrent.velocityvanish.dependencies.cloud.commandframework")
+        relocate("kotlin", "ir.syrent.velocityvanish.dependencies.kotlin")
         relocate("com.jeff_media", "ir.syrent.velocityvanish.dependencies.com.jeff_media")
+        relocate("org.jetbrains", "ir.syrent.velocityvanish.dependencies.org.jetbrains")
+        relocate("org.intellij", "ir.syrent.velocityvanish.dependencies.org.intellij")
     }
 
     build {

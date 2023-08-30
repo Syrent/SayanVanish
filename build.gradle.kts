@@ -100,6 +100,33 @@ dependencies {
     annotationProcessor("com.velocitypowered:velocity-api:3.1.1")
 }
 
+
+
+publishing {
+    publications {
+        register<MavenPublication>("maven") {
+            groupId = project.group.toString()
+            version = project.version.toString()
+            artifactId = rootProject.name
+
+            artifact(tasks.shadowJar.get().archiveFile)
+        }
+    }
+
+    publishing {
+        repositories {
+            maven {
+                name = "syrent"
+                url = uri("https://jitpack.io")
+            }
+        }
+    }
+
+    tasks.withType<PublishToMavenLocal> {
+        dependsOn(tasks.shadowJar)
+    }
+}
+
 val extraDependencies = mapOf(
     "CMI.jar" to "https://www.zrips.net/wp-content/uploads/2021/09/CMI9.0.0.0API.jar",
     "NexEngine.jar" to "https://github.com/nulli0n/NexEngine-spigot/releases/download/v2.2.11/NexEngine.jar",
@@ -153,7 +180,7 @@ tasks {
 
     shadowJar {
         dependsOn(extraDeps)
-        archiveClassifier.set("")
+        archiveFileName.set("${rootProject.name}_${project.version}.jar")
         exclude("META-INF/**")
         from("LICENSE")
         minimize()
@@ -174,7 +201,16 @@ tasks {
         dependsOn(shadowJar)
     }
 
+    jar {
+        enabled = true
+    }
+
+    publishAllPublicationsToHangar {
+        this.dependsOn(shadowJar)
+        this.mustRunAfter(shadowJar)
+    }
 }
+
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))
@@ -216,12 +252,12 @@ hangarPublish {
 
         platforms {
             register(Platforms.PAPER) {
-                jar.set(tasks.shadowJar.get().archiveFile)
+                jar.set(tasks.shadowJar.flatMap { it.archiveFile })
                 platformVersions.set((property("paperVersion") as String).split(",").map { it.trim() })
             }
 
             register(Platforms.VELOCITY) {
-                jar.set(tasks.shadowJar.get().archiveFile)
+                jar.set(tasks.shadowJar.flatMap { it.archiveFile })
                 platformVersions.set((property("velocityVersion") as String).split(",").map { it.trim() })
             }
         }

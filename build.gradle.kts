@@ -233,18 +233,18 @@ hangarPublish {
     publications.register("plugin") {
         version.set(suffixedVersion)
         channel.set(System.getenv("HANGAR_BUILD_CHANNEL") ?: "Snapshot")
-        changelog.set(changelogContent)
+        changelog.set(System.getenv("HANGAR_CHANGELOG") ?: changelogContent)
         id.set(slug)
         apiKey.set(System.getenv("HANGAR_API_TOKEN"))
 
         platforms {
             register(Platforms.PAPER) {
-                jar.set(tasks.jar.flatMap { it.archiveFile })
+                jar.set(tasks.shadowJar.flatMap { it.archiveFile })
                 platformVersions.set((property("paperVersion") as String).split(",").map { it.trim() })
             }
 
             register(Platforms.VELOCITY) {
-                jar.set(tasks.jar.flatMap { it.archiveFile })
+                jar.set(tasks.shadowJar.flatMap { it.archiveFile })
                 platformVersions.set((property("velocityVersion") as String).split(",").map { it.trim() })
             }
         }

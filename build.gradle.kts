@@ -15,6 +15,7 @@ plugins {
     id("org.screamingsandals.nms-mapper") version "1.4.5"
     id("xyz.jpenilla.run-paper") version "2.1.0"
     id("io.papermc.hangar-publish-plugin") version "0.1.0"
+    id("com.modrinth.minotaur") version "2.8.3"
 }
 
 val slug = "velocityvanish"
@@ -262,6 +263,23 @@ hangarPublish {
             }
         }
     }
+}
+
+modrinth {
+    val modrinthApiKey = System.getenv("MODRINTH_API_TOKEN")
+    val modrinthChangelog = System.getenv("MODRINTH_CHANGELOG") ?: changelogContent
+
+    token.set(modrinthApiKey)
+    projectId.set("${property("modrinthProjectID")}")
+    versionNumber.set(rootProject.version.toString())
+    versionType.set(System.getenv("MODRINTH_BUILD_CHANNEL") ?: "BETA")
+    uploadFile.set(tasks.shadowJar.flatMap { it.archiveFile })
+    gameVersions.set("${property("modrinthMinecraftVersions")}".split(","))
+    loaders.set("${property("modrinthLoaders")}".split(","))
+
+    changelog.set(modrinthChangelog)
+
+    syncBodyFrom.set(rootProject.file("README.md").readText())
 }
 
 val templateSource = file("src/main/templates")

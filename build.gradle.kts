@@ -272,7 +272,7 @@ modrinth {
     token.set(modrinthApiKey)
     projectId.set("${property("modrinthProjectID")}")
     versionNumber.set(rootProject.version.toString())
-    versionType.set(System.getenv("MODRINTH_BUILD_CHANNEL") ?: "BETA")
+    versionType.set(System.getenv("MODRINTH_BUILD_CHANNEL") ?: "beta")
     uploadFile.set(tasks.shadowJar.flatMap { it.archiveFile })
     gameVersions.set("${property("modrinthMinecraftVersions")}".split(","))
     loaders.set("${property("modrinthLoaders")}".split(","))

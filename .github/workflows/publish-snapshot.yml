@@ -1,4 +1,4 @@
-name: Publish to Hangar
+name: Publish Snapshots
 on:
   push:
     branches:
@@ -35,4 +35,5 @@ jobs:
         env:
           HANGAR_API_TOKEN: ${{ secrets.HANGAR_API_TOKEN }}
           HANGAR_BUILD_CHANNEL: Snapshot
+          HANGAR_CHANGELOG: ${{ github.event.release.body }}
         run: ./gradlew build publishPluginPublicationToHangar --stacktrace

@@ -30,9 +30,14 @@ jobs:
             ${{ runner.OS }}-gradle-
       - name: Build with Gradle
         run: ./gradlew shadowJar
-      - name: Publish
+      - name: Publish to Hangar
         env:
           HANGAR_API_TOKEN: ${{ secrets.HANGAR_API_TOKEN }}
           HANGAR_BUILD_CHANNEL: Snapshot
           HANGAR_CHANGELOG: ${{ github.event.release.body }}
         run: ./gradlew build publishPluginPublicationToHangar --stacktrace
+      - name: Publish to Modrinth
+        run: ./gradlew modrinth
+        env:
+          MODRINTH_API_TOKEN: ${{ secrets.MODRINTH_API_TOKEN }}
+          MODRINTH_CHANGELOG: ${{ github.event.release.body }}

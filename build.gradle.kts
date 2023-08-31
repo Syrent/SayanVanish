@@ -56,6 +56,9 @@ repositories {
 
     // Mojang
     maven("https://libraries.minecraft.net/")
+
+    // Cloud SNAPSHOT (Dev repository)
+    maven("https://repo.masmc05.dev/repository/maven-snapshots/")
 }
 
 dependencies {
@@ -91,8 +94,8 @@ dependencies {
     implementation("net.kyori:adventure-platform-bukkit:4.3.0")
     implementation("net.kyori:adventure-text-minimessage:4.14.0")
 
-    implementation("cloud.commandframework:cloud-paper:1.9.0-SNAPSHOT")
-    implementation("cloud.commandframework:cloud-minecraft-extras:1.9.0-SNAPSHOT")
+    implementation("cloud.commandframework:cloud-paper:tooltips-SNAPSHOT")
+    implementation("cloud.commandframework:cloud-minecraft-extras:tooltips-SNAPSHOT")
 
     implementation("com.jeff_media:SpigotUpdateChecker:3.0.3")
 

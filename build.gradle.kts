@@ -18,9 +18,39 @@ plugins {
     id("com.modrinth.minotaur") version "2.8.3"
 }
 
+fun executeGitCommand(vararg command: String): String {
+    val byteOut = ByteArrayOutputStream()
+    exec {
+        commandLine = listOf("git", *command)
+        standardOutput = byteOut
+    }
+    return byteOut.toString(Charsets.UTF_8.name()).trim()
+}
+
+fun latestCommitMessage(): String {
+    return executeGitCommand("log", "-1", "--pretty=%B")
+}
+
+val versionString: String = findProperty("version")!! as String
+val isRelease: Boolean = (System.getenv("HANGAR_BUILD_CHANNEL") ?: "Snapshot") == "Release"
+
+val suffixedVersion: String = if (isRelease) {
+    versionString
+} else {
+    versionString + "-beta." + System.getenv("GITHUB_RUN_NUMBER")
+}
+
+val commitVersion: String = if (isRelease) {
+    versionString
+} else {
+    versionString + "-" + System.getenv("GITHUB_SHA")?.substring(0, 7)
+}
+
+val changelogContent: String = latestCommitMessage()
+
 val slug = "velocityvanish"
 group = "ir.syrent.velocityvanish"
-version = findProperty("version")!!
+version = commitVersion
 
 repositories {
     mavenLocal()
@@ -221,30 +251,6 @@ java {
 }
 
 artifacts.archives(tasks.shadowJar)
-
-fun executeGitCommand(vararg command: String): String {
-    val byteOut = ByteArrayOutputStream()
-    exec {
-        commandLine = listOf("git", *command)
-        standardOutput = byteOut
-    }
-    return byteOut.toString(Charsets.UTF_8.name()).trim()
-}
-
-fun latestCommitMessage(): String {
-    return executeGitCommand("log", "-1", "--pretty=%B")
-}
-
-val versionString: String = version as String
-val isRelease: Boolean = (System.getenv("HANGAR_BUILD_CHANNEL") ?: "Snapshot") == "Release"
-
-val suffixedVersion: String = if (isRelease) {
-    versionString
-} else {
-    versionString + "+" + System.getenv("GITHUB_RUN_NUMBER")
-}
-
-val changelogContent: String = latestCommitMessage()
 
 hangarPublish {
     publications.register("plugin") {

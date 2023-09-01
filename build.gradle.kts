@@ -18,9 +18,35 @@ plugins {
     id("com.modrinth.minotaur") version "2.8.3"
 }
 
+fun executeGitCommand(vararg command: String): String {
+    val byteOut = ByteArrayOutputStream()
+    exec {
+        commandLine = listOf("git", *command)
+        standardOutput = byteOut
+    }
+    return byteOut.toString(Charsets.UTF_8.name()).trim()
+}
+
+fun latestCommitMessage(): String {
+    return executeGitCommand("log", "-1", "--pretty=%B")
+}
+
+val versionString: String = findProperty("version")!! as String
+val isRelease: Boolean = (System.getenv("HANGAR_BUILD_CHANNEL") ?: "Snapshot") == "Release"
+
+val suffixedVersion: String = if (isRelease) {
+    versionString
+} else {
+    versionString + "-build." + System.getenv("GITHUB_RUN_NUMBER")
+}
+
+val commitVersion = suffixedVersion + "-" + System.getenv("GITHUB_SHA")?.substring(0, 7)
+
+val changelogContent: String = latestCommitMessage()
+
 val slug = "velocityvanish"
 group = "ir.syrent.velocityvanish"
-version = findProperty("version")!!
+version = commitVersion
 
 repositories {
     mavenLocal()
@@ -56,6 +82,9 @@ repositories {
 
     // Mojang
     maven("https://libraries.minecraft.net/")
+
+    // Cloud SNAPSHOT (Dev repository)
+    maven("https://repo.masmc05.dev/repository/maven-snapshots/")
 }
 
 dependencies {
@@ -91,8 +120,8 @@ dependencies {
     implementation("net.kyori:adventure-platform-bukkit:4.3.0")
     implementation("net.kyori:adventure-text-minimessage:4.14.0")
 
-    implementation("cloud.commandframework:cloud-paper:1.9.0-SNAPSHOT")
-    implementation("cloud.commandframework:cloud-minecraft-extras:1.9.0-SNAPSHOT")
+    implementation("cloud.commandframework:cloud-paper:tooltips-SNAPSHOT")
+    implementation("cloud.commandframework:cloud-minecraft-extras:tooltips-SNAPSHOT")
 
     implementation("com.jeff_media:SpigotUpdateChecker:3.0.3")
 
@@ -219,30 +248,6 @@ java {
 
 artifacts.archives(tasks.shadowJar)
 
-fun executeGitCommand(vararg command: String): String {
-    val byteOut = ByteArrayOutputStream()
-    exec {
-        commandLine = listOf("git", *command)
-        standardOutput = byteOut
-    }
-    return byteOut.toString(Charsets.UTF_8.name()).trim()
-}
-
-fun latestCommitMessage(): String {
-    return executeGitCommand("log", "-1", "--pretty=%B")
-}
-
-val versionString: String = version as String
-val isRelease: Boolean = (System.getenv("HANGAR_BUILD_CHANNEL") ?: "Snapshot") == "Release"
-
-val suffixedVersion: String = if (isRelease) {
-    versionString
-} else {
-    versionString + "+" + System.getenv("GITHUB_RUN_NUMBER")
-}
-
-val changelogContent: String = latestCommitMessage()
-
 hangarPublish {
     publications.register("plugin") {
         version.set(suffixedVersion)
@@ -271,7 +276,7 @@ modrinth {
 
     token.set(modrinthApiKey)
     projectId.set("${property("modrinthProjectID")}")
-    versionNumber.set(rootProject.version.toString())
+    versionNumber.set(suffixedVersion)
     versionType.set(System.getenv("MODRINTH_BUILD_CHANNEL") ?: "beta")
     uploadFile.set(tasks.shadowJar.flatMap { it.archiveFile })
     gameVersions.set("${property("modrinthMinecraftVersions")}".split(","))

@@ -40,6 +40,7 @@ abstract class Command(
         )
 
         manager.createCommandHelpHandler()
+        manager.registerAsynchronousCompletions()
 
         try {
             manager.registerBrigadier()

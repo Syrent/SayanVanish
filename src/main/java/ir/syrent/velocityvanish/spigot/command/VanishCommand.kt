@@ -1,6 +1,7 @@
 package ir.syrent.velocityvanish.spigot.command
 
 import cloud.commandframework.ArgumentDescription
+import cloud.commandframework.DescriptiveCompletion
 import cloud.commandframework.arguments.flags.CommandFlag
 import cloud.commandframework.arguments.standard.IntegerArgument
 import cloud.commandframework.arguments.standard.StringArgument
@@ -12,7 +13,12 @@ import ir.syrent.velocityvanish.spigot.storage.Message
 import ir.syrent.velocityvanish.spigot.storage.Settings
 import ir.syrent.velocityvanish.spigot.utils.sendMessage
 import ir.syrent.velocityvanish.utils.TextReplacement
+import net.kyori.adventure.platform.bukkit.MinecraftComponentSerializer
+import net.kyori.adventure.text.minimessage.MiniMessage
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
+import org.bukkit.entity.Player
 import kotlin.jvm.optionals.getOrNull
 
 class VanishCommand(
@@ -22,8 +28,8 @@ class VanishCommand(
     init {
         val fakeJoinLiteral = addLiteral("fakejoin", ArgumentDescription.of("Send a fake join message"))
             .permission(getPermission("fakejoin"))
-            .argument(StringArgument.builder<ISender?>("for").withSuggestionsProvider { _, _ -> Ruom.onlinePlayers.map { it.name } })
-            .argument(StringArgument.builder<ISender?>("to").asOptional().withSuggestionsProvider { _, _ -> Ruom.onlinePlayers.map { it.name } })
+            .argument(StringArgument.builder<ISender?>("for").withCompletionsProvider { _, _ -> Ruom.onlinePlayers.map { getVanishDescription(it) } })
+            .argument(StringArgument.builder<ISender?>("to").asOptional().withCompletionsProvider { _, _ -> Ruom.onlinePlayers.map { getVanishDescription(it) } })
             .handler { context ->
                 val forPlayerName = context.get<String>("for")
                 val forPlayer = Bukkit.getPlayerExact(forPlayerName)
@@ -50,8 +56,8 @@ class VanishCommand(
 
         val fakeQuit = addLiteral("fakequit", ArgumentDescription.of("Send a fake quit message"))
             .permission(getPermission("fakequit"))
-            .argument(StringArgument.builder<ISender?>("for").withSuggestionsProvider { _, _ -> Ruom.onlinePlayers.map { it.name } })
-            .argument(StringArgument.builder<ISender?>("to").asOptional().withSuggestionsProvider { _, _ -> Ruom.onlinePlayers.map { it.name } })
+            .argument(StringArgument.builder<ISender?>("for").withCompletionsProvider { _, _ -> Ruom.onlinePlayers.map { getVanishDescription(it) } })
+            .argument(StringArgument.builder<ISender?>("to").asOptional().withCompletionsProvider { _, _ -> Ruom.onlinePlayers.map { getVanishDescription(it) } })
             .handler { context ->
                 val forPlayerName = context.get<String>("for")
                 val forPlayer = Bukkit.getPlayerExact(forPlayerName)
@@ -70,7 +76,7 @@ class VanishCommand(
 
         val setLevel = addLiteral("setlevel", ArgumentDescription.of("Set the vanish level of specific player"))
             .permission(getPermission("setlevel"))
-            .argument(StringArgument.builder<ISender?>("player").withSuggestionsProvider { _, _ -> Ruom.onlinePlayers.map { it.name } })
+            .argument(StringArgument.builder<ISender?>("player").withCompletionsProvider { _, _ -> Ruom.onlinePlayers.map { getVanishDescription(it) } })
             .argument(IntegerArgument.builder<ISender?>("level").withMin(0))
             .handler { context ->
                 val player = Bukkit.getPlayerExact(context.get("player")) ?: let {
@@ -87,7 +93,7 @@ class VanishCommand(
 
         val getLevel = addLiteral("getlevel", ArgumentDescription.of("Get the vanish level of specific player"))
             .permission(getPermission("getlevel"))
-            .argument(StringArgument.builder<ISender?>("player").withSuggestionsProvider { _, _ -> Ruom.onlinePlayers.map { it.name } })
+            .argument(StringArgument.builder<ISender?>("player").withCompletionsProvider { _, _ -> Ruom.onlinePlayers.map { getVanishDescription(it) } })
             .handler { context ->
                 val player = Bukkit.getPlayerExact(context.get("player")) ?: let {
                     context.sender.getSender().sendMessage(Message.PLAYER_NOT_FOUND)
@@ -100,11 +106,11 @@ class VanishCommand(
 
         val vanishCommand = builder
             .argument(
-                StringArgument.builder<ISender?>("player").asOptional().withSuggestionsProvider { _, _ -> Ruom.onlinePlayers.map { it.name } },
+                StringArgument.builder<ISender?>("player").asOptional().withCompletionsProvider { _, _ -> Ruom.onlinePlayers.map { getVanishDescription(it) } },
                 ArgumentDescription.of("The player you want to vanish/unvanish")
             )
             .flag(CommandFlag.builder("state").withAliases("s").withArgument(
-                StringArgument.builder<String>("state").withSuggestionsProvider { _, _ -> listOf("off", "on") }
+                StringArgument.builder<String>("state").withCompletionsProvider { _, _ -> listOf(DescriptiveCompletion.of("off", "Turn off vanish"), DescriptiveCompletion.of("on", "Turn on vanish")) }
             ))
             .flag(CommandFlag.builder("silent").withAliases("s"))
             .handler { context ->
@@ -153,7 +159,7 @@ class VanishCommand(
         val setStateCommand = addLiteral("setstate", ArgumentDescription.of("Set vanish state"))
             .permission(getPermission("setstate"))
             .argument(
-                StringArgument.builder<ISender?>("state").withSuggestionsProvider { _, _ -> listOf("on", "off") },
+                StringArgument.builder<ISender?>("state").withCompletionsProvider { _, _ -> listOf(DescriptiveCompletion.of("off", "Turn off vanish"), DescriptiveCompletion.of("on", "Turn on vanish")) },
                 ArgumentDescription.of("The state of vanish (on/off)")
             )
             .flag(CommandFlag.builder("silent").withAliases("s"))
@@ -171,5 +177,16 @@ class VanishCommand(
                 }
             }
         saveCommand(setStateCommand)
+    }
+
+    @Suppress("deprecation")
+    fun getVanishDescription(player: Player): DescriptiveCompletion {
+        return DescriptiveCompletion.of(
+            player.name,
+            if (plugin.vanishedNames.contains(player.name))
+                "${player.name} is currently vanished"
+            else
+                "${player.name} is not vanished"
+        )
     }
 }

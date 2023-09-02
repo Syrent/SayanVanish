@@ -37,16 +37,17 @@ val isRelease: Boolean = (System.getenv("HANGAR_BUILD_CHANNEL") ?: "Snapshot") =
 val suffixedVersion: String = if (isRelease) {
     versionString
 } else {
-    versionString + "-build." + System.getenv("GITHUB_RUN_NUMBER")
+    versionString + "-build." + (System.getenv("GITHUB_RUN_NUMBER") ?: "development")
 }
 
-val commitVersion = suffixedVersion + "-" + System.getenv("GITHUB_SHA")?.substring(0, 7)
+val commitVersion = suffixedVersion + "-" + (System.getenv("GITHUB_SHA")?.substring(0, 7) ?: "local")
 
 val changelogContent: String = latestCommitMessage()
 
 val slug = "velocityvanish"
 group = "ir.syrent.velocityvanish"
 version = commitVersion
+description = "Modern vanish system with Velocity and Folia support"
 
 repositories {
     mavenLocal()

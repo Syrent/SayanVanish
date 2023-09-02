@@ -26,6 +26,15 @@ class VanishCommand(
 ) : Command("velocityvanish", "velocityvanish.command.vanish", "vanish", "sayanvanish", "v") {
 
     init {
+        val helpCommand = builder
+            .literal("help")
+            .permission(getPermission("help"))
+            .argument(StringArgument.optional("query", StringArgument.StringMode.GREEDY))
+            .handler { context ->
+                help.queryCommands("$name ${context.getOrDefault("query", "")}", context.sender)
+            }
+        saveCommand(helpCommand)
+
         val fakeJoinLiteral = addLiteral("fakejoin", ArgumentDescription.of("Send a fake join message"))
             .permission(getPermission("fakejoin"))
             .argument(StringArgument.builder<ISender?>("for").withCompletionsProvider { _, _ -> Ruom.onlinePlayers.map { getVanishDescription(it) } })

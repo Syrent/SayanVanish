@@ -21,3 +21,10 @@ vanish:
     unvanish_notify: "$warn_prefix <red>$player</red> Görünmezlik kapatıldı!"
     join_message: "<yellow>$player oyuna katıldı"
     quit_message: "<yellow>$player oyundan ayrıldı"
+    discordsrv_join_message: "$player oyunu katıldı"
+    discordsrv_quit_message: "$player oyunu terk etti"
+    join_message_sent: "$successful_prefix <gold>$player</gold> için sahte katılma mesajı gönderildi."
+    quit_message_sent: "$successful_prefix <gold>$player</gold> için sahte çıkma mesajı gönderildi."
+    level:
+        set: "$successful_prefix <gold>$player</gold> için seviye <gold>$level</gold> olarak ayarlandı."
+        get: "$successful_prefix <gold>$player</gold> için görünmezlik seviyesi: <gold>$level</gold>"

@@ -219,7 +219,7 @@ tasks {
         relocate("io.papermc.lib", "ir.syrent.velocityvanish.dependencies.io.papermc.lib")
         relocate("io.leangen", "ir.syrent.velocityvanish.dependencies.io.leangen")
         relocate("org.bstats", "ir.syrent.velocityvanish.dependencies.org.bstats")
-        relocate("com.google.code.gson", "ir.syrent.velocityvanish.dependencies.com.google.code.gson")
+//        relocate("com.google.code.gson", "ir.syrent.velocityvanish.dependencies.com.google.code.gson")
         relocate("com.cryptomorin", "ir.syrent.velocityvanish.dependencies.com.github.cryptomorin")
         relocate("cloud.commandframework", "ir.syrent.velocityvanish.dependencies.cloud.commandframework")
         relocate("kotlin", "ir.syrent.velocityvanish.dependencies.kotlin")

@@ -229,6 +229,7 @@ tasks {
     }
 
     build {
+        dependsOn(clean)
         dependsOn(shadowJar)
     }
 

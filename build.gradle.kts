@@ -254,7 +254,7 @@ hangarPublish {
     publications.register("plugin") {
         version.set(suffixedVersion)
         channel.set(System.getenv("HANGAR_BUILD_CHANNEL") ?: "Snapshot")
-        changelog.set(System.getenv("HANGAR_CHANGELOG") ?: changelogContent)
+        changelog.set(if (System.getenv("HANGAR_CHANGELOG").isNullOrEmpty()) changelogContent else System.getenv("HANGAR_CHANGELOG"))
         id.set(slug)
         apiKey.set(System.getenv("HANGAR_API_TOKEN"))
 
@@ -274,7 +274,7 @@ hangarPublish {
 
 modrinth {
     val modrinthApiKey = System.getenv("MODRINTH_API_TOKEN")
-    val modrinthChangelog = System.getenv("MODRINTH_CHANGELOG") ?: changelogContent
+    val modrinthChangelog = if (System.getenv("MODRINTH_CHANGELOG").isNullOrEmpty()) changelogContent else System.getenv("MODRINTH_CHANGELOG")
 
     token.set(modrinthApiKey)
     projectId.set("${property("modrinthProjectID")}")

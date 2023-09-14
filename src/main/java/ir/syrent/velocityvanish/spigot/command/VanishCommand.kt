@@ -26,6 +26,58 @@ class VanishCommand(
 ) : Command("velocityvanish", "velocityvanish.command.vanish", "vanish", "sayanvanish", "v") {
 
     init {
+        val vanishCommand = builder
+            .argument(
+                StringArgument.builder<ISender?>("player").asOptional().withCompletionsProvider { _, _ -> Ruom.onlinePlayers.map { getVanishDescription(it) } },
+                ArgumentDescription.of("The player you want to vanish/unvanish")
+            )
+            .flag(CommandFlag.builder("state").withAliases("s").withArgument(
+                StringArgument.builder<String>("state").withCompletionsProvider { _, _ -> listOf(DescriptiveCompletion.of("off", "Turn off vanish"), DescriptiveCompletion.of("on", "Turn on vanish")) }
+            ))
+            .flag(CommandFlag.builder("silent").withAliases("s"))
+            .handler { context ->
+                val playerName = context.getOptional<String>("player")
+                val player = if (playerName.isPresent) Bukkit.getPlayerExact(playerName.get()).let {
+                    if (it != null) {
+                        it
+                    } else {
+                        context.sender.getSender().sendMessage(Message.PLAYER_NOT_FOUND)
+                        return@handler
+                    }
+                } else context.sender.player() ?: return@handler
+
+                val state = context.flags().getValue<String>("state")
+                val silent = context.flags().hasFlag("silent").or(false)
+
+                if (state.isPresent) {
+                    when (state.get()) {
+                        "on" -> {
+                            plugin.vanishManager.vanish(player, callPostEvent = true, notifyAdmins = true)
+                            if (plugin.vanishedNames.contains(player.name)) {
+                                player.sendMessage(Message.VANISH_USE_VANISH)
+                            }
+                            return@handler
+                        }
+                        "off" -> {
+                            plugin.vanishManager.unVanish(player, callPostEvent = true, sendJoinMessage = !silent, notifyAdmins = true)
+                            if (plugin.vanishedNames.contains(player.name)) {
+                                player.sendMessage(Message.VANISH_USE_UNVANISH)
+                            }
+                            return@handler
+                        }
+                    }
+                }
+
+                if (plugin.vanishedNames.contains(player.name)) {
+                    player.sendMessage(Message.VANISH_USE_UNVANISH)
+                    plugin.vanishManager.unVanish(player, callPostEvent = true, sendJoinMessage = !silent, notifyAdmins = true)
+                } else {
+                    player.sendMessage(Message.VANISH_USE_VANISH)
+                    plugin.vanishManager.vanish(player, callPostEvent = true, sendQuitMessage = !silent, notifyAdmins = true)
+                }
+            }
+        saveCommand(vanishCommand)
+
         val helpCommand = builder
             .literal("help")
             .permission(getPermission("help"))
@@ -112,58 +164,6 @@ class VanishCommand(
                 player.sendMessage(Message.LEVEL_GET, TextReplacement("player", player.name), TextReplacement("level", plugin.vanishManager.getVanishLevel(player).toString()))
             }
         saveCommand(getLevel)
-
-        val vanishCommand = builder
-            .argument(
-                StringArgument.builder<ISender?>("player").asOptional().withCompletionsProvider { _, _ -> Ruom.onlinePlayers.map { getVanishDescription(it) } },
-                ArgumentDescription.of("The player you want to vanish/unvanish")
-            )
-            .flag(CommandFlag.builder("state").withAliases("s").withArgument(
-                StringArgument.builder<String>("state").withCompletionsProvider { _, _ -> listOf(DescriptiveCompletion.of("off", "Turn off vanish"), DescriptiveCompletion.of("on", "Turn on vanish")) }
-            ))
-            .flag(CommandFlag.builder("silent").withAliases("s"))
-            .handler { context ->
-                val playerName = context.getOptional<String>("player")
-                val player = if (playerName.isPresent) Bukkit.getPlayerExact(playerName.get()).let {
-                    if (it != null) {
-                        it
-                    } else {
-                        context.sender.getSender().sendMessage(Message.PLAYER_NOT_FOUND)
-                        return@handler
-                    }
-                } else context.sender.player() ?: return@handler
-
-                val state = context.flags().getValue<String>("state")
-                val silent = context.flags().hasFlag("silent").or(false)
-
-                if (state.isPresent) {
-                    when (state.get()) {
-                        "on" -> {
-                            plugin.vanishManager.vanish(player, callPostEvent = true, notifyAdmins = true)
-                            if (plugin.vanishedNames.contains(player.name)) {
-                                player.sendMessage(Message.VANISH_USE_VANISH)
-                            }
-                            return@handler
-                        }
-                        "off" -> {
-                            plugin.vanishManager.unVanish(player, callPostEvent = true, sendJoinMessage = !silent, notifyAdmins = true)
-                            if (plugin.vanishedNames.contains(player.name)) {
-                                player.sendMessage(Message.VANISH_USE_UNVANISH)
-                            }
-                            return@handler
-                        }
-                    }
-                }
-
-                if (plugin.vanishedNames.contains(player.name)) {
-                    player.sendMessage(Message.VANISH_USE_UNVANISH)
-                    plugin.vanishManager.unVanish(player, callPostEvent = true, sendJoinMessage = !silent, notifyAdmins = true)
-                } else {
-                    player.sendMessage(Message.VANISH_USE_VANISH)
-                    plugin.vanishManager.vanish(player, callPostEvent = true, sendQuitMessage = !silent, notifyAdmins = true)
-                }
-            }
-        saveCommand(vanishCommand)
 
         val setStateCommand = addLiteral("setstate", ArgumentDescription.of("Set vanish state"))
             .permission(getPermission("setstate"))

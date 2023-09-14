@@ -305,12 +305,8 @@ class VanishManager(
         }
 
         for (onlinePlayer in Ruom.onlinePlayers) {
-            try {
-                onlinePlayer.showPlayer(Ruom.plugin, player)
-            } catch (e: NoSuchMethodError) {
                 @Suppress("DEPRECATION")
                 onlinePlayer.showPlayer(player)
-            }
         }
 
         player.isSleepingIgnored = false

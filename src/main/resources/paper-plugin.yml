@@ -10,26 +10,26 @@ folia-supported: true
 dependencies:
   server:
     DiscordSRV:
-      load: AFTER
+      load: BEFORE
       required: false
     ProtocolLib:
-      load: AFTER
+      load: BEFORE
       required: false
     ProCosmetics:
-      load: AFTER
+      load: BEFORE
       required: false
     SayanChat:
-      load: AFTER
+      load: BEFORE
       required: false
     PlaceholderAPI:
-      load: AFTER
+      load: BEFORE
       required: false
     squaremap:
-      load: AFTER
+      load: BEFORE
       required: false
     Essentials:
-      load: AFTER
+      load: BEFORE
       required: false
     CMI:
-      load: AFTER
+      load: BEFORE
       required: false

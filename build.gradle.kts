@@ -98,7 +98,7 @@ dependencies {
     compileOnly("org.spongepowered:configurate-yaml:4.2.0-yamlbranch-4")
     compileOnly("com.discordsrv:discordsrv:1.26.2")
     compileOnly("com.mojang:authlib:1.11")
-    compileOnly("io.netty:netty-all:4.1.97.Final")
+    compileOnly("io.netty:netty-all:4.1.98.Final")
 
     // SayanChat 2.8.1
     // ProCosmetics

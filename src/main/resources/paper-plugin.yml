@@ -9,10 +9,10 @@ website: syrent.ir
 folia-supported: true
 dependencies:
   server:
-    DiscordSRV:
+    ProtocolLib:
       load: BEFORE
       required: false
-    ProtocolLib:
+    DiscordSRV:
       load: BEFORE
       required: false
     ProCosmetics:

@@ -1,6 +1,6 @@
 package ir.syrent.velocityvanish.spigot.hook
 
-class EnhancedVelocityHook constructor(name: String) : Dependency(name) {
+class EnhancedVelocityHook(name: String) : Dependency(name) {
 
     override fun features(): List<String> {
         return mutableListOf(

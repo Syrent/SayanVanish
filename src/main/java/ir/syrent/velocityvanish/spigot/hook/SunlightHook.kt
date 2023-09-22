@@ -1,5 +1,6 @@
 package ir.syrent.velocityvanish.spigot.hook
 
+import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import su.nightexpress.sunlight.SunLight
@@ -13,9 +14,11 @@ class SunlightHook(name: String) : Dependency(name) {
         private set
 
     init {
-        if (exists) {
-            sunLight = Bukkit.getPluginManager().getPlugin("SunLight") as SunLight
-        }
+        Ruom.runSync({
+            if (exists) {
+                sunLight = Bukkit.getPluginManager().getPlugin("SunLight") as SunLight
+            }
+        }, 20)
     }
 
     override fun features(): List<String> {

@@ -92,7 +92,7 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
     compileOnly("dev.folia:folia-api:1.20.1-R0.1-SNAPSHOT")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
-    compileOnly("me.clip:placeholderapi:2.11.3")
+    compileOnly("me.clip:placeholderapi:2.11.4")
     compileOnly("xyz.jpenilla:squaremap-api:1.2.0")
     compileOnly("net.essentialsx:EssentialsX:2.20.1")
     compileOnly("org.spongepowered:configurate-yaml:4.2.0-yamlbranch-4")

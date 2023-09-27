@@ -76,8 +76,8 @@ body:
   - type: textarea
     attributes:
       label: "VelocityVanish's configuration file"
-      description: "I need it to check for any problem with your permissions (Leave it empty if you don't have LuckPerms)"
       placeholder: |
+        ```yml
         config_version: 6
         default_language: en_US
         show_dependency_suggestions: true
@@ -92,6 +92,7 @@ body:
           command: ""
           vanish: ""
           unvanish: ""
+        ```
     validations:
       required: true
 

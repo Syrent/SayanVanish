@@ -13,9 +13,9 @@ plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.7"
     id("org.screamingsandals.nms-mapper") version "1.4.5"
-    id("xyz.jpenilla.run-paper") version "2.1.0"
+    id("xyz.jpenilla.run-paper") version "2.2.0"
     id("io.papermc.hangar-publish-plugin") version "0.1.0"
-    id("com.modrinth.minotaur") version "2.8.3"
+    id("com.modrinth.minotaur") version "2.8.4"
 }
 
 fun executeGitCommand(vararg command: String): String {
@@ -93,13 +93,13 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
     compileOnly("dev.folia:folia-api:1.20.1-R0.1-SNAPSHOT")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
-    compileOnly("me.clip:placeholderapi:2.11.3")
-    compileOnly("xyz.jpenilla:squaremap-api:1.1.16")
+    compileOnly("me.clip:placeholderapi:2.11.4")
+    compileOnly("xyz.jpenilla:squaremap-api:1.2.0")
     compileOnly("net.essentialsx:EssentialsX:2.20.1")
     compileOnly("org.spongepowered:configurate-yaml:4.2.0-yamlbranch-4")
     compileOnly("com.discordsrv:discordsrv:1.26.2")
     compileOnly("com.mojang:authlib:1.11")
-    compileOnly("io.netty:netty-all:4.1.96.Final")
+    compileOnly("io.netty:netty-all:4.1.98.Final")
 
     // SayanChat 2.8.1
     // ProCosmetics

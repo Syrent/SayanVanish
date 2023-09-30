@@ -114,7 +114,7 @@ dependencies {
     // gson does not exist in legacy minecraft version
     implementation("com.google.code.gson:gson:2.10.1")
 
-    implementation("com.github.cryptomorin:XSeries:9.5.0") { isTransitive = false }
+    implementation("com.github.cryptomorin:XSeries:9.6.0") { isTransitive = false }
 
     implementation("net.kyori:adventure-api:4.14.0")
     implementation("net.kyori:adventure-platform-bukkit:4.3.1")

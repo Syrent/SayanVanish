@@ -1,6 +1,7 @@
-package ir.syrent.velocityvanish.spigot.hook
+package ir.syrent.velocityvanish.spigot.hook.hooks
 
 import ir.syrent.velocityvanish.spigot.VelocityVanishSpigot
+import ir.syrent.velocityvanish.spigot.hook.Dependency
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import ir.syrent.velocityvanish.spigot.storage.Settings
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
@@ -9,15 +10,9 @@ import org.bukkit.OfflinePlayer
 class PlaceholderAPIHook(plugin: VelocityVanishSpigot, name: String) : Dependency(name) {
 
     init {
-        Ruom.runSync({
-            if (exists) {
-                try {
-                    VanishExpansion(plugin).register()
-                } catch (_: NoClassDefFoundError) {
-                    Ruom.warn("Could not initialize PlaceholderAPI hook. If you want to use its features you may need to upgrade your server and plugin to latest build.")
-                }
-            }
-        }, 20)
+        if (exists) {
+            VanishExpansion(plugin).register()
+        }
     }
 
     override fun features(): List<String> {

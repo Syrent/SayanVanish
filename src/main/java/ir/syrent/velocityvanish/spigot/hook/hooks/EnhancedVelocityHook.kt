@@ -1,4 +1,6 @@
-package ir.syrent.velocityvanish.spigot.hook
+package ir.syrent.velocityvanish.spigot.hook.hooks
+
+import ir.syrent.velocityvanish.spigot.hook.Dependency
 
 class EnhancedVelocityHook(name: String) : Dependency(name) {
 

@@ -12,7 +12,7 @@ plugins {
     id("java")
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.7"
-    id("org.screamingsandals.nms-mapper") version "1.4.5"
+    id("org.screamingsandals.nms-mapper") version "1.4.6"
     id("xyz.jpenilla.run-paper") version "2.2.0"
     id("io.papermc.hangar-publish-plugin") version "0.1.0"
     id("com.modrinth.minotaur") version "2.8.4"
@@ -167,8 +167,7 @@ val extraDependencies = mapOf(
 
 tasks {
     runServer {
-        minecraftVersion("1.20.1")
-        serverJar(file("run/paper-1.20.1-48.jar"))
+        minecraftVersion("1.20.2")
     }
 
     runPaper {

@@ -1,5 +1,6 @@
-package ir.syrent.velocityvanish.spigot.hook
+package ir.syrent.velocityvanish.spigot.hook.hooks
 
+import ir.syrent.velocityvanish.spigot.hook.Dependency
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import xyz.jpenilla.squaremap.api.Squaremap
 import xyz.jpenilla.squaremap.api.SquaremapProvider
@@ -10,11 +11,9 @@ class SquareMapHook(name: String) : Dependency(name) {
         private set
 
     init {
-        Ruom.runSync({
-            if (exists) {
-                squareMap = SquaremapProvider.get()
-            }
-        }, 20)
+        if (exists) {
+            squareMap = SquaremapProvider.get()
+        }
     }
 
     override fun features(): List<String> {

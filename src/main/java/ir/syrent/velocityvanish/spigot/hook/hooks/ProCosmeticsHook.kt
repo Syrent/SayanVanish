@@ -1,4 +1,4 @@
-/*
+package ir.syrent.velocityvanish.spigot.hook.hooks/*
 package ir.syrent.velocityvanish.spigot.hook
 
 import se.file14.procosmetics.ProCosmetics

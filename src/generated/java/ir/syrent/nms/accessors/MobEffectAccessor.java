@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
  * <p>
  * This class is a reflection accessor for net.minecraft.world.effect.MobEffect
  *
- * @since 2023-08-30 15:38:06
+ * @since 2023-10-01 12:57:10
  */
 public class MobEffectAccessor {
   /**
@@ -24,11 +24,11 @@ public class MobEffectAccessor {
           /* SEARGE */
           mapper.map("SEARGE", "1.8.8", "net.minecraft.potion.Potion"); // 1.8.8 - 1.13.2
           mapper.map("SEARGE", "1.14", "net.minecraft.potion.Effect"); // 1.14 - 1.16.5
-          mapper.map("SEARGE", "1.17", "net.minecraft.src.C_496_"); // 1.17 - 1.20.1
+          mapper.map("SEARGE", "1.17", "net.minecraft.src.C_496_"); // 1.17 - 1.20.2
 
           /* SPIGOT */
           mapper.map("SPIGOT", "1.8.8", "net.minecraft.server.${V}.MobEffectList"); // 1.8.8 - 1.16.5
-          mapper.map("SPIGOT", "1.17", "net.minecraft.world.effect.MobEffectList"); // 1.17 - 1.20.1
+          mapper.map("SPIGOT", "1.17", "net.minecraft.world.effect.MobEffectList"); // 1.17 - 1.20.2
 
         });
   }

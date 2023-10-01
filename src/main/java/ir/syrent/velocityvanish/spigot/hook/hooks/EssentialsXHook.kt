@@ -1,6 +1,7 @@
-package ir.syrent.velocityvanish.spigot.hook
+package ir.syrent.velocityvanish.spigot.hook.hooks
 
 import com.earth2me.essentials.Essentials
+import ir.syrent.velocityvanish.spigot.hook.Dependency
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 

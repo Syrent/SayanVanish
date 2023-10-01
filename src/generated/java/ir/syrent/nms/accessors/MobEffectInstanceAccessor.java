@@ -9,7 +9,7 @@ import java.lang.reflect.Field;
  * <p>
  * This class is a reflection accessor for net.minecraft.world.effect.MobEffectInstance
  *
- * @since 2023-08-30 15:38:06
+ * @since 2023-10-01 12:57:10
  */
 public class MobEffectInstanceAccessor {
   /**
@@ -25,11 +25,11 @@ public class MobEffectInstanceAccessor {
           /* SEARGE */
           mapper.map("SEARGE", "1.8.8", "net.minecraft.potion.PotionEffect"); // 1.8.8 - 1.13.2
           mapper.map("SEARGE", "1.14", "net.minecraft.potion.EffectInstance"); // 1.14 - 1.16.5
-          mapper.map("SEARGE", "1.17", "net.minecraft.src.C_498_"); // 1.17 - 1.20.1
+          mapper.map("SEARGE", "1.17", "net.minecraft.src.C_498_"); // 1.17 - 1.20.2
 
           /* SPIGOT */
           mapper.map("SPIGOT", "1.8.8", "net.minecraft.server.${V}.MobEffect"); // 1.8.8 - 1.16.5
-          mapper.map("SPIGOT", "1.17", "net.minecraft.world.effect.MobEffect"); // 1.17 - 1.20.1
+          mapper.map("SPIGOT", "1.17", "net.minecraft.world.effect.MobEffect"); // 1.17 - 1.20.2
 
         });
   }
@@ -39,7 +39,7 @@ public class MobEffectInstanceAccessor {
    * <p>
    * Requested constructor: (net.minecraft.world.effect.MobEffect, int, int, boolean, boolean, boolean)
    * <p>
-   * Present in versions: 1.20.1, 1.20, 1.19.4, 1.19.3, 1.19.2, 1.19.1, 1.19, 1.18.2, 1.18.1, 1.18, 1.17.1, 1.17, 1.16.5, 1.16.4, 1.16.3, 1.16.2, 1.16.1, 1.15.2, 1.15.1, 1.15, 1.14.4, 1.14.3, 1.14.2, 1.14.1, 1.14, 1.13.2, 1.13.1, 1.13
+   * Present in versions: 1.20.2, 1.20.1, 1.20, 1.19.4, 1.19.3, 1.19.2, 1.19.1, 1.19, 1.18.2, 1.18.1, 1.18, 1.17.1, 1.17, 1.16.5, 1.16.4, 1.16.3, 1.16.2, 1.16.1, 1.15.2, 1.15.1, 1.15, 1.14.4, 1.14.3, 1.14.2, 1.14.1, 1.14, 1.13.2, 1.13.1, 1.13
    * <p>
    * This method is safe to call: exception is handled and null is returned in case of failure.
    *
@@ -63,11 +63,12 @@ public class MobEffectInstanceAccessor {
 
           /* SEARGE */
           mapper.map("SEARGE", "1.9", "field_188420_b"); // 1.9 - 1.16.5
-          mapper.map("SEARGE", "1.17", "f_19502_"); // 1.17 - 1.20.1
+          mapper.map("SEARGE", "1.17", "f_19502_"); // 1.17 - 1.20.2
 
           /* SPIGOT */
           mapper.map("SPIGOT", "1.9", "b"); // 1.9 - 1.19.3
           mapper.map("SPIGOT", "1.19.4", "c"); // 1.19.4 - 1.20.1
+          mapper.map("SPIGOT", "1.20.2", "k"); // 1.20.2
 
         });
   }

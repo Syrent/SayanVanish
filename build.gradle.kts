@@ -12,7 +12,7 @@ plugins {
     id("java")
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.7"
-    id("org.screamingsandals.nms-mapper") version "1.4.5"
+    id("org.screamingsandals.nms-mapper") version "1.4.6"
     id("xyz.jpenilla.run-paper") version "2.2.0"
     id("io.papermc.hangar-publish-plugin") version "0.1.0"
     id("com.modrinth.minotaur") version "2.8.4"
@@ -37,16 +37,17 @@ val isRelease: Boolean = (System.getenv("HANGAR_BUILD_CHANNEL") ?: "Snapshot") =
 val suffixedVersion: String = if (isRelease) {
     versionString
 } else {
-    versionString + "-build." + System.getenv("GITHUB_RUN_NUMBER")
+    versionString + "-build." + (System.getenv("GITHUB_RUN_NUMBER") ?: "development")
 }
 
-val commitVersion = suffixedVersion + "-" + System.getenv("GITHUB_SHA")?.substring(0, 7)
+val commitVersion = suffixedVersion + "-" + (System.getenv("GITHUB_SHA")?.substring(0, 7) ?: "local")
 
 val changelogContent: String = latestCommitMessage()
 
 val slug = "velocityvanish"
 group = "ir.syrent.velocityvanish"
 version = commitVersion
+description = "Modern vanish system with Velocity and Folia support"
 
 repositories {
     mavenLocal()
@@ -166,8 +167,7 @@ val extraDependencies = mapOf(
 
 tasks {
     runServer {
-        minecraftVersion("1.20.1")
-        serverJar(file("run/paper-1.20.1-48.jar"))
+        minecraftVersion("1.20.2")
     }
 
     runPaper {
@@ -218,7 +218,7 @@ tasks {
         relocate("io.papermc.lib", "ir.syrent.velocityvanish.dependencies.io.papermc.lib")
         relocate("io.leangen", "ir.syrent.velocityvanish.dependencies.io.leangen")
         relocate("org.bstats", "ir.syrent.velocityvanish.dependencies.org.bstats")
-        relocate("com.google.code.gson", "ir.syrent.velocityvanish.dependencies.com.google.code.gson")
+        relocate("com.google.gson", "ir.syrent.velocityvanish.dependencies.com.google.gson")
         relocate("com.cryptomorin", "ir.syrent.velocityvanish.dependencies.com.github.cryptomorin")
         relocate("cloud.commandframework", "ir.syrent.velocityvanish.dependencies.cloud.commandframework")
         relocate("kotlin", "ir.syrent.velocityvanish.dependencies.kotlin")
@@ -228,6 +228,7 @@ tasks {
     }
 
     build {
+        dependsOn(clean)
         dependsOn(shadowJar)
     }
 
@@ -252,7 +253,7 @@ hangarPublish {
     publications.register("plugin") {
         version.set(suffixedVersion)
         channel.set(System.getenv("HANGAR_BUILD_CHANNEL") ?: "Snapshot")
-        changelog.set(System.getenv("HANGAR_CHANGELOG") ?: changelogContent)
+        changelog.set(if (System.getenv("HANGAR_CHANGELOG").isNullOrEmpty()) changelogContent else System.getenv("HANGAR_CHANGELOG"))
         id.set(slug)
         apiKey.set(System.getenv("HANGAR_API_TOKEN"))
 
@@ -272,7 +273,7 @@ hangarPublish {
 
 modrinth {
     val modrinthApiKey = System.getenv("MODRINTH_API_TOKEN")
-    val modrinthChangelog = System.getenv("MODRINTH_CHANGELOG") ?: changelogContent
+    val modrinthChangelog = if (System.getenv("MODRINTH_CHANGELOG").isNullOrEmpty()) changelogContent else System.getenv("MODRINTH_CHANGELOG")
 
     token.set(modrinthApiKey)
     projectId.set("${property("modrinthProjectID")}")

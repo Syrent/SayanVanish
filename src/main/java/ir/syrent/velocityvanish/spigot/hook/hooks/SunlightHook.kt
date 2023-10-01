@@ -1,10 +1,10 @@
-package ir.syrent.velocityvanish.spigot.hook
+package ir.syrent.velocityvanish.spigot.hook.hooks
 
+import ir.syrent.velocityvanish.spigot.hook.Dependency
+import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import su.nightexpress.sunlight.SunLight
-import su.nightexpress.sunlight.SunLightAPI
-import su.nightexpress.sunlight.data.UserManager
 import su.nightexpress.sunlight.data.impl.settings.UserSetting
 
 class SunlightHook(name: String) : Dependency(name) {

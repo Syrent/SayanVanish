@@ -65,7 +65,7 @@ class VelocityVanishSpigot : RUoMPlugin() {
         }
 
         if (DependencyManager.protocolLibHook.exists) {
-            DependencyManager.protocolLibHook.protocolManager.addPacketListener(
+            DependencyManager.protocolLibHook.protocolManager?.addPacketListener(
                 object : PacketAdapter(this, ListenerPriority.NORMAL, listOf(PacketType.Status.Server.SERVER_INFO), ListenerOptions.ASYNC) {
                     override fun onPacketSending(event: PacketEvent?) {
                         event?.packet?.serverPings?.let { serverPing ->

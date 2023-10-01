@@ -1,12 +1,13 @@
-package ir.syrent.velocityvanish.spigot.hook
+package ir.syrent.velocityvanish.spigot.hook.hooks
 
 import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
+import ir.syrent.velocityvanish.spigot.hook.Dependency
+import ir.syrent.velocityvanish.spigot.ruom.Ruom
 
-class ProtocolLibHook constructor(name: String) : Dependency(name) {
+class ProtocolLibHook(name: String) : Dependency(name) {
 
-    lateinit var protocolManager: ProtocolManager
-        private set
+    var protocolManager: ProtocolManager? = null
 
     init {
         if (exists) {

@@ -60,7 +60,7 @@ class VanishManager(
             } else {
                 if (DependencyManager.protocolLibHook.exists) {
                     try {
-                        val tabPacket = DependencyManager.protocolLibHook.protocolManager.createPacket(PacketType.Play.Server.PLAYER_INFO, true)
+                        val tabPacket = DependencyManager.protocolLibHook.protocolManager?.createPacket(PacketType.Play.Server.PLAYER_INFO, true)
                         val infoData = tabPacket?.playerInfoDataLists
                         val infoAction = tabPacket?.playerInfoAction
 
@@ -81,7 +81,7 @@ class VanishManager(
                         val newTabPacket = PacketContainer(PacketType.Play.Server.PLAYER_INFO, tabPacket?.handle)
 
                         for (onlinePlayer in Ruom.onlinePlayers.filter { it.hasPermission("velocityvanish.admin.seevanished") }.filter { it != player }) {
-                            DependencyManager.protocolLibHook.protocolManager.sendServerPacket(onlinePlayer, newTabPacket)
+                            DependencyManager.protocolLibHook.protocolManager?.sendServerPacket(onlinePlayer, newTabPacket)
                         }
                     } catch (_: Exception) {
                         Ruom.warn("Couldn't vanish player using ProtocolLib, Is you server/plugins up-to-date?")
@@ -305,12 +305,8 @@ class VanishManager(
         }
 
         for (onlinePlayer in Ruom.onlinePlayers) {
-            try {
-                onlinePlayer.showPlayer(Ruom.plugin, player)
-            } catch (e: NoSuchMethodError) {
                 @Suppress("DEPRECATION")
                 onlinePlayer.showPlayer(player)
-            }
         }
 
         player.isSleepingIgnored = false

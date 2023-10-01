@@ -14,6 +14,7 @@ import ir.syrent.velocityvanish.utils.component
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import net.kyori.adventure.text.Component
 import org.bukkit.command.CommandSender
+import java.lang.IllegalStateException
 
 abstract class Command(
     val name: String,
@@ -40,7 +41,12 @@ abstract class Command(
         )
 
         manager.createCommandHelpHandler()
-        manager.registerAsynchronousCompletions()
+
+        try {
+            manager.registerAsynchronousCompletions()
+        } catch (_: IllegalStateException) {
+            Ruom.warn("Failed to enable asynchronous command completions.")
+        }
 
         try {
             manager.registerBrigadier()

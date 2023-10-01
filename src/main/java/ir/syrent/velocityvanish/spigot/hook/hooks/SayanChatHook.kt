@@ -1,6 +1,8 @@
-package ir.syrent.velocityvanish.spigot.hook
+package ir.syrent.velocityvanish.spigot.hook.hooks
 
-class SayanChatHook constructor(name: String) : Dependency(name) {
+import ir.syrent.velocityvanish.spigot.hook.Dependency
+
+class SayanChatHook(name: String) : Dependency(name) {
 
     override fun features(): List<String> {
         return mutableListOf(

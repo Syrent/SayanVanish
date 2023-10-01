@@ -28,6 +28,13 @@ class PlayerJoinListener(
 
     @EventHandler(priority = EventPriority.LOWEST)
     private fun onPlayerJoin(event: PlayerJoinEvent) {
+        handleVanishOnJoin(event)
+        Ruom.runSync({
+            handleVanishOnJoin(event)
+        }, 15)
+    }
+
+    fun handleVanishOnJoin(event: PlayerJoinEvent) {
         val player = event.player
 
         // Note: DiscordSRV support
@@ -57,9 +64,9 @@ class PlayerJoinListener(
                 event.joinMessage = null
 
                 Ruom.runSync({
-                     if (!plugin.vanishedNames.contains(player.name)) {
-                         plugin.vanishManager.unVanish(player, sendJoinMessage = false, callPostEvent = true)
-                     }
+                    if (!plugin.vanishedNames.contains(player.name)) {
+                        plugin.vanishManager.unVanish(player, sendJoinMessage = false, callPostEvent = true)
+                    }
 
                     val joinMessage = Utils.getSerializedMessage(Settings.formatMessage(player, Message.JOIN_MESSAGE, TextReplacement("player", player.name), TextReplacement("play_displayname", player.displayName)))
                     if (joinMessage.isNotBlank() && joinMessage.isNotEmpty()) {

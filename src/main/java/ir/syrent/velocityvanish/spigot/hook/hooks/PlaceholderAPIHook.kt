@@ -1,12 +1,13 @@
-package ir.syrent.velocityvanish.spigot.hook
+package ir.syrent.velocityvanish.spigot.hook.hooks
 
 import ir.syrent.velocityvanish.spigot.VelocityVanishSpigot
+import ir.syrent.velocityvanish.spigot.hook.Dependency
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import ir.syrent.velocityvanish.spigot.storage.Settings
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import org.bukkit.OfflinePlayer
 
-class PlaceholderAPIHook constructor(plugin: VelocityVanishSpigot, name: String) : Dependency(name) {
+class PlaceholderAPIHook(plugin: VelocityVanishSpigot, name: String) : Dependency(name) {
 
     init {
         if (exists) {

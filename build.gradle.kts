@@ -94,12 +94,12 @@ dependencies {
     compileOnly("dev.folia:folia-api:1.20.1-R0.1-SNAPSHOT")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
     compileOnly("me.clip:placeholderapi:2.11.4")
-    compileOnly("xyz.jpenilla:squaremap-api:1.2.0")
+    compileOnly("xyz.jpenilla:squaremap-api:1.2.1")
     compileOnly("net.essentialsx:EssentialsX:2.20.1")
     compileOnly("org.spongepowered:configurate-yaml:4.2.0-yamlbranch-4")
     compileOnly("com.discordsrv:discordsrv:1.26.2")
     compileOnly("com.mojang:authlib:1.11")
-    compileOnly("io.netty:netty-all:4.1.98.Final")
+    compileOnly("io.netty:netty-all:4.1.99.Final")
 
     // SayanChat 2.8.1
     // ProCosmetics
@@ -115,10 +115,10 @@ dependencies {
     // gson does not exist in legacy minecraft version
     implementation("com.google.code.gson:gson:2.10.1")
 
-    implementation("com.github.cryptomorin:XSeries:9.5.0") { isTransitive = false }
+    implementation("com.github.cryptomorin:XSeries:9.6.0") { isTransitive = false }
 
     implementation("net.kyori:adventure-api:4.14.0")
-    implementation("net.kyori:adventure-platform-bukkit:4.3.0")
+    implementation("net.kyori:adventure-platform-bukkit:4.3.1")
     implementation("net.kyori:adventure-text-minimessage:4.14.0")
 
     implementation("cloud.commandframework:cloud-paper:tooltips-SNAPSHOT")

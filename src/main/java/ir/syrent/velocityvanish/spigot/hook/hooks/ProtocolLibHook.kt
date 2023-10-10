@@ -3,7 +3,6 @@ package ir.syrent.velocityvanish.spigot.hook.hooks
 import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
 import ir.syrent.velocityvanish.spigot.hook.Dependency
-import ir.syrent.velocityvanish.spigot.ruom.Ruom
 
 class ProtocolLibHook(name: String) : Dependency(name) {
 

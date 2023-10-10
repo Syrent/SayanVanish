@@ -41,6 +41,8 @@ class VanishManager(
     private val plugin: VelocityVanishSpigot
 ) {
 
+    val flyingPlayers = mutableListOf<UUID>()
+
     private val potions = mutableSetOf(
         PotionEffect(PotionEffectType.NIGHT_VISION, Int.MAX_VALUE, 255, false, false),
         PotionEffect(PotionEffectType.FIRE_RESISTANCE, Int.MAX_VALUE, 255, false, false),
@@ -170,7 +172,11 @@ class VanishManager(
         updateTabState(player, GameMode.SPECTATOR)
         hidePlayer(player)
 
-        if (player.hasPermission("velocityvanish.action.fly.onvanish")) {
+        if (player.isFlying || player.allowFlight) {
+            flyingPlayers.add(player.uniqueId)
+        }
+
+        if (player.hasPermission("velocityvanish.action.fly.onvanish") || player.isOp || player.allowFlight) {
             player.allowFlight = true
             player.isFlying = true
         }
@@ -296,9 +302,10 @@ class VanishManager(
 
         updateTabState(player, GameMode.SURVIVAL)
 
-        val canFly = (player.allowFlight && player.hasPermission("velocityvanish.action.fly.onvanish")) || player.isOp
+        val canFly = player.isOp || player.gameMode == GameMode.CREATIVE || flyingPlayers.contains(player.uniqueId)
         player.allowFlight = canFly
         player.isFlying = canFly
+        flyingPlayers.remove(player.uniqueId)
 
         if (ServerVersion.supports(9)) {
             player.isInvulnerable = false /*invulnerablePlayers.contains(player.uniqueId)*/

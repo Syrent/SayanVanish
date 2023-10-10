@@ -1,7 +1,6 @@
 package ir.syrent.velocityvanish.spigot.hook.hooks
 
 import ir.syrent.velocityvanish.spigot.hook.Dependency
-import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import su.nightexpress.sunlight.SunLight

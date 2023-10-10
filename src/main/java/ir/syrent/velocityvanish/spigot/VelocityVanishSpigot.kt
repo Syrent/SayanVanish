@@ -6,12 +6,9 @@ import com.comphenix.protocol.events.ListenerPriority
 import com.comphenix.protocol.events.PacketAdapter
 import com.comphenix.protocol.events.PacketEvent
 import com.comphenix.protocol.wrappers.WrappedGameProfile
-import com.cryptomorin.xseries.ReflectionUtils
 import com.google.gson.JsonObject
 import com.jeff_media.updatechecker.UpdateCheckSource
 import com.jeff_media.updatechecker.UpdateChecker
-import com.jeff_media.updatechecker.UserAgentBuilder
-import io.netty.util.internal.ReflectionUtil
 import io.papermc.lib.PaperLib
 import ir.syrent.velocityvanish.spigot.command.VanishCommand
 import ir.syrent.velocityvanish.spigot.bridge.BukkitBridge
@@ -31,7 +28,6 @@ import ir.syrent.velocityvanish.spigot.utils.Utils
 import ir.syrent.velocityvanish.utils.component
 import org.bstats.bukkit.Metrics
 import org.bukkit.entity.Player
-import su.nightexpress.sunlight.api.event.PlayerTeleportRequestEvent
 
 
 class VelocityVanishSpigot : RUoMPlugin() {

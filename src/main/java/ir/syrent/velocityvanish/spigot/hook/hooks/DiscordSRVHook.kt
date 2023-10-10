@@ -2,7 +2,6 @@ package ir.syrent.velocityvanish.spigot.hook.hooks
 
 import github.scarsz.discordsrv.DiscordSRV
 import ir.syrent.velocityvanish.spigot.hook.Dependency
-import ir.syrent.velocityvanish.spigot.ruom.Ruom
 
 class DiscordSRVHook(name: String) : Dependency(name) {
 

@@ -1,9 +1,6 @@
 package ir.syrent.velocityvanish.spigot.listener
 
-import com.Zrips.CMI.CMI
-import com.Zrips.CMI.commands.list.vanishedit
 import ir.syrent.velocityvanish.spigot.VelocityVanishSpigot
-import ir.syrent.velocityvanish.spigot.hook.DependencyManager
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import ir.syrent.velocityvanish.spigot.storage.Message
 import ir.syrent.velocityvanish.spigot.storage.Settings
@@ -35,7 +32,12 @@ class PlayerJoinListener(
     }
 
     fun handleVanishOnJoin(event: PlayerJoinEvent) {
-        val player = event.player
+        val oldPlayer = event.player
+        /*
+        * Velocity plugin message problem on 1.20.2 (1.20.2 is not yet supported offically)
+        * https://github.com/PaperMC/Velocity/pull/1088#issuecomment-1744385241
+        * */
+        val player = Bukkit.getPlayer(oldPlayer.uniqueId) ?: return
 
         // Note: DiscordSRV support
         player.setMetadata("vanished", FixedMetadataValue(plugin, true))

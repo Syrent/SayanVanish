@@ -1,7 +1,6 @@
 package ir.syrent.velocityvanish.spigot.hook.hooks
 
 import ir.syrent.velocityvanish.spigot.hook.Dependency
-import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import xyz.jpenilla.squaremap.api.Squaremap
 import xyz.jpenilla.squaremap.api.SquaremapProvider
 

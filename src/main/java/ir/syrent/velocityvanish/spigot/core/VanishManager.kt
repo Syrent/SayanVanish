@@ -115,6 +115,7 @@ class VanishManager(
     fun addPotionEffects(player: Player) {
         Ruom.runSync({
             for (potionEffect in potions) {
+                if (player.hasPotionEffect(potionEffect.type)) continue
                 try {
                     @Suppress("DEPRECATION") val mobEffect = MobEffectInstanceAccessor.getConstructor0().newInstance(
                         MobEffectAccessor.getMethodById1().invoke(null, potionEffect.type.id),

@@ -26,18 +26,13 @@ class PlayerJoinListener(
     @EventHandler(priority = EventPriority.LOWEST)
     private fun onPlayerJoin(event: PlayerJoinEvent) {
         handleVanishOnJoin(event)
-        Ruom.runSync({
+        /*Ruom.runSync({
             handleVanishOnJoin(event)
-        }, 15)
+        }, 15)*/
     }
 
     fun handleVanishOnJoin(event: PlayerJoinEvent) {
-        val oldPlayer = event.player
-        /*
-        * Velocity plugin message problem on 1.20.2 (1.20.2 is not yet supported offically)
-        * https://github.com/PaperMC/Velocity/pull/1088#issuecomment-1744385241
-        * */
-        val player = Bukkit.getPlayer(oldPlayer.uniqueId) ?: return
+        val player = event.player
 
         // Note: DiscordSRV support
         player.setMetadata("vanished", FixedMetadataValue(plugin, true))

@@ -10,7 +10,6 @@ import com.comphenix.protocol.wrappers.PlayerInfoData
 import com.comphenix.protocol.wrappers.WrappedChatComponent
 import com.comphenix.protocol.wrappers.WrappedGameProfile
 import com.mojang.authlib.GameProfile
-import io.papermc.paper.threadedregions.scheduler.EntityScheduler
 import ir.syrent.nms.accessors.*
 import ir.syrent.velocityvanish.spigot.VelocityVanishSpigot
 import ir.syrent.velocityvanish.spigot.event.PostUnVanishEvent
@@ -136,7 +135,9 @@ class VanishManager(
     fun removePotionEffects(player: Player) {
         Ruom.runSync({
             for (potionEffect in potions) {
-                if (player.getPotionEffect(potionEffect.type)?.amplifier != potionEffect.amplifier) continue
+                if (ServerVersion.supports(10)) {
+                    if (player.getPotionEffect(potionEffect.type)?.amplifier != potionEffect.amplifier) continue
+                }
                 try {
                     @Suppress("DEPRECATION") NMSUtils.sendPacket(player, ClientboundRemoveMobEffectPacketAccessor.getConstructor0().newInstance(player.entityId, MobEffectAccessor.getMethodById1().invoke(null, potionEffect.type.id)))
                 } catch (e: Exception) {

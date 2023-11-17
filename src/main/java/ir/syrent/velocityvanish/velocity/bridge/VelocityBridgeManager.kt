@@ -8,6 +8,7 @@ import ir.syrent.velocityvanish.velocity.event.VelocityUnVanishEvent
 import ir.syrent.velocityvanish.velocity.event.VelocityVanishEvent
 import ir.syrent.velocityvanish.velocity.vruom.VRuom
 import ir.syrent.velocityvanish.velocity.vruom.utils.GsonUtils
+import net.william278.velocitab.api.VelocitabAPI
 
 @Suppress("UnstableApiUsage")
 class VelocityBridgeManager(
@@ -61,9 +62,17 @@ class VelocityBridgeManager(
 
                 if (vanished) {
                     plugin.vanishedPlayers.add(name)
-                    VRuom.getServer().eventManager.fire(VelocityVanishEvent(VRuom.getPlayer(name).orElse(null), name))
+                    val player = VRuom.getPlayer(name).orElse(null)
+                    if (player != null) {
+                        VelocitabAPI.getInstance().vanishPlayer(player)
+                    }
+                    VRuom.getServer().eventManager.fire(VelocityVanishEvent(player, name))
                 } else {
                     plugin.vanishedPlayers.remove(name)
+                    val player = VRuom.getPlayer(name).orElse(null)
+                    if (player != null) {
+                        VelocitabAPI.getInstance().unVanishPlayer(player)
+                    }
                     VRuom.getServer().eventManager.fire(VelocityUnVanishEvent(VRuom.getPlayer(name).orElse(null), name))
                 }
             }

@@ -64,16 +64,20 @@ class VelocityBridgeManager(
                     plugin.vanishedPlayers.add(name)
                     val player = VRuom.getPlayer(name).orElse(null)
                     if (player != null) {
-                        VelocitabAPI.getInstance().vanishPlayer(player)
+                        try {
+                            VelocitabAPI.getInstance().vanishPlayer(player)
+                        } catch (_: NoClassDefFoundError) {}
                     }
                     VRuom.getServer().eventManager.fire(VelocityVanishEvent(player, name))
                 } else {
                     plugin.vanishedPlayers.remove(name)
                     val player = VRuom.getPlayer(name).orElse(null)
                     if (player != null) {
-                        VelocitabAPI.getInstance().unVanishPlayer(player)
+                        try {
+                            VelocitabAPI.getInstance().unVanishPlayer(player)
+                        } catch (_: NoClassDefFoundError) {}
                     }
-                    VRuom.getServer().eventManager.fire(VelocityUnVanishEvent(VRuom.getPlayer(name).orElse(null), name))
+                    VRuom.getServer().eventManager.fire(VelocityUnVanishEvent(player, name))
                 }
             }
             else -> {

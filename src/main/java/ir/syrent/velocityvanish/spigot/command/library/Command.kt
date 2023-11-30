@@ -55,7 +55,7 @@ abstract class Command(
             } catch (_: BrigadierFailureException) {
                 Ruom.warn("Failed to enable mojang brigadier commands.")
             }
-        }  else {
+        } else {
             Ruom.warn("Ignore mojang brigadier commands, your server version doesn't support this feature!")
         }
 

@@ -7,15 +7,15 @@ import java.util.concurrent.Executors
 import java.io.ByteArrayOutputStream
 
 plugins {
-    kotlin("jvm") version "1.9.10"
+    kotlin("jvm") version "1.9.21"
     id("maven-publish")
     id("java")
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.7"
     id("org.screamingsandals.nms-mapper") version "1.4.6"
-    id("xyz.jpenilla.run-paper") version "2.2.0"
+    id("xyz.jpenilla.run-paper") version "2.2.2"
     id("io.papermc.hangar-publish-plugin") version "0.1.0"
-    id("com.modrinth.minotaur") version "2.8.4"
+    id("com.modrinth.minotaur") version "2.8.6"
 }
 
 fun executeGitCommand(vararg command: String): String {
@@ -96,13 +96,13 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
     compileOnly("dev.folia:folia-api:1.20.1-R0.1-SNAPSHOT")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
-    compileOnly("me.clip:placeholderapi:2.11.4")
+    compileOnly("me.clip:placeholderapi:2.11.5")
     compileOnly("xyz.jpenilla:squaremap-api:1.2.1")
     compileOnly("net.essentialsx:EssentialsX:2.20.1")
     compileOnly("org.spongepowered:configurate-yaml:4.2.0-yamlbranch-4")
     compileOnly("com.discordsrv:discordsrv:1.26.2")
     compileOnly("com.mojang:authlib:1.11")
-    compileOnly("io.netty:netty-all:4.1.99.Final")
+    compileOnly("io.netty:netty-all:4.1.101.Final")
     compileOnly("net.william278:velocitab:1.5.1")
 
     // SayanChat 2.8.1
@@ -119,7 +119,7 @@ dependencies {
     // gson does not exist in legacy minecraft version
     implementation("com.google.code.gson:gson:2.10.1")
 
-    implementation("com.github.cryptomorin:XSeries:9.6.0") { isTransitive = false }
+    implementation("com.github.cryptomorin:XSeries:9.7.0") { isTransitive = false }
 
     implementation("net.kyori:adventure-api:4.14.0")
     implementation("net.kyori:adventure-platform-bukkit:4.3.1")

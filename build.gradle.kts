@@ -214,6 +214,7 @@ tasks {
 
     shadowJar {
         dependsOn(extraDeps)
+        dependsOn(generateNmsComponents)
         archiveFileName.set("${rootProject.name}_${project.version}.jar")
         exclude("META-INF/**")
         from("LICENSE")

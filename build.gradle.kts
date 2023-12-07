@@ -1,6 +1,7 @@
 import io.papermc.hangarpublishplugin.model.Platforms
 import org.jetbrains.gradle.ext.settings
 import org.jetbrains.gradle.ext.taskTriggers
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.net.URL
 import java.util.*
 import java.util.concurrent.Executors
@@ -214,7 +215,6 @@ tasks {
 
     shadowJar {
         dependsOn(extraDeps)
-        dependsOn(generateNmsComponents)
         archiveFileName.set("${rootProject.name}_${project.version}.jar")
         exclude("META-INF/**")
         from("LICENSE")
@@ -244,6 +244,11 @@ tasks {
     publishAllPublicationsToHangar {
         this.dependsOn(shadowJar)
         this.mustRunAfter(shadowJar)
+    }
+
+    withType<KotlinCompile> {
+        dependsOn(generateNmsComponents)
+        kotlinOptions.jvmTarget = "17"
     }
 }
 

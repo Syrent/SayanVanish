@@ -1,6 +1,6 @@
 # User-specific stuff
 .idea/
-/src/generated/
+#/src/generated/
 
 *.iml
 *.ipr

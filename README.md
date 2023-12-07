@@ -40,7 +40,7 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 ```
-Add the Origin dependency:
+Add the VelocityVanish dependency:
 ```gradle
 dependencies {
     implementation 'com.github.Syrent:VelocityVanish:Tag'
@@ -59,7 +59,7 @@ Add the Jitpack repository to your `pom.xml` file:
     </repository>
 </repositories>
 ```
-Add the Origin dependency:
+Add the VelocityVanish dependency:
 ```xml
 <dependency>
     <groupId>com.github.Syrent</groupId>

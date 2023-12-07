@@ -10,6 +10,7 @@ import cloud.commandframework.paper.PaperCommandManager
 import ir.syrent.velocityvanish.spigot.command.library.interfaces.ICommand
 import ir.syrent.velocityvanish.spigot.command.library.interfaces.ISender
 import ir.syrent.velocityvanish.spigot.ruom.Ruom
+import ir.syrent.velocityvanish.spigot.utils.ServerVersion
 import ir.syrent.velocityvanish.utils.component
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import net.kyori.adventure.text.Component
@@ -48,10 +49,14 @@ abstract class Command(
             Ruom.warn("Failed to enable asynchronous command completions.")
         }
 
-        try {
-            manager.registerBrigadier()
-        } catch (_: BrigadierFailureException) {
-            Ruom.warn("Failed to enable mojang brigadier commands.")
+        if (ServerVersion.supports(13)) {
+            try {
+                manager.registerBrigadier()
+            } catch (_: BrigadierFailureException) {
+                Ruom.warn("Failed to enable mojang brigadier commands.")
+            }
+        } else {
+            Ruom.warn("Ignore mojang brigadier commands, your server version doesn't support this feature!")
         }
 
         MinecraftExceptionHandler<ISender>()

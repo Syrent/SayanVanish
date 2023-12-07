@@ -86,6 +86,9 @@ repositories {
 
     // Cloud SNAPSHOT (Dev repository)
     maven("https://repo.masmc05.dev/repository/maven-snapshots/")
+
+    // Velocitab
+    maven("https://repo.william278.net/releases")
 }
 
 dependencies {
@@ -100,6 +103,7 @@ dependencies {
     compileOnly("com.discordsrv:discordsrv:1.26.2")
     compileOnly("com.mojang:authlib:1.11")
     compileOnly("io.netty:netty-all:4.1.101.Final")
+    compileOnly("net.william278:velocitab:1.5.1")
 
     // SayanChat 2.8.1
     // ProCosmetics
@@ -210,6 +214,7 @@ tasks {
 
     shadowJar {
         dependsOn(extraDeps)
+        dependsOn(generateNmsComponents)
         archiveFileName.set("${rootProject.name}_${project.version}.jar")
         exclude("META-INF/**")
         from("LICENSE")

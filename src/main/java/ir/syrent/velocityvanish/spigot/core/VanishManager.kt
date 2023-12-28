@@ -174,6 +174,10 @@ class VanishManager(
 
         updateTabState(player, GameMode.SPECTATOR)
         hidePlayer(player)
+        // Also hide player after 1 tick, so it works on legacy minecraft versions
+        Ruom.runSync({
+            hidePlayer(player)
+        }, 1)
 
         if (player.isFlying || player.allowFlight) {
             flyingPlayers.add(player.uniqueId)

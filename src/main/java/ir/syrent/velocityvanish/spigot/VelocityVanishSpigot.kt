@@ -129,9 +129,7 @@ class VelocityVanishSpigot : RUoMPlugin() {
                 }
                 vanishManager.unVanish(player)
             }
-        } catch (_: Exception) {
-            Ruom.warn("Plugin didn't fully complete reset data task on plugin shutdown")
-        }
+        } catch (_: Exception) { }
     }
 
     private fun enableMetrics() {

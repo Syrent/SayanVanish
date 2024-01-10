@@ -257,6 +257,10 @@ class VanishManager(
             DependencyManager.squareMapHook.squareMap.playerManager().hide(player.uniqueId, true)
         }
 
+        if (DependencyManager.dynmapHook.exists) {
+            DependencyManager.dynmapHook.dynmap.setPlayerVisiblity(player.name, false)
+        }
+
         if (sendQuitMessage) {
             if (DependencyManager.discordSRVHook.exists) {
                 DependencyManager.discordSRVHook.discordSRV.sendLeaveMessage(player, Settings.formatMessage(Message.DISCORDSRV_QUIT_MESSAGE))
@@ -361,6 +365,10 @@ class VanishManager(
 
         if (DependencyManager.squareMapHook.exists) {
             DependencyManager.squareMapHook.squareMap.playerManager().show(player.uniqueId, true)
+        }
+
+        if (DependencyManager.dynmapHook.exists) {
+            DependencyManager.dynmapHook.dynmap.setPlayerVisiblity(player.name, true)
         }
 
         if (sendJoinMessage) {

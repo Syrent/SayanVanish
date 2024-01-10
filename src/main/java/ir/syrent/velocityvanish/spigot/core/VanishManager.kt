@@ -263,7 +263,9 @@ class VanishManager(
 
         if (sendQuitMessage) {
             if (DependencyManager.discordSRVHook.exists) {
-                DependencyManager.discordSRVHook.discordSRV.sendLeaveMessage(player, Settings.formatMessage(Message.DISCORDSRV_QUIT_MESSAGE))
+                if(!player.hasPermission("discordsrv.silentquit")) {
+                    DependencyManager.discordSRVHook.discordSRV.sendLeaveMessage(player, Settings.formatMessage(Message.DISCORDSRV_QUIT_MESSAGE))
+                }
             }
         }
 
@@ -373,7 +375,9 @@ class VanishManager(
 
         if (sendJoinMessage) {
             if (DependencyManager.discordSRVHook.exists) {
-                DependencyManager.discordSRVHook.discordSRV.sendJoinMessage(player, Settings.formatMessage(Message.DISCORDSRV_JOIN_MESSAGE))
+                if(!player.hasPermission("discordsrv.silentjoin")) {
+                    DependencyManager.discordSRVHook.discordSRV.sendJoinMessage(player, Settings.formatMessage(Message.DISCORDSRV_JOIN_MESSAGE))
+                }
             }
         }
 

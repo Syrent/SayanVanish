@@ -90,6 +90,9 @@ repositories {
 
     // Velocitab
     maven("https://repo.william278.net/releases")
+
+    //Dynmap
+    maven("https://repo.mikeprimm.com/")
 }
 
 dependencies {
@@ -105,7 +108,7 @@ dependencies {
     compileOnly("com.mojang:authlib:1.11")
     compileOnly("io.netty:netty-all:4.1.101.Final")
     compileOnly("net.william278:velocitab:1.5.1")
-
+    compileOnly("us.dynmap:DynmapCoreAPI:3.7-SNAPSHOT")
     // SayanChat 2.8.1
     // ProCosmetics
     // ServerListPlus Velocity (From extradeps)

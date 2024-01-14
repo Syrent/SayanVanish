@@ -16,7 +16,7 @@ plugins {
     id("org.screamingsandals.nms-mapper") version "1.4.6"
     id("xyz.jpenilla.run-paper") version "2.2.2"
     id("io.papermc.hangar-publish-plugin") version "0.1.1"
-    id("com.modrinth.minotaur") version "2.8.6"
+    id("com.modrinth.minotaur") version "2.8.7"
 }
 
 fun executeGitCommand(vararg command: String): String {

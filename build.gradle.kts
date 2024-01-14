@@ -8,7 +8,7 @@ import java.util.concurrent.Executors
 import java.io.ByteArrayOutputStream
 
 plugins {
-    kotlin("jvm") version "1.9.10"
+    kotlin("jvm") version "1.9.22"
     id("maven-publish")
     id("java")
     id("com.github.johnrengelman.shadow") version "8.1.1"

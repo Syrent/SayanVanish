@@ -90,6 +90,9 @@ repositories {
 
     // Velocitab
     maven("https://repo.william278.net/releases")
+
+    //Dynmap
+    maven("https://repo.mikeprimm.com/")
 }
 
 dependencies {
@@ -105,7 +108,7 @@ dependencies {
     compileOnly("com.mojang:authlib:1.11")
     compileOnly("io.netty:netty-all:4.1.101.Final")
     compileOnly("net.william278:velocitab:1.5.1")
-
+    compileOnly("us.dynmap:DynmapCoreAPI:3.7-SNAPSHOT")
     // SayanChat 2.8.1
     // ProCosmetics
     // ServerListPlus Velocity (From extradeps)
@@ -123,7 +126,7 @@ dependencies {
     implementation("com.github.cryptomorin:XSeries:9.7.0") { isTransitive = false }
 
     implementation("net.kyori:adventure-api:4.14.0")
-    implementation("net.kyori:adventure-platform-bukkit:4.3.1")
+    implementation("net.kyori:adventure-platform-bukkit:4.3.2")
     implementation("net.kyori:adventure-text-minimessage:4.15.0")
 
     implementation("cloud.commandframework:cloud-paper:tooltips-SNAPSHOT")

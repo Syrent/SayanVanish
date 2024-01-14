@@ -24,6 +24,8 @@ object DependencyManager {
         private set
     var cmiHook: CMIHook
         private set
+    var dynmapHook: DynmapHook
+        private set
 
     init {
         ProtocolLibHook("ProtocolLib").apply {
@@ -66,6 +68,10 @@ object DependencyManager {
         CMIHook("CMI").apply {
             this.register()
             cmiHook = this
+        }
+        DynmapHook("dynmap").apply {
+            this.register()
+            dynmapHook = this
         }
     }
 

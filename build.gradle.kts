@@ -104,7 +104,7 @@ dependencies {
     compileOnly("xyz.jpenilla:squaremap-api:1.2.1")
     compileOnly("net.essentialsx:EssentialsX:2.20.1")
     compileOnly("org.spongepowered:configurate-yaml:4.2.0-yamlbranch-4")
-    compileOnly("com.discordsrv:discordsrv:1.26.2")
+    compileOnly("com.discordsrv:discordsrv:1.27.0")
     compileOnly("com.mojang:authlib:1.11")
     compileOnly("io.netty:netty-all:4.1.101.Final")
     compileOnly("net.william278:velocitab:1.5.1")

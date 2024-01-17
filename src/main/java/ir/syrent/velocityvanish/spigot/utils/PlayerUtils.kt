@@ -6,8 +6,6 @@ import ir.syrent.velocityvanish.spigot.storage.Settings
 import ir.syrent.velocityvanish.spigot.utils.Utils.getSerializedMessage
 import ir.syrent.velocityvanish.utils.TextReplacement
 import ir.syrent.velocityvanish.utils.component
-import net.kyori.adventure.text.minimessage.MiniMessage
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -20,7 +18,11 @@ fun CommandSender.sendMessage(message: Message, vararg replacements: TextReplace
 }
 
 fun Player.sendMessage(message: Message, vararg replacements: TextReplacement) {
-    val formattedMessage = Settings.formatMessage(this, message, *replacements)
+    this.sendMessage(message, this, *replacements)
+}
+
+fun Player.sendMessage(message: Message, placeholderTarget: Player, vararg replacements: TextReplacement) {
+    val formattedMessage = Settings.formatMessage(this, message, placeholderTarget, *replacements)
     if (formattedMessage.isBlank()) return
 
     Settings.commandSound.let {
@@ -34,11 +36,11 @@ fun Player.sendMessage(message: Message, vararg replacements: TextReplacement) {
 }
 
 fun Player.sendMessageOnly(message: Message, vararg replacements: TextReplacement) {
-    val serializedMessage = getSerializedMessage(Settings.formatMessage(this, message, *replacements))
+    val serializedMessage = getSerializedMessage(Settings.formatMessage(this, message, this, *replacements))
     AdventureApi.get().sender(this).sendMessage(serializedMessage.component())
 }
 
 fun Player.sendActionbar(message: Message, vararg replacements: TextReplacement) {
-    val serializedMessage = getSerializedMessage(Settings.formatMessage(this, message, *replacements))
+    val serializedMessage = getSerializedMessage(Settings.formatMessage(this, message, this, *replacements))
     AdventureApi.get().sender(this).sendActionBar(serializedMessage.component())
 }

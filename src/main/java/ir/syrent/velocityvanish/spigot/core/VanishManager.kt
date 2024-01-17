@@ -277,7 +277,7 @@ class VanishManager(
         plugin.vanishedNames.add(player.name)
         plugin.bridgeManager?.updateVanishedPlayersRequest(player, true)
 
-        val quitMessage = Utils.getSerializedMessage(Settings.formatMessage(player, Message.QUIT_MESSAGE, TextReplacement("player", player.name), TextReplacement("play_displayname", player.displayName)))
+        val quitMessage = Utils.getSerializedMessage(Settings.formatMessage(player, Message.QUIT_MESSAGE, player, TextReplacement("player", player.name), TextReplacement("play_displayname", player.displayName)))
         if (quitMessage.isNotBlank() && quitMessage.isNotEmpty() && sendQuitMessage && Settings.fakeJoinLeaveMessage) {
             Ruom.broadcast(quitMessage.component())
         }
@@ -289,7 +289,7 @@ class VanishManager(
 
         if (notifyAdmins) {
             for (staff in Ruom.onlinePlayers.filter { it.hasPermission("velocityvanish.admin.notify") && it != player }) {
-                staff.sendMessage(Message.VANISH_NOTIFY, TextReplacement("player", player.name))
+                staff.sendMessage(Message.VANISH_NOTIFY, player, TextReplacement("player", player.name))
             }
         }
     }
@@ -383,7 +383,7 @@ class VanishManager(
         plugin.vanishedNames.remove(player.name)
         plugin.bridgeManager?.updateVanishedPlayersRequest(player, false)
 
-        val joinMessage = Utils.getSerializedMessage(Settings.formatMessage(player, Message.JOIN_MESSAGE, TextReplacement("player_displayname", player.displayName), TextReplacement("player", player.name)))
+        val joinMessage = Utils.getSerializedMessage(Settings.formatMessage(player, Message.JOIN_MESSAGE, player, TextReplacement("player_displayname", player.displayName), TextReplacement("player", player.name)))
         if (joinMessage.isNotBlank() && joinMessage.isNotEmpty() && sendJoinMessage && Settings.fakeJoinLeaveMessage) {
             Ruom.broadcast(joinMessage.component())
         }
@@ -395,7 +395,7 @@ class VanishManager(
 
         if (notifyAdmins) {
             for (staff in Ruom.onlinePlayers.filter { it.hasPermission("velocityvanish.admin.notify") && it != player }) {
-                staff.sendMessage(Message.UNVANISH_NOTIFY, TextReplacement("player", player.name))
+                staff.sendMessage(Message.UNVANISH_NOTIFY, player, TextReplacement("player", player.name))
             }
         }
     }

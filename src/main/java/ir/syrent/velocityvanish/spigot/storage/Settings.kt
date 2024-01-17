@@ -132,10 +132,10 @@ object Settings {
     }
 
 
-    fun formatMessage(player: Player, message: String, vararg replacements: TextReplacement): String {
+    fun formatMessage(message: String, placeholderTarget: Player, vararg replacements: TextReplacement): String {
         var formattedMessage = formatMessage(message, *replacements)
         if (DependencyManager.placeholderAPIHook.exists) {
-            formattedMessage = PlaceholderAPI.setPlaceholders(player, formattedMessage)
+            formattedMessage = PlaceholderAPI.setPlaceholders(placeholderTarget, formattedMessage)
         }
         return formattedMessage
     }
@@ -153,8 +153,8 @@ object Settings {
         return formattedMessage
     }
 
-    fun formatMessage(player: Player, message: Message, vararg replacements: TextReplacement): String {
-        return formatMessage(player, getMessage(message), *replacements)
+    fun formatMessage(player: Player, message: Message, placeholderTarget: Player, vararg replacements: TextReplacement): String {
+        return formatMessage(getMessage(message), placeholderTarget, *replacements)
     }
 
     fun formatMessage(message: Message, vararg replacements: TextReplacement): String {

@@ -63,7 +63,7 @@ class PlayerJoinListener(
                         plugin.vanishManager.unVanish(player, sendJoinMessage = true, callPostEvent = true)
                     }
 
-                    val joinMessage = Utils.getSerializedMessage(Settings.formatMessage(player, Message.JOIN_MESSAGE, TextReplacement("player", player.name), TextReplacement("play_displayname", player.displayName)))
+                    val joinMessage = Utils.getSerializedMessage(Settings.formatMessage(player, Message.JOIN_MESSAGE, player, TextReplacement("player", player.name), TextReplacement("play_displayname", player.displayName)))
                     if (joinMessage.isNotBlank() && joinMessage.isNotEmpty()) {
                         Ruom.broadcast(joinMessage.component())
                     }

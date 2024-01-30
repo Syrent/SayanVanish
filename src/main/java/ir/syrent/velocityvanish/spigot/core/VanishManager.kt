@@ -136,7 +136,7 @@ class VanishManager(
         Ruom.runSync({
             for (potionEffect in potions) {
                 if (ServerVersion.supports(10)) {
-                    if (player.getPotionEffect(potionEffect.type)?.amplifier != potionEffect.amplifier) continue
+                    if (player.hasPotionEffect(potionEffect.type) && player.getPotionEffect(potionEffect.type)?.amplifier != potionEffect.amplifier) continue
                 }
                 try {
                     @Suppress("DEPRECATION") NMSUtils.sendPacket(player, ClientboundRemoveMobEffectPacketAccessor.getConstructor0().newInstance(player.entityId, MobEffectAccessor.getMethodById1().invoke(null, potionEffect.type.id)))

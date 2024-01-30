@@ -61,7 +61,7 @@ class PlaceholderAPIHook(plugin: VelocityVanishSpigot, name: String) : Dependenc
                     Ruom.onlinePlayers.filter { !plugin.vanishedNamesOnline.contains(it.name) }.size.toString()
                 } else if (type.equals("total", true)) {
                     val players = mutableListOf<String>()
-                    for (serverPlayers in plugin.proxyPlayers.values.filter { it.isNotEmpty() }) {
+                    for (serverPlayers in plugin.proxyPlayers.values.filter { it.isNotEmpty() }.distinct()) {
                         players.addAll(serverPlayers)
                     }
                     players.filter { !plugin.vanishedNamesOnline.contains(it) }.size.toString()

@@ -26,9 +26,9 @@ class PlayerJoinListener(
     @EventHandler(priority = EventPriority.LOWEST)
     private fun onPlayerJoin(event: PlayerJoinEvent) {
         handleVanishOnJoin(event)
-        /*Ruom.runSync({
+        Ruom.runSync({
             handleVanishOnJoin(event)
-        }, 15)*/
+        }, 15)
     }
 
     fun handleVanishOnJoin(event: PlayerJoinEvent) {

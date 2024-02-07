@@ -10,6 +10,7 @@ import com.velocitypowered.api.proxy.messages.ChannelMessageSource
 import ir.syrent.velocityvanish.velocity.bridge.VelocityBridge
 import ir.syrent.velocityvanish.velocity.bridge.VelocityBridgeManager
 import ir.syrent.velocityvanish.velocity.command.ForceVanishCommand
+import ir.syrent.velocityvanish.velocity.hooks.VelocitabHook
 import ir.syrent.velocityvanish.velocity.listener.ProxyPingListener
 import ir.syrent.velocityvanish.velocity.listener.TabCompleteListener
 import ir.syrent.velocityvanish.velocity.vruom.VRUoMPlugin
@@ -19,6 +20,7 @@ import net.minecrell.serverlistplus.core.ServerListPlusCore
 import net.minecrell.serverlistplus.core.replacement.LiteralPlaceholder
 import net.minecrell.serverlistplus.core.replacement.ReplacementManager
 import net.minecrell.serverlistplus.core.status.StatusResponse
+import net.william278.velocitab.api.VelocitabAPI
 import org.slf4j.Logger
 import java.io.File
 import java.nio.file.Path
@@ -33,6 +35,8 @@ class VelocityVanish @Inject constructor(
     lateinit var bridgeManager: VelocityBridgeManager
         private set
 
+    var velocitabHook: VelocitabHook? = null
+
     /*
     * Note: This is not the best way to do this, but for time being it's fine.
     * TODO: Create a VanishedPlayer object with serializer and deserializer.
@@ -45,6 +49,11 @@ class VelocityVanish @Inject constructor(
     @Subscribe
     private fun onProxyInitialization(event: ProxyInitializeEvent) {
         instance = this
+
+        try {
+            velocitabHook = VelocitabHook()
+            VelocitabAPI.getInstance().vanishIntegration = velocitabHook
+        } catch (_: ClassNotFoundException) { }
 
         initializeMessagingChannels()
         initializeListeners()
@@ -128,7 +137,7 @@ class VelocityVanish @Inject constructor(
     }
 
     private fun createFolder() {
-        val dataFile = VRUoMPlugin.getDataDirectory().toFile()
+        val dataFile = getDataDirectory().toFile()
         if (!dataFile.exists()) {
             dataFile.mkdir()
         }

@@ -66,6 +66,7 @@ class VelocityBridgeManager(
                     if (player != null) {
                         try {
                             VelocitabAPI.getInstance().vanishPlayer(player)
+                            VelocitabAPI.getInstance().tabList.updateDisplayNames()
                         } catch (_: NoClassDefFoundError) {}
                     }
                     VRuom.getServer().eventManager.fire(VelocityVanishEvent(player, name))

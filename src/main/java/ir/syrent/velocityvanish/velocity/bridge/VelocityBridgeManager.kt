@@ -67,7 +67,8 @@ class VelocityBridgeManager(
                         try {
                             VelocitabAPI.getInstance().vanishPlayer(player)
                             VelocitabAPI.getInstance().tabList.updateDisplayNames()
-                        } catch (_: NoClassDefFoundError) {}
+                        } catch (_: ClassNotFoundException) {}
+                        catch (_: NoClassDefFoundError) { }
                     }
                     VRuom.getServer().eventManager.fire(VelocityVanishEvent(player, name))
                 } else {
@@ -76,7 +77,8 @@ class VelocityBridgeManager(
                     if (player != null) {
                         try {
                             VelocitabAPI.getInstance().unVanishPlayer(player)
-                        } catch (_: NoClassDefFoundError) {}
+                        } catch (_: ClassNotFoundException) {}
+                        catch (_: NoClassDefFoundError) { }
                     }
                     VRuom.getServer().eventManager.fire(VelocityUnVanishEvent(player, name))
                 }

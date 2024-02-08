@@ -35,8 +35,6 @@ class VelocityVanish @Inject constructor(
     lateinit var bridgeManager: VelocityBridgeManager
         private set
 
-    var velocitabHook: VelocitabHook? = null
-
     /*
     * Note: This is not the best way to do this, but for time being it's fine.
     * TODO: Create a VanishedPlayer object with serializer and deserializer.
@@ -51,9 +49,9 @@ class VelocityVanish @Inject constructor(
         instance = this
 
         try {
-            velocitabHook = VelocitabHook()
-            VelocitabAPI.getInstance().vanishIntegration = velocitabHook
+            VelocitabAPI.getInstance().vanishIntegration = VelocitabHook()
         } catch (_: ClassNotFoundException) { }
+        catch (_: NoClassDefFoundError) { }
 
         initializeMessagingChannels()
         initializeListeners()

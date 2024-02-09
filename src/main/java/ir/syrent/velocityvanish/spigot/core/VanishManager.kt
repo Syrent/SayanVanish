@@ -408,7 +408,7 @@ class VanishManager(
                     true,
                     player.ping,
                     GameTypeAccessor.getMethodByName1().invoke(null, gameMode.name.lowercase()),
-                    null,
+                    MinecraftComponentSerializer.get().serialize(player.displayName()),
                     null
                 )
             )

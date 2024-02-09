@@ -26,6 +26,7 @@ import ir.syrent.velocityvanish.spigot.utils.Utils
 import ir.syrent.velocityvanish.spigot.utils.sendMessage
 import ir.syrent.velocityvanish.utils.TextReplacement
 import ir.syrent.velocityvanish.utils.component
+import net.kyori.adventure.platform.bukkit.MinecraftComponentSerializer
 import org.bukkit.GameMode
 import org.bukkit.entity.Creature
 import org.bukkit.entity.Player
@@ -243,19 +244,9 @@ class VanishManager(
             DependencyManager.sunlightHook.vanish(player, true)
         }
 
-        if (ServerVersion.supports(9)) {
+        if (ServerVersion.supports(9) && Settings.disableCollision) {
             denyPush(player)
         }
-
-        /*if (DependencyManager.proCosmeticsHook.exists) {
-            Ruom.runSync({
-                try {
-                    DependencyManager.proCosmeticsHook.proCosmetics.userManager?.getUser(player.uniqueId)?.unequipCosmetics(true)
-                } catch (e: Exception) {
-                    Ruom.warn("Failed to un-equip cosmetics for player ${player.name}, is ProCosmetics up to date?")
-                }
-            }, 20)
-        }*/
 
         if (DependencyManager.squareMapHook.exists) {
             DependencyManager.squareMapHook.squareMap.playerManager().hide(player.uniqueId, true)
@@ -351,7 +342,7 @@ class VanishManager(
 
         Utils.actionbarPlayers.remove(player)
 
-        if (ServerVersion.supports(9)) {
+        if (ServerVersion.supports(9) && Settings.disableCollision) {
             allowPush(player)
         }
 

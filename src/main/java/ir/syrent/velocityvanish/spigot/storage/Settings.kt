@@ -47,6 +47,7 @@ object Settings {
     var invincible = true
     var silentOpenContainer = true
     var fakeJoinLeaveMessage = true
+    var disableCollision = false
 
     var forcePreventPrivateMessages = true
 
@@ -101,6 +102,7 @@ object Settings {
         invincible = settingsConfig.getBoolean("vanish.invincible")
         silentOpenContainer = settingsConfig.getBoolean("vanish.silent_open_container")
         fakeJoinLeaveMessage = settingsConfig.getBoolean("vanish.fake_join_leave_message")
+        disableCollision = settingsConfig.getBoolean("vanish.disable_collision")
 
         preventPickup = settingsConfig.getBoolean("vanish.prevent.pickup")
         preventBlockBreak = settingsConfig.getBoolean("vanish.prevent.block_break")

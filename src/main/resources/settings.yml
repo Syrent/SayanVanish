@@ -13,34 +13,28 @@ support_legacy_color_codes: false
 force_vanish_if_first: true
 
 bstats: true
-
 # Leave sounds blank to disable them
 # Example: command: ""
 sounds:
     command: "ENTITY_EXPERIENCE_ORB_PICKUP"
     vanish: "ENTITY_EXPERIENCE_ORB_PICKUP"
     unvanish: "ENTITY_EXPERIENCE_ORB_PICKUP"
-
 vanish:
     # Show players an actionbar when they are vanished
     actionbar: true
-
     # Remember vanish data after switching servers?
     # Note: Requires Velocity as a proxy server
     remember: true
-
     # Should we change player type to spectator in tablist for players who have permission to see vanished players?
     # Note: Requires ProtocolLib in versions lower than 1.19
     see_as_spectator: true
-
     # Should vanished players be protected from all damage sources?
     invincible: true
-
     # You can also achieve this by setting the fake join/leave message to blank in the language file
     fake_join_leave_message: true
-
     silent_open_container: true
-
+    # Might cause incompatibility with some plugins like TAB and eGlow
+    disable_collision: false
     prevent:
         pickup: true
         block_break: false
@@ -48,7 +42,6 @@ vanish:
         interact: false
         # Only works on PaperMC servers (Paper, Purpur, Pufferfish, etc...)
         advancement: true
-
 hooks:
     essentials:
         force_prevent_private_messages: false

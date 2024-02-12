@@ -184,7 +184,7 @@ class VanishManager(
             flyingPlayers.add(player.uniqueId)
         }
 
-        if (player.hasPermission("velocityvanish.action.fly.onvanish") || player.isOp || player.allowFlight) {
+        if (player.hasPermission("velocityvanish.action.fly.onvanish") || player.allowFlight) {
             player.allowFlight = true
             player.isFlying = true
         }
@@ -300,7 +300,7 @@ class VanishManager(
 
         updateTabState(player, GameMode.SURVIVAL)
 
-        val canFly = player.isOp || player.gameMode == GameMode.CREATIVE || flyingPlayers.contains(player.uniqueId)
+        val canFly = player.isOp || player.gameMode == GameMode.CREATIVE || flyingPlayers.contains(player.uniqueId) || player.gameMode == GameMode.SPECTATOR || player.gameMode == GameMode.CREATIVE
         player.allowFlight = canFly
         player.isFlying = canFly
         flyingPlayers.remove(player.uniqueId)
@@ -310,8 +310,8 @@ class VanishManager(
         }
 
         for (onlinePlayer in Ruom.onlinePlayers) {
-                @Suppress("DEPRECATION")
-                onlinePlayer.showPlayer(player)
+            @Suppress("DEPRECATION")
+            onlinePlayer.showPlayer(player)
         }
 
         player.isSleepingIgnored = false

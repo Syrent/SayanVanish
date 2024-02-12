@@ -45,13 +45,7 @@ class VanishManager(
 
     private val potions = mutableSetOf(
         PotionEffect(PotionEffectType.NIGHT_VISION, Int.MAX_VALUE, 235, false, false),
-        PotionEffect(PotionEffectType.FIRE_RESISTANCE, Int.MAX_VALUE, 235, false, false),
-        PotionEffect(PotionEffectType.INVISIBILITY, Int.MAX_VALUE, 235, false, false),
     )
-
-    init {
-        if (ServerVersion.supports(13)) potions.add(PotionEffect(PotionEffectType.WATER_BREATHING, Int.MAX_VALUE, 235, false, false))
-    }
 
     val invulnerablePlayers = mutableSetOf<UUID>()
 

@@ -13,7 +13,7 @@ plugins {
     id("java")
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.7"
-    id("org.screamingsandals.nms-mapper") version "1.4.6"
+    id("org.screamingsandals.nms-mapper") version "1.4.9"
     id("xyz.jpenilla.run-paper") version "2.2.2"
     id("io.papermc.hangar-publish-plugin") version "0.1.0"
     id("com.modrinth.minotaur") version "2.8.6"
@@ -331,6 +331,7 @@ nmsGen {
 
     /* Here we can define the classes */
     val ServerGamePacketListenerImpl = reqClass("net.minecraft.server.network.ServerGamePacketListenerImpl")
+    var ServerCommonPacketListenerImpl = reqClass("net.minecraft.server.network.ServerCommonPacketListenerImpl") //1.20.2 and above
     val ClientboundUpdateMobEffectPacket = reqClass("net.minecraft.network.protocol.game.ClientboundUpdateMobEffectPacket")
     val ClientboundRemoveMobEffectPacket = reqClass("net.minecraft.network.protocol.game.ClientboundRemoveMobEffectPacket")
     val ClientboundPlayerInfoUpdatePacket = reqClass("net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket")
@@ -372,6 +373,10 @@ nmsGen {
     ServerGamePacketListenerImpl
         .reqMethod("send", Packet)
         .reqField("connection")
+    ServerCommonPacketListenerImpl
+        .reqMethod("send", Packet)
+        .reqField("connection")
+        .reqMethod("latency")
     ClientboundUpdateMobEffectPacket
         .reqConstructor(Int::class, MobEffectInstance)
     ClientboundRemoveMobEffectPacket

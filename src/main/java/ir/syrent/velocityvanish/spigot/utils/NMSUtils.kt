@@ -3,6 +3,7 @@ package ir.syrent.velocityvanish.spigot.utils
 import com.cryptomorin.xseries.ReflectionUtils
 import io.netty.channel.Channel
 import ir.syrent.nms.accessors.ConnectionAccessor
+import ir.syrent.nms.accessors.ServerCommonPacketListenerImplAccessor
 import ir.syrent.nms.accessors.ServerGamePacketListenerImplAccessor
 import ir.syrent.nms.accessors.ServerPlayerAccessor
 import org.bukkit.entity.Player
@@ -42,11 +43,15 @@ object NMSUtils {
         }
     }
 
-    fun sendPacket(player: Player?, vararg packets: Any?) {
+    fun sendPacket(player: Player, vararg packets: Any) {
         try {
             val connection = getServerGamePacketListener(player)
             for (packet in packets) {
-                ServerGamePacketListenerImplAccessor.getMethodSend1().invoke(connection, packet)
+                if (ServerVersion.supports(20) && ServerVersion.getPatchNumber() >= 2) {
+                    ServerCommonPacketListenerImplAccessor.getMethodSend1().invoke(connection, packet)
+                } else {
+                    ServerGamePacketListenerImplAccessor.getMethodSend1().invoke(connection, packet)
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()

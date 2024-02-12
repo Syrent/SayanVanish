@@ -1,5 +1,5 @@
 # Full wiki is available at https://github.com/Syrent/VelocityVanish/wiki
-config_version: 7
+config_version: 8
 default_language: en_US
 show_dependency_suggestions: true
 
@@ -44,4 +44,17 @@ vanish:
         advancement: true
 hooks:
     essentials:
+        enabled: false
         force_prevent_private_messages: false
+    sunlight:
+        enabled: false
+    placeholderapi:
+        enabled: true
+    protocollib:
+        enabled: true
+    squaremap:
+        enabled: true
+    discordsrv:
+        enabled: true
+    cmi:
+        enabled: false

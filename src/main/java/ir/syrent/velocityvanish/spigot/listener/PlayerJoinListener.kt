@@ -5,6 +5,7 @@ import ir.syrent.velocityvanish.spigot.ruom.Ruom
 import ir.syrent.velocityvanish.spigot.storage.Message
 import ir.syrent.velocityvanish.spigot.storage.Settings
 import ir.syrent.velocityvanish.spigot.utils.Utils
+import ir.syrent.velocityvanish.spigot.utils.sendMessage
 import ir.syrent.velocityvanish.utils.TextReplacement
 import ir.syrent.velocityvanish.utils.component
 import org.bukkit.Bukkit
@@ -34,6 +35,8 @@ class PlayerJoinListener(
         // Note: DiscordSRV support
         player.setMetadata("vanished", FixedMetadataValue(plugin, true))
 
+        if (!Settings.remember) return
+
         for (vanishedPlayer in plugin.vanishedNames.mapNotNull { Bukkit.getPlayerExact(it) }) {
             plugin.vanishManager.hidePlayer(vanishedPlayer)
             plugin.vanishManager.updateTabState(vanishedPlayer, GameMode.SPECTATOR)
@@ -41,8 +44,6 @@ class PlayerJoinListener(
                 plugin.vanishManager.updateTabState(vanishedPlayer, GameMode.SPECTATOR)
             }, 1)
         }
-
-        if (!Settings.remember) return
 
         if (plugin.vanishedNames.contains(player.name)) {
             plugin.vanishManager.vanish(player, sendQuitMessage = false, callPostEvent = true)
@@ -52,7 +53,9 @@ class PlayerJoinListener(
                 plugin.vanishManager.vanish(player, sendQuitMessage = false, callPostEvent = true)
                 event.joinMessage = null
             } else if (player.hasPermission("velocityvanish.action.vanish.force") && Settings.forceVanishIfFirst && Ruom.onlinePlayers.size <= 1) {
+                player.sendMessage(Message.FORCE_VANISHED)
                 plugin.vanishManager.vanish(player, sendQuitMessage = false, callPostEvent = true)
+                plugin.vanishedNames.remove(player.name)
                 event.joinMessage = null
 
                 Ruom.runSync({

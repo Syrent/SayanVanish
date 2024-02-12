@@ -25,6 +25,7 @@ vanish:
     discordsrv_quit_message: "$player left the game"
     join_message_sent: "$successful_prefix Fake join message for <gold>$player</gold> has been sent."
     quit_message_sent: "$successful_prefix Fake quit message for <gold>$player</gold> has been sent."
+    force_vanished: "$warn_prefix You are the only player on this server. Temporary force vanish applied to you for a second. <gray>(Ignore this message if you don't know what it means)"
     level:
         set: "$successful_prefix Level <gold>$level</gold> has been set for <gold>$player</gold>"
         get: "$successful_prefix <gold>$player</gold> vanish level is: <gold>$level</gold>"

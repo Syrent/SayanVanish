@@ -23,6 +23,7 @@ enum class Message(val path: String) {
     QUIT_MESSAGE("vanish.quit_message"),
     DISCORDSRV_QUIT_MESSAGE("vanish.discordsrv_quit_message"),
     QUIT_MESSAGE_SENT("vanish.quit_message_sent"),
+    FORCE_VANISHED("vanish.force_vanished"),
     LEVEL_SET("vanish.level.set"),
     LEVEL_GET("vanish.level.get"),
     EMPTY("");

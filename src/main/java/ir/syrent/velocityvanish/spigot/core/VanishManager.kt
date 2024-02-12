@@ -171,6 +171,7 @@ class VanishManager(
         hidePlayer(player)
         // Also hide player after 1 tick, so it works on legacy minecraft versions
         Ruom.runSync({
+            updateTabState(player, GameMode.SPECTATOR)
             hidePlayer(player)
         }, 1)
 

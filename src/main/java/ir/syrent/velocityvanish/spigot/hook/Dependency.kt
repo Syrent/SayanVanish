@@ -7,7 +7,7 @@ import ir.syrent.velocityvanish.utils.component
 
 abstract class Dependency(val name: String) {
 
-    val exists = Ruom.hasPlugin(name) && Settings.settings.config.getBoolean("hooks.${name.lowercase()}", false)
+    val exists = Ruom.hasPlugin(name) && Settings.settings.config.getBoolean("hooks.${name.lowercase()}.enabled", false)
 
     fun register() {
         if (Settings.showDependencySuggestions) {

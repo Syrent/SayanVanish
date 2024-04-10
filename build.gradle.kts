@@ -14,7 +14,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("org.jetbrains.gradle.plugin.idea-ext") version "1.1.7"
     id("org.screamingsandals.nms-mapper") version "1.4.9"
-    id("xyz.jpenilla.run-paper") version "2.2.2"
+    id("xyz.jpenilla.run-paper") version "2.2.3"
     id("io.papermc.hangar-publish-plugin") version "0.1.0"
     id("com.modrinth.minotaur") version "2.8.6"
 }
@@ -90,12 +90,15 @@ repositories {
 
     // Velocitab
     maven("https://repo.william278.net/releases")
+
+    // ForestRedisAPI
+    maven("https://jitpack.io/")
 }
 
 dependencies {
     compileOnly("com.velocitypowered:velocity-api:3.1.1")
-    compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
-    compileOnly("dev.folia:folia-api:1.20.1-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
+    compileOnly("dev.folia:folia-api:1.20.4-R0.1-SNAPSHOT")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.1.0")
     compileOnly("me.clip:placeholderapi:2.11.5")
     compileOnly("xyz.jpenilla:squaremap-api:1.2.1")
@@ -105,6 +108,9 @@ dependencies {
     compileOnly("com.mojang:authlib:1.11")
     compileOnly("io.netty:netty-all:4.1.101.Final")
     compileOnly("net.william278:velocitab:1.5.1")
+
+    implementation("commons-io:commons-io:2.15.1")
+
 
     // SayanChat 2.8.1
     // ProCosmetics
@@ -117,14 +123,20 @@ dependencies {
     implementation("io.papermc:paperlib:1.0.8")
     implementation("org.bstats:bstats-bukkit:3.0.2")
 
+    // Redis
+//    implementation("it.ozimov:embedded-redis:0.7.3")
+//    implementation("redis.clients:jedis:4.3.1")
+//    implementation("commons-logging:commons-logging:1.2")
+    implementation("io.lettuce:lettuce-core:6.3.1.RELEASE")
+
     // gson does not exist in legacy minecraft version
     implementation("com.google.code.gson:gson:2.10.1")
 
     implementation("com.github.cryptomorin:XSeries:9.7.0") { isTransitive = false }
 
-    implementation("net.kyori:adventure-api:4.15.0")
+    implementation("net.kyori:adventure-api:4.16.0")
     implementation("net.kyori:adventure-platform-bukkit:4.3.2")
-    implementation("net.kyori:adventure-text-minimessage:4.15.0")
+    implementation("net.kyori:adventure-text-minimessage:4.16.0")
 
     implementation("cloud.commandframework:cloud-paper:tooltips-SNAPSHOT")
     implementation("cloud.commandframework:cloud-minecraft-extras:tooltips-SNAPSHOT")
@@ -172,11 +184,11 @@ val extraDependencies = mapOf(
 
 tasks {
     runServer {
-        minecraftVersion("1.20.2")
+        minecraftVersion("1.20.4")
     }
 
     runPaper {
-        folia.registerTask()
+//        folia.registerTask()
     }
 
     compileJava {
@@ -218,7 +230,7 @@ tasks {
         archiveFileName.set("${rootProject.name}_${project.version}.jar")
         exclude("META-INF/**")
         from("LICENSE")
-        minimize()
+//        minimize()
 
         relocate("io.papermc.lib", "ir.syrent.velocityvanish.dependencies.io.papermc.lib")
         relocate("io.leangen", "ir.syrent.velocityvanish.dependencies.io.leangen")

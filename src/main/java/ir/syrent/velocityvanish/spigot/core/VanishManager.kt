@@ -295,7 +295,7 @@ class VanishManager(
 
         updateTabState(player, GameMode.SURVIVAL)
 
-        val canFly = player.isOp || player.gameMode == GameMode.CREATIVE || flyingPlayers.contains(player.uniqueId) || player.gameMode == GameMode.SPECTATOR || player.gameMode == GameMode.CREATIVE
+        val canFly = player.isOp || flyingPlayers.contains(player.uniqueId) || player.gameMode == GameMode.SPECTATOR || player.gameMode == GameMode.CREATIVE
         player.allowFlight = canFly
         player.isFlying = canFly
         flyingPlayers.remove(player.uniqueId)

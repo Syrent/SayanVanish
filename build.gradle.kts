@@ -230,7 +230,7 @@ tasks {
         archiveFileName.set("${rootProject.name}_${project.version}.jar")
         exclude("META-INF/**")
         from("LICENSE")
-//        minimize()
+        minimize()
 
         relocate("io.papermc.lib", "ir.syrent.velocityvanish.dependencies.io.papermc.lib")
         relocate("io.leangen", "ir.syrent.velocityvanish.dependencies.io.leangen")

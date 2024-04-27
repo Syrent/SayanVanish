@@ -55,7 +55,6 @@ class PlayerJoinListener(
             } else if (player.hasPermission("velocityvanish.action.vanish.force") && Settings.forceVanishIfFirst && Ruom.onlinePlayers.size <= 1) {
                 player.sendMessage(Message.FORCE_VANISHED)
                 plugin.vanishManager.vanish(player, sendQuitMessage = false, callPostEvent = true)
-                plugin.vanishedNames.remove(player.name)
                 event.joinMessage = null
 
                 Ruom.runSync({

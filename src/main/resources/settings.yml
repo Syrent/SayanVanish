@@ -1,7 +1,7 @@
 # Full wiki is available at https://github.com/Syrent/VelocityVanish/wiki
 config_version: 9
 default_language: en_US
-show_dependency_suggestions: true
+show_dependency_suggestions: false
 
 # IMPORTANT: Legacy code support is strongly discouraged. It adversely affects performance and lacks new Minecraft chat features.
 support_legacy_color_codes: false

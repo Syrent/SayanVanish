@@ -1,3 +1,6 @@
+# Attention
+Updates for VelocityVanish are currently proceeding at a slower pace due to my focus on [SayanVanish](https://github.com/Syrent/SayanVanish). SayanVanish is set to supersede VelocityVanish, offering a plethora of enhanced features and improved compatibility with other plugins.
+
 # About
 VelocityVanish is one of the best vanish plugins and only vanish plugin that supports Velocity (It also can run on spigot servers without any problem).
 More information can be found at [Why VelocityVanish](https://github.com/Syrent/VelocityVanish/wiki/Why-VelocityVanish%3F)? [wiki page](https://github.com/Syrent/VelocityVanish/wiki).

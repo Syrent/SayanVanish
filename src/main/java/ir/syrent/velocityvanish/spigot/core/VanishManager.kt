@@ -165,6 +165,11 @@ class VanishManager(
 
         if (preVanishEvent.isCancelled) return
 
+        plugin.bridgeManager?.updateVanishedPlayersRequest(player, true)
+        // Because plugin messaging is the most reliable thing in the world i have to send the vanish update after 20 ticks to make sure the message is received on the Velocity side
+        Ruom.runSync({
+            plugin.bridgeManager?.updateVanishedPlayersRequest(player, true)
+        }, 20)
         setMeta(player, true)
 
         updateTabState(player, GameMode.SPECTATOR)
@@ -261,7 +266,6 @@ class VanishManager(
 
         Utils.sendVanishActionbar(player)
         plugin.vanishedNames.add(player.name)
-        plugin.bridgeManager?.updateVanishedPlayersRequest(player, true)
 
         val quitMessage = Utils.getSerializedMessage(Settings.formatMessage(player, Message.QUIT_MESSAGE, player, TextReplacement("player", player.name), TextReplacement("play_displayname", player.displayName)))
         if (quitMessage.isNotBlank() && quitMessage.isNotEmpty() && sendQuitMessage && Settings.fakeJoinLeaveMessage) {
@@ -290,6 +294,7 @@ class VanishManager(
         VelocityVanishSpigot.instance.server.pluginManager.callEvent(preUnVanishEvent)
 
         if (preUnVanishEvent.isCancelled) return
+        plugin.bridgeManager?.updateVanishedPlayersRequest(player, false)
 
         setMeta(player, false)
 
@@ -367,7 +372,6 @@ class VanishManager(
 
         Utils.sendVanishActionbar(player)
         plugin.vanishedNames.remove(player.name)
-        plugin.bridgeManager?.updateVanishedPlayersRequest(player, false)
 
         val joinMessage = Utils.getSerializedMessage(Settings.formatMessage(player, Message.JOIN_MESSAGE, player, TextReplacement("player_displayname", player.displayName), TextReplacement("player", player.name)))
         if (joinMessage.isNotBlank() && joinMessage.isNotEmpty() && sendJoinMessage && Settings.fakeJoinLeaveMessage) {

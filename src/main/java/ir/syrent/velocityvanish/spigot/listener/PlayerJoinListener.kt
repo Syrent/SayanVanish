@@ -35,8 +35,6 @@ class PlayerJoinListener(
         // Note: DiscordSRV support
         player.setMetadata("vanished", FixedMetadataValue(plugin, true))
 
-        if (!Settings.remember) return
-
         for (vanishedPlayer in plugin.vanishedNames.mapNotNull { Bukkit.getPlayerExact(it) }) {
             plugin.vanishManager.hidePlayer(vanishedPlayer)
             plugin.vanishManager.updateTabState(vanishedPlayer, GameMode.SPECTATOR)
@@ -46,6 +44,7 @@ class PlayerJoinListener(
         }
 
         if (plugin.vanishedNames.contains(player.name)) {
+            if (!Settings.remember) return
             plugin.vanishManager.vanish(player, sendQuitMessage = false, callPostEvent = true)
             event.joinMessage = null
         } else {
@@ -53,6 +52,7 @@ class PlayerJoinListener(
                 plugin.vanishManager.vanish(player, sendQuitMessage = false, callPostEvent = true)
                 event.joinMessage = null
             } else if (player.hasPermission("velocityvanish.action.vanish.force") && Settings.forceVanishIfFirst && Ruom.onlinePlayers.size <= 1) {
+                if (!Settings.remember) return
                 player.sendMessage(Message.FORCE_VANISHED)
                 plugin.vanishManager.vanish(player, sendQuitMessage = false, callPostEvent = true)
                 event.joinMessage = null

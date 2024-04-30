@@ -15,6 +15,8 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.metadata.FixedMetadataValue
+import org.bukkit.permissions.Permission
+import org.bukkit.permissions.PermissionDefault
 
 class PlayerJoinListener(
     private val plugin: VelocityVanishSpigot
@@ -48,13 +50,13 @@ class PlayerJoinListener(
             plugin.vanishManager.vanish(player, sendQuitMessage = false, callPostEvent = true)
             event.joinMessage = null
         } else {
-            if (player.hasPermission("velocityvanish.action.vanish.onjoin")) {
+            if (player.hasPermission(Permission("velocityvanish.action.vanish.onjoin", PermissionDefault.FALSE))) {
                 plugin.vanishManager.vanish(player, sendQuitMessage = false, callPostEvent = true)
                 event.joinMessage = null
             } else if (player.hasPermission("velocityvanish.action.vanish.force") && Settings.forceVanishIfFirst && Ruom.onlinePlayers.size <= 1) {
                 if (!Settings.remember) return
                 player.sendMessage(Message.FORCE_VANISHED)
-                plugin.vanishManager.vanish(player, sendQuitMessage = false, callPostEvent = true)
+                plugin.vanishManager.vanish(player, sendQuitMessage = false, callPostEvent = true, sendPluginMessage = false)
                 event.joinMessage = null
 
                 Ruom.runSync({

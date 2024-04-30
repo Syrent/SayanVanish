@@ -1,7 +1,7 @@
 package ir.syrent.velocityvanish.spigot.core
 
 import com.Zrips.CMI.CMI
-import com.Zrips.CMI.commands.list.vanishedit
+import com.Zrips.CMI.Modules.Vanish.VanishAction
 import com.comphenix.protocol.PacketType
 import com.comphenix.protocol.events.PacketContainer
 import com.comphenix.protocol.wrappers.EnumWrappers
@@ -155,21 +155,23 @@ class VanishManager(
         player.scoreboard.getTeam("Vanished")?.removeEntry(player.name)
     }
 
-    fun vanish(player: Player, sendQuitMessage: Boolean = true, callPostEvent: Boolean = false) {
-        vanish(player, sendQuitMessage, callPostEvent, false)
+    fun vanish(player: Player, sendQuitMessage: Boolean = true, callPostEvent: Boolean = false, sendPluginMessage: Boolean = true) {
+        vanish(player, sendQuitMessage, callPostEvent, false, sendPluginMessage = sendPluginMessage)
     }
 
-    fun vanish(player: Player, sendQuitMessage: Boolean = true, callPostEvent: Boolean = false, notifyAdmins: Boolean = false) {
+    fun vanish(player: Player, sendQuitMessage: Boolean = true, callPostEvent: Boolean = false, notifyAdmins: Boolean = false, sendPluginMessage: Boolean = true) {
         val preVanishEvent = PreVanishEvent(player, sendQuitMessage)
         VelocityVanishSpigot.instance.server.pluginManager.callEvent(preVanishEvent)
 
         if (preVanishEvent.isCancelled) return
 
-        plugin.bridgeManager?.updateVanishedPlayersRequest(player, true)
-        // Because plugin messaging is the most reliable thing in the world i have to send the vanish update after 20 ticks to make sure the message is received on the Velocity side
-        Ruom.runSync({
+        if (sendPluginMessage) {
             plugin.bridgeManager?.updateVanishedPlayersRequest(player, true)
-        }, 20)
+            // Because plugin messaging is the most reliable thing in the world i have to send the vanish update after 20 ticks to make sure the message is received on the Velocity side
+            Ruom.runSync({
+                plugin.bridgeManager?.updateVanishedPlayersRequest(player, true)
+            }, 20)
+        }
         setMeta(player, true)
 
         updateTabState(player, GameMode.SPECTATOR)
@@ -231,8 +233,12 @@ class VanishManager(
             val cmiUser = CMI.getInstance().playerManager.getUser(player)
             cmiUser.isVanished = true
             CMI.getInstance().vanishManager.addPlayer(cmiUser)
-            cmiUser.vanish.set(vanishedit.VanishAction.isVanished, true)
-            cmiUser.vanish.set(vanishedit.VanishAction.informOnJoin, false)
+            cmiUser.vanish.set(VanishAction.isVanished, true)
+            cmiUser.vanish.set(VanishAction.informOnJoin, false)
+            cmiUser.vanish.set(VanishAction.PrivateMessages, false)
+            cmiUser.vanish.set(VanishAction.afkcommands, false)
+            cmiUser.vanish.set(VanishAction.deathMessages, false)
+            cmiUser.vanish.set(VanishAction.fakeJoinLeave, false)
             cmiUser.updateVanishMode()
         }
 
@@ -285,16 +291,18 @@ class VanishManager(
     }
 
 
-    fun unVanish(player: Player, sendJoinMessage: Boolean = true, callPostEvent: Boolean = false) {
-        unVanish(player, sendJoinMessage, callPostEvent, false)
+    fun unVanish(player: Player, sendJoinMessage: Boolean = true, callPostEvent: Boolean = false, sendPluginMessage: Boolean = true) {
+        unVanish(player, sendJoinMessage, callPostEvent, false, sendPluginMessage = sendPluginMessage)
     }
 
-    fun unVanish(player: Player, sendJoinMessage: Boolean = true, callPostEvent: Boolean = false, notifyAdmins: Boolean = false) {
+    fun unVanish(player: Player, sendJoinMessage: Boolean = true, callPostEvent: Boolean = false, notifyAdmins: Boolean = false, sendPluginMessage: Boolean = true) {
         val preUnVanishEvent = PreUnVanishEvent(player, sendJoinMessage)
         VelocityVanishSpigot.instance.server.pluginManager.callEvent(preUnVanishEvent)
 
         if (preUnVanishEvent.isCancelled) return
-        plugin.bridgeManager?.updateVanishedPlayersRequest(player, false)
+        if (sendPluginMessage) {
+            plugin.bridgeManager?.updateVanishedPlayersRequest(player, false)
+        }
 
         setMeta(player, false)
 
@@ -335,8 +343,12 @@ class VanishManager(
             val cmiUser = CMI.getInstance().playerManager.getUser(player)
             cmiUser.isVanished = false
             CMI.getInstance().vanishManager.removePlayer(cmiUser)
-            cmiUser.vanish.set(vanishedit.VanishAction.isVanished, false)
-            cmiUser.vanish.set(vanishedit.VanishAction.informOnJoin, true)
+            cmiUser.vanish.set(VanishAction.isVanished, false)
+            cmiUser.vanish.set(VanishAction.informOnJoin, false)
+            cmiUser.vanish.set(VanishAction.PrivateMessages, true)
+            cmiUser.vanish.set(VanishAction.afkcommands, true)
+            cmiUser.vanish.set(VanishAction.deathMessages, true)
+            cmiUser.vanish.set(VanishAction.fakeJoinLeave, false)
             cmiUser.updateVanishMode()
         }
 

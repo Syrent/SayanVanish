@@ -54,6 +54,11 @@ class PlaceholderAPIHook(plugin: VelocityVanishSpigot, name: String) : Dependenc
                 return plugin.vanishedNamesOnline.size.toString()
             }
 
+            if (params.equals("level", true)) {
+                val onlinePlayer = player?.player ?: return "0"
+                return plugin.vanishManager.getVanishLevel(onlinePlayer).toString()
+            }
+
             if (params.startsWith("online_")) {
                 val type = params.substring(7)
 

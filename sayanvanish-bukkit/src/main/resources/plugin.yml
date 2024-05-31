@@ -6,6 +6,7 @@ prefix: '${name}'
 authors: [ Syrent ]
 description: '${description}'
 website: sayandev.org
+folia-supported: true
 softdepend:
   - Essentials
   - squaremap

@@ -68,4 +68,8 @@ tasks {
             url("https://github.com/EssentialsX/Essentials/releases/download/2.20.1/EssentialsX-2.20.1.jar")
         }
     }
+
+    runPaper {
+        folia.registerTask()
+    }
 }

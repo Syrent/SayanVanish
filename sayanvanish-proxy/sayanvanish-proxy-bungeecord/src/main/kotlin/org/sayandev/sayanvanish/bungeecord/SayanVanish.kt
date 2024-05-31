@@ -1,50 +1,41 @@
-package org.sayandev.sayanvanish.velocity
+package org.sayandev.sayanvanish.bungeecord
 
+import com.alessiodp.libby.BungeeLibraryManager
 import com.alessiodp.libby.Library
-import com.alessiodp.libby.VelocityLibraryManager
-import com.google.inject.Inject
-import com.velocitypowered.api.event.Subscribe
-import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
-import com.velocitypowered.api.plugin.annotation.DataDirectory
-import com.velocitypowered.api.proxy.ProxyServer
+import net.md_5.bungee.api.plugin.Plugin
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.database.databaseConfig
+import org.sayandev.sayanvanish.bungeecord.api.SayanVanishBungeeAPI
 import org.sayandev.sayanvanish.proxy.config.settings
-import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
-import org.sayandev.stickynote.velocity.WrappedStickyNotePlugin
-import org.sayandev.stickynote.velocity.registerListener
-import org.slf4j.LoggerFactory
-import java.nio.file.Path
-import java.util.logging.Logger
+import org.sayandev.sayanvanish.velocity.VanishManager
+import org.sayandev.stickynote.bungeecord.WrappedStickyNotePlugin
+import org.sayandev.stickynote.bungeecord.dataDirectory
+import org.sayandev.stickynote.bungeecord.registerListener
+import org.sayandev.stickynote.bungeecord.server
 
-class SayanVanish @Inject constructor(
-    val server: ProxyServer,
-    val logger: Logger,
-    @DataDirectory val dataDirectory: Path
-) {
+class SayanVanish : Plugin() {
 
-    @Subscribe
-    fun onProxyInitialize(event: ProxyInitializeEvent) {
+    override fun onEnable() {
         downloadLibraries()
 
-        WrappedStickyNotePlugin(this, PLUGIN_ID, server, logger, dataDirectory).initialize()
-        Platform.setAndRegister(Platform("velocity", logger, dataDirectory.toFile()))
+        WrappedStickyNotePlugin(this).initialize()
+        Platform.setAndRegister(Platform("bungeecord", logger, dataDirectory))
 
-        SayanVanishVelocityAPI(databaseConfig.useCacheWhenAvailable)
+        SayanVanishBungeeAPI(databaseConfig.useCacheWhenAvailable)
 
         registerListener(VanishManager)
 
         if (settings.general.purgeOnlineHistoryOnStartup) {
-            for (onlineServer in server.allServers) {
-                SayanVanishVelocityAPI.getInstance().database.purgeBasic(onlineServer.serverInfo.name)
+            for (onlineServer in server.servers) {
+                SayanVanishBungeeAPI.getInstance().database.purgeBasic(onlineServer.value.name)
             }
-            SayanVanishVelocityAPI.getInstance().database.purgeBasic(settings.general.serverId)
+            SayanVanishBungeeAPI.getInstance().database.purgeBasic(settings.general.serverId)
         }
     }
 
     private fun downloadLibraries() {
-        logger.info("Trying to download required libraries, make sure your machine is connected to internet.")
-        val libraryManager = VelocityLibraryManager(this, LoggerFactory.getLogger(this::class.java), dataDirectory, server.pluginManager)
+        proxy.logger.info("Trying to download required libraries, make sure your machine is connected to internet.")
+        val libraryManager = BungeeLibraryManager(this)
         libraryManager.addMavenLocal()
         libraryManager.addMavenCentral()
         libraryManager.addRepository("https://repo.sayandev.org/snapshots")
@@ -81,15 +72,10 @@ class SayanVanish @Inject constructor(
         libraryManager.loadLibrary(
             Library.builder()
                 .groupId("org{}sayandev")
-                .artifactId("stickynote-proxy-velocity")
+                .artifactId("stickynote-proxy-bungeecord")
                 .version("1.0.31")
                 .relocate("org{}sayandev{}stickynote", "org{}sayandev{}sayanvanish{}lib{}stickynote")
                 .build()
         )
     }
-
-    companion object {
-        const val PLUGIN_ID = "sayanvanish"
-    }
-
 }

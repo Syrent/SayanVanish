@@ -1,9 +1,8 @@
-package org.sayandev.sayanvanish.velocity.config
+package org.sayandev.sayanvanish.proxy.config
 
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.stickynote.core.configuration.Config
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
-import org.sayandev.stickynote.velocity.dataDirectory
 import java.io.File
 import java.util.UUID
 
@@ -13,7 +12,7 @@ public var settings: SettingsConfig = SettingsConfig.fromConfig() ?: SettingsCon
 class SettingsConfig(
     val general: General = General()
 ) : Config(
-    dataDirectory.toFile(),
+    Platform.get().rootDirectory,
     fileName
 ) {
 
@@ -29,7 +28,7 @@ class SettingsConfig(
 
     companion object {
         private val fileName = "settings.yml"
-        val settingsFile = File(dataDirectory.toFile(), fileName)
+        val settingsFile = File(Platform.get().rootDirectory, fileName)
 
         @JvmStatic
         fun defaultConfig(): SettingsConfig {

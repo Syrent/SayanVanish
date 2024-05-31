@@ -1,16 +1,18 @@
-package org.sayandev.sayanvanish.velocity.api
+package org.sayandev.sayanvanish.bungeecord.api
 
-import com.velocitypowered.api.proxy.Player
-import net.kyori.adventure.text.Component
+import net.md_5.bungee.api.connection.ProxiedPlayer
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.proxy.config.settings
-import org.sayandev.stickynote.velocity.StickyNote
-import org.sayandev.stickynote.velocity.utils.AdventureUtils.component
+import org.sayandev.stickynote.bungeecord.utils.AdventureUtils.component
+import org.sayandev.stickynote.bungeecord.utils.AdventureUtils.sendMessage
+import org.sayandev.stickynote.bungeecord.utils.AdventureUtils.sendActionbar
+import org.sayandev.stickynote.bungeecord.StickyNote
+import org.sayandev.stickynote.lib.kyori.adventure.text.Component
 import java.util.UUID
 
 
-open class VelocityUser(
+open class BungeeUser(
     override val uniqueId: UUID,
     override var username: String
 ) : User {
@@ -23,7 +25,7 @@ open class VelocityUser(
 
     fun stateText(isVanished: Boolean = this.isVanished) = if (isVanished) "<green>ON</green>" else "<red>OFF</red>"
 
-    fun player(): Player? = StickyNote.getPlayer(uniqueId)
+    fun player(): ProxiedPlayer? = StickyNote.getPlayer(uniqueId)
 
     override fun vanish(options: VanishOptions) {
         database.addToQueue(uniqueId, true)
@@ -48,17 +50,17 @@ open class VelocityUser(
     }
 
     override fun sendActionbar(content: String) {
-        player()?.sendActionBar(content.component())
+        player()?.sendActionbar(content.component())
     }
 
     fun sendActionbar(content: Component) {
-        player()?.sendActionBar(content)
+        player()?.sendActionbar(content)
     }
 
     companion object {
         @JvmStatic
-        fun fromUser(user: User): VelocityUser {
-            return VelocityUser(user.uniqueId, user.username).apply {
+        fun fromUser(user: User): BungeeUser {
+            return BungeeUser(user.uniqueId, user.username).apply {
                 this.isOnline = user.isOnline
                 this.isVanished = user.isVanished
                 this.vanishLevel = user.vanishLevel

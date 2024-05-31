@@ -7,10 +7,10 @@ Welcome to the introduction for **SayanVanish**, a versatile vanish system that 
 SayanVanish is compatible with the following platforms:
 
 * **Minecraft**
-    * **Bukkit**
-    * **Proxy**
-        * **Velocity**
-        * **Bungeecord**
+  * **Bukkit**
+  * **Proxy**
+    * **Velocity**
+    * **Bungeecord**
 
 ### Key Features
 

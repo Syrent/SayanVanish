@@ -1,6 +1,6 @@
 # Introduction
 
-Welcome to the documentation for **SayanVanish**, a versatile vanish system that allows you to disappear and reappear on your server network at will, along with many other features.
+Welcome to the introduction for **SayanVanish**, a versatile vanish system that allows you to disappear and reappear on your server network at will, along with many other features.
 
 ### Supported Platforms
 

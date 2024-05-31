@@ -27,8 +27,6 @@ SayanVanish includes a comprehensive API, allowing other plugins to interact wit
 The API provided by SayanVanish enables deep integration with other plugins, facilitating the development of additional server management tools.
 
 ***
-
-For detailed setup and usage instructions, please refer to the subsequent sections.
 # How It Works?
 
 SayanVanish uses a modular system to operate independently of specific platforms.

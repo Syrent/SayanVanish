@@ -1,0 +1,15 @@
+name: '${name}'
+version: '${version}'
+main: org.sayandev.sayanvanish.bukkit.SayanVanish
+api-version: 1.13
+prefix: '${name}'
+authors: [ Syrent ]
+description: '${description}'
+website: sayandev.org
+softdepend:
+  - Essentials
+  - squaremap
+  - LuckPerms
+  - Dynmap
+  - PlaceholderAPI
+  - Citizens

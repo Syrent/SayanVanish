@@ -1,0 +1,12 @@
+{
+  "id": "${slug}",
+  "name": "${name}",
+  "version": "${version}",
+  "description": "${description}",
+  "url": "sayandev.org",
+  "authors": [
+    "Syrent"
+  ],
+  "dependencies": [],
+  "main": "org.sayandev.sayanvanish.velocity.SayanVanish"
+}

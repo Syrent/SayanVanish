@@ -1,0 +1,33 @@
+name: Publish Snapshots
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  publish:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 17
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.OS }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: |
+            ${{ runner.OS }}-gradle-
+      - name: Publish to SayanDevelopment snapshot repo
+        run: ./gradlew publish
+        env:
+          REPO_SAYAN_USER: ${{ secrets.REPO_SAYAN_USER }}
+          REPO_SAYAN_TOKEN: ${{ secrets.REPO_SAYAN_TOKEN }}

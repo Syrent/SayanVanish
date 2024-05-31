@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.sayandev:stickynote-proxy-velocity:1.0.31")
+    compileOnly("org.sayandev:stickynote-proxy-velocity:1.0.32")
 
     implementation("com.alessiodp.libby:libby-velocity:2.0.0-SNAPSHOT")
 

@@ -39,9 +39,9 @@ dependencies {
 //    compileOnly("org.spigotmc:spigot-api:1.20.6-R0.1-SNAPSHOT")
     paperweight.paperDevBundle("1.20.4-R0.1-SNAPSHOT")
 
-    compileOnly("org.sayandev:stickynote-core:1.0.31")
-    compileOnly("org.sayandev:stickynote-bukkit:1.0.31")
-    compileOnly("org.sayandev:stickynote-bukkit-nms:1.0.31")
+    compileOnly("org.sayandev:stickynote-core:1.0.32")
+    compileOnly("org.sayandev:stickynote-bukkit:1.0.32")
+    compileOnly("org.sayandev:stickynote-bukkit-nms:1.0.32")
     // dynmap api doesn't work
 //    compileOnly("us.dynmap:dynmap-api:3.4-beta-3")
     implementation("com.alessiodp.libby:libby-bukkit:2.0.0-SNAPSHOT")

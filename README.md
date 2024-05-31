@@ -175,5 +175,3 @@ SayanVanishAPI.getInstance().getDatabase();
 #### Events
 
 There are two Bukkit-specific events you can use: `BukkitUserVanishEvent` and `BukkitUserUnVanishEvent`. Both events contain the user and vanish options.
-
-***

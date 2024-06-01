@@ -1,16 +1,52 @@
-import org.sayandev.getRelocations
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import io.papermc.hangarpublishplugin.model.Platforms
+import org.sayandev.getRelocations
+import java.io.ByteArrayOutputStream
 
 plugins {
     kotlin("jvm") version "2.0.0"
     `java-library`
     `maven-publish`
     id("io.github.goooler.shadow") version "8.1.7"
+    id("io.papermc.hangar-publish-plugin") version "0.1.2"
+    id("com.modrinth.minotaur") version "2.8.7"
 }
 
 val slug = findProperty("slug")!! as String
 description = findProperty("description")!! as String
+
+fun executeGitCommand(vararg command: String): String {
+    val byteOut = ByteArrayOutputStream()
+    exec {
+        commandLine = listOf("git", *command)
+        standardOutput = byteOut
+    }
+    return byteOut.toString(Charsets.UTF_8.name()).trim()
+}
+
+fun latestCommitMessage(): String {
+    return executeGitCommand("log", "-1", "--pretty=%B")
+}
+
+val versionString: String = findProperty("version")!! as String
+val isRelease: Boolean = (System.getenv("HANGAR_BUILD_CHANNEL") ?: "Snapshot") == "Release"
+
+val suffixedVersion: String = if (isRelease) {
+    versionString
+} else {
+    versionString + "-build." + (System.getenv("GITHUB_RUN_NUMBER") ?: "development")
+}
+
+val commitVersion = suffixedVersion + "-" + (System.getenv("GITHUB_SHA")?.substring(0, 7) ?: "local")
+
+val changelogContent: String = latestCommitMessage()
+
+tasks {
+    publishAllPublicationsToHangar {
+        this.dependsOn(shadowJar)
+        this.mustRunAfter(shadowJar)
+    }
+}
 
 allprojects {
     group = findProperty("group")!! as String
@@ -73,6 +109,8 @@ subprojects {
         }
     }
 
+    artifacts.archives(tasks.shadowJar)
+
     tasks.named<Jar>("sourcesJar") {
         getRelocations().forEach { (from, to) ->
             val filePattern = Regex("(.*)${from.replace('.', '/')}((?:/|$).*)")
@@ -86,43 +124,11 @@ subprojects {
         }
     }
 
-    /*configurations {
-        "apiElements" {
-            attributes {
-                attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage.JAVA_API))
-                attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
-                attribute(Bundling.BUNDLING_ATTRIBUTE, project.objects.named(Bundling.SHADOWED))
-                attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, project.objects.named(LibraryElements.JAR))
-                attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 17)
-            }
-            outgoing.artifact(tasks.named("shadowJar"))
-        }
-        "runtimeElements" {
-            attributes {
-                attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage.JAVA_RUNTIME))
-                attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
-                attribute(Bundling.BUNDLING_ATTRIBUTE, project.objects.named(Bundling.SHADOWED))
-                attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, project.objects.named(LibraryElements.JAR))
-                attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 17)
-            }
-            outgoing.artifact(tasks.named("shadowJar"))
-        }
-        "mainSourceElements" {
-            attributes {
-                attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage.JAVA_RUNTIME))
-                attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.DOCUMENTATION))
-                attribute(Bundling.BUNDLING_ATTRIBUTE, project.objects.named(Bundling.SHADOWED))
-                attribute(DocsType.DOCS_TYPE_ATTRIBUTE, project.objects.named(DocsType.SOURCES))
-            }
-        }
-    }*/
-
     publishing {
         publications {
             create<MavenPublication>("maven") {
                 shadow.component(this)
                 artifact(tasks["sourcesJar"])
-//                artifact(tasks["java"])
                 setPom(this)
             }
         }
@@ -165,4 +171,52 @@ fun setPom(publication: MavenPublication) {
             url.set("https://github.com/syrent/sayanvanish/tree/master")
         }
     }
+}
+
+hangarPublish {
+    publications.register("plugin") {
+        version.set(suffixedVersion)
+        channel.set(System.getenv("HANGAR_BUILD_CHANNEL") ?: "Snapshot")
+        changelog.set(if (System.getenv("HANGAR_CHANGELOG").isNullOrEmpty()) changelogContent else System.getenv("HANGAR_CHANGELOG"))
+        id.set(slug)
+        apiKey.set(System.getenv("HANGAR_API_TOKEN"))
+
+        platforms {
+            register(Platforms.PAPER) {
+                jar.set(project(":sayanvanish-bukkit").tasks.shadowJar.flatMap { it.archiveFile })
+                platformVersions.set((property("paperVersion") as String).split(",").map { it.trim() })
+            }
+
+            register(Platforms.VELOCITY) {
+                jar.set(project(":sayanvanish-proxy-velocity").tasks.shadowJar.flatMap { it.archiveFile })
+                platformVersions.set((property("velocityVersion") as String).split(",").map { it.trim() })
+            }
+
+            register(Platforms.WATERFALL) {
+                jar.set(project(":sayanvanish-proxy-bungeecord").tasks.shadowJar.flatMap { it.archiveFile })
+                platformVersions.set((property("waterfallVersion") as String).split(",").map { it.trim() })
+            }
+        }
+    }
+}
+
+modrinth {
+    val modrinthApiKey = System.getenv("MODRINTH_API_TOKEN")
+    val modrinthChangelog = if (System.getenv("MODRINTH_CHANGELOG").isNullOrEmpty()) changelogContent else System.getenv("MODRINTH_CHANGELOG")
+
+    token.set(modrinthApiKey)
+    projectId.set("${property("modrinthProjectID")}")
+    versionNumber.set(suffixedVersion)
+    versionType.set(System.getenv("MODRINTH_BUILD_CHANNEL") ?: "beta")
+    uploadFile.set(project(":sayanvanish-bukkit").tasks.shadowJar.flatMap { it.archiveFile })
+    additionalFiles.set(listOf(
+        project(":sayanvanish-proxy:sayanvanish-proxy-velocity").tasks.shadowJar.flatMap { it.archiveFile },
+        project(":sayanvanish-proxy:sayanvanish-proxy-bungeecord").tasks.shadowJar.flatMap { it.archiveFile },
+    ))
+    gameVersions.set("${property("modrinthMinecraftVersions")}".split(","))
+    loaders.set("${property("modrinthLoaders")}".split(","))
+
+    changelog.set(modrinthChangelog)
+
+    syncBodyFrom.set(rootProject.file("README.md").readText())
 }

@@ -6,6 +6,7 @@ on:
 
 jobs:
   build:
+    name: Build artifacts job
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout Repository
@@ -26,3 +27,5 @@ jobs:
           key: ${{ runner.OS }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: |
             ${{ runner.OS }}-gradle-
+      - name: Build artifacts
+        run: ./gradlew build

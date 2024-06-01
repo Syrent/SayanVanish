@@ -1,7 +1,0 @@
-name: '${name}'
-version: '${version}'
-main: org.sayandev.sayanvanish.bungeecord.SayanVanish
-prefix: '${name}'
-authors: [ Syrent ]
-description: '${description}'
-website: sayandev.org

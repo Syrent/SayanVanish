@@ -1,0 +1,19 @@
+name: Publish modrinth
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    uses: syrent/sayanvanish/.github/workflows/build-artifacts.yml@master
+  publish_to_modrinth:
+    needs: build
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Publish to Modrinth
+        run: ./gradlew modrinth
+        env:
+          MODRINTH_BUILD_CHANNEL: beta
+          MODRINTH_API_TOKEN: ${{ secrets.MODRINTH_API_TOKEN }}
+          MODRINTH_CHANGELOG: ${{ github.event.release.body }}

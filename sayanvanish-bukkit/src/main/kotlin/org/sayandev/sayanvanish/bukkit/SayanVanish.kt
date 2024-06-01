@@ -2,7 +2,9 @@ package org.sayandev.sayanvanish.bukkit
 
 import com.alessiodp.libby.BukkitLibraryManager
 import com.alessiodp.libby.Library
+import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.java.JavaPlugin
+import org.sayandev.sayanvanish.BuildConstants
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.database.DatabaseMethod
 import org.sayandev.sayanvanish.api.database.databaseConfig
@@ -19,6 +21,7 @@ import org.sayandev.stickynote.bukkit.WrappedStickyNotePlugin
 import org.sayandev.stickynote.bukkit.pluginDirectory
 import org.sayandev.stickynote.bukkit.runAsync
 import org.sayandev.stickynote.core.configuration.Config
+import java.io.File
 
 open class SayanVanish : JavaPlugin() {
 
@@ -60,7 +63,7 @@ open class SayanVanish : JavaPlugin() {
             Library.builder()
                 .groupId("org{}sayandev")
                 .artifactId("stickynote-core")
-                .version("1.0.32")
+                .version(BuildConstants.STICKYNOTE_VERSION)
                 .relocate("org{}sayandev{}stickynote", "org{}sayandev{}sayanvanish{}lib{}stickynote")
                 .build()
         )
@@ -68,7 +71,7 @@ open class SayanVanish : JavaPlugin() {
             Library.builder()
                 .groupId("org{}sayandev")
                 .artifactId("stickynote-bukkit")
-                .version("1.0.32")
+                .version(BuildConstants.STICKYNOTE_VERSION)
                 .relocate("org{}sayandev{}stickynote", "org{}sayandev{}sayanvanish{}lib{}stickynote")
                 .build()
         )
@@ -76,7 +79,7 @@ open class SayanVanish : JavaPlugin() {
             Library.builder()
                 .groupId("org{}sayandev")
                 .artifactId("stickynote-bukkit-nms")
-                .version("1.0.32")
+                .version(BuildConstants.STICKYNOTE_VERSION)
                 .relocate("org{}sayandev{}stickynote", "org{}sayandev{}sayanvanish{}lib{}stickynote")
                 .build()
         )

@@ -1,3 +1,4 @@
+import org.sayandev.getRelocations
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -13,7 +14,7 @@ description = "A modular vanish system for Minecraft servers"
 
 allprojects {
     group = "org.sayandev"
-    version = "1.0.0-rc.3"
+    version = findProperty("version")!! as String
 
     plugins.apply("java-library")
     plugins.apply("maven-publish")
@@ -23,12 +24,6 @@ allprojects {
     repositories {
         mavenCentral()
         mavenLocal()
-
-        // Takenaka
-        maven("https://repo.screamingsandals.org/public")
-
-        maven("https://repo.sayandev.org/snapshots")
-        maven("https://repo.sayandev.org/releases")
     }
 
     tasks {
@@ -47,17 +42,12 @@ allprojects {
 
 subprojects {
     java {
-        withJavadocJar()
         withSourcesJar()
 
         toolchain.languageVersion.set(JavaLanguageVersion.of(17))
     }
 
     dependencies {
-        testImplementation(kotlin("test"))
-
-        testImplementation("org.xerial:sqlite-jdbc:3.45.3.0")
-        testImplementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.23.1")
         compileOnly(kotlin("stdlib", version = "2.0.0"))
     }
 
@@ -78,17 +68,25 @@ subprojects {
             archiveFileName.set("${rootProject.name}-${version}-${this@subprojects.name.removePrefix("sayanvanish-")}.jar")
             archiveClassifier.set(null as String?)
             destinationDirectory.set(file(rootProject.projectDir.path + "/bin"))
-            relocate("org.sayandev.stickynote", "org.sayandev.sayanvanish.lib.stickynote")
             from("LICENSE")
 //            minimize()
         }
+    }
 
-        test {
-            useJUnitPlatform()
+    tasks.named<Jar>("sourcesJar") {
+        getRelocations().forEach { (from, to) ->
+            val filePattern = Regex("(.*)${from.replace('.', '/')}((?:/|$).*)")
+            val textPattern = Regex.fromLiteral(from)
+            eachFile {
+                filter {
+                    it.replaceFirst(textPattern, to)
+                }
+                path = path.replaceFirst(filePattern, "$1${to.replace('.', '/')}$2")
+            }
         }
     }
 
-    configurations {
+    /*configurations {
         "apiElements" {
             attributes {
                 attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage.JAVA_API))
@@ -117,12 +115,14 @@ subprojects {
                 attribute(DocsType.DOCS_TYPE_ATTRIBUTE, project.objects.named(DocsType.SOURCES))
             }
         }
-    }
+    }*/
 
     publishing {
         publications {
             create<MavenPublication>("maven") {
-                from(components["java"])
+                shadow.component(this)
+                artifact(tasks["sourcesJar"])
+//                artifact(tasks["java"])
                 setPom(this)
             }
         }

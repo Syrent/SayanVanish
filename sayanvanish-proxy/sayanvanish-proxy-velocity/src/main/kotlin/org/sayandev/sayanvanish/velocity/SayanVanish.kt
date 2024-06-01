@@ -7,6 +7,7 @@ import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.plugin.annotation.DataDirectory
 import com.velocitypowered.api.proxy.ProxyServer
+import org.sayandev.sayanvanish.BuildConstants
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.proxy.config.settings
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
@@ -73,7 +74,7 @@ class SayanVanish @Inject constructor(
             Library.builder()
                 .groupId("org{}sayandev")
                 .artifactId("stickynote-core")
-                .version("1.0.32")
+                .version(BuildConstants.STICKYNOTE_VERSION)
                 .relocate("org{}sayandev{}stickynote", "org{}sayandev{}sayanvanish{}lib{}stickynote")
                 .build()
         )
@@ -81,7 +82,7 @@ class SayanVanish @Inject constructor(
             Library.builder()
                 .groupId("org{}sayandev")
                 .artifactId("stickynote-proxy-velocity")
-                .version("1.0.32")
+                .version(BuildConstants.STICKYNOTE_VERSION)
                 .relocate("org{}sayandev{}stickynote", "org{}sayandev{}sayanvanish{}lib{}stickynote")
                 .build()
         )

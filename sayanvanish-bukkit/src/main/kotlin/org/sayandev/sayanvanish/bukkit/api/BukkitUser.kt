@@ -8,7 +8,6 @@ import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishOptions
-import org.sayandev.sayanvanish.bukkit.VanishManager
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrCreateUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
@@ -99,7 +98,7 @@ open class BukkitUser(
         for (onlinePlayer in onlinePlayers) {
             hideUser(onlinePlayer)
         }
-        if (currentOptions.notifyOthers) {
+        if (currentOptions.notifyStatusChangeToOthers) {
             for (otherUsers in SayanVanishBukkitAPI.getInstance().getOnlineUsers().filter { it.username != username && it.vanishLevel >= vanishLevel }) {
                 otherUsers.sendMessage(language.vanish.vanishStateOther.component(Placeholder.parsed("player", username), Placeholder.parsed("state", stateText(true))))
             }
@@ -116,8 +115,8 @@ open class BukkitUser(
         for (onlinePlayer in onlinePlayers.filter { it.uniqueId != this.uniqueId }) {
             showUser(onlinePlayer)
         }
-        if (currentOptions.notifyOthers) {
-            for (otherUsers in SayanVanishBukkitAPI.getInstance().getOnlineUsers().filter { it.username != username && it.vanishLevel >= vanishLevel }) {
+        if (currentOptions.notifyStatusChangeToOthers) {
+            for (otherUsers in SayanVanishBukkitAPI.getInstance().getOnlineUsers().filter { it.username != this.username && it.vanishLevel >= this.vanishLevel }) {
                 otherUsers.sendMessage(language.vanish.vanishStateOther.component(Placeholder.parsed("player", username), Placeholder.parsed("state", stateText(false))))
             }
         }

@@ -1,33 +1,26 @@
+import org.sayandev.*
+import org.sayandev.applyShadowRelocation
+
 plugins {
     id("xyz.jpenilla.run-velocity") version "2.3.0"
 }
 
 repositories {
-    // Velocity
-    maven("https://repo.papermc.io/repository/maven-public/")
-
-    // libby
-    maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-
-    // Velocitab
-    maven("https://repo.william278.net/releases")
+    applyRepositories(Module.VELOCITY)
 }
 
 dependencies {
-    compileOnly("org.sayandev:stickynote-proxy-velocity:1.0.32")
+    applyDependencies(Module.VELOCITY)
 
-    implementation("com.alessiodp.libby:libby-velocity:2.0.0-SNAPSHOT")
 
-    compileOnly("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
-    annotationProcessor("com.velocitypowered:velocity-api:3.3.0-SNAPSHOT")
-
-    compileOnly("ir.syrent:EnhancedVelocity:1.3.3")
-    compileOnly("net.william278:velocitab:1.6.5")
-
-    implementation(project(":sayanvanish-proxy"))
+    api(project(":sayanvanish-proxy"))
 }
 
 tasks {
+    shadowJar {
+        applyShadowRelocation(Module.VELOCITY)
+    }
+
     runVelocity {
         velocityVersion("3.3.0-SNAPSHOT")
 

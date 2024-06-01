@@ -22,6 +22,7 @@ class FeatureEffect(
     val effects: List<PotionEffectData> = listOf(
         PotionEffectData(
             true,
+            false,
             PotionEffectType.NIGHT_VISION,
             Int.MAX_VALUE,
             0,
@@ -30,6 +31,7 @@ class FeatureEffect(
         ),
         PotionEffectData(
             false,
+            false,
             PotionEffectType.WATER_BREATHING,
             Int.MAX_VALUE,
             0,
@@ -37,6 +39,7 @@ class FeatureEffect(
             false,
         ),
         PotionEffectData(
+            false,
             false,
             PotionEffectType.FIRE_RESISTANCE,
             Int.MAX_VALUE,
@@ -64,7 +67,7 @@ class FeatureEffect(
     private fun onUnVanish(event: BukkitUserUnVanishEvent) {
         if (!isActive()) return
         val player = event.user.player() ?: return
-        for (effect in effects) {
+        for (effect in effects.filter { !it.keepAfterAppear }) {
             if (effect.usePacket) {
                 NMSUtils.sendPacket(player, PacketUtils.getRemoveMobEffectPacket(player, effect.type))
             } else {
@@ -80,6 +83,7 @@ class FeatureEffect(
 @ConfigSerializable
 data class PotionEffectData(
     val usePacket: Boolean,
+    val keepAfterAppear: Boolean = false,
     val type: PotionEffectType,
     val duration: Int,
     val amplifier: Int,

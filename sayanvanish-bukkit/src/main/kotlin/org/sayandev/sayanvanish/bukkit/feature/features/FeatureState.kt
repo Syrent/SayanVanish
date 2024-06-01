@@ -6,13 +6,17 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.api.VanishOptions
+import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrCreateUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
+import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.onlinePlayers
+import org.sayandev.stickynote.lib.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @RegisteredFeature
@@ -31,11 +35,11 @@ class FeatureState(
     @Transient var generalQuitMessage: String? = null
 
     @EventHandler(priority = EventPriority.LOWEST)
-    private fun onUnVanish(event: PlayerJoinEvent) {
+    private fun onJoin(event: PlayerJoinEvent) {
         if (!isActive()) return
         val player = event.player
         val user = player.user(false)
-        val vanishJoinOptions = VanishOptions.Builder().sendMessage(false).notifyOthers(false).build()
+        val vanishJoinOptions = VanishOptions.Builder().sendMessage(false).notifyStatusChangeToOthers(false).build()
 
         if (user == null) {
             val tempUser = player.getOrCreateUser()
@@ -65,6 +69,15 @@ class FeatureState(
             user.isVanished = true
             user.vanish(vanishJoinOptions)
         }
+
+        if (user.isVanished) {
+            if (user.currentOptions.notifyJoinQuitVanished) {
+                for (vanishedUser in SayanVanishBukkitAPI.getInstance().getUsers { it.hasPermission(Permission.VANISH) && it.vanishLevel >= user.vanishLevel }) {
+                    vanishedUser.sendMessage(language.vanish.joinedTheServerWhileVanished.component(Placeholder.unparsed("player", user.username)))
+                }
+            }
+        }
+
         user.save()
 
         if (player.user(false)?.isVanished == true) {
@@ -80,10 +93,20 @@ class FeatureState(
     private fun updateUserOnQuit(event: PlayerQuitEvent) {
         val player = event.player
         val user = player.user(false) ?: return
+
+        if (user.isVanished) {
+            if (user.currentOptions.notifyJoinQuitVanished) {
+                for (vanishedUser in SayanVanishBukkitAPI.getInstance().getUsers { it.hasPermission(Permission.VANISH) && it.vanishLevel >= user.vanishLevel }) {
+                    vanishedUser.sendMessage(language.vanish.leftTheServerWhileVanished.component(Placeholder.unparsed("player", user.username)))
+                }
+            }
+        }
+
         if ((reappearOnQuit && user.isVanished) || (checkPermissionOnQuit && !user.hasPermission(Permission.VANISH))) {
             user.unVanish()
         }
         user.isOnline = false
+
         user.save()
 
         if (user.isVanished) {

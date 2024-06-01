@@ -7,13 +7,15 @@ import org.sayandev.stickynote.lib.gson.JsonParser
 data class VanishOptions(
     var sendMessage: Boolean = true,
     var notifyStatusChangeToOthers: Boolean = true,
-    var notifyJoinQuitVanished: Boolean = true
+    var notifyJoinQuitVanished: Boolean = true,
+    var isOnJoin: Boolean = false
 ) {
 
     class Builder {
         private var sendMessage = true
         private var notifyStatusChangeToOthers = true
         private var notifyJoinQuitVanished = true
+        private var isOnJoin = false
 
 
         fun sendMessage(sendMessage: Boolean): Builder {
@@ -31,8 +33,13 @@ data class VanishOptions(
             return this
         }
 
+        fun isOnJoin(isOnJoin: Boolean): Builder {
+            this.isOnJoin = isOnJoin
+            return this
+        }
+
         fun build(): VanishOptions {
-            return VanishOptions(sendMessage, notifyStatusChangeToOthers, notifyJoinQuitVanished)
+            return VanishOptions(sendMessage, notifyStatusChangeToOthers, notifyJoinQuitVanished, isOnJoin)
         }
     }
 
@@ -41,6 +48,7 @@ data class VanishOptions(
         json.addProperty("send-message", sendMessage)
         json.addProperty("notify-status-change-to-others", notifyStatusChangeToOthers)
         json.addProperty("notify-join-quit-vanished", notifyJoinQuitVanished)
+        json.addProperty("is-on-join", isOnJoin)
         return Gson.gson.toJson(json)
     }
 
@@ -51,7 +59,8 @@ data class VanishOptions(
             return VanishOptions(
                 json.get("send-message").asBoolean,
                 json.get("notify-status-change-to-others").asBoolean,
-                json.get("notify-join-quit-vanished").asBoolean
+                json.get("notify-join-quit-vanished").asBoolean,
+                json.get("is-on-join").asBoolean
             )
         }
 

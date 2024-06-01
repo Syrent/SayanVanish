@@ -26,4 +26,7 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-gradle-
       - name: Build artifacts
+        env:
+          REPO_SAYAN_USER: ${{ secrets.REPO_SAYAN_USER }}
+          REPO_SAYAN_TOKEN: ${{ secrets.REPO_SAYAN_TOKEN }}
         run: ./gradlew build

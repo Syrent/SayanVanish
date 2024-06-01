@@ -1,0 +1,14 @@
+name: Publish Snapshots
+on:
+  workflow_run:
+    workflows: ["Publish Snapshots"]
+    types:
+      - completed
+
+jobs:
+  publish:
+      - name: Publish to SayanDevelopment snapshot repo
+        run: ./gradlew publish
+        env:
+          REPO_SAYAN_USER: ${{ secrets.REPO_SAYAN_USER }}
+          REPO_SAYAN_TOKEN: ${{ secrets.REPO_SAYAN_TOKEN }}

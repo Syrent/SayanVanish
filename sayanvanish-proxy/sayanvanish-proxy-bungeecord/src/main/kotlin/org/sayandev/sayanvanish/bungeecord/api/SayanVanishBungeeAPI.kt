@@ -7,17 +7,12 @@ import java.util.UUID
 
 val database = SayanVanishBungeeAPI.getInstance().database
 
-class SayanVanishBungeeAPI(useCache: Boolean) : SayanVanishAPI<BungeeUser>(BungeeUser::class, useCache) {
+class SayanVanishBungeeAPI() : SayanVanishAPI<BungeeUser>(BungeeUser::class,) {
     companion object {
-        private val cachedInstance = SayanVanishBungeeAPI(true)
-        private val defaultInstance = SayanVanishBungeeAPI(false)
-
-        fun getInstance(useCache: Boolean): SayanVanishAPI<BungeeUser> {
-            return if (useCache) cachedInstance else defaultInstance
-        }
+        private val defaultInstance = SayanVanishBungeeAPI()
 
         fun getInstance(): SayanVanishAPI<BungeeUser> {
-            return if (databaseConfig.useCacheWhenAvailable) cachedInstance else defaultInstance
+            return defaultInstance
         }
 
         public fun UUID.user(): BungeeUser? {
@@ -25,15 +20,15 @@ class SayanVanishBungeeAPI(useCache: Boolean) : SayanVanishAPI<BungeeUser>(Bunge
         }
 
         public fun ProxiedPlayer.user(useCache: Boolean = databaseConfig.useCacheWhenAvailable): BungeeUser? {
-            return getInstance(useCache).getUser(this.uniqueId)
+            return getInstance().getUser(this.uniqueId, useCache)
         }
 
-        fun ProxiedPlayer.getOrCreateUser(): BungeeUser {
-            return getInstance().getUser(this.uniqueId) ?: BungeeUser(this.uniqueId, this.name ?: "N/A")
+        fun ProxiedPlayer.getOrCreateUser(useCache: Boolean = databaseConfig.useCacheWhenAvailable): BungeeUser {
+            return getInstance().getUser(this.uniqueId, useCache) ?: BungeeUser(this.uniqueId, this.name ?: "N/A")
         }
 
-        fun ProxiedPlayer.getOrAddUser(): BungeeUser {
-            return getInstance().getUser(this.uniqueId) ?: let {
+        fun ProxiedPlayer.getOrAddUser(useCache: Boolean = databaseConfig.useCacheWhenAvailable): BungeeUser {
+            return getInstance().getUser(this.uniqueId, useCache) ?: let {
                 val newUser = BungeeUser(this.uniqueId, this.name ?: "N/A")
                 getInstance().addUser(newUser)
                 newUser

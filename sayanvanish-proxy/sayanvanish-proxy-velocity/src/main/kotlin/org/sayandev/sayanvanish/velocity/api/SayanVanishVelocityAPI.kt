@@ -7,17 +7,12 @@ import java.util.UUID
 
 val database = SayanVanishVelocityAPI.getInstance().database
 
-class SayanVanishVelocityAPI(useCache: Boolean) : SayanVanishAPI<VelocityUser>(VelocityUser::class, useCache) {
+class SayanVanishVelocityAPI() : SayanVanishAPI<VelocityUser>(VelocityUser::class) {
     companion object {
-        private val cachedInstance = SayanVanishVelocityAPI(true)
-        private val defaultInstance = SayanVanishVelocityAPI(false)
-
-        fun getInstance(useCache: Boolean): SayanVanishAPI<VelocityUser> {
-            return if (useCache) cachedInstance else defaultInstance
-        }
+        private val defaultInstance = SayanVanishVelocityAPI()
 
         fun getInstance(): SayanVanishAPI<VelocityUser> {
-            return if (databaseConfig.useCacheWhenAvailable) cachedInstance else defaultInstance
+            return defaultInstance
         }
 
         public fun UUID.user(): VelocityUser? {
@@ -25,15 +20,15 @@ class SayanVanishVelocityAPI(useCache: Boolean) : SayanVanishAPI<VelocityUser>(V
         }
 
         public fun Player.user(useCache: Boolean = databaseConfig.useCacheWhenAvailable): VelocityUser? {
-            return getInstance(useCache).getUser(this.uniqueId)
+            return getInstance().getUser(this.uniqueId, useCache)
         }
 
-        fun Player.getOrCreateUser(): VelocityUser {
-            return getInstance().getUser(this.uniqueId) ?: VelocityUser(this.uniqueId, this.username ?: "N/A")
+        fun Player.getOrCreateUser(useCache: Boolean = databaseConfig.useCacheWhenAvailable): VelocityUser {
+            return getInstance().getUser(this.uniqueId, useCache) ?: VelocityUser(this.uniqueId, this.username ?: "N/A")
         }
 
-        fun Player.getOrAddUser(): VelocityUser {
-            return getInstance().getUser(this.uniqueId) ?: let {
+        fun Player.getOrAddUser(useCache: Boolean = databaseConfig.useCacheWhenAvailable): VelocityUser {
+            return getInstance().getUser(this.uniqueId, useCache) ?: let {
                 val newUser = VelocityUser(this.uniqueId, this.username ?: "N/A")
                 getInstance().addUser(newUser)
                 newUser

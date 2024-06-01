@@ -6,6 +6,8 @@ import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
+import org.sayandev.stickynote.bukkit.StickyNote
+import org.sayandev.stickynote.bukkit.plugin
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @RegisteredFeature
@@ -17,12 +19,21 @@ class FeaturePreventCreatureTarget: ListenedFeature("prevent_creature_target", c
         if (!isActive()) return
         val user = event.user
         val player = user.player() ?: return
-        player.world.entities.stream()
-            .filter { entity -> entity is Creature }
-            .map { entity -> entity as Creature }
-            .filter { mob -> mob.target != null }
-            .filter { mob -> player.uniqueId == mob.target?.uniqueId }
-            .forEach { mob -> mob.target = null }
+        // TODO: Creature modification cannot be off region thread
+        if (StickyNote.isFolia()) {
+            player.world.entities
+                .filterIsInstance<Creature>()
+                .forEach { creature ->
+                    if (creature.target?.uniqueId == player.uniqueId) {
+                        creature.target = null
+                    }
+                }
+        } else {
+            player.world.entities
+                .filterIsInstance<Creature>()
+                .filter { mob -> player.uniqueId == mob.target?.uniqueId }
+                .forEach { mob -> mob.target = null }
+        }
     }
 
 }

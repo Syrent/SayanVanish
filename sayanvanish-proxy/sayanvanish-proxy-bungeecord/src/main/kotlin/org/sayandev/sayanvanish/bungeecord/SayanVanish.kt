@@ -21,7 +21,7 @@ class SayanVanish : Plugin() {
         WrappedStickyNotePlugin(this).initialize()
         Platform.setAndRegister(Platform("bungeecord", logger, dataDirectory))
 
-        SayanVanishBungeeAPI(databaseConfig.useCacheWhenAvailable)
+        SayanVanishBungeeAPI()
 
         registerListener(VanishManager)
 

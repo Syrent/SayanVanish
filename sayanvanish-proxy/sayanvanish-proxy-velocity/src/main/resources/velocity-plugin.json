@@ -7,6 +7,15 @@
   "authors": [
     "Syrent"
   ],
-  "dependencies": [],
+  "dependencies": [
+    {
+      "id": "enhancedvelocity",
+      "optional": true
+    },
+    {
+      "id": "velocitab",
+      "optional": true
+    }
+  ],
   "main": "org.sayandev.sayanvanish.velocity.SayanVanish"
 }

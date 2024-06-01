@@ -8,7 +8,6 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.plugin.annotation.DataDirectory
 import com.velocitypowered.api.proxy.ProxyServer
 import org.sayandev.sayanvanish.api.Platform
-import org.sayandev.sayanvanish.api.database.databaseConfig
 import org.sayandev.sayanvanish.proxy.config.settings
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
 import org.sayandev.stickynote.velocity.WrappedStickyNotePlugin
@@ -30,7 +29,7 @@ class SayanVanish @Inject constructor(
         WrappedStickyNotePlugin(this, PLUGIN_ID, server, logger, dataDirectory).initialize()
         Platform.setAndRegister(Platform("velocity", logger, dataDirectory.toFile()))
 
-        SayanVanishVelocityAPI(databaseConfig.useCacheWhenAvailable)
+        SayanVanishVelocityAPI()
 
         registerListener(VanishManager)
 

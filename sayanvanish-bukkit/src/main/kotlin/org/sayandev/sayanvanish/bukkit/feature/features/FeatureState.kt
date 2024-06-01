@@ -9,7 +9,10 @@ import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrCreateUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
+import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
+import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
+import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @RegisteredFeature
@@ -110,6 +113,34 @@ class FeatureState(
             }
         } else {
             event.quitMessage = null
+        }
+    }
+
+    @EventHandler
+    private fun sendQuitMessageOnVanish(event: BukkitUserVanishEvent) {
+        val options = event.options
+
+        if (options.sendMessage) {
+            val quitMessage = generalQuitMessage
+            if (quitMessage != null) {
+                for (onlinePlayer in onlinePlayers) {
+                    onlinePlayer.sendMessage(quitMessage)
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    private fun sendJoinMessageOnUnVanish(event: BukkitUserUnVanishEvent) {
+        val options = event.options
+
+        if (options.sendMessage) {
+            val joinMessage = generalJoinMessage
+            if (joinMessage != null) {
+                for (onlinePlayer in onlinePlayers) {
+                    onlinePlayer.sendMessage(joinMessage)
+                }
+            }
         }
     }
 

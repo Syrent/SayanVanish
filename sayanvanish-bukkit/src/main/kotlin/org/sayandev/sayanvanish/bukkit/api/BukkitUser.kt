@@ -45,15 +45,6 @@ open class BukkitUser(
         val options = vanishEvent.options
         currentOptions = options
 
-        if (options.sendMessage) {
-            val quitMessage = VanishManager.generalQuitMessage
-            if (quitMessage != null) {
-                for (onlinePlayer in onlinePlayers) {
-                    onlinePlayer.sendMessage(quitMessage)
-                }
-            }
-        }
-
         player()?.isCollidable = false
         player()?.isSleepingIgnored = true
 
@@ -72,15 +63,6 @@ open class BukkitUser(
         if (unVanishEvent.isCancelled) return
         val options = unVanishEvent.options
         currentOptions = options
-
-        if (options.sendMessage) {
-            val joinMessage = VanishManager.generalJoinMessage
-            if (joinMessage != null) {
-                for (onlinePlayer in onlinePlayers) {
-                    onlinePlayer.sendMessage(joinMessage)
-                }
-            }
-        }
 
         player()?.isCollidable = true
         player()?.isSleepingIgnored = false

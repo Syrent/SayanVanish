@@ -12,11 +12,6 @@ import org.sayandev.stickynote.bukkit.*
 
 object VanishManager : Listener {
 
-    // TODO: Remove this
-    private const val REMOVAL_MESSAGE_ID = "SAYANVANISH_DISABLE_MESSAGE"
-    var generalJoinMessage: String? = null
-    var generalQuitMessage: String? = null
-
     init {
         registerListener(this)
     }

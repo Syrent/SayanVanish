@@ -108,8 +108,20 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
                         val latestLogFile = File(File(pluginDirectory.parentFile.parentFile, "logs"), "latest.log")
                         if (latestLogFile.exists()) {
                             Paste("log", latestLogFile.readLines()).post().whenComplete { logKey, logError ->
+
+                                val featurePastes = mutableMapOf<String, List<String>>()
+                                for (feature in Features.features()) {
+                                    featurePastes[feature.id] = feature.file.readLines()
+                                }
+                                Paste("yaml", featurePastes.map { "${it.key}:\n     ${it.value.joinToString("\n     ")}" }).post().whenComplete { featureKey, featureError ->
+                                    sendPasteError(sender, featureError)
+                                    generateMainPaste(sender, mapOf(
+                                        "settings.yml" to "${Paste.PASTE_URL}/$settingsKey",
+                                        "latest.log" to "${Paste.PASTE_URL}/$logKey",
+                                        "features" to "${Paste.PASTE_URL}/$featureKey"
+                                    ))
+                                }
                                 sendPasteError(sender, logError)
-                                generateMainPaste(sender, mapOf("settings.yml" to "${Paste.PASTE_URL}/$settingsKey", "latest.log" to "${Paste.PASTE_URL}/$logKey"))
                             }
                         } else {
                             generateMainPaste(sender, mapOf("settings.yml" to "${Paste.PASTE_URL}/$settingsKey"))

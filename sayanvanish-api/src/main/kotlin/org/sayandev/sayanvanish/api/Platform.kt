@@ -21,6 +21,7 @@ data class Platform(
 
         @JvmStatic
         fun register() {
+            RegisteredFeatureHandler.process()
         }
 
         @JvmStatic

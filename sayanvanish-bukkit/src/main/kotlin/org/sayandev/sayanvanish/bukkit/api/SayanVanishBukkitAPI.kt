@@ -7,21 +7,16 @@ import java.util.*
 
 val database = SayanVanishBukkitAPI.getInstance().database
 
-class SayanVanishBukkitAPI(useCache: Boolean) : SayanVanishAPI<BukkitUser>(BukkitUser::class, useCache) {
+class SayanVanishBukkitAPI : SayanVanishAPI<BukkitUser>(BukkitUser::class) {
     companion object {
-        private val cachedInstance = SayanVanishBukkitAPI(true)
-        private val defaultInstance = SayanVanishBukkitAPI(false)
-
-        fun getInstance(useCache: Boolean): SayanVanishAPI<BukkitUser> {
-            return if (useCache) cachedInstance else defaultInstance
-        }
+        private val defaultInstance = SayanVanishBukkitAPI()
 
         fun getInstance(): SayanVanishAPI<BukkitUser> {
-            return if (databaseConfig.useCacheWhenAvailable) cachedInstance else defaultInstance
+            return defaultInstance
         }
 
-        fun UUID.user(): BukkitUser? {
-            return getInstance().getUser(this)
+        fun UUID.user(useCache: Boolean = databaseConfig.useCacheWhenAvailable): BukkitUser? {
+            return getInstance().getUser(this, useCache)
         }
 
         fun OfflinePlayer.user(useCache: Boolean = databaseConfig.useCacheWhenAvailable): BukkitUser? {
@@ -31,7 +26,7 @@ class SayanVanishBukkitAPI(useCache: Boolean) : SayanVanishAPI<BukkitUser>(Bukki
                     return null
                 }
             }*/
-            return getInstance(useCache).getUser(this.uniqueId)
+            return getInstance().getUser(this.uniqueId, useCache)
         }
 
         fun OfflinePlayer.getOrCreateUser(): BukkitUser {

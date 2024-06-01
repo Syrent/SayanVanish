@@ -9,7 +9,6 @@ import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrCreateUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
-import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
 
@@ -77,7 +76,7 @@ class FeatureState(
     @EventHandler(priority = EventPriority.LOWEST)
     private fun updateUserOnQuit(event: PlayerQuitEvent) {
         val player = event.player
-        val user = player.user() ?: return
+        val user = player.user(false) ?: return
         if ((reappearOnQuit && user.isVanished) || (checkPermissionOnQuit && !user.hasPermission(Permission.VANISH))) {
             user.unVanish()
         }

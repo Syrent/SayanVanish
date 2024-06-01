@@ -28,7 +28,7 @@ open class SayanVanish : JavaPlugin() {
 
         Platform.setAndRegister(Platform("bukkit", logger, pluginDirectory))
 
-        SayanVanishBukkitAPI(databaseConfig.useCacheWhenAvailable)
+        SayanVanishBukkitAPI()
 
         SettingsConfig
         if (settings.general.proxyMode && databaseConfig.method == DatabaseMethod.SQL && databaseConfig.sql.method == SQLConfig.SQLMethod.SQLITE) {
@@ -38,8 +38,6 @@ open class SayanVanish : JavaPlugin() {
         LanguageConfig
 
         VanishManager
-
-        RegisteredFeatureHandler.process()
 
         SayanVanishCommand()
 

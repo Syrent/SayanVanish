@@ -7,8 +7,7 @@ import org.sayandev.sayanvanish.api.database.redis.RedisDatabase
 import java.util.*
 import kotlin.reflect.KClass
 
-open class SayanVanishAPI<U: User>(val type: KClass<out User>, val useCache: Boolean) {
-    constructor(type: KClass<out User>): this(type, false)
+open class SayanVanishAPI<U: User>(val type: KClass<out User>) {
     constructor(): this(User::class)
 
     val database = when (databaseConfig.method) {
@@ -30,7 +29,7 @@ open class SayanVanishAPI<U: User>(val type: KClass<out User>, val useCache: Boo
         return Platform.get()
     }
 
-    fun getUsers(): List<U> {
+    fun getUsers(useCache: Boolean = databaseConfig.useCacheWhenAvailable): List<U> {
         return database.getUsers(useCache, type)
     }
 
@@ -38,12 +37,16 @@ open class SayanVanishAPI<U: User>(val type: KClass<out User>, val useCache: Boo
         return getUsers().filter(predicate)
     }
 
-    fun getBasicUsers(): List<BasicUser> {
+    fun getBasicUsers(useCache: Boolean = databaseConfig.useCacheWhenAvailable): List<BasicUser> {
         return database.getBasicUsers(useCache)
     }
 
     fun getSortedUsers(predicate: (U) -> Int) {
         getUsers().sortedByDescending(predicate)
+    }
+
+    fun isVanished(uniqueId: UUID, useCache: Boolean = databaseConfig.useCacheWhenAvailable): Boolean {
+        return database.getUser(uniqueId, useCache, type)?.isVanished == true
     }
 
     fun getVanishedUsers(): Collection<U> {
@@ -74,7 +77,7 @@ open class SayanVanishAPI<U: User>(val type: KClass<out User>, val useCache: Boo
         removeUser(user.uniqueId)
     }
 
-    fun getUser(uniqueId: UUID): U? {
+    fun getUser(uniqueId: UUID, useCache: Boolean = databaseConfig.useCacheWhenAvailable): U? {
         return database.getUser(uniqueId, useCache, type)
     }
 

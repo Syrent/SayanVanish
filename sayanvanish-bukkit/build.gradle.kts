@@ -4,6 +4,7 @@ import org.sayandev.applyShadowRelocation
 plugins {
     id("xyz.jpenilla.run-paper") version "2.3.0"
     id("io.papermc.paperweight.userdev") version "1.7.1"
+    id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
 }
 
 generateRepositoriesClass(Module.BUKKIT)
@@ -38,4 +39,26 @@ tasks {
     runPaper {
         folia.registerTask()
     }
+}
+
+bukkit {
+    name = rootProject.name
+    version = rootProject.version as String
+    description = rootProject.description
+    website = findProperty("website")!! as String
+    author = findProperty("author")!! as String
+
+    main = "${rootProject.group}.${findProperty("slug")!! as String}.bukkit.${rootProject.name}"
+
+    foliaSupported = true
+
+    apiVersion = "1.13"
+
+    softDepend = listOf(
+        "Essentials",
+        "squaremap",
+        "LcukPerms",
+        "PlaceholderAPI",
+        "Citizens"
+    )
 }

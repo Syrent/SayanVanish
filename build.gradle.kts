@@ -9,11 +9,11 @@ plugins {
     id("io.github.goooler.shadow") version "8.1.7"
 }
 
-val slug = "sayanvanish"
-description = "A modular vanish system for Minecraft servers"
+val slug = findProperty("slug")!! as String
+description = findProperty("description")!! as String
 
 allprojects {
-    group = "org.sayandev"
+    group = findProperty("group")!! as String
     version = findProperty("version")!! as String
 
     plugins.apply("java-library")

@@ -11,6 +11,10 @@ jobs:
     needs: build
     runs-on: ubuntu-22.04
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
       - name: Publish to SayanDevelopment snapshot repo
         run: ./gradlew publish
         env:

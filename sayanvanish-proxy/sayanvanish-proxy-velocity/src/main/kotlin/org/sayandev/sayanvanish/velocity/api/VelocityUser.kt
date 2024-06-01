@@ -5,7 +5,10 @@ import net.kyori.adventure.text.Component
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.proxy.config.settings
+import org.sayandev.sayanvanish.velocity.event.VelocityUserUnVanishEvent
+import org.sayandev.sayanvanish.velocity.event.VelocityUserVanishEvent
 import org.sayandev.stickynote.velocity.StickyNote
+import org.sayandev.stickynote.velocity.server
 import org.sayandev.stickynote.velocity.utils.AdventureUtils.component
 import java.util.UUID
 
@@ -26,13 +29,27 @@ open class VelocityUser(
     fun player(): Player? = StickyNote.getPlayer(uniqueId)
 
     override fun vanish(options: VanishOptions) {
-        database.addToQueue(uniqueId, true)
-        super.vanish(options)
+        server.eventManager.fire<VelocityUserVanishEvent>(VelocityUserVanishEvent(this, options)).whenComplete { event, error ->
+            error?.printStackTrace()
+
+            val options = event.options
+            currentOptions = options
+
+            database.addToQueue(uniqueId, true)
+            super.vanish(options)
+        }
     }
 
     override fun unVanish(options: VanishOptions) {
-        database.addToQueue(uniqueId, false)
-        super.unVanish(options)
+        server.eventManager.fire<VelocityUserUnVanishEvent>(VelocityUserUnVanishEvent(this, options)).whenComplete { event, error ->
+            error?.printStackTrace()
+
+            val options = event.options
+            currentOptions = options
+
+            database.addToQueue(uniqueId, false)
+            super.unVanish(options)
+        }
     }
 
     override fun hasPermission(permission: String): Boolean {

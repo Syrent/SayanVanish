@@ -134,13 +134,13 @@ For platform-specific dependencies, the artifact ID follows the format `sayanvan
 * **Groovy**
 
 ```groovy
-implementation "org.sayandev:sayanvanish-bukkit:[get version from github]"
+compileOnly "org.sayandev:sayanvanish-bukkit:[get version from github]"
 ```
 
 * **Kotlin**
 
 ```kotlin
-implementation("org.sayandev:sayanvanish-bukkit:[get version from github]")
+compileOnly("org.sayandev:sayanvanish-bukkit:[get version from github]")
 ```
 
 #### Accessing the API

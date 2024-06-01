@@ -193,7 +193,7 @@ hangarPublish {
             }
 
             register(Platforms.WATERFALL) {
-                jar.set(project(":sayanvanish-proxy-bungeecord").tasks.shadowJar.flatMap { it.archiveFile })
+                jar.set(project(":sayanvanish-proxy:sayanvanish-proxy-bungeecord").tasks.shadowJar.flatMap { it.archiveFile })
                 platformVersions.set((property("waterfallVersion") as String).split(",").map { it.trim() })
             }
         }

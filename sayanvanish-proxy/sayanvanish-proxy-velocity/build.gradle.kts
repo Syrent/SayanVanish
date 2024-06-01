@@ -5,6 +5,8 @@ plugins {
     id("xyz.jpenilla.run-velocity") version "2.3.0"
 }
 
+generateTemplate(Module.VELOCITY)
+
 repositories {
     applyRepositories(Module.VELOCITY)
 }

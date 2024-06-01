@@ -1,0 +1,18 @@
+name: Publish hangar
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  publish_to_sayanrepo:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Call Build artifacts workflow
+        uses: boi-carti/sayanvanish/.github/workflows/build-artifacts.yml@master
+      - name: Publish to Hangar
+        env:
+          HANGAR_API_TOKEN: ${{ secrets.HANGAR_API_TOKEN }}
+          HANGAR_BUILD_CHANNEL: Snapshot
+          HANGAR_CHANGELOG: ${{ github.event.release.body }}
+        run: ./gradlew build publishPluginPublicationToHangar --stacktrace

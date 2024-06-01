@@ -5,11 +5,12 @@ on:
       - master
 
 jobs:
+  build:
+    uses: boi-carti/sayanvanish/.github/workflows/build-artifacts.yml@master
   publish_to_sayanrepo:
+    needs: build
     runs-on: ubuntu-22.04
     steps:
-      - name: Call Build artifacts workflow
-        uses: boi-carti/sayanvanish/.github/workflows/build-artifacts.yml@master
       - name: Publish to Hangar
         env:
           HANGAR_API_TOKEN: ${{ secrets.HANGAR_API_TOKEN }}

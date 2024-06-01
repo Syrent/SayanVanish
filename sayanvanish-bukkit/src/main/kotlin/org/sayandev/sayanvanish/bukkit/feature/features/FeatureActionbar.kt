@@ -16,8 +16,9 @@ import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.Confi
 @RegisteredFeature
 @ConfigSerializable
 class FeatureActionbar(
-    val content: String = "<gray>You are currenly vanished!",
-    val repeatEvery: Long = 20,
+    val content: String = "<gray>You are currently vanished!",
+    val delay: Long = 20,
+    val period: Long = 20,
 ) : ListenedFeature("actionbar") {
 
     @EventHandler
@@ -40,7 +41,7 @@ class FeatureActionbar(
             for (user in onlinePlayers.filter { it.hasPermission(Permission.VANISH.permission()) }.mapNotNull { it.user() }.filter { it.isVanished }) {
                 user.sendActionbar(content.component())
             }
-        }, repeatEvery, repeatEvery)
+        }, delay, period)
         super.enable()
     }
 

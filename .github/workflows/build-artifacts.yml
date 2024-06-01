@@ -1,11 +1,11 @@
-name: Publish Snapshots
+name: Build artifacts
 on:
   push:
     branches:
       - master
 
 jobs:
-  publish:
+  build:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout Repository
@@ -26,8 +26,3 @@ jobs:
           key: ${{ runner.OS }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: |
             ${{ runner.OS }}-gradle-
-      - name: Publish to SayanDevelopment snapshot repo
-        run: ./gradlew publish
-        env:
-          REPO_SAYAN_USER: ${{ secrets.REPO_SAYAN_USER }}
-          REPO_SAYAN_TOKEN: ${{ secrets.REPO_SAYAN_TOKEN }}

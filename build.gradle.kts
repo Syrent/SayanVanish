@@ -31,13 +31,7 @@ fun latestCommitMessage(): String {
 val versionString: String = findProperty("version")!! as String
 val isRelease: Boolean = (System.getenv("HANGAR_BUILD_CHANNEL") ?: "Snapshot") == "Release"
 
-val suffixedVersion: String = if (isRelease) {
-    versionString
-} else {
-    "$versionString-SNAPSHOT"
-}
-
-val publishVersion = if (isRelease) suffixedVersion else "$versionString-build.${System.getenv("GITHUB_RUN_NUMBER")}"
+val publishVersion = if (isRelease) versionString else "$versionString-build.${System.getenv("GITHUB_RUN_NUMBER")}"
 val commitVersion = publishVersion + "-" + (System.getenv("GITHUB_SHA")?.substring(0, 7) ?: "local")
 version = commitVersion
 
@@ -131,7 +125,7 @@ subprojects {
             create<MavenPublication>("maven") {
                 shadow.component(this)
                 artifact(tasks["sourcesJar"])
-                this.version = suffixedVersion
+                this.version = versionString
                 setPom(this)
             }
         }
@@ -178,7 +172,7 @@ fun setPom(publication: MavenPublication) {
 
 hangarPublish {
     publications.register("plugin") {
-        version.set(if (isRelease) suffixedVersion else publishVersion)
+        version.set(if (isRelease) versionString else publishVersion)
         channel.set(System.getenv("HANGAR_BUILD_CHANNEL") ?: "Snapshot")
         changelog.set(if (System.getenv("HANGAR_CHANGELOG").isNullOrEmpty()) changelogContent else System.getenv("HANGAR_CHANGELOG"))
         id.set(slug)
@@ -209,7 +203,7 @@ modrinth {
 
     token.set(modrinthApiKey)
     projectId.set("${property("modrinthProjectID")}")
-    versionNumber.set(if (isRelease) suffixedVersion else publishVersion)
+    versionNumber.set(if (isRelease) versionString else publishVersion)
     versionType.set(System.getenv("MODRINTH_BUILD_CHANNEL") ?: "beta")
     uploadFile.set(project(":sayanvanish-bukkit").tasks.shadowJar.flatMap { it.archiveFile })
     additionalFiles.set(listOf(

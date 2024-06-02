@@ -2,6 +2,7 @@ package org.sayandev.sayanvanish.bukkit.feature.features
 
 import org.bukkit.event.EventHandler
 import org.sayandev.sayanvanish.api.Permission
+import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
@@ -16,9 +17,9 @@ import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.Confi
 @RegisteredFeature
 @ConfigSerializable
 class FeatureActionbar(
-    val content: String = "<gray>You are currently vanished!",
-    val delay: Long = 20,
-    val period: Long = 20,
+    @Configurable val content: String = "<gray>You are currently vanished!",
+    @Configurable val delay: Long = 20,
+    @Configurable val period: Long = 20,
 ) : ListenedFeature("actionbar") {
 
     @EventHandler

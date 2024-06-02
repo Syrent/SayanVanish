@@ -4,6 +4,7 @@ import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
+import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
@@ -21,9 +22,9 @@ import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.Confi
 @RegisteredFeature
 @ConfigSerializable
 class FeatureUpdateChecker(
-    val checkEveryXMinutes: Int = 60,
-    val notifyPermission: String = "sayanvanish.feature.updatechecker.notify",
-    val notifyOnJoin: Boolean = true,
+    @Configurable val checkEveryXMinutes: Int = 60,
+    @Configurable val notifyPermission: String = "sayanvanish.feature.updatechecker.notify",
+    @Configurable val notifyOnJoin: Boolean = true,
     val content: List<String> = listOf(
         "<green>A new version of <white>SayanVanish</white> is available!",
         "<gold> - Latest release: <white><latest_release_name>",

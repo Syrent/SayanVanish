@@ -5,6 +5,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerGameModeChangeEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.sayandev.sayanvanish.api.Permission
+import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
@@ -17,7 +18,7 @@ import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.Confi
 @RegisteredFeature
 @ConfigSerializable
 class FeatureLevel(
-    val seeAsSpectator: Boolean = true
+    @Configurable val seeAsSpectator: Boolean = true
 ): ListenedFeature("level") {
 
     @EventHandler

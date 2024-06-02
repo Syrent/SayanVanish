@@ -1,5 +1,6 @@
 package org.sayandev.sayanvanish.bukkit.feature.features
 
+import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.Feature
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
@@ -15,7 +16,7 @@ import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.Confi
 @RegisteredFeature
 @ConfigSerializable
 class FeatureProxyVanishQueue(
-    val checkEvery: Long = 100
+    @Configurable val checkEvery: Long = 100
 ) : Feature("proxy_vanish_queue", category = FeatureCategories.PROXY) {
 
     override fun enable() {

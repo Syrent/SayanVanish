@@ -9,6 +9,7 @@ import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.database.DatabaseConfig
 import org.sayandev.sayanvanish.api.database.databaseConfig
+import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.Features
 import org.sayandev.sayanvanish.api.feature.RegisteredFeatureHandler
 import org.sayandev.sayanvanish.api.utils.Paste
@@ -33,11 +34,13 @@ import org.sayandev.stickynote.lib.incendo.cloud.bukkit.parser.OfflinePlayerPars
 import org.sayandev.stickynote.lib.incendo.cloud.component.CommandComponent
 import org.sayandev.stickynote.lib.incendo.cloud.parser.flag.CommandFlag
 import org.sayandev.stickynote.lib.incendo.cloud.parser.standard.IntegerParser
+import org.sayandev.stickynote.lib.incendo.cloud.parser.standard.StringArrayParser
 import org.sayandev.stickynote.lib.incendo.cloud.parser.standard.StringParser
 import org.sayandev.stickynote.lib.incendo.cloud.suggestion.Suggestion
 import org.sayandev.stickynote.lib.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import java.io.File
 import java.util.concurrent.CompletableFuture
+import kotlin.reflect.full.memberProperties
 
 class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
 
@@ -244,6 +247,69 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
                 feature.enable()
                 feature.save()
                 sender.sendMessage(language.feature.featureEnabled.component(Placeholder.unparsed("feature", feature.id)))
+            }
+            .build())
+
+        manager.command(featureLiteral
+            .literal("update")
+            .permission(constructBasePermission("feature.update"))
+            .required(
+                "option",
+                CommandComponent.builder<SenderExtension, String>("state", StringParser.stringParser())
+                    .suggestionProvider { context, _ ->
+                        val feature = Features.features.find { it.id == context.get<String>("feature") } ?: return@suggestionProvider CompletableFuture.completedFuture(emptyList())
+                        CompletableFuture.completedFuture(feature::class.java.declaredFields.filter { it.isAnnotationPresent(Configurable::class.java) }.map { Suggestion.suggestion(it.name) })
+                    }
+            )
+            .required("value",
+                CommandComponent.builder<SenderExtension, String>("value", StringParser.stringParser(StringParser.StringMode.QUOTED))
+                    .suggestionProvider { context, _ ->
+                        val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
+                            return@suggestionProvider CompletableFuture.completedFuture(emptyList())
+                        }
+
+                        val field = feature::class.java.declaredFields.find { it.name == context.get("option") } ?: let {
+                            return@suggestionProvider CompletableFuture.completedFuture(emptyList())
+                        }
+                        field.isAccessible = true
+
+                        when (field.type) {
+                            Boolean::class.java -> CompletableFuture.completedFuture(listOf("true", "false").map { Suggestion.suggestion(it) })
+                            Int::class.java -> CompletableFuture.completedFuture(listOf("0", "1", "2", "3", "4", "5").map { Suggestion.suggestion(it) })
+                            Double::class.java -> CompletableFuture.completedFuture(listOf("0.0", "0.1", "0.2", "0.3", "0.4", "0.5").map { Suggestion.suggestion(it) })
+                            Float::class.java -> CompletableFuture.completedFuture(listOf("0.0", "0.1", "0.2", "0.3", "0.4", "0.5").map { Suggestion.suggestion(it) })
+                            else -> CompletableFuture.completedFuture(listOf(field.get(feature).toString()).map { Suggestion.suggestion(it) })
+                        }
+                    }
+                )
+            .handler { context ->
+                val sender = context.sender().bukkitSender()
+                val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
+                    sender.sendMessage(language.feature.featureNotFound.component())
+                    return@handler
+                }
+
+                val field = feature::class.java.declaredFields.find { it.name == context.get("option") }
+                if (field == null) {
+                    sender.sendMessage(language.feature.invalidOption.component(Placeholder.unparsed("options", feature::class.memberProperties.joinToString(", ") { it.name })))
+                    return@handler
+                }
+
+                val value = context.get<String>("value")
+                field.isAccessible = true
+                try {
+                    field.set(feature, value)
+                } catch (_: Exception) {
+                    sender.sendMessage(language.feature.invalidValue.component(Placeholder.unparsed("values", field.type.simpleName ?: "N/A")))
+                    return@handler
+                }
+                feature.save()
+
+                sender.sendMessage(language.feature.updated.component(
+                    Placeholder.unparsed("feature", feature.id),
+                    Placeholder.unparsed("option", field.name),
+                    Placeholder.unparsed("state", value)
+                ))
             }
             .build())
     }

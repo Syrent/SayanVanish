@@ -3,6 +3,7 @@ package org.sayandev.sayanvanish.bukkit.feature.features
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
@@ -17,12 +18,12 @@ import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.Confi
 @RegisteredFeature
 @ConfigSerializable
 class FeatureFakeMessage(
-    val sendFakeJoinMessage: Boolean = false,
-    val sendFakeQuitMessage: Boolean = false,
-    val fakeJoinMessage: String = "<yellow><player> joined the game",
-    val fakeQuitMessage: String = "<yellow><player> left the game",
-    val disableJoinMessageIfVanished: Boolean = true,
-    val disableQuitMessageIfVanished: Boolean = true,
+    @Configurable val sendFakeJoinMessage: Boolean = false,
+    @Configurable val sendFakeQuitMessage: Boolean = false,
+    @Configurable val fakeJoinMessage: String = "<yellow><player> joined the game",
+    @Configurable val fakeQuitMessage: String = "<yellow><player> left the game",
+    @Configurable val disableJoinMessageIfVanished: Boolean = true,
+    @Configurable val disableQuitMessageIfVanished: Boolean = true,
 ) : ListenedFeature("fake_message") {
 
     @EventHandler

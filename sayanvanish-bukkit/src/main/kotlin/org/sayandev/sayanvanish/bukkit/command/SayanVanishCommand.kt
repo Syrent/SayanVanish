@@ -1,11 +1,8 @@
 package org.sayandev.sayanvanish.bukkit.command
 
-import org.bukkit.Bukkit
-import org.bukkit.GameMode
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.database.DatabaseConfig
 import org.sayandev.sayanvanish.api.database.databaseConfig
@@ -20,8 +17,6 @@ import org.sayandev.sayanvanish.bukkit.config.SettingsConfig
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.sayanvanish.bukkit.utils.ServerUtils
-import org.sayandev.stickynote.bukkit.NMSUtils
-import org.sayandev.stickynote.bukkit.PacketUtils
 import org.sayandev.stickynote.bukkit.command.StickyCommand
 import org.sayandev.stickynote.bukkit.command.interfaces.SenderExtension
 import org.sayandev.stickynote.bukkit.pluginDirectory
@@ -29,12 +24,10 @@ import org.sayandev.stickynote.bukkit.runAsync
 import org.sayandev.stickynote.bukkit.runSync
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendMessage
-import org.sayandev.stickynote.core.math.Vector3
 import org.sayandev.stickynote.lib.incendo.cloud.bukkit.parser.OfflinePlayerParser
 import org.sayandev.stickynote.lib.incendo.cloud.component.CommandComponent
 import org.sayandev.stickynote.lib.incendo.cloud.parser.flag.CommandFlag
 import org.sayandev.stickynote.lib.incendo.cloud.parser.standard.IntegerParser
-import org.sayandev.stickynote.lib.incendo.cloud.parser.standard.StringArrayParser
 import org.sayandev.stickynote.lib.incendo.cloud.parser.standard.StringParser
 import org.sayandev.stickynote.lib.incendo.cloud.suggestion.Suggestion
 import org.sayandev.stickynote.lib.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -141,7 +134,6 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
                 val sender = context.sender().bukkitSender()
                 language = LanguageConfig.fromConfig() ?: LanguageConfig.defaultConfig()
                 Features.features.forEach { feature ->
-                    feature.enabled = false
                     feature.disable()
                 }
                 Features.features.clear()
@@ -214,7 +206,7 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
             .handler { context ->
                 val sender = context.sender().bukkitSender()
                 val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
-                    sender.sendMessage(language.feature.featureNotFound.component())
+                    sender.sendMessage(language.feature.notFound.component())
                     return@handler
                 }
 
@@ -225,7 +217,7 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
 
                 feature.disable()
                 feature.save()
-                sender.sendMessage(language.feature.featureDisabled.component(Placeholder.unparsed("feature", feature.id)))
+                sender.sendMessage(language.feature.disabled.component(Placeholder.unparsed("feature", feature.id)))
             }
             .build())
 
@@ -235,7 +227,7 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
             .handler { context ->
                 val sender = context.sender().bukkitSender()
                 val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
-                    sender.sendMessage(language.feature.featureNotFound.component())
+                    sender.sendMessage(language.feature.notFound.component())
                     return@handler
                 }
 
@@ -246,7 +238,29 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
 
                 feature.enable()
                 feature.save()
-                sender.sendMessage(language.feature.featureEnabled.component(Placeholder.unparsed("feature", feature.id)))
+                sender.sendMessage(language.feature.enabled.component(Placeholder.unparsed("feature", feature.id)))
+            }
+            .build())
+
+        manager.command(featureLiteral
+            .literal("reset")
+            .permission(constructBasePermission("feature.reset"))
+            .handler { context ->
+                val sender = context.sender().bukkitSender()
+                val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
+                    sender.sendMessage(language.feature.notFound.component())
+                    return@handler
+                }
+
+                feature.disable()
+                Features.features.remove(feature)
+                val freshFeature = feature::class.java.getDeclaredConstructor().newInstance()
+                if (freshFeature.enabled) {
+                    freshFeature.enable()
+                }
+                freshFeature.save()
+                Features.features.add(freshFeature)
+                sender.sendMessage(language.feature.reset.component(Placeholder.unparsed("feature", feature.id)))
             }
             .build())
 
@@ -285,7 +299,7 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
             .handler { context ->
                 val sender = context.sender().bukkitSender()
                 val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
-                    sender.sendMessage(language.feature.featureNotFound.component())
+                    sender.sendMessage(language.feature.notFound.component())
                     return@handler
                 }
 
@@ -305,11 +319,7 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
                 }
                 feature.save()
 
-                sender.sendMessage(language.feature.updated.component(
-                    Placeholder.unparsed("feature", feature.id),
-                    Placeholder.unparsed("option", field.name),
-                    Placeholder.unparsed("state", value)
-                ))
+                sender.sendMessage(language.feature.updated.component(Placeholder.unparsed("feature", feature.id), Placeholder.unparsed("option", field.name), Placeholder.unparsed("state", value)))
             }
             .build())
     }

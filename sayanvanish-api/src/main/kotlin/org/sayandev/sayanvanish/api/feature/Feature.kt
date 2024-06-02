@@ -11,7 +11,7 @@ import java.io.File
 abstract class Feature(
     val id: String,
     var enabled: Boolean = true,
-    val category: FeatureCategories = FeatureCategories.DEFAULT,
+    @Transient val category: FeatureCategories = FeatureCategories.DEFAULT,
     @Transient val additionalSerializers: TypeSerializerCollection = TypeSerializerCollection.defaults()
 ) : Config(
     when (category.directory) {
@@ -43,7 +43,14 @@ abstract class Feature(
     companion object {
         fun createFromConfig(type: Class<out Feature>): Feature {
             val freshInstance = type.getDeclaredConstructor().newInstance()
-            val instance = getConfigFromFile(File(File(Platform.get().rootDirectory, "features"), "${freshInstance.id}.yml"), freshInstance.additionalSerializers)?.get(type) ?: freshInstance
+            val category = freshInstance.category
+            val instance = getConfigFromFile(File(
+                if (category.directory == null) {
+                    File(Platform.get().rootDirectory, "features")
+                } else {
+                    File(File(Platform.get().rootDirectory, "features"), category.directory)
+                }, "${freshInstance.id}.yml"),
+                freshInstance.additionalSerializers)?.get(type) ?: freshInstance
             if (instance.enabled) {
                 instance.enable()
             }

@@ -53,6 +53,7 @@ allprojects {
     plugins.apply("maven-publish")
     plugins.apply("kotlin")
     plugins.apply("io.github.goooler.shadow")
+    plugins.apply("com.modrinth.minotaur")
 
     repositories {
         mavenCentral()
@@ -206,7 +207,7 @@ for (module in modrinthModules) {
 
         token.set(modrinthApiKey)
         projectId.set("${property("modrinthProjectID")}")
-        versionNumber.set(if (isRelease) versionString else publishVersion)
+        versionNumber.set((if (isRelease) versionString else publishVersion) + "-${module.name.lowercase()}")
         versionType.set(System.getenv("MODRINTH_BUILD_CHANNEL") ?: "beta")
         when (module) {
             Module.BUKKIT -> {

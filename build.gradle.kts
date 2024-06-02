@@ -1,5 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import io.papermc.hangarpublishplugin.model.Platforms
+import org.sayandev.Module
 import org.sayandev.getRelocations
 import java.io.ByteArrayOutputStream
 
@@ -197,23 +198,42 @@ hangarPublish {
     }
 }
 
-modrinth {
-    val modrinthApiKey = System.getenv("MODRINTH_API_TOKEN")
-    val modrinthChangelog = if (System.getenv("MODRINTH_CHANGELOG").isNullOrEmpty()) changelogContent else System.getenv("MODRINTH_CHANGELOG")
+val modrinthModules = listOf(Module.BUKKIT, Module.VELOCITY, Module.BUNGEECORD)
+for (module in modrinthModules) {
+    modrinth {
+        val modrinthApiKey = System.getenv("MODRINTH_API_TOKEN")
+        val modrinthChangelog = if (System.getenv("MODRINTH_CHANGELOG").isNullOrEmpty()) changelogContent else System.getenv("MODRINTH_CHANGELOG")
 
-    token.set(modrinthApiKey)
-    projectId.set("${property("modrinthProjectID")}")
-    versionNumber.set(if (isRelease) versionString else publishVersion)
-    versionType.set(System.getenv("MODRINTH_BUILD_CHANNEL") ?: "beta")
-    uploadFile.set(project(":sayanvanish-bukkit").tasks.shadowJar.flatMap { it.archiveFile })
-    additionalFiles.set(listOf(
-        project(":sayanvanish-proxy:sayanvanish-proxy-velocity").tasks.shadowJar.flatMap { it.archiveFile },
-        project(":sayanvanish-proxy:sayanvanish-proxy-bungeecord").tasks.shadowJar.flatMap { it.archiveFile },
-    ))
-    gameVersions.set("${property("modrinthMinecraftVersions")}".split(","))
-    loaders.set("${property("modrinthLoaders")}".split(","))
+        token.set(modrinthApiKey)
+        projectId.set("${property("modrinthProjectID")}")
+        versionNumber.set(if (isRelease) versionString else publishVersion)
+        versionType.set(System.getenv("MODRINTH_BUILD_CHANNEL") ?: "beta")
+        when (module) {
+            Module.BUKKIT -> {
+                uploadFile.set(project(":sayanvanish-bukkit").tasks.shadowJar.flatMap { it.archiveFile })
+            }
+            Module.VELOCITY -> {
+                uploadFile.set(project(":sayanvanish-proxy:sayanvanish-proxy-velocity").tasks.shadowJar.flatMap { it.archiveFile })
+            }
+            Module.BUNGEECORD -> {
+                uploadFile.set(project(":sayanvanish-proxy:sayanvanish-proxy-bungeecord").tasks.shadowJar.flatMap { it.archiveFile })
+            }
+            else -> {
+                throw IllegalArgumentException("Unknown module $module")
+            }
+        }
+        gameVersions.set("${property("modrinthMinecraftVersions")}".split(","))
+        loaders.set(
+            when (module) {
+                Module.BUKKIT -> listOf("paper", "purpur", "spigot", "folia")
+                Module.VELOCITY -> listOf("velocity")
+                Module.BUNGEECORD -> listOf("bungeecord", "waterfall")
+                else -> throw IllegalArgumentException("Unknown module $module")
+            }
+        )
 
-    changelog.set(modrinthChangelog)
+        changelog.set(modrinthChangelog)
 
-    syncBodyFrom.set(rootProject.file("README.md").readText())
+        syncBodyFrom.set(rootProject.file("README.md").readText())
+    }
 }

@@ -82,7 +82,7 @@ class FeatureUpdateChecker(
 
     private fun send(sender: CommandSender) {
         if (latestRelease == null || latestSnapshot == null) return
-        if (latestRelease!!.name == plugin.description.version && latestSnapshot!!.name == plugin.description.version) return
+        if (latestRelease!!.name == plugin.description.version || latestSnapshot!!.name == plugin.description.version) return
 
         for (line in content) {
             sender.sendMessage(line

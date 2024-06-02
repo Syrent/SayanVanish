@@ -103,7 +103,7 @@ subprojects {
         }
 
         withType<ShadowJar> {
-            archiveFileName.set("${rootProject.name}-${suffixedVersion}-${this@subprojects.name.removePrefix("sayanvanish-")}.jar")
+            archiveFileName.set("${rootProject.name}-${commitVersion}-${this@subprojects.name.removePrefix("sayanvanish-")}.jar")
             archiveClassifier.set(null as String?)
             destinationDirectory.set(file(rootProject.projectDir.path + "/bin"))
             from("LICENSE")

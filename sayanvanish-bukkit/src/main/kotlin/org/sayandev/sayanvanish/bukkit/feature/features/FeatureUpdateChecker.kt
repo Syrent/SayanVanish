@@ -40,7 +40,7 @@ class FeatureUpdateChecker(
     @Transient var latestRelease: VersionInfo? = null
     @Transient var latestSnapshot: VersionInfo? = null
 
-    init {
+    override fun enable() {
         runAsync({
             if (!isActive()) return@runAsync
             log("Checking for updates...")
@@ -62,6 +62,7 @@ class FeatureUpdateChecker(
                 }
             }
         }, 0, checkEveryXMinutes * 60 * 20L)
+        super.enable()
     }
 
     @EventHandler

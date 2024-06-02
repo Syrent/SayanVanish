@@ -39,6 +39,7 @@ val suffixedVersion: String = if (isRelease) {
 
 val publishVersion = if (isRelease) suffixedVersion else "$versionString-build.${System.getenv("GITHUB_RUN_NUMBER")}"
 val commitVersion = publishVersion + "-" + (System.getenv("GITHUB_SHA")?.substring(0, 7) ?: "local")
+version = commitVersion
 
 val changelogContent: String = latestCommitMessage()
 

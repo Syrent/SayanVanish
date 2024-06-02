@@ -6,6 +6,7 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.api.VanishOptions
+import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrCreateUser
@@ -19,11 +20,11 @@ import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.Confi
 @RegisteredFeature
 @ConfigSerializable
 class FeatureState(
-    val remember: Boolean = true,
-    val vanishOnJoin: Boolean = false,
-    val reappearOnQuit: Boolean = false,
-    val checkPermissionOnQuit: Boolean = false,
-    val checkPermissionOnJoin: Boolean = false,
+    @Configurable val remember: Boolean = true,
+    @Configurable val vanishOnJoin: Boolean = false,
+    @Configurable val reappearOnQuit: Boolean = false,
+    @Configurable val checkPermissionOnQuit: Boolean = false,
+    @Configurable val checkPermissionOnJoin: Boolean = false,
 ) : ListenedFeature("state") {
 
     @EventHandler(priority = EventPriority.LOWEST)

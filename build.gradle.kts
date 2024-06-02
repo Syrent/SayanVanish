@@ -53,7 +53,6 @@ allprojects {
     plugins.apply("maven-publish")
     plugins.apply("kotlin")
     plugins.apply("io.github.goooler.shadow")
-    plugins.apply("com.modrinth.minotaur")
 
     repositories {
         mavenCentral()
@@ -209,6 +208,7 @@ for (module in modrinthModules) {
         projectId.set("${property("modrinthProjectID")}")
         versionNumber.set((if (isRelease) versionString else publishVersion) + "-${module.name.lowercase()}")
         versionType.set(System.getenv("MODRINTH_BUILD_CHANNEL") ?: "beta")
+        uploadFile.set(project(":sayanvanish-bukkit").tasks.shadowJar.flatMap { it.archiveFile })
         when (module) {
             Module.BUKKIT -> {
                 uploadFile.set(project(":sayanvanish-bukkit").tasks.shadowJar.flatMap { it.archiveFile })

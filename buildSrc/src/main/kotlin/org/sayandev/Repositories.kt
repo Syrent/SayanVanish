@@ -102,7 +102,7 @@ val placeholderAPI = Dependency(
     modules = listOf(Module.BUKKIT)
 )
 
-val stickynoteVersion = "1.0.32"
+const val stickynoteVersion = "1.0.32"
 
 val stickynoteCore = Dependency(
     group = "org.sayandev",

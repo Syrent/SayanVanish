@@ -25,7 +25,7 @@ fun executeGitCommand(vararg command: String): String {
 }
 
 fun latestCommitMessage(): String {
-    return executeGitCommand("log", "-1", "--pretty=%B")
+    return executeGitCommand("log", "--pretty=format:%s")
 }
 
 val versionString: String = findProperty("version")!! as String
@@ -37,7 +37,8 @@ val suffixedVersion: String = if (isRelease) {
     "$versionString-SNAPSHOT"
 }
 
-val commitVersion = suffixedVersion + "-" + (System.getenv("GITHUB_SHA")?.substring(0, 7) ?: "local")
+val publishVersion = if (isRelease) suffixedVersion else "$versionString-build.${System.getenv("GITHUB_RUN_NUMBER")}"
+val commitVersion = publishVersion + "-" + (System.getenv("GITHUB_SHA")?.substring(0, 7) ?: "local")
 
 val changelogContent: String = latestCommitMessage()
 
@@ -66,7 +67,7 @@ allprojects {
         processResources {
             filesMatching(listOf("**plugin.yml", "**plugin.json")) {
                 expand(
-                    "version" to rootProject.version as String,
+                    "version" to commitVersion,
                     "slug" to slug,
                     "name" to rootProject.name,
                     "description" to rootProject.description
@@ -176,7 +177,7 @@ fun setPom(publication: MavenPublication) {
 
 hangarPublish {
     publications.register("plugin") {
-        version.set(suffixedVersion)
+        version.set(if (isRelease) suffixedVersion else publishVersion)
         channel.set(System.getenv("HANGAR_BUILD_CHANNEL") ?: "Snapshot")
         changelog.set(if (System.getenv("HANGAR_CHANGELOG").isNullOrEmpty()) changelogContent else System.getenv("HANGAR_CHANGELOG"))
         id.set(slug)
@@ -207,7 +208,7 @@ modrinth {
 
     token.set(modrinthApiKey)
     projectId.set("${property("modrinthProjectID")}")
-    versionNumber.set(suffixedVersion)
+    versionNumber.set(if (isRelease) suffixedVersion else publishVersion)
     versionType.set(System.getenv("MODRINTH_BUILD_CHANNEL") ?: "beta")
     uploadFile.set(project(":sayanvanish-bukkit").tasks.shadowJar.flatMap { it.archiveFile })
     additionalFiles.set(listOf(

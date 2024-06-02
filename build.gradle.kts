@@ -34,7 +34,7 @@ val isRelease: Boolean = (System.getenv("HANGAR_BUILD_CHANNEL") ?: "Snapshot") =
 val suffixedVersion: String = if (isRelease) {
     versionString
 } else {
-    versionString + "-build." + (System.getenv("GITHUB_RUN_NUMBER") ?: "development")
+    "$versionString-SNAPSHOT"
 }
 
 val commitVersion = suffixedVersion + "-" + (System.getenv("GITHUB_SHA")?.substring(0, 7) ?: "local")
@@ -101,7 +101,7 @@ subprojects {
         }
 
         withType<ShadowJar> {
-            archiveFileName.set("${rootProject.name}-${version}-${this@subprojects.name.removePrefix("sayanvanish-")}.jar")
+            archiveFileName.set("${rootProject.name}-${suffixedVersion}-${this@subprojects.name.removePrefix("sayanvanish-")}.jar")
             archiveClassifier.set(null as String?)
             destinationDirectory.set(file(rootProject.projectDir.path + "/bin"))
             from("LICENSE")
@@ -129,6 +129,7 @@ subprojects {
             create<MavenPublication>("maven") {
                 shadow.component(this)
                 artifact(tasks["sourcesJar"])
+                this.version = suffixedVersion
                 setPom(this)
             }
         }

@@ -10,11 +10,11 @@ import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.sayanvanish.bukkit.utils.HangarUtils
 import org.sayandev.sayanvanish.bukkit.utils.VersionInfo
 import org.sayandev.stickynote.bukkit.log
+import org.sayandev.stickynote.bukkit.plugin
 import org.sayandev.stickynote.bukkit.runAsync
 import org.sayandev.stickynote.bukkit.runSync
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendMessage
-import org.sayandev.stickynote.bukkit.warn
 import org.sayandev.stickynote.lib.kyori.adventure.text.Component
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
 
@@ -26,13 +26,13 @@ class FeatureUpdateChecker(
     val notifyOnJoin: Boolean = true,
     val content: List<String> = listOf(
         "<green>A new version of <white>SayanVanish</white> is available!",
-        "<aqua> - Latest release: <white><latest_release_name>",
+        "<gold> - Latest release: <white><latest_release_name>",
         "  <yellow>- <gray>Click to download: <blue><click:open_url:'<latest_release_url_paper>'>Paper</click> <gray>|</gray> <aqua><click:open_url:'<latest_release_url_velocity>'>Velocity</click> <gray>|</gray> <blue><click:open_url:'<latest_release_url_waterfall>'>Waterfall</click>",
-        "  <yellow>- <gray>Changelog: <gray><latest_release_changelog>",
+        "  <yellow>- <gray>Changelog: <white><latest_release_changelog>",
         "  <yellow>- <gray><click:open_url:'https://hangar.papermc.io/Syrent/SayanVanish/versions/<latest_release_name>'>Click to see full changelog",
-        "<aqua> - Latest snapshot: <white><latest_snapshot_name>",
+        "<gold> - Latest snapshot: <white><latest_snapshot_name>",
         "  <yellow>- <gray>Click to download: <blue><click:open_url:'<latest_snapshot_url_paper>'>Paper</click> <gray>|</gray> <aqua><click:open_url:'<latest_snapshot_url_velocity>'>Velocity</click> <gray>|</gray> <blue><click:open_url:'<latest_snapshot_url_waterfall>'>Waterfall</click>",
-        "  <yellow>- Changelog: <gray><latest_snapshot_changelog>",
+        "  <yellow>- <gray>Changelog: <white><latest_snapshot_changelog>",
         "  <yellow>- <gray><click:open_url:'https://hangar.papermc.io/Syrent/SayanVanish/versions/<latest_snapshot_name>'>Click to see full changelog"
     )
 ) : ListenedFeature("update_checker") {
@@ -57,7 +57,6 @@ class FeatureUpdateChecker(
                     this.latestSnapshot = latestSnapshot
 
                     runSync {
-                        warn("1")
                         send(Bukkit.getConsoleSender())
                     }
                 }
@@ -67,16 +66,9 @@ class FeatureUpdateChecker(
 
     @EventHandler
     private fun onVanish(event: PlayerJoinEvent) {
-        warn("2")
         if (!isActive()) return
-        warn("3")
         val player = event.player
-        warn("notifyOnJoin: ${notifyOnJoin}")
-        warn("player.hasPermission(notifyPermission): ${player.hasPermission(notifyPermission)}")
-        warn("latestRelease != null: ${latestRelease != null}")
-        warn("latestSnapshot != null: ${latestSnapshot != null}")
         if (notifyOnJoin && player.hasPermission(notifyPermission) && latestRelease != null && latestSnapshot != null) {
-            warn("4")
             send(player)
         }
     }
@@ -90,6 +82,8 @@ class FeatureUpdateChecker(
 
     private fun send(sender: CommandSender) {
         if (latestRelease == null || latestSnapshot == null) return
+        if (latestRelease!!.name == plugin.description.version && latestSnapshot!!.name == plugin.description.version) return
+
         for (line in content) {
             sender.sendMessage(line
                 .replace("<latest_release_name>", latestRelease?.name ?: "Unknown")
@@ -121,5 +115,6 @@ class FeatureUpdateChecker(
             description
         }
     }
+
 
 }

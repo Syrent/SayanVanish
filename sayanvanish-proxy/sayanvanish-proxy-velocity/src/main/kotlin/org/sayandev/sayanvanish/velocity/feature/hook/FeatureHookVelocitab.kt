@@ -1,10 +1,10 @@
-package org.sayandev.sayanvanish.velocity.hook
+package org.sayandev.sayanvanish.velocity.feature.hook
 
 import com.velocitypowered.api.event.Subscribe
 import net.william278.velocitab.api.VelocitabAPI
 import net.william278.velocitab.vanish.VanishIntegration
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
-import org.sayandev.sayanvanish.bukkit.feature.HookFeature
+import org.sayandev.sayanvanish.velocity.feature.HookFeature
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI.Companion.user
 import org.sayandev.sayanvanish.velocity.event.VelocityUserUnVanishEvent
 import org.sayandev.sayanvanish.velocity.event.VelocityUserVanishEvent

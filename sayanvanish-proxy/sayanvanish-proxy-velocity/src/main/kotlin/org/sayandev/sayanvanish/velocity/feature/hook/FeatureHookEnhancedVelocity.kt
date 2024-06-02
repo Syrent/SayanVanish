@@ -2,7 +2,7 @@ package org.sayandev.sayanvanish.velocity.feature.hook
 
 import ir.syrent.enhancedvelocity.api.VanishHook
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
-import org.sayandev.sayanvanish.bukkit.feature.HookFeature
+import org.sayandev.sayanvanish.velocity.feature.HookFeature
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI.Companion.getOrAddUser
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable

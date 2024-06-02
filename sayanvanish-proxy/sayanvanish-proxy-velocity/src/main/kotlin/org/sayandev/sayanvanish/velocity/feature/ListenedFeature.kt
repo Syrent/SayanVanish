@@ -1,4 +1,4 @@
-package org.sayandev.sayanvanish.bukkit.feature
+package org.sayandev.sayanvanish.velocity.feature
 
 import org.sayandev.sayanvanish.api.feature.Feature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories

@@ -1,0 +1,57 @@
+name: Publish Releases
+
+on:
+  release:
+    types: [published]
+
+    
+jobs:
+  build:
+    name: Build artifacts job
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 17
+      - name: Change wrapper permissions
+        run: chmod +x ./gradlew
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.OS }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: |
+            ${{ runner.OS }}-gradle-
+      - name: Build artifacts
+        env:
+          REPO_SAYAN_USER: ${{ secrets.REPO_SAYAN_USER }}
+          REPO_SAYAN_TOKEN: ${{ secrets.REPO_SAYAN_TOKEN }}
+        run: ./gradlew build
+      - name: Publish to SayanDevelopment snapshot repo
+        run: ./gradlew publish
+        env:
+          REPO_SAYAN_USER: ${{ secrets.REPO_SAYAN_USER }}
+          REPO_SAYAN_TOKEN: ${{ secrets.REPO_SAYAN_TOKEN }}
+      - name: Publish to Hangar
+        env:
+          HANGAR_API_TOKEN: ${{ secrets.HANGAR_API_TOKEN }}
+          HANGAR_BUILD_CHANNEL: Release
+          HANGAR_CHANGELOG: ${{ github.event.release.body }}
+          REPO_SAYAN_USER: ${{ secrets.REPO_SAYAN_USER }}
+          REPO_SAYAN_TOKEN: ${{ secrets.REPO_SAYAN_TOKEN }}
+        run: ./gradlew build publishPluginPublicationToHangar --stacktrace
+      - name: Publish to Modrinth
+        run: ./gradlew modrinth
+        env:
+          MODRINTH_BUILD_CHANNEL: release
+          MODRINTH_API_TOKEN: ${{ secrets.MODRINTH_API_TOKEN }}
+          MODRINTH_CHANGELOG: ${{ github.event.release.body }}
+          REPO_SAYAN_USER: ${{ secrets.REPO_SAYAN_USER }}
+          REPO_SAYAN_TOKEN: ${{ secrets.REPO_SAYAN_TOKEN }}
+

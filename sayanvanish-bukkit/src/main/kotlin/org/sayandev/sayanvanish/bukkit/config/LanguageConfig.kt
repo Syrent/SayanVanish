@@ -10,6 +10,7 @@ public var language: LanguageConfig = LanguageConfig.fromConfig() ?: LanguageCon
 @ConfigSerializable
 data class LanguageConfig(
     val vanish: Vanish = Vanish(),
+    val feature: Feature = Feature(),
     val general: General = General(),
     val paste: Paste = Paste()
 ) : Config(languageDirectory, "${settings.general.language}.yml") {
@@ -22,6 +23,15 @@ data class LanguageConfig(
     data class General(
         val reloaded: String = "<green>Plugin successfully reloaded. <red>Please note that some changes may require a server restart to take effect. Subsequent reloads may cause issues.",
         val playerNotFound: String = "<red>Player not found",
+    )
+
+    @ConfigSerializable
+    data class Feature(
+        val featureNotFound: String = "<red>Feature not found",
+        val featureEnabled: String = "<gray><gold><feature></gold> has been enabled.",
+        val featureDisabled: String = "<gray><gold><feature></gold> has been disabled.",
+        val alreadyDisabled: String = "<gray><gold><feature></gold> is already disabled.",
+        val alreadyEnabled: String = "<gray><gold><feature></gold> is already enabled.",
     )
 
     @ConfigSerializable

@@ -143,15 +143,7 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
                 }
                 Features.features.clear()
                 RegisteredFeatureHandler.process()
-                /*settings.vanish.features.forEach { feature ->
-                    feature.enabled = false
-                    feature.disable()
-                }
-                settings.vanish.features.clear()*/
                 settings = SettingsConfig.fromConfig() ?: SettingsConfig.defaultConfig()
-                /*settings.vanish.features.forEach {
-                    if (it.enabled) it.enable()
-                }*/
                 databaseConfig = DatabaseConfig.fromConfig() ?: DatabaseConfig.defaultConfig()
                 sender.sendMessage(language.general.reloaded.component())
             }
@@ -199,6 +191,59 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
                 val user = target.user()
 
                 sender.sendMessage(language.vanish.levelGet.component(Placeholder.unparsed("player", target.name ?: "N/A"), Placeholder.unparsed("level", (user?.vanishLevel ?: 0).toString())))
+            }
+            .build())
+
+        val featureLiteral = builder
+            .literal("feature")
+            .permission(constructBasePermission("feature"))
+            .required(
+                "feature",
+                CommandComponent.builder<SenderExtension, String>("state", StringParser.stringParser())
+                    .suggestionProvider { _, _ ->
+                        CompletableFuture.completedFuture(Features.features.map { Suggestion.suggestion(it.id) })
+                    }
+            )
+
+        manager.command(featureLiteral
+            .literal("disable")
+            .permission(constructBasePermission("feature.disable"))
+            .handler { context ->
+                val sender = context.sender().bukkitSender()
+                val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
+                    sender.sendMessage(language.feature.featureNotFound.component())
+                    return@handler
+                }
+
+                if (!feature.enabled) {
+                    sender.sendMessage(language.feature.alreadyDisabled.component(Placeholder.unparsed("feature", feature.id)))
+                    return@handler
+                }
+
+                feature.disable()
+                feature.save()
+                sender.sendMessage(language.feature.featureDisabled.component(Placeholder.unparsed("feature", feature.id)))
+            }
+            .build())
+
+        manager.command(featureLiteral
+            .literal("enable")
+            .permission(constructBasePermission("feature.enable"))
+            .handler { context ->
+                val sender = context.sender().bukkitSender()
+                val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
+                    sender.sendMessage(language.feature.featureNotFound.component())
+                    return@handler
+                }
+
+                if (feature.enabled) {
+                    sender.sendMessage(language.feature.alreadyEnabled.component(Placeholder.unparsed("feature", feature.id)))
+                    return@handler
+                }
+
+                feature.enable()
+                feature.save()
+                sender.sendMessage(language.feature.featureEnabled.component(Placeholder.unparsed("feature", feature.id)))
             }
             .build())
     }

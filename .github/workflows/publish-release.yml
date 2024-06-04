@@ -47,7 +47,7 @@ jobs:
           REPO_SAYAN_TOKEN: ${{ secrets.REPO_SAYAN_TOKEN }}
         run: ./gradlew build publishPluginPublicationToHangar --stacktrace
       - name: Publish to Modrinth
-        run: ./gradlew publishAllModulesModrinth
+        run: ./gradlew modrinth
         env:
           MODRINTH_BUILD_CHANNEL: release
           MODRINTH_API_TOKEN: ${{ secrets.MODRINTH_API_TOKEN }}

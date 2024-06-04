@@ -202,7 +202,7 @@ for (module in modrinthModules) {
 
         token.set(modrinthApiKey)
         projectId.set("${property("modrinthProjectID")}")
-        versionNumber.set((if (isRelease) versionString else publishVersion.replace("-build.", "-b")) + "-${module.name.lowercase()}")
+        versionNumber.set((if (isRelease) versionString else publishVersion.replace("-build.", "-b").replace("-SNAPSHOT", "")) + "-${module.id.lowercase()}")
         versionType.set(System.getenv("MODRINTH_BUILD_CHANNEL") ?: "beta")
         uploadFile.set(project(":sayanvanish-bukkit").tasks.shadowJar.flatMap { it.archiveFile })
         when (module) {

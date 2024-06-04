@@ -48,17 +48,19 @@ private class HookPlaceholderAPI : PlaceholderExpansion() {
         return true
     }
 
-    override fun onRequest(player: OfflinePlayer, params: String): String? {
+    override fun onRequest(player: OfflinePlayer?, params: String): String? {
         if (params.equals("vanished", true)) {
+            if (player == null) return "false"
             return if (SayanVanishBukkitAPI.getInstance().getVanishedUsers().map { it.username }.contains(player.name)) "true" else "false"
+        }
+
+        if (params.equals("level", true)) {
+            if (player == null) return "0"
+            return player.user()?.vanishLevel?.toString() ?: "0"
         }
 
         if (params.equals("count", true)) {
             return SayanVanishBukkitAPI.getInstance().getUsers { user -> user.isOnline && user.isVanished }.size.toString()
-        }
-
-        if (params.equals("level", true)) {
-            return player.user()?.vanishLevel?.toString() ?: "0"
         }
 
         if (params.startsWith("online_")) {

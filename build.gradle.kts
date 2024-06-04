@@ -196,6 +196,8 @@ hangarPublish {
 
 val modrinthModules = listOf(Module.BUKKIT, Module.VELOCITY, Module.BUNGEECORD)
 for (module in modrinthModules) {
+    Thread.sleep(1000)
+    println("Publishing ${module.id} module to modrinth")
     modrinth {
         val modrinthApiKey = System.getenv("MODRINTH_API_TOKEN")
         val modrinthChangelog = if (System.getenv("MODRINTH_CHANGELOG").isNullOrEmpty()) changelogContent else System.getenv("MODRINTH_CHANGELOG")
@@ -204,7 +206,6 @@ for (module in modrinthModules) {
         projectId.set("${property("modrinthProjectID")}")
         versionNumber.set((if (isRelease) versionString else publishVersion.replace("-build.", "-b").replace("-SNAPSHOT", "")) + "-${module.id.lowercase()}")
         versionType.set(System.getenv("MODRINTH_BUILD_CHANNEL") ?: "beta")
-        uploadFile.set(project(":sayanvanish-bukkit").tasks.shadowJar.flatMap { it.archiveFile })
         when (module) {
             Module.BUKKIT -> {
                 uploadFile.set(project(":sayanvanish-bukkit").tasks.shadowJar.flatMap { it.archiveFile })

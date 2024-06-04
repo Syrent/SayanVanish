@@ -1,8 +1,8 @@
 package org.sayandev
 
-enum class Module(val id: String) {
-    API("api"),
-    BUKKIT("bukkit"),
-    VELOCITY("velocity"),
-    BUNGEECORD("bungee")
+enum class Module(val id: String, val title: String) {
+    API("api", "API"),
+    BUKKIT("bukkit", "Bukkit"),
+    VELOCITY("velocity", "Velocity"),
+    BUNGEECORD("bungee", "Bungee")
 }

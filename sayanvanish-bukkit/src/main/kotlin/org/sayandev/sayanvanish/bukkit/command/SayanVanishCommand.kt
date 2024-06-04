@@ -37,7 +37,7 @@ import kotlin.reflect.full.memberProperties
 
 class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
 
-    val command = manager.commandBuilder(this.name, *aliases)
+    private val command = manager.commandBuilder(this.name, *aliases)
         .permission(constructBasePermission("vanish"))
         .optional("player", OfflinePlayerParser.offlinePlayerParser())
         .flag(

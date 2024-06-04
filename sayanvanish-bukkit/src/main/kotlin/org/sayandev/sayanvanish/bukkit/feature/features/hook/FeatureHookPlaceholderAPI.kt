@@ -7,8 +7,10 @@ import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
+import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.stickynote.bukkit.StickyNote
 import org.sayandev.stickynote.bukkit.onlinePlayers
+import org.sayandev.stickynote.bukkit.warn
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @RegisteredFeature
@@ -24,6 +26,8 @@ class FeatureHookPlaceholderAPI: HookFeature("hook_placeholderapi", "Placeholder
 }
 
 private class HookPlaceholderAPI : PlaceholderExpansion() {
+    val proxyRequestOnCooldown = false
+
     override fun getIdentifier(): String {
         return StickyNote.plugin().description.name.lowercase()
     }
@@ -64,8 +68,14 @@ private class HookPlaceholderAPI : PlaceholderExpansion() {
             return if (type.equals("here", true)) {
                 onlinePlayers.filter { onlinePlayer -> !vanishedOnlineUsers.map { vanishedOnlineUser -> vanishedOnlineUser.username }.contains(onlinePlayer.name) }.size.toString()
             } else if (type.equals("total", true)) {
+                if (!settings.general.proxyMode) {
+                    return "PROXY_MODE IS NOT ENABLED!"
+                }
                 return SayanVanishAPI.getInstance().getBasicUsers().filter { !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
             } else {
+                if (!settings.general.proxyMode) {
+                    return "PROXY_MODE IS NOT ENABLED!"
+                }
                 return SayanVanishAPI.getInstance().getBasicUsers().filter { it.serverId == type && !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
             }
         }

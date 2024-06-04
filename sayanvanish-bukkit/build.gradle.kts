@@ -26,8 +26,14 @@ tasks {
         applyShadowRelocation(Module.BUKKIT)
     }
 
+    java {
+        if (gradle.startParameter.getTaskNames().isNotEmpty() && gradle.startParameter.getTaskNames().contains("runServer")) {
+            toolchain.languageVersion = JavaLanguageVersion.of(21)
+        }
+    }
+
     runServer {
-        minecraftVersion("1.20.4")
+        minecraftVersion("1.20.6")
 
         downloadPlugins {
             url("https://download.luckperms.net/1539/bukkit/loader/LuckPerms-Bukkit-5.4.126.jar")

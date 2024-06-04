@@ -125,7 +125,6 @@ open class BukkitUser(
     fun showUser(target: Player) {
         player()?.let { player ->
             target.showPlayer(plugin, player)
-            NMSUtils.sendPacket(target, PacketUtils.getAddEntityPacket(NMSUtils.getServerPlayer(player)))
         }
     }
 

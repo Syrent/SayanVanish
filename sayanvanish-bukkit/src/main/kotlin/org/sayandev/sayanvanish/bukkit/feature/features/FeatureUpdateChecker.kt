@@ -85,7 +85,10 @@ class FeatureUpdateChecker(
     private fun send(sender: CommandSender) {
         if (latestRelease == null || latestSnapshot == null) return
         var normalCurrentVersion = plugin.description.version
-        normalCurrentVersion = normalCurrentVersion.removeSuffix("-" + normalCurrentVersion.split("build.")[1].split("-")[1])
+        val build = normalCurrentVersion.split("build.").getOrNull(1)?.split("-")?.getOrNull(1)
+        if (build != null) {
+            normalCurrentVersion = normalCurrentVersion.removeSuffix("-$build")
+        }
         if (latestRelease!!.name == plugin.description.version || latestSnapshot!!.name == normalCurrentVersion) return
 
         for (line in content) {

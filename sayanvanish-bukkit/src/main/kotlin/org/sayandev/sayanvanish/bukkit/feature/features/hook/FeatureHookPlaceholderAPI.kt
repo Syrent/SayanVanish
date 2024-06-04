@@ -63,7 +63,7 @@ private class HookPlaceholderAPI : PlaceholderExpansion() {
 
         if (params.startsWith("online_")) {
             val type = params.substring(7)
-            val vanishedOnlineUsers = SayanVanishBukkitAPI.getInstance().getUsers { user -> user.isVanished && user.isOnline }
+            val vanishedOnlineUsers = SayanVanishBukkitAPI.getInstance().getUsers(false).filter { user -> user.isVanished && user.isOnline }
 
             return if (type.equals("here", true)) {
                 onlinePlayers.filter { onlinePlayer -> !vanishedOnlineUsers.map { vanishedOnlineUser -> vanishedOnlineUser.username }.contains(onlinePlayer.name) }.size.toString()
@@ -71,12 +71,12 @@ private class HookPlaceholderAPI : PlaceholderExpansion() {
                 if (!settings.general.proxyMode) {
                     return "PROXY_MODE IS NOT ENABLED!"
                 }
-                return SayanVanishAPI.getInstance().getBasicUsers().filter { !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
+                return SayanVanishAPI.getInstance().getBasicUsers(false).filter { !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
             } else {
                 if (!settings.general.proxyMode) {
                     return "PROXY_MODE IS NOT ENABLED!"
                 }
-                return SayanVanishAPI.getInstance().getBasicUsers().filter { it.serverId == type && !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
+                return SayanVanishAPI.getInstance().getBasicUsers(false).filter { it.serverId == type && !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
             }
         }
 

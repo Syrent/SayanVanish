@@ -1,5 +1,7 @@
 package org.sayandev
 
+const val stickynoteVersion = "1.0.35"
+
 val paperApi = Dependency(
     group = "io.papermc.paper",
     artifact = "paper-api",
@@ -110,8 +112,6 @@ val placeholderAPI = Dependency(
     type = Dependency.Type.COMPILE_ONLY,
     modules = listOf(Module.BUKKIT)
 )
-
-const val stickynoteVersion = "1.0.34"
 
 val stickynoteCore = Dependency(
     group = "org.sayandev",

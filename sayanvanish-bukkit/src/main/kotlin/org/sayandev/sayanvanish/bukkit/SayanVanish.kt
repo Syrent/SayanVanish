@@ -2,15 +2,12 @@ package org.sayandev.sayanvanish.bukkit
 
 import com.alessiodp.libby.BukkitLibraryManager
 import com.alessiodp.libby.Library
-import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.java.JavaPlugin
 import org.sayandev.sayanvanish.BuildConstants
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.database.DatabaseMethod
 import org.sayandev.sayanvanish.api.database.databaseConfig
 import org.sayandev.sayanvanish.api.database.sql.SQLConfig
-import org.sayandev.sayanvanish.api.feature.Features
-import org.sayandev.sayanvanish.api.feature.RegisteredFeatureHandler
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.sayanvanish.bukkit.command.SayanVanishCommand
 import org.sayandev.sayanvanish.bukkit.config.LanguageConfig
@@ -20,8 +17,6 @@ import org.sayandev.stickynote.bukkit.StickyNote
 import org.sayandev.stickynote.bukkit.WrappedStickyNotePlugin
 import org.sayandev.stickynote.bukkit.pluginDirectory
 import org.sayandev.stickynote.bukkit.runAsync
-import org.sayandev.stickynote.core.configuration.Config
-import java.io.File
 
 open class SayanVanish : JavaPlugin() {
 

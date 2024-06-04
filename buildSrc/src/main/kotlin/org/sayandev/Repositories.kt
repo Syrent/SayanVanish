@@ -1,5 +1,14 @@
 package org.sayandev
 
+val paperApi = Dependency(
+    group = "io.papermc.paper",
+    artifact = "paper-api",
+    version = "1.20.6-R0.1-SNAPSHOT",
+    relocation = null,
+    type = Dependency.Type.COMPILE_ONLY,
+    modules = listOf(Module.BUKKIT)
+)
+
 val foliaAPI = Dependency(
     group = "dev.folia",
     artifact = "folia-api",
@@ -194,6 +203,7 @@ val repositories = listOf(
         id = "papermc",
         repos = listOf("https://repo.papermc.io/repository/maven-public/"),
         dependencies = listOf(
+            paperApi,
             foliaAPI,
             velocityAPI,
             velocityAPIAnnotation,

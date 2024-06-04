@@ -8,7 +8,7 @@ plugins {
     kotlin("jvm") version "2.0.0"
     `java-library`
     `maven-publish`
-    id("io.github.goooler.shadow") version "8.1.7"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.papermc.hangar-publish-plugin") version "0.1.2"
     id("com.modrinth.minotaur") version "2.8.7"
 }
@@ -52,7 +52,7 @@ allprojects {
     plugins.apply("java-library")
     plugins.apply("maven-publish")
     plugins.apply("kotlin")
-    plugins.apply("io.github.goooler.shadow")
+    plugins.apply("com.github.johnrengelman.shadow")
 
     repositories {
         mavenCentral()
@@ -77,7 +77,7 @@ subprojects {
     java {
         withSourcesJar()
 
-        toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+        disableAutoTargetJvm()
     }
 
     dependencies {
@@ -87,10 +87,6 @@ subprojects {
     tasks {
         jar {
             archiveClassifier.set("unshaded")
-        }
-
-        kotlin {
-            jvmToolchain(17)
         }
 
         build {

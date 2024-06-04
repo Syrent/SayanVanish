@@ -18,7 +18,7 @@ import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.sayanvanish.bukkit.utils.ServerUtils
 import org.sayandev.stickynote.bukkit.command.StickyCommand
-import org.sayandev.stickynote.bukkit.command.interfaces.SenderExtension
+import org.sayandev.stickynote.bukkit.command.StickySender
 import org.sayandev.stickynote.bukkit.pluginDirectory
 import org.sayandev.stickynote.bukkit.runAsync
 import org.sayandev.stickynote.bukkit.runSync
@@ -41,13 +41,13 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
         .permission(constructBasePermission("vanish"))
         .optional("player", OfflinePlayerParser.offlinePlayerParser())
         .flag(
-            CommandFlag.builder<SenderExtension?>("state").withComponent(
-                CommandComponent.builder<SenderExtension, String>("state", StringParser.stringParser())
+            CommandFlag.builder<StickySender>("state").withComponent(
+                CommandComponent.builder<StickySender, String>("state", StringParser.stringParser())
                     .suggestionProvider { _, _ ->
                         CompletableFuture.completedFuture(listOf("on", "off").map { Suggestion.suggestion(it) })
                     })
         )
-        .flag(CommandFlag.builder<SenderExtension?>("silent").withAliases("s"))
+        .flag(CommandFlag.builder<StickySender?>("silent").withAliases("s"))
         .handler { context ->
             val sender = context.sender().bukkitSender()
             val target = context.optional<OfflinePlayer>("player")
@@ -194,7 +194,7 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
             .permission(constructBasePermission("feature"))
             .required(
                 "feature",
-                CommandComponent.builder<SenderExtension, String>("state", StringParser.stringParser())
+                CommandComponent.builder<StickySender, String>("state", StringParser.stringParser())
                     .suggestionProvider { _, _ ->
                         CompletableFuture.completedFuture(Features.features.map { Suggestion.suggestion(it.id) })
                     }
@@ -269,14 +269,14 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
             .permission(constructBasePermission("feature.update"))
             .required(
                 "option",
-                CommandComponent.builder<SenderExtension, String>("state", StringParser.stringParser())
+                CommandComponent.builder<StickySender, String>("state", StringParser.stringParser())
                     .suggestionProvider { context, _ ->
                         val feature = Features.features.find { it.id == context.get<String>("feature") } ?: return@suggestionProvider CompletableFuture.completedFuture(emptyList())
                         CompletableFuture.completedFuture(feature::class.java.declaredFields.filter { it.isAnnotationPresent(Configurable::class.java) }.map { Suggestion.suggestion(it.name) })
                     }
             )
             .required("value",
-                CommandComponent.builder<SenderExtension, String>("value", StringParser.stringParser(StringParser.StringMode.QUOTED))
+                CommandComponent.builder<StickySender, String>("value", StringParser.stringParser(StringParser.StringMode.QUOTED))
                     .suggestionProvider { context, _ ->
                         val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
                             return@suggestionProvider CompletableFuture.completedFuture(emptyList())

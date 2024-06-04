@@ -24,6 +24,7 @@ import org.sayandev.stickynote.bukkit.runAsync
 import org.sayandev.stickynote.bukkit.runSync
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendMessage
+import org.sayandev.stickynote.bukkit.warn
 import org.sayandev.stickynote.lib.incendo.cloud.bukkit.parser.OfflinePlayerParser
 import org.sayandev.stickynote.lib.incendo.cloud.component.CommandComponent
 import org.sayandev.stickynote.lib.incendo.cloud.parser.flag.CommandFlag

@@ -57,8 +57,8 @@ allprojects {
     plugins.apply("com.github.johnrengelman.shadow")
 
     repositories {
-        mavenCentral()
         mavenLocal()
+        mavenCentral()
     }
 
     tasks {

@@ -1,6 +1,6 @@
 package org.sayandev
 
-const val stickynoteVersion = "1.0.35"
+const val stickynoteVersion = "1.0.36"
 
 val paperApi = Dependency(
     group = "io.papermc.paper",

@@ -57,7 +57,7 @@ bukkit {
     softDepend = listOf(
         "Essentials",
         "squaremap",
-        "LcukPerms",
+        "LuckPerms",
         "PlaceholderAPI",
         "Citizens"
     )

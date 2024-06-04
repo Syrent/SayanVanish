@@ -41,7 +41,7 @@ jobs:
         env:
           HANGAR_API_TOKEN: ${{ secrets.HANGAR_API_TOKEN }}
           HANGAR_BUILD_CHANNEL: Snapshot
-          HANGAR_CHANGELOG: ${{ github.event.release.body }}
+          # HANGAR_CHANGELOG: ${{ github.event.release.body }}
           REPO_SAYAN_USER: ${{ secrets.REPO_SAYAN_USER }}
           REPO_SAYAN_TOKEN: ${{ secrets.REPO_SAYAN_TOKEN }}
         run: ./gradlew build publishPluginPublicationToHangar --stacktrace

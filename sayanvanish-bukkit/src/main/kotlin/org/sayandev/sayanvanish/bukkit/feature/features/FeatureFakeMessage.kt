@@ -3,8 +3,10 @@ package org.sayandev.sayanvanish.bukkit.feature.features
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
@@ -29,6 +31,8 @@ class FeatureFakeMessage(
     @EventHandler
     private fun onJoin(event: PlayerJoinEvent) {
         if (!isActive()) return
+        val user = event.player.user(false) ?: return
+        if (!user.isVanished || user.hasPermission(Permission.VANISH_ON_JOIN)) return
         if (disableJoinMessageIfVanished) {
             event.joinMessage = null
         }
@@ -37,6 +41,8 @@ class FeatureFakeMessage(
     @EventHandler
     private fun onQuit(event: PlayerQuitEvent) {
         if (!isActive()) return
+        val user = event.player.user() ?: return
+        if (!user.isVanished) return
         if (disableQuitMessageIfVanished) {
             event.quitMessage = null
         }

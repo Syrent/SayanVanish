@@ -1,8 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import com.modrinth.minotaur.ModrinthExtension
-import com.modrinth.minotaur.TaskModrinthUpload
 import io.papermc.hangarpublishplugin.model.Platforms
-import org.sayandev.Module
 import org.sayandev.getRelocations
 import java.io.ByteArrayOutputStream
 

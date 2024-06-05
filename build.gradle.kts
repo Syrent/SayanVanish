@@ -21,7 +21,7 @@ fun executeGitCommand(vararg command: String): String {
         commandLine = listOf("git", *command)
         standardOutput = byteOut
     }
-    return byteOut.toString(Charsets.UTF_8.name()).trim()
+    return byteOut.toString(Charsets.UTF_8).trim()
 }
 
 fun latestCommitMessage(): String {

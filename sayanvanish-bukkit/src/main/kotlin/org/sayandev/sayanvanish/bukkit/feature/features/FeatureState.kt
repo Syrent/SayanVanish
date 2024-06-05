@@ -23,8 +23,8 @@ class FeatureState(
     @Configurable val remember: Boolean = true,
     @Configurable val vanishOnJoin: Boolean = false,
     @Configurable val reappearOnQuit: Boolean = false,
-    @Configurable val checkPermissionOnQuit: Boolean = false,
-    @Configurable val checkPermissionOnJoin: Boolean = false,
+    @Configurable val checkPermissionOnQuit: Boolean = true,
+    @Configurable val checkPermissionOnJoin: Boolean = true,
 ) : ListenedFeature("state") {
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -54,7 +54,7 @@ class FeatureState(
 
         if (checkPermissionOnJoin && !user.hasPermission(Permission.VANISH)) {
             user.unVanish()
-            user.save()
+            user.delete()
             return
         }
 

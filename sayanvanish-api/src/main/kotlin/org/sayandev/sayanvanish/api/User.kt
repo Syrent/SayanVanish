@@ -60,6 +60,10 @@ interface User : BasicUser {
         SayanVanishAPI.getInstance().addUser(this)
     }
 
+    fun delete() {
+        SayanVanishAPI.getInstance().removeUser(uniqueId)
+    }
+
     override fun toJson(): String {
         val json = JsonObject()
         json.addProperty("unique-id", uniqueId.toString())

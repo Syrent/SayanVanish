@@ -1,6 +1,7 @@
 package org.sayandev.sayanvanish.bukkit.feature.features
 
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.sayandev.sayanvanish.api.Permission
@@ -28,7 +29,7 @@ class FeatureFakeMessage(
     @Configurable val disableQuitMessageIfVanished: Boolean = true,
 ) : ListenedFeature("fake_message") {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     private fun onJoin(event: PlayerJoinEvent) {
         if (!isActive()) return
         val user = event.player.user(false) ?: return
@@ -38,8 +39,28 @@ class FeatureFakeMessage(
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     private fun onQuit(event: PlayerQuitEvent) {
+        if (!isActive()) return
+        val user = event.player.user() ?: return
+        if (!user.isVanished) return
+        if (disableQuitMessageIfVanished) {
+            event.quitMessage = null
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    private fun onJoinLast(event: PlayerJoinEvent) {
+        if (!isActive()) return
+        val user = event.player.user(false) ?: return
+        if (!user.isVanished || user.hasPermission(Permission.VANISH_ON_JOIN)) return
+        if (disableJoinMessageIfVanished) {
+            event.joinMessage = null
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    private fun onQuitLast(event: PlayerQuitEvent) {
         if (!isActive()) return
         val user = event.player.user() ?: return
         if (!user.isVanished) return

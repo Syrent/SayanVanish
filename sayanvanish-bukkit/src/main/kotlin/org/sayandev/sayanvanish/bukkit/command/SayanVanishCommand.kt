@@ -313,7 +313,22 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
                 val value = context.get<String>("value")
                 field.isAccessible = true
                 try {
-                    field.set(feature, value)
+                    if (value.toDoubleOrNull() != null) {
+                        val parsedValue = value.toDouble()
+                        if (field.type == Int::class.java) {
+                            field.set(feature, parsedValue.toInt())
+                        } else if (field.type == Float::class.java) {
+                            field.set(feature, parsedValue.toFloat())
+                        } else {
+                            field.set(feature, parsedValue)
+                        }
+                    } else {
+                        if (value.toBooleanStrictOrNull() != null) {
+                            field.set(feature, value.toBoolean())
+                        } else {
+                            field.set(feature, value)
+                        }
+                    }
                 } catch (_: Exception) {
                     sender.sendMessage(language.feature.invalidValue.component(Placeholder.unparsed("values", field.type.simpleName ?: "N/A")))
                     return@handler

@@ -1,0 +1,9 @@
+# .github/release.yml
+
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+  categories:
+    - title: You can download the plugin from (hangar)[https://hangar.papermc.io/Syrent/SayanVanish] and (modrinth)[https://modrinth.com/plugin/sayanvanish]
+      labels: '*'

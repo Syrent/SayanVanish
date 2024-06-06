@@ -1,9 +1,9 @@
 ![SayanVanish](https://github.com/Syrent/SayanVanish/assets/56670179/12d1c62c-e901-427e-bec2-97f59fe45703)
 | Download Plugin | Link |
 |-----------------|------|
-| Hangar          | [hangar.papermc.io/syrent/sayanvanish](https://hangar.papermc.io/syrent/sayanvanish) |
+| Hangar (Recommended)          | [hangar.papermc.io/syrent/sayanvanish](https://hangar.papermc.io/syrent/sayanvanish) |
 | Modrinth        | [modrinth.com/plugin/sayanvanish](https://modrinth.com/plugin/sayanvanish) |
-| Spoigot          | [spigotmc.org/resources/sayanvanish-1-8-1-20-6.105992/](https://www.spigotmc.org/resources/sayanvanish-1-8-1-20-6.105992/) |
+| Spigot          | [spigotmc.org/resources/sayanvanish-1-8-1-20-6.105992/](https://www.spigotmc.org/resources/sayanvanish-1-8-1-20-6.105992/) |
 
 # Introduction
 

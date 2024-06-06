@@ -33,7 +33,7 @@ class FeatureFakeMessage(
     private fun onJoin(event: PlayerJoinEvent) {
         if (!isActive()) return
         val user = event.player.user(false) ?: return
-        if (!user.isVanished || user.hasPermission(Permission.VANISH_ON_JOIN)) return
+        if (!user.isVanished && !user.hasPermission(Permission.VANISH_ON_JOIN)) return
         if (disableJoinMessageIfVanished) {
             event.joinMessage = null
         }
@@ -53,7 +53,7 @@ class FeatureFakeMessage(
     private fun onJoinLast(event: PlayerJoinEvent) {
         if (!isActive()) return
         val user = event.player.user(false) ?: return
-        if (!user.isVanished || user.hasPermission(Permission.VANISH_ON_JOIN)) return
+        if (!user.isVanished && !user.hasPermission(Permission.VANISH_ON_JOIN)) return
         if (disableJoinMessageIfVanished) {
             event.joinMessage = null
         }

@@ -3,6 +3,7 @@ package org.sayandev.sayanvanish.bukkit.command
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.database.DatabaseConfig
 import org.sayandev.sayanvanish.api.database.databaseConfig
@@ -55,7 +56,12 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
             val state = context.flags().get<String>("state")
 
             if (!target.isPresent && sender !is Player) {
-                sender.sendMessage("<red>You have to provide a player".component())
+                sender.sendMessage(language.general.haveToProvidePlayer.component())
+                return@handler
+            }
+
+            if (target.isPresent && !sender.hasPermission(Permission.VANISH_OTHERS.permission())) {
+                sender.sendMessage(language.general.dontHavePermission.component())
                 return@handler
             }
 

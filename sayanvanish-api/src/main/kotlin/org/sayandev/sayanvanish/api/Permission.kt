@@ -2,6 +2,7 @@ package org.sayandev.sayanvanish.api
 
 enum class Permission(val value: String) {
     VANISH("vanish.use"),
+    VANISH_OTHERS("commands.vanish.others"),
     VANISH_ON_JOIN("action.vanish.onjoin"),
     INVULNERABLE("action.vanish.invulnerable"),
     FLY("action.vanish.fly");

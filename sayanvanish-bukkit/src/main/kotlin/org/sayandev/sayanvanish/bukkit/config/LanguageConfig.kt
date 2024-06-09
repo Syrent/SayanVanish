@@ -23,6 +23,8 @@ data class LanguageConfig(
     data class General(
         val reloaded: String = "<green>Plugin successfully reloaded. <red>Please note that some changes may require a server restart to take effect. Subsequent reloads may cause issues.",
         val playerNotFound: String = "<red>Player not found",
+        val haveToProvidePlayer: String = "<red>You have to provide a player.",
+        val dontHavePermission: String = "<red>You don't have permission to do that.",
     )
 
     @ConfigSerializable

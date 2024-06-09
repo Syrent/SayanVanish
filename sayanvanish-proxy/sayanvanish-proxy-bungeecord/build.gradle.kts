@@ -16,6 +16,8 @@ repositories {
 
 dependencies {
     applyDependencies(Module.BUNGEECORD)
+
+    api(project(":sayanvanish-proxy"))
 }
 
 tasks {

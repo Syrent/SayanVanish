@@ -17,7 +17,6 @@ repositories {
 dependencies {
     applyDependencies(Module.VELOCITY)
 
-
     api(project(":sayanvanish-proxy"))
 }
 

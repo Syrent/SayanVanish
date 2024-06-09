@@ -65,6 +65,8 @@ allprojects {
     repositories {
         mavenLocal()
         mavenCentral()
+
+        maven("https://repo.sayandev.org/snapshots")
     }
 
     tasks {

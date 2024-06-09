@@ -1,9 +1,9 @@
 package org.sayandev.sayanvanish.api
 
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import org.sayandev.sayanvanish.api.exception.UnsupportedPlatformException
 import org.sayandev.stickynote.core.utils.Gson
-import org.sayandev.stickynote.lib.gson.JsonObject
-import org.sayandev.stickynote.lib.gson.JsonParser
 import java.util.*
 import kotlin.reflect.KClass
 

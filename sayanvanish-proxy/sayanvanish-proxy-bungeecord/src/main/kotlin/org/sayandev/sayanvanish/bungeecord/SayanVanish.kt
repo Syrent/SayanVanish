@@ -1,24 +1,24 @@
 package org.sayandev.sayanvanish.bungeecord
 
-import com.alessiodp.libby.BungeeLibraryManager
-import com.alessiodp.libby.Library
 import net.md_5.bungee.api.plugin.Plugin
 import org.sayandev.sayanvanish.BuildConstants
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.bungeecord.api.SayanVanishBungeeAPI
 import org.sayandev.sayanvanish.proxy.config.settings
 import org.sayandev.sayanvanish.velocity.VanishManager
-import org.sayandev.stickynote.bungeecord.WrappedStickyNotePlugin
 import org.sayandev.stickynote.bungeecord.dataDirectory
 import org.sayandev.stickynote.bungeecord.registerListener
 import org.sayandev.stickynote.bungeecord.server
+import org.sayandev.stickynote.lib.libby.BungeeLibraryManager
+import org.sayandev.stickynote.lib.libby.Library
+import org.sayandev.stickynote.loader.bungee.StickyNoteBungeeLoader
 
 class SayanVanish : Plugin() {
 
     override fun onEnable() {
         downloadLibraries()
 
-        WrappedStickyNotePlugin(this).initialize()
+        StickyNoteBungeeLoader.load(this)
         Platform.setAndRegister(Platform("bungeecord", logger, dataDirectory))
 
         SayanVanishBungeeAPI()

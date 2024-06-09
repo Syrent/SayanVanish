@@ -1,6 +1,6 @@
 package org.sayandev.sayanvanish.api.utils
 
-import org.sayandev.stickynote.lib.gson.JsonParser
+import com.google.gson.JsonParser
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader

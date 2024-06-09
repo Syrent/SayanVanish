@@ -1,11 +1,14 @@
 import org.sayandev.*
 import org.sayandev.applyShadowRelocation
+import org.sayandev.plugin.StickyNoteModules
 
 plugins {
     id("xyz.jpenilla.run-velocity") version "2.3.0"
 }
 
-generateTemplate(Module.VELOCITY)
+stickynote {
+    modules(StickyNoteModules.VELOCITY)
+}
 
 repositories {
     applyRepositories(Module.VELOCITY)

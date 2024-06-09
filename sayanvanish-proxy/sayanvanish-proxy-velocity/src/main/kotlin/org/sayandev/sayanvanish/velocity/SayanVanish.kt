@@ -1,17 +1,16 @@
 package org.sayandev.sayanvanish.velocity
 
-import com.alessiodp.libby.Library
-import com.alessiodp.libby.VelocityLibraryManager
 import com.google.inject.Inject
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.plugin.annotation.DataDirectory
 import com.velocitypowered.api.proxy.ProxyServer
-import org.sayandev.sayanvanish.BuildConstants
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.proxy.config.settings
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
-import org.sayandev.stickynote.velocity.WrappedStickyNotePlugin
+import org.sayandev.stickynote.lib.libby.Library
+import org.sayandev.stickynote.lib.libby.VelocityLibraryManager
+import org.sayandev.stickynote.loader.velocity.StickyNoteVelocityLoader
 import org.sayandev.stickynote.velocity.registerListener
 import org.slf4j.LoggerFactory
 import java.nio.file.Path
@@ -27,7 +26,8 @@ class SayanVanish @Inject constructor(
     fun onProxyInitialize(event: ProxyInitializeEvent) {
         downloadLibraries()
 
-        WrappedStickyNotePlugin(this, PLUGIN_ID, server, logger, dataDirectory).initialize()
+        StickyNoteVelocityLoader.load(this, PLUGIN_ID, server, logger, dataDirectory)
+
         Platform.setAndRegister(Platform("velocity", logger, dataDirectory.toFile()))
 
         SayanVanishVelocityAPI()
@@ -47,7 +47,6 @@ class SayanVanish @Inject constructor(
         val libraryManager = VelocityLibraryManager(this, LoggerFactory.getLogger(this::class.java), dataDirectory, server.pluginManager)
         libraryManager.addMavenLocal()
         libraryManager.addMavenCentral()
-        libraryManager.addRepository("https://repo.sayandev.org/snapshots")
         try {
             Class.forName("com.mysql.cj.jdbc.Driver")
         } catch (_: Exception) {
@@ -70,22 +69,6 @@ class SayanVanish @Inject constructor(
                     .build()
             )
         }
-        libraryManager.loadLibrary(
-            Library.builder()
-                .groupId("org{}sayandev")
-                .artifactId("stickynote-core")
-                .version(BuildConstants.STICKYNOTE_VERSION)
-                .relocate("org{}sayandev{}stickynote", "org{}sayandev{}sayanvanish{}lib{}stickynote")
-                .build()
-        )
-        libraryManager.loadLibrary(
-            Library.builder()
-                .groupId("org{}sayandev")
-                .artifactId("stickynote-proxy-velocity")
-                .version(BuildConstants.STICKYNOTE_VERSION)
-                .relocate("org{}sayandev{}stickynote", "org{}sayandev{}sayanvanish{}lib{}stickynote")
-                .build()
-        )
     }
 
     companion object {

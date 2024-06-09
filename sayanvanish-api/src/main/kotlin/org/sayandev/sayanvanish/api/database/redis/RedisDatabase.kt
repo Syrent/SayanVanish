@@ -4,7 +4,9 @@ import org.sayandev.sayanvanish.api.BasicUser
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.User.Companion.cast
 import org.sayandev.sayanvanish.api.database.Database
-import redis.clients.jedis.*
+import org.sayandev.stickynote.lib.jedis.clients.jedis.DefaultJedisClientConfig
+import org.sayandev.stickynote.lib.jedis.clients.jedis.HostAndPort
+import org.sayandev.stickynote.lib.jedis.clients.jedis.JedisPooled
 import java.util.*
 import java.util.function.Consumer
 import kotlin.reflect.KClass
@@ -35,7 +37,6 @@ class RedisDatabase<U : User>(
                 JedisPooled(address, config)
             }
         }
-        redis.set("test", "test1")
     }
 
     override fun connect() {

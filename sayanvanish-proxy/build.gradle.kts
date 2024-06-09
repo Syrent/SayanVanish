@@ -1,11 +1,12 @@
 import org.sayandev.*
 import org.sayandev.applyShadowRelocation
-
-dependencies {
-    implementation(kotlin("stdlib", version = "2.0.0"))
-}
+import org.sayandev.plugin.StickyNoteModules
 
 allprojects {
+    stickynote {
+        modules(StickyNoteModules.PROXY)
+    }
+
     repositories {
         applyRepositories(Module.VELOCITY)
         applyRepositories(Module.BUNGEECORD)
@@ -16,8 +17,9 @@ allprojects {
     }
 }
 
+/*
 subprojects {
     dependencies {
         compileOnlyApi(project(":sayanvanish-proxy"))
     }
-}
+}*/

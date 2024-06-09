@@ -1,7 +1,5 @@
 package org.sayandev
 
-const val stickynoteVersion = "1.0.38"
-
 val paperApi = Dependency(
     group = "io.papermc.paper",
     artifact = "paper-api",
@@ -56,36 +54,6 @@ val essentialsX = Dependency(
     modules = listOf(Module.BUKKIT)
 )
 
-val libbyBukkit = Dependency(
-    group = "com.alessiodp.libby",
-    artifact = "libby-bukkit",
-    version = "2.0.0-SNAPSHOT",
-    relocation = Relocation("com.alessiodp.libby", "org.sayandev.stickynote.lib.libby"),
-    type = Dependency.Type.IMPLEMENTATION,
-    modules = listOf(Module.BUKKIT),
-    shadeMethod = Dependency.ShadeMethod.FORCE
-)
-
-val libbyVelocity = Dependency(
-    group = "com.alessiodp.libby",
-    artifact = "libby-velocity",
-    version = "2.0.0-SNAPSHOT",
-    relocation = Relocation("com.alessiodp.libby", "org.sayandev.stickynote.lib.libby"),
-    type = Dependency.Type.IMPLEMENTATION,
-    modules = listOf(Module.VELOCITY),
-    shadeMethod = Dependency.ShadeMethod.FORCE
-)
-
-val libbyBungee = Dependency(
-    group = "com.alessiodp.libby",
-    artifact = "libby-bungee",
-    version = "2.0.0-SNAPSHOT",
-    relocation = Relocation("com.alessiodp.libby", "org.sayandev.stickynote.lib.libby"),
-    type = Dependency.Type.IMPLEMENTATION,
-    modules = listOf(Module.BUNGEECORD),
-    shadeMethod = Dependency.ShadeMethod.FORCE
-)
-
 val citizens = Dependency(
     group = "net.citizensnpcs",
     artifact = "citizensapi",
@@ -111,51 +79,6 @@ val placeholderAPI = Dependency(
     relocation = null,
     type = Dependency.Type.COMPILE_ONLY,
     modules = listOf(Module.BUKKIT)
-)
-
-val stickynoteCore = Dependency(
-    group = "org.sayandev",
-    artifact = "stickynote-core",
-    version = stickynoteVersion,
-    relocation = Relocation("org.sayandev.stickynote", "org.sayandev.sayanvanish.lib.stickynote"),
-    type = Dependency.Type.COMPILE_ONLY_API,
-    modules = listOf(Module.API, Module.BUKKIT, Module.VELOCITY, Module.BUNGEECORD)
-)
-
-val stickynoteBukkit = Dependency(
-    group = "org.sayandev",
-    artifact = "stickynote-bukkit",
-    version = stickynoteVersion,
-    relocation = Relocation("org.sayandev.stickynote", "org.sayandev.sayanvanish.lib.stickynote"),
-    type = Dependency.Type.COMPILE_ONLY_API,
-    modules = listOf(Module.BUKKIT)
-)
-
-val stickynoteBukkitNMS = Dependency(
-    group = "org.sayandev",
-    artifact = "stickynote-bukkit-nms",
-    version = stickynoteVersion,
-    relocation = Relocation("org.sayandev.stickynote", "org.sayandev.sayanvanish.lib.stickynote"),
-    type = Dependency.Type.COMPILE_ONLY_API,
-    modules = listOf(Module.BUKKIT)
-)
-
-val stickynoteProxyVelocity = Dependency(
-    group = "org.sayandev",
-    artifact = "stickynote-proxy-velocity",
-    version = stickynoteVersion,
-    relocation = Relocation("org.sayandev.stickynote", "org.sayandev.sayanvanish.lib.stickynote"),
-    type = Dependency.Type.COMPILE_ONLY_API,
-    modules = listOf(Module.VELOCITY)
-)
-
-val stickynoteProxyBungeecord = Dependency(
-    group = "org.sayandev",
-    artifact = "stickynote-proxy-bungeecord",
-    version = stickynoteVersion,
-    relocation = Relocation("org.sayandev.stickynote", "org.sayandev.sayanvanish.lib.stickynote"),
-    type = Dependency.Type.COMPILE_ONLY_API,
-    modules = listOf(Module.BUNGEECORD)
 )
 
 val enhancedVelocity = Dependency(
@@ -184,11 +107,6 @@ val repositories = listOf(
             "https://repo.sayandev.org/releases"
         ),
         dependencies = listOf(
-            stickynoteCore,
-            stickynoteBukkit,
-            stickynoteBukkitNMS,
-            stickynoteProxyVelocity,
-            stickynoteProxyBungeecord,
             enhancedVelocity
         )
     ),
@@ -235,15 +153,6 @@ val repositories = listOf(
         repos = listOf("https://oss.sonatype.org/content/repositories/snapshots"),
         dependencies = listOf(
             bungeecordAPI,
-        )
-    ),
-    Repository(
-        id = "sonatype-snapshots-s01",
-        repos = listOf("https://s01.oss.sonatype.org/content/repositories/snapshots/"),
-        dependencies = listOf(
-            libbyBukkit,
-            libbyVelocity,
-            libbyBungee,
         )
     ),
     Repository(

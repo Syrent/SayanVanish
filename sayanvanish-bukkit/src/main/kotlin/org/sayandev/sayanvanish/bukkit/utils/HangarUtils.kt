@@ -1,7 +1,7 @@
 package org.sayandev.sayanvanish.bukkit.utils
 
+import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
-import org.sayandev.stickynote.lib.gson.Gson
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection

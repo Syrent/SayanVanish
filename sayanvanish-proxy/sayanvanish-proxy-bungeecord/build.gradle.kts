@@ -1,11 +1,14 @@
 import org.sayandev.*
 import org.sayandev.applyShadowRelocation
+import org.sayandev.plugin.StickyNoteModules
 
 plugins {
     id("net.minecrell.plugin-yml.bungee") version "0.6.0"
 }
 
-generateTemplate(Module.BUNGEECORD)
+stickynote {
+    modules(StickyNoteModules.BUNGEECORD)
+}
 
 repositories {
     applyRepositories(Module.BUNGEECORD)

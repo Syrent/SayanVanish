@@ -1,5 +1,5 @@
 import org.sayandev.*
-import org.sayandev.applyShadowRelocation
+import org.sayandev.plugin.StickyNoteModules
 
 plugins {
     id("xyz.jpenilla.run-paper") version "2.3.0"
@@ -7,8 +7,9 @@ plugins {
     id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
 }
 
-generateRepositoriesClass(Module.BUKKIT)
-generateTemplate(Module.BUKKIT)
+stickynote {
+    modules(StickyNoteModules.BUKKIT, StickyNoteModules.BUKKIT_NMS)
+}
 
 repositories {
     applyRepositories(Module.BUKKIT)
@@ -22,8 +23,18 @@ dependencies {
 }
 
 tasks {
+    jar {
+        manifest {
+            attributes["paperweight-mappings-namespace"] = "mojang"
+        }
+    }
+
     shadowJar {
         applyShadowRelocation(Module.BUKKIT)
+
+        manifest {
+            attributes["paperweight-mappings-namespace"] = "mojang"
+        }
     }
 
     java {
@@ -45,6 +56,8 @@ tasks {
     runPaper {
         folia.registerTask()
     }
+
+    paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION
 }
 
 bukkit {

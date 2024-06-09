@@ -1,6 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import io.papermc.hangarpublishplugin.model.Platforms
 import org.sayandev.getRelocations
+import org.sayandev.plugin.StickyNoteModules
 import java.io.ByteArrayOutputStream
 
 plugins {
@@ -10,6 +11,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.papermc.hangar-publish-plugin") version "0.1.2"
     id("com.modrinth.minotaur") version "2.8.7"
+    id("org.sayandev.stickynote") version "1.1.0"
 }
 
 val slug = findProperty("slug")!! as String
@@ -52,6 +54,13 @@ allprojects {
     plugins.apply("maven-publish")
     plugins.apply("kotlin")
     plugins.apply("com.github.johnrengelman.shadow")
+    plugins.apply("org.sayandev.stickynote")
+
+    stickynote {
+        loaderVersion(findProperty("stickynoteVersion")!! as String)
+        modules(StickyNoteModules.CORE)
+        useLoader(true)
+    }
 
     repositories {
         mavenLocal()
@@ -79,10 +88,6 @@ subprojects {
         disableAutoTargetJvm()
     }
 
-    dependencies {
-        compileOnly(kotlin("stdlib", version = "2.0.0"))
-    }
-
     tasks {
         jar {
             archiveClassifier.set("unshaded")
@@ -98,6 +103,10 @@ subprojects {
             destinationDirectory.set(file(rootProject.projectDir.path + "/bin"))
             from("LICENSE")
 //            minimize()
+        }
+
+        named("sourcesJar") {
+            dependsOn(createStickyNoteLoader)
         }
     }
 

@@ -1,7 +1,6 @@
 package org.sayandev.sayanvanish.bungeecord
 
 import net.md_5.bungee.api.plugin.Plugin
-import org.sayandev.sayanvanish.BuildConstants
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.bungeecord.api.SayanVanishBungeeAPI
 import org.sayandev.sayanvanish.proxy.config.settings
@@ -61,21 +60,5 @@ class SayanVanish : Plugin() {
                     .build()
             )
         }
-        libraryManager.loadLibrary(
-            Library.builder()
-                .groupId("org{}sayandev")
-                .artifactId("stickynote-core")
-                .version(BuildConstants.STICKYNOTE_VERSION)
-                .relocate("org{}sayandev{}stickynote", "org{}sayandev{}sayanvanish{}lib{}stickynote")
-                .build()
-        )
-        libraryManager.loadLibrary(
-            Library.builder()
-                .groupId("org{}sayandev")
-                .artifactId("stickynote-proxy-bungeecord")
-                .version(BuildConstants.STICKYNOTE_VERSION)
-                .relocate("org{}sayandev{}stickynote", "org{}sayandev{}sayanvanish{}lib{}stickynote")
-                .build()
-        )
     }
 }

@@ -87,6 +87,10 @@ class FeatureUpdateChecker(
             val snapshotVersion = latestSnapshot!!.name // eg: 1.1.0-SNAPSHOT-build.121
             val commitHash = currentVersion.split("-").last()
             if (currentVersion.removeSuffix("-${commitHash}") == snapshotVersion) return
+        } else {
+            val releaseVersion = latestRelease!!.name // eg: 1.0.1-263f0bf
+            val commitHash = currentVersion.split("-").last()
+            if (currentVersion.removeSuffix("-${commitHash}") == releaseVersion) return
         }
 
         for (line in content) {

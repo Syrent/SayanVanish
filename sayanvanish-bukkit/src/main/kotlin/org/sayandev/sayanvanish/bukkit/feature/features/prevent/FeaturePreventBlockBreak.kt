@@ -10,7 +10,7 @@ import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.Confi
 
 @RegisteredFeature
 @ConfigSerializable
-class FeaturePreventBlockBreak: ListenedFeature("prevent_block_break", category = FeatureCategories.PREVENTION) {
+class FeaturePreventBlockBreak: ListenedFeature("prevent_block_break", false, category = FeatureCategories.PREVENTION) {
 
     @EventHandler
     private fun onBlockBreak(event: BlockBreakEvent) {

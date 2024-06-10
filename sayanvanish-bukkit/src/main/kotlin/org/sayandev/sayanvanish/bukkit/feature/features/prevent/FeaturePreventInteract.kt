@@ -16,7 +16,7 @@ import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.Confi
 class FeaturePreventInteract(
     @Configurable val pressurePlateTrigger: Boolean = true,
     @Configurable val dripLeaf: Boolean = true,
-    @Configurable val interact: Boolean = true,
+    @Configurable val interact: Boolean = false,
 ) : ListenedFeature("prevent_interact_event", category = FeatureCategories.PREVENTION) {
 
     @EventHandler

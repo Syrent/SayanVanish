@@ -10,7 +10,7 @@ import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.Confi
 
 @RegisteredFeature
 @ConfigSerializable
-class FeaturePreventBlockPlace: ListenedFeature("prevent_block_place", category = FeatureCategories.PREVENTION) {
+class FeaturePreventBlockPlace: ListenedFeature("prevent_block_place", false, category = FeatureCategories.PREVENTION) {
 
     @EventHandler
     private fun onBlockPlace(event: BlockPlaceEvent) {

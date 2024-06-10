@@ -10,10 +10,7 @@ import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.sayanvanish.bukkit.utils.HangarUtils
 import org.sayandev.sayanvanish.bukkit.utils.VersionInfo
-import org.sayandev.stickynote.bukkit.log
-import org.sayandev.stickynote.bukkit.plugin
-import org.sayandev.stickynote.bukkit.runAsync
-import org.sayandev.stickynote.bukkit.runSync
+import org.sayandev.stickynote.bukkit.*
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendMessage
 import org.sayandev.stickynote.lib.kyori.adventure.text.Component
@@ -84,11 +81,11 @@ class FeatureUpdateChecker(
 
     private fun send(sender: CommandSender) {
         if (latestRelease == null || latestSnapshot == null) return
-        val currentVersion = plugin.description.version
+        val currentVersion = plugin.description.version // eg: 1.1.0-SNAPSHOT-build.121-ed8f2b2
         val isSnapshot = currentVersion.contains("SNAPSHOT")
         if (isSnapshot) {
-            val snapshotVersion = latestSnapshot!!.name
-            val commitHash = snapshotVersion.split("-").last()
+            val snapshotVersion = latestSnapshot!!.name // eg: 1.1.0-SNAPSHOT-build.121
+            val commitHash = currentVersion.split("-").last()
             if (currentVersion.removeSuffix("-${commitHash}") == snapshotVersion) return
         }
 

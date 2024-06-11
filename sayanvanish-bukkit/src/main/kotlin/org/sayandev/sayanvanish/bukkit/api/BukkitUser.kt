@@ -30,7 +30,15 @@ open class BukkitUser(
     override var currentOptions = VanishOptions.defaultOptions()
     override var isVanished = false
     override var isOnline: Boolean = false
-    override var vanishLevel: Int = 1
+    override var vanishLevel: Int
+        get() = player()?.let { player ->
+            player.effectivePermissions.map { it.permission }
+                .filter { it.startsWith("sayanvanish.level.") }.maxOfOrNull { it.split(".")[2].toInt() } ?: 0
+        } ?: 0
+        set(value) {
+            player()?.addAttachment(plugin, "sayanvanish.level.$value", true)
+        }
+
 
     fun stateText(isVanished: Boolean = this.isVanished) = if (isVanished) "<green>ON</green>" else "<red>OFF</red>"
 

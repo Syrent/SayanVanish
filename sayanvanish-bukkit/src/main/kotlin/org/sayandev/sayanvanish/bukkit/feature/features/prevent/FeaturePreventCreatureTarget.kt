@@ -39,7 +39,7 @@ class FeaturePreventCreatureTarget: ListenedFeature("prevent_creature_target", c
 
     override fun enable() {
         runSync({
-            if (isActive()) return@runSync
+            if (!isActive()) return@runSync
             for (player in SayanVanishBukkitAPI.getInstance().getVanishedUsers().mapNotNull { it.player() }) {
                 if (StickyNote.isFolia()) {
                     // TODO: Creature modification cannot be off region thread

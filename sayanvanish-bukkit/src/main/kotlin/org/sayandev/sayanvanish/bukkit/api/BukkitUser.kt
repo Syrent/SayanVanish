@@ -8,12 +8,16 @@ import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishOptions
+import org.sayandev.sayanvanish.api.feature.Features
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrCreateUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.config.language
-import org.sayandev.stickynote.bukkit.*
+import org.sayandev.sayanvanish.bukkit.feature.features.FeatureLevel
+import org.sayandev.stickynote.bukkit.onlinePlayers
+import org.sayandev.stickynote.bukkit.plugin
+import org.sayandev.stickynote.bukkit.server
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendActionbar
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendMessage
@@ -30,13 +34,15 @@ open class BukkitUser(
     override var currentOptions = VanishOptions.defaultOptions()
     override var isVanished = false
     override var isOnline: Boolean = false
-    override var vanishLevel: Int
-        get() = player()?.let { player ->
-            player.effectivePermissions.map { it.permission }
-                .filter { it.startsWith("sayanvanish.level.") }.maxOfOrNull { it.split(".")[2].toInt() } ?: 0
-        } ?: 0
-        set(value) {
-            player()?.addAttachment(plugin, "sayanvanish.level.$value", true)
+    override var vanishLevel: Int = 1
+        get() = if (Features.getFeature<FeatureLevel>().levelMethod == FeatureLevel.LevelMethod.PERMISSION) {
+            player()?.let { player ->
+                player.effectivePermissions
+                    .filter { it.permission.startsWith("sayanvanish.level.") }
+                    .maxOfOrNull { it.permission.substringAfter("sayanvanish.level.").toIntOrNull() ?: 1 } ?: 1
+            } ?: 1
+        } else {
+            field
         }
 
 

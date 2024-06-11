@@ -18,7 +18,8 @@ import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.Confi
 @RegisteredFeature
 @ConfigSerializable
 class FeatureLevel(
-    @Configurable val seeAsSpectator: Boolean = true
+    @Configurable val seeAsSpectator: Boolean = true,
+    val levelMethod: LevelMethod = LevelMethod.PERMISSION
 ): ListenedFeature("level") {
 
     @EventHandler
@@ -100,6 +101,11 @@ class FeatureLevel(
                 }
             }
         }, 1)
+    }
+
+    enum class LevelMethod {
+        PERMISSION,
+        DATABASE
     }
 
 }

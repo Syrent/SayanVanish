@@ -17,6 +17,7 @@ import org.sayandev.sayanvanish.bukkit.config.LanguageConfig
 import org.sayandev.sayanvanish.bukkit.config.SettingsConfig
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.config.settings
+import org.sayandev.sayanvanish.bukkit.feature.features.FeatureLevel
 import org.sayandev.sayanvanish.bukkit.utils.ServerUtils
 import org.sayandev.stickynote.bukkit.command.StickyCommand
 import org.sayandev.stickynote.bukkit.command.StickySender
@@ -172,6 +173,11 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
                 val user = target.getOrAddUser()
                 user.vanishLevel = context.get("level")
                 user.save()
+
+                if (Features.getFeature<FeatureLevel>().levelMethod == FeatureLevel.LevelMethod.PERMISSION) {
+                    sender.sendMessage(language.feature.permissionLevelMethodWarning.component(Placeholder.unparsed("method", FeatureLevel.LevelMethod.PERMISSION.name), Placeholder.unparsed("methods", FeatureLevel.LevelMethod.entries.joinToString(", ") { it.name })))
+                    return@handler
+                }
 
                 sender.sendMessage(language.vanish.levelSet.component(Placeholder.unparsed("level", user.vanishLevel.toString()), Placeholder.unparsed("player", user.username)))
             }

@@ -90,6 +90,29 @@ subprojects {
         disableAutoTargetJvm()
     }
 
+    modrinth {
+        val modrinthApiKey = System.getenv("MODRINTH_API_TOKEN")
+        val modrinthChangelog = if (System.getenv("MODRINTH_CHANGELOG").isNullOrEmpty()) changelogContent else System.getenv("MODRINTH_CHANGELOG")
+
+        token.set(modrinthApiKey)
+        projectId.set("${rootProject.property("modrinthProjectID")}")
+        versionNumber.set(if (isRelease) versionString else publishVersion.replace("-build.", "-b").replace("-SNAPSHOT", ""))
+        versionType.set(System.getenv("MODRINTH_BUILD_CHANNEL") ?: "beta")
+        uploadFile.set(this@subprojects.tasks.shadowJar.flatMap { it.archiveFile })
+        /*additionalFiles.set(listOf(
+            project(":sayanvanish-proxy:sayanvanish-proxy-velocity").tasks.shadowJar.flatMap { it.archiveFile },
+            project(":sayanvanish-proxy:sayanvanish-proxy-bungeecord").tasks.shadowJar.flatMap { it.archiveFile }
+        ))*/
+        gameVersions.set("${rootProject.property("modrinthMinecraftVersions")}".split(","))
+//    loaders.set(listOf("paper", "folia", "purpur", "spigot", "velocity", "waterfall", "bungeecord"))
+//    failSilently.set(true)
+    detectLoaders.set(true)
+
+        changelog.set(modrinthChangelog)
+
+        syncBodyFrom.set(rootProject.file("README.md").readText())
+    }
+
     tasks {
         jar {
             archiveClassifier.set("unshaded")
@@ -202,27 +225,4 @@ hangarPublish {
             }
         }
     }
-}
-
-modrinth {
-    val modrinthApiKey = System.getenv("MODRINTH_API_TOKEN")
-    val modrinthChangelog = if (System.getenv("MODRINTH_CHANGELOG").isNullOrEmpty()) changelogContent else System.getenv("MODRINTH_CHANGELOG")
-
-    token.set(modrinthApiKey)
-    projectId.set("${rootProject.property("modrinthProjectID")}")
-    versionNumber.set(if (isRelease) versionString else publishVersion.replace("-build.", "-b").replace("-SNAPSHOT", ""))
-    versionType.set(System.getenv("MODRINTH_BUILD_CHANNEL") ?: "beta")
-    uploadFile.set(project(":sayanvanish-bukkit").tasks.shadowJar.flatMap { it.archiveFile })
-    additionalFiles.set(listOf(
-        project(":sayanvanish-proxy:sayanvanish-proxy-velocity").tasks.shadowJar.flatMap { it.archiveFile },
-        project(":sayanvanish-proxy:sayanvanish-proxy-bungeecord").tasks.shadowJar.flatMap { it.archiveFile }
-    ))
-    gameVersions.set("${rootProject.property("modrinthMinecraftVersions")}".split(","))
-    loaders.set(listOf("paper", "folia", "purpur", "spigot"/*, "velocity"*/, "waterfall", "bungeecord"))
-    failSilently.set(true)
-    detectLoaders.set(false)
-
-    changelog.set(modrinthChangelog)
-
-    syncBodyFrom.set(rootProject.file("README.md").readText())
 }

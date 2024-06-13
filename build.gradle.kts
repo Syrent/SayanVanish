@@ -218,7 +218,7 @@ modrinth {
         project(":sayanvanish-proxy:sayanvanish-proxy-bungeecord").tasks.shadowJar.flatMap { it.archiveFile }
     ))
     gameVersions.set("${rootProject.property("modrinthMinecraftVersions")}".split(","))
-    loaders.set(listOf("paper", "folia", "purpur", "spigot", "velocity", "waterfall", "bungeecord"))
+    loaders.set(listOf("paper", "folia", "purpur", "spigot"/*, "velocity"*/, "waterfall", "bungeecord"))
     failSilently.set(true)
     detectLoaders.set(false)
 

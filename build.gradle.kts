@@ -219,6 +219,8 @@ modrinth {
     ))
     gameVersions.set("${rootProject.property("modrinthMinecraftVersions")}".split(","))
     loaders.set(listOf("paper", "folia", "purpur", "spigot", "velocity", "waterfall", "bungeecord"))
+    failSilently.set(true)
+    detectLoaders.set(false)
 
     changelog.set(modrinthChangelog)
 

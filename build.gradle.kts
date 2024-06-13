@@ -55,6 +55,7 @@ allprojects {
     plugins.apply("kotlin")
     plugins.apply("com.github.johnrengelman.shadow")
     plugins.apply("org.sayandev.stickynote")
+    plugins.apply("com.modrinth.minotaur")
 
     stickynote {
         loaderVersion(findProperty("stickynoteVersion")!! as String)

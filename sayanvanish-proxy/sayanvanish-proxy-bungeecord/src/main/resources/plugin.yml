@@ -1,0 +1,5 @@
+name: "${name}"
+version: "${version}"
+description: "${description}"
+main: "org.sayandev.sayanvanish.bungeecord.SayanVanish"
+author: "Syrent"

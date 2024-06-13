@@ -20,6 +20,11 @@ dependencies {
     api(project(":sayanvanish-proxy"))
 }
 
+modrinth {
+    loaders.set(listOf("bungeecord", "waterfall"))
+    detectLoaders.set(false)
+}
+
 tasks {
     shadowJar {
         applyShadowRelocation(Module.BUNGEECORD)

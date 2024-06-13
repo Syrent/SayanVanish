@@ -82,14 +82,6 @@ allprojects {
             }
         }
     }
-}
-
-subprojects {
-    java {
-        withSourcesJar()
-
-        disableAutoTargetJvm()
-    }
 
     modrinth {
         val modrinthApiKey = System.getenv("MODRINTH_API_TOKEN")
@@ -99,19 +91,22 @@ subprojects {
         projectId.set("${rootProject.property("modrinthProjectID")}")
         versionNumber.set(if (isRelease) versionString else publishVersion.replace("-build.", "-b").replace("-SNAPSHOT", ""))
         versionType.set(System.getenv("MODRINTH_BUILD_CHANNEL") ?: "beta")
-        uploadFile.set(this@subprojects.tasks.shadowJar.flatMap { it.archiveFile })
-        /*additionalFiles.set(listOf(
-            project(":sayanvanish-proxy:sayanvanish-proxy-velocity").tasks.shadowJar.flatMap { it.archiveFile },
-            project(":sayanvanish-proxy:sayanvanish-proxy-bungeecord").tasks.shadowJar.flatMap { it.archiveFile }
-        ))*/
+        uploadFile.set(tasks.shadowJar.flatMap { it.archiveFile })
         gameVersions.set("${rootProject.property("modrinthMinecraftVersions")}".split(","))
-//    loaders.set(listOf("paper", "folia", "purpur", "spigot", "velocity", "waterfall", "bungeecord"))
-//    failSilently.set(true)
-    detectLoaders.set(true)
+        failSilently.set(true)
+        detectLoaders.set(true)
 
         changelog.set(modrinthChangelog)
 
         syncBodyFrom.set(rootProject.file("README.md").readText())
+    }
+}
+
+subprojects {
+    java {
+        withSourcesJar()
+
+        disableAutoTargetJvm()
     }
 
     tasks {

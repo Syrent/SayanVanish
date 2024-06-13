@@ -41,10 +41,9 @@ class FeaturePreventCreatureTarget: ListenedFeature("prevent_creature_target", c
     @EventHandler
     private fun onEntityTarget(event: EntityTargetEvent) {
         if (!isActive()) return
-        val target = event.target
-        if (target is Player && SayanVanishBukkitAPI.getInstance().isVanished(target.uniqueId)) {
-            event.isCancelled = true
-        }
+        val target = event.target as? Player ?: return
+        if (!SayanVanishBukkitAPI.getInstance().isVanished(target.uniqueId)) return
+        event.isCancelled = true
     }
 
 }

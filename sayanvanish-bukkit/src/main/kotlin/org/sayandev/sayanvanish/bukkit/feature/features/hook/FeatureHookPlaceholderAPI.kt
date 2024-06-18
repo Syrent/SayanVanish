@@ -1,32 +1,49 @@
 package org.sayandev.sayanvanish.bukkit.feature.features.hook
 
-import org.sayandev.sayanvanish.bukkit.feature.HookFeature
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import org.bukkit.OfflinePlayer
 import org.sayandev.sayanvanish.api.SayanVanishAPI
+import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.config.settings
+import org.sayandev.sayanvanish.bukkit.feature.HookFeature
 import org.sayandev.stickynote.bukkit.StickyNote
 import org.sayandev.stickynote.bukkit.onlinePlayers
-import org.sayandev.stickynote.bukkit.warn
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @RegisteredFeature
 @ConfigSerializable
-class FeatureHookPlaceholderAPI: HookFeature("hook_placeholderapi", "PlaceholderAPI") {
+class FeatureHookPlaceholderAPI(
+    @Configurable val cacheCooldown: Long = 1000L
+): HookFeature("hook_placeholderapi", "PlaceholderAPI") {
+
+    private var hook: Any? = null
 
     override fun enable() {
         if (hasPlugin()) {
-            HookPlaceholderAPI().register()
+            val hook = hook as? HookPlaceholderAPI?
+            if (hook == null || hook.isRegistered() == false) {
+                this.hook = HookPlaceholderAPI(cacheCooldown)
+                hook?.register()
+            }
         }
         super.enable()
     }
+
+    override fun disable() {
+        if (hasPlugin()) {
+            val hook = hook as? HookPlaceholderAPI?
+            if (hook?.isRegistered() == true) {
+                hook.unregister()
+            }
+        }
+        super.disable()
+    }
 }
 
-private class HookPlaceholderAPI : PlaceholderExpansion() {
-    val proxyRequestOnCooldown = false
+private class HookPlaceholderAPI(val cacheCooldown: Long) : PlaceholderExpansion() {
 
     override fun getIdentifier(): String {
         return StickyNote.plugin().description.name.lowercase()

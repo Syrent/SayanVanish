@@ -19,7 +19,7 @@ class FeatureHookPlaceholderAPI(
     @Configurable val cacheCooldown: Long = 1000L
 ): HookFeature("hook_placeholderapi", "PlaceholderAPI") {
 
-    private var hook: Any? = null
+    @Transient private var hook: Any? = null
 
     override fun enable() {
         if (hasPlugin()) {

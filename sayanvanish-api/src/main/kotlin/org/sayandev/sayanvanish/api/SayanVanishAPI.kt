@@ -49,8 +49,8 @@ open class SayanVanishAPI<U: User>(val type: KClass<out User>) {
         return database.getUser(uniqueId, useCache, type)?.isVanished == true
     }
 
-    fun getVanishedUsers(): Collection<U> {
-        return getUsers(User::isVanished)
+    fun getVanishedUsers(useCache: Boolean = true): Collection<U> {
+        return getUsers(useCache).filter { it.isVanished }
     }
 
     fun getOnlineUsers(): Collection<U> {

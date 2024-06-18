@@ -1,4 +1,4 @@
-package org.sayandev.sayanvanish.velocity.feature.hook
+package org.sayandev.sayanvanish.velocity.feature.features.hook
 
 import ir.syrent.enhancedvelocity.api.VanishHook
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature

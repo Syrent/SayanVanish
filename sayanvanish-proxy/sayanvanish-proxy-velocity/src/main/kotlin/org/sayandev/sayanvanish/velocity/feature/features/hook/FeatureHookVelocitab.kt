@@ -1,4 +1,4 @@
-package org.sayandev.sayanvanish.velocity.feature.hook
+package org.sayandev.sayanvanish.velocity.feature.features.hook
 
 import com.velocitypowered.api.event.Subscribe
 import net.william278.velocitab.api.VelocitabAPI

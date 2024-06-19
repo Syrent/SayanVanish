@@ -29,13 +29,24 @@ fun executeGitCommand(vararg command: String): String {
     return byteOut.toString(Charsets.UTF_8).trim()
 }
 
-fun latestCommitMessage(): String {
+fun lastCommitMessages(): String {
     val url = URL("https://api.github.com/repos/Syrent/$name/actions/runs?status=success&per_page=1")
     val connection = url.openConnection() as HttpURLConnection
     connection.requestMethod = "GET"
     connection.setRequestProperty("Accept", "application/vnd.github.v3+json")
     val response = connection.inputStream.bufferedReader().use { it.readText() }
     val sha = JsonParser.parseString(response).asJsonObject.getAsJsonArray("workflow_runs").get(0).asJsonObject.get("head_sha").asString
+
+    return executeGitCommand("log", "--pretty=format:%s%n", "$sha..HEAD")
+}
+
+fun lastReleaseCommitMessages(): String {
+    val url = URL("https://api.github.com/repos/Syrent/$name/releases")
+    val connection = url.openConnection() as HttpURLConnection
+    connection.requestMethod = "GET"
+    connection.setRequestProperty("Accept", "application/vnd.github.v3+json")
+    val response = connection.inputStream.bufferedReader().use { it.readText() }
+    val sha = JsonParser.parseString(response).asJsonArray.get(0).asJsonObject.get("target_commitish").asString
 
     return executeGitCommand("log", "--pretty=format:%s%n", "$sha..HEAD")
 }
@@ -47,7 +58,7 @@ val publishVersion = if (isRelease) versionString else "$versionString-build.${S
 val commitVersion = publishVersion + "-" + (System.getenv("GITHUB_SHA")?.substring(0, 7) ?: "local")
 version = commitVersion
 
-val changelogContent: String = latestCommitMessage()
+val changelogContent: String = if (isRelease) lastReleaseCommitMessages() else lastCommitMessages()
 
 tasks {
     publishAllPublicationsToHangar {

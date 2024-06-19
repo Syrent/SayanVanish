@@ -12,7 +12,9 @@ import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.Confi
 
 @RegisteredFeature
 @ConfigSerializable
-class FeatureSneakToggleGameMode: ListenedFeature("sneak_toggle_gamemode") {
+class FeatureSneakToggleGameMode(
+    val fallbackMode: GameMode = GameMode.SURVIVAL
+): ListenedFeature("sneak_toggle_gamemode") {
 
     @Transient val sneakMap = mutableMapOf<Player, GameMode>()
     @Transient val sneakList = mutableListOf<Player>()
@@ -23,7 +25,7 @@ class FeatureSneakToggleGameMode: ListenedFeature("sneak_toggle_gamemode") {
         if (!player.isSneaking || player.user()?.isVanished != true || !isActive()) return
         if (sneakList.contains(player)) {
             if (player.gameMode == GameMode.SPECTATOR) {
-                player.gameMode = sneakMap[player]!!
+                player.gameMode = sneakMap[player] ?: fallbackMode
             } else {
                 sneakMap[player] = player.gameMode
                 player.gameMode = GameMode.SPECTATOR

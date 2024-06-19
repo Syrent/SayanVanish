@@ -3,6 +3,9 @@ import io.papermc.hangarpublishplugin.model.Platforms
 import org.sayandev.getRelocations
 import org.sayandev.plugin.StickyNoteModules
 import java.io.ByteArrayOutputStream
+import java.net.URL
+import java.net.HttpURLConnection
+import com.google.gson.JsonParser
 
 plugins {
     kotlin("jvm") version "2.0.0"
@@ -27,7 +30,14 @@ fun executeGitCommand(vararg command: String): String {
 }
 
 fun latestCommitMessage(): String {
-    return executeGitCommand("log", "--pretty=format:%s")
+    val url = URL("https://api.github.com/repos/Syrent/$name/actions/runs?status=success&per_page=1")
+    val connection = url.openConnection() as HttpURLConnection
+    connection.requestMethod = "GET"
+    connection.setRequestProperty("Accept", "application/vnd.github.v3+json")
+    val response = connection.inputStream.bufferedReader().use { it.readText() }
+    val sha = JsonParser.parseString(response).asJsonObject.getAsJsonArray("workflow_runs").get(0).asJsonObject.get("head_sha").asString
+
+    return executeGitCommand("log", "--pretty=format:%s", "$sha..HEAD")
 }
 
 val versionString: String = findProperty("version")!! as String

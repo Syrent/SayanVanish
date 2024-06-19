@@ -37,7 +37,7 @@ fun latestCommitMessage(): String {
     val response = connection.inputStream.bufferedReader().use { it.readText() }
     val sha = JsonParser.parseString(response).asJsonObject.getAsJsonArray("workflow_runs").get(0).asJsonObject.get("head_sha").asString
 
-    return executeGitCommand("log", "--pretty=format:%s", "$sha..HEAD")
+    return executeGitCommand("log", "--pretty=format:%s%n", "$sha..HEAD")
 }
 
 val versionString: String = findProperty("version")!! as String

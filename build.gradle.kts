@@ -11,7 +11,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.papermc.hangar-publish-plugin") version "0.1.2"
     id("com.modrinth.minotaur") version "2.8.7"
-    id("org.sayandev.stickynote") version "1.1.9"
+    id("org.sayandev.stickynote") version "1.1.10"
 }
 
 val slug = findProperty("slug")!! as String

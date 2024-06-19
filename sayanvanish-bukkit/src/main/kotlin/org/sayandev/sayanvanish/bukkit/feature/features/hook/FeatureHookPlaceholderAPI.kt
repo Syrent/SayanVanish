@@ -11,6 +11,7 @@ import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.sayanvanish.bukkit.feature.HookFeature
 import org.sayandev.stickynote.bukkit.StickyNote
 import org.sayandev.stickynote.bukkit.onlinePlayers
+import org.sayandev.stickynote.bukkit.warn
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @RegisteredFeature
@@ -22,11 +23,16 @@ class FeatureHookPlaceholderAPI(
     @Transient private var hook: Any? = null
 
     override fun enable() {
+        warn("1")
         if (hasPlugin()) {
-            val hook = hook as? HookPlaceholderAPI?
+            warn("2")
+            var hook = hook as? HookPlaceholderAPI?
+            warn("3")
             if (hook == null || hook.isRegistered() == false) {
-                this.hook = HookPlaceholderAPI(cacheCooldown)
-                hook?.register()
+                warn("4")
+                hook = HookPlaceholderAPI(cacheCooldown)
+                hook.register()
+                this.hook = hook
             }
         }
         super.enable()
@@ -34,7 +40,7 @@ class FeatureHookPlaceholderAPI(
 
     override fun disable() {
         if (hasPlugin()) {
-            val hook = hook as? HookPlaceholderAPI?
+            val hook = this.hook as? HookPlaceholderAPI?
             if (hook?.isRegistered() == true) {
                 hook.unregister()
             }

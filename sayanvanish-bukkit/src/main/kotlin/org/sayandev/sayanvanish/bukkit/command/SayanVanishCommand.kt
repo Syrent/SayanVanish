@@ -11,6 +11,7 @@ import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.Features
 import org.sayandev.sayanvanish.api.feature.RegisteredFeatureHandler
 import org.sayandev.sayanvanish.api.utils.Paste
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrAddUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.config.LanguageConfig
@@ -27,6 +28,7 @@ import org.sayandev.stickynote.bukkit.runSync
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendMessage
 import org.sayandev.stickynote.bukkit.warn
+import org.sayandev.stickynote.core.utils.MilliCounter
 import org.sayandev.stickynote.lib.incendo.cloud.bukkit.parser.OfflinePlayerParser
 import org.sayandev.stickynote.lib.incendo.cloud.component.CommandComponent
 import org.sayandev.stickynote.lib.incendo.cloud.parser.flag.CommandFlag
@@ -274,6 +276,25 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
                 freshFeature.save()
                 Features.features.add(freshFeature)
                 sender.sendMessage(language.feature.reset.component(Placeholder.unparsed("feature", feature.id)))
+            }
+            .build())
+
+        manager.command(builder
+            .literal("debug")
+            .permission(constructBasePermission("debug"))
+            .handler { context ->
+                val sender = context.sender().bukkitSender()
+
+                repeat(10) {
+                    val counter = MilliCounter()
+                    counter.start()
+                    sender.sendMessage("<gold>[${it}] <gray>Trying <green>1000 Get Vanished Users</green> sync database operation".component())
+                    repeat(1000) {
+                        SayanVanishBukkitAPI.getInstance().getVanishedUsers(false)
+                    }
+                    counter.stop()
+                    sender.sendMessage("<gold>[${it}] <gray>Took <green>${counter.get()}ms</green>".component())
+                }
             }
             .build())
 

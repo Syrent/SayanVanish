@@ -23,13 +23,9 @@ class FeatureHookPlaceholderAPI(
     @Transient private var hook: Any? = null
 
     override fun enable() {
-        warn("1")
         if (hasPlugin()) {
-            warn("2")
             var hook = hook as? HookPlaceholderAPI?
-            warn("3")
             if (hook == null || hook.isRegistered() == false) {
-                warn("4")
                 hook = HookPlaceholderAPI(cacheCooldown)
                 hook.register()
                 this.hook = hook

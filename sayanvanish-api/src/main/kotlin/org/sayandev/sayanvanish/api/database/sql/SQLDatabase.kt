@@ -34,7 +34,7 @@ class SQLDatabase<U : User>(
     }
     val database: org.sayandev.stickynote.core.database.Database = when (config.method) {
         SQLConfig.SQLMethod.MYSQL -> {
-            MySQLDatabase(MySQLCredentials.Companion.mySQLCredentials(config.host, config.port, config.database, config.poolProperties.useSSL, config.username, config.password), config.poolProperties.maximumPoolSize, false, driverClass, config.poolProperties.keepaliveTime, config.poolProperties.connectionTimeout)
+            MySQLDatabase(MySQLCredentials.Companion.mySQLCredentials(config.host, config.port, config.database, config.poolProperties.useSSL, config.username, config.password), config.poolProperties.maximumPoolSize, false, driverClass, config.poolProperties.keepaliveTime, config.poolProperties.connectionTimeout, config.poolProperties.minimumIdle, config.poolProperties.maximumLifetime)
         }
         SQLConfig.SQLMethod.SQLITE -> {
             SQLiteDatabase(File(Platform.get().rootDirectory, "storage.db"), Platform.get().logger)

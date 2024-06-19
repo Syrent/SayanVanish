@@ -9,6 +9,7 @@ import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
+import org.sayandev.stickynote.bukkit.utils.ServerVersion
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @RegisteredFeature
@@ -22,7 +23,9 @@ class FeaturePreventInteract(
     @EventHandler
     private fun onInteract(event: PlayerInteractEvent) {
         if (!isActive()) return
-        if (event.clickedBlock?.state is Container) return
+        if (ServerVersion.supports(13)) {
+            if (event.clickedBlock?.state is Container) return
+        }
         val user = event.player.user() ?: return
         if (user.isVanished) {
             val isPressurePlate = pressurePlateTrigger && event.action == Action.PHYSICAL && event.clickedBlock?.type?.name?.contains("PLATE") == true

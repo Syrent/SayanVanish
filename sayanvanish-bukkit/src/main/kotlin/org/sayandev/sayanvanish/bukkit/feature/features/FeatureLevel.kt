@@ -1,6 +1,7 @@
 package org.sayandev.sayanvanish.bukkit.feature.features
 
 import org.bukkit.GameMode
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerGameModeChangeEvent
 import org.bukkit.event.player.PlayerJoinEvent
@@ -13,12 +14,13 @@ import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.*
+import org.sayandev.stickynote.bukkit.utils.ServerVersion
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @RegisteredFeature
 @ConfigSerializable
 class FeatureLevel(
-    @Configurable val seeAsSpectator: Boolean = true,
+    @Configurable val seeAsSpectator: Boolean = ServerVersion.supports(9),
     val levelMethod: LevelMethod = LevelMethod.PERMISSION
 ): ListenedFeature("level") {
 
@@ -31,7 +33,7 @@ class FeatureLevel(
                 val playerVanishLevel = onlinePlayer.user(false)?.vanishLevel ?: -1
                 if (playerVanishLevel < user.vanishLevel || !onlinePlayer.hasPermission(Permission.VANISH.permission())) {
                     user.player()?.let { player ->
-                        onlinePlayer.hidePlayer(plugin, player)
+                        hidePlayer(onlinePlayer, player)
                         NMSUtils.sendPacket(onlinePlayer, PacketUtils.getRemoveEntitiesPacket(player.entityId))
                     }
                 } else {
@@ -96,11 +98,19 @@ class FeatureLevel(
             for (user in SayanVanishBukkitAPI.getInstance().getVanishedUsers().filter { it.player() != null && it.uniqueId != player.uniqueId }) {
                 val vanishedPlayer = user.player() ?: continue
                 if (playerVanishLevel < user.vanishLevel || !player.hasPermission(Permission.VANISH.permission())) {
-                    player.hidePlayer(plugin, vanishedPlayer)
+                    hidePlayer(player, vanishedPlayer)
                     NMSUtils.sendPacket(player, PacketUtils.getRemoveEntitiesPacket(vanishedPlayer.entityId))
                 }
             }
         }, 1)
+    }
+
+    private fun hidePlayer(player: Player, target: Player) {
+        if (ServerVersion.supports(9)) {
+            player.hidePlayer(plugin, target)
+        } else {
+            player.hidePlayer(target)
+        }
     }
 
     enum class LevelMethod {

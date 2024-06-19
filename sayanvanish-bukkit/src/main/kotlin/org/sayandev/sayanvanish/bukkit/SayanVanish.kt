@@ -11,7 +11,11 @@ import org.sayandev.sayanvanish.bukkit.config.LanguageConfig
 import org.sayandev.sayanvanish.bukkit.config.SettingsConfig
 import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.stickynote.bukkit.*
+import org.sayandev.stickynote.bukkit.utils.ServerVersion
+import org.sayandev.stickynote.lib.libby.BukkitLibraryManager
+import org.sayandev.stickynote.lib.libby.Library
 import org.sayandev.stickynote.loader.bukkit.StickyNoteBukkitLoader
+import org.slf4j.LoggerFactory
 
 open class SayanVanish : JavaPlugin() {
 

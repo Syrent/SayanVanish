@@ -21,6 +21,7 @@ import org.sayandev.stickynote.bukkit.server
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendActionbar
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendMessage
+import org.sayandev.stickynote.bukkit.utils.ServerVersion
 import org.sayandev.stickynote.lib.kyori.adventure.text.Component
 import org.sayandev.stickynote.lib.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import java.util.*
@@ -58,7 +59,9 @@ open class BukkitUser(
         val options = vanishEvent.options
         currentOptions = options
 
-        player()?.isCollidable = false
+        if (ServerVersion.supports(9)) {
+            player()?.isCollidable = false
+        }
         player()?.isSleepingIgnored = true
 
         player()?.setMetadata("vanished", FixedMetadataValue(plugin, true))
@@ -77,7 +80,9 @@ open class BukkitUser(
         val options = unVanishEvent.options
         currentOptions = options
 
-        player()?.isCollidable = true
+        if (ServerVersion.supports(9)) {
+            player()?.isCollidable = true
+        }
         player()?.isSleepingIgnored = false
 
         player()?.setMetadata("vanished", FixedMetadataValue(plugin, false))
@@ -138,7 +143,15 @@ open class BukkitUser(
 
     fun showUser(target: Player) {
         player()?.let { player ->
-            target.showPlayer(plugin, player)
+            showPlayer(target, player)
+        }
+    }
+
+    private fun showPlayer(player: Player, target: Player) {
+        if (ServerVersion.supports(9)) {
+            player.showPlayer(plugin, target)
+        } else {
+            player.showPlayer(target)
         }
     }
 

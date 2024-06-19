@@ -10,6 +10,7 @@ import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.NMSUtils
 import org.sayandev.stickynote.bukkit.PacketUtils
 import org.sayandev.stickynote.bukkit.utils.ServerVersion
+import org.sayandev.stickynote.bukkit.warn
 import org.sayandev.stickynote.lib.spongepowered.configurate.ConfigurationNode
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.sayandev.stickynote.lib.spongepowered.configurate.serialize.TypeSerializer
@@ -21,7 +22,7 @@ import java.lang.reflect.Type
 class FeatureEffect(
     val effects: List<PotionEffectData> = listOf(
         PotionEffectData(
-            true,
+            ServerVersion.supports(9),
             false,
             PotionEffectType.NIGHT_VISION,
             Int.MAX_VALUE,

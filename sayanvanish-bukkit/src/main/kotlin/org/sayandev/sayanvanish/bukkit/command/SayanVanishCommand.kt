@@ -31,6 +31,7 @@ import org.sayandev.stickynote.bukkit.warn
 import org.sayandev.stickynote.core.utils.MilliCounter
 import org.sayandev.stickynote.lib.incendo.cloud.bukkit.parser.OfflinePlayerParser
 import org.sayandev.stickynote.lib.incendo.cloud.component.CommandComponent
+import org.sayandev.stickynote.lib.incendo.cloud.component.DefaultValue
 import org.sayandev.stickynote.lib.incendo.cloud.parser.flag.CommandFlag
 import org.sayandev.stickynote.lib.incendo.cloud.parser.standard.IntegerParser
 import org.sayandev.stickynote.lib.incendo.cloud.parser.standard.StringParser
@@ -279,25 +280,6 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
             }
             .build())
 
-        manager.command(builder
-            .literal("debug")
-            .permission(constructBasePermission("debug"))
-            .handler { context ->
-                val sender = context.sender().bukkitSender()
-
-                repeat(10) {
-                    val counter = MilliCounter()
-                    counter.start()
-                    sender.sendMessage("<gold>[${it}] <gray>Trying <green>1000 Get Vanished Users</green> sync database operation".component())
-                    repeat(1000) {
-                        SayanVanishBukkitAPI.getInstance().getVanishedUsers(false)
-                    }
-                    counter.stop()
-                    sender.sendMessage("<gold>[${it}] <gray>Took <green>${counter.get()}ms</green>".component())
-                }
-            }
-            .build())
-
         manager.command(featureLiteral
             .literal("update")
             .permission(constructBasePermission("feature.update"))
@@ -369,6 +351,32 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
                 feature.save()
 
                 sender.sendMessage(language.feature.updated.component(Placeholder.unparsed("feature", feature.id), Placeholder.unparsed("option", field.name), Placeholder.unparsed("state", value)))
+            }
+            .build())
+
+        val testLiteral = builder
+            .literal("test")
+            .permission(constructBasePermission("test"))
+
+        manager.command(testLiteral
+            .literal("database")
+            .permission(constructBasePermission("test.database"))
+            .optional("amount", IntegerParser.integerParser(1, 10000), DefaultValue.constant(100))
+            .optional("tries", IntegerParser.integerParser(1, 10), DefaultValue.constant(5))
+            .handler { context ->
+                val sender = context.sender().bukkitSender()
+                val amount = context.get<Int>("amount")
+
+                repeat(context.get("tries")) {
+                    val counter = MilliCounter()
+                    counter.start()
+                    sender.sendMessage("<gold>[${it + 1}] <gray>Trying <green>${amount} Get Vanished Users</green> sync database operation".component())
+                    repeat(amount) {
+                        SayanVanishBukkitAPI.getInstance().getVanishedUsers(false)
+                    }
+                    counter.stop()
+                    sender.sendMessage("<gold>[${it + 1}] <gray>Took <green>${counter.get()}ms</green>".component())
+                }
             }
             .build())
     }

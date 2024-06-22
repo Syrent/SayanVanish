@@ -6,7 +6,9 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.*
 import org.sayandev.sayanvanish.api.BasicUser
 import org.sayandev.sayanvanish.api.SayanVanishAPI
+import org.sayandev.sayanvanish.api.database.sql.SQLDatabase
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
+import org.sayandev.sayanvanish.bukkit.api.database
 import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.stickynote.bukkit.*
 
@@ -29,6 +31,7 @@ object VanishManager : Listener {
         if (settings.general.proxyMode) return
 
         val player = event.player
+        (database as? SQLDatabase)?.cache?.remove(player.uniqueId)
         SayanVanishAPI.getInstance().removeBasicUser(player.uniqueId)
     }
 

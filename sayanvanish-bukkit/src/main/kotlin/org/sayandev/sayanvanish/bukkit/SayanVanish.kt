@@ -22,7 +22,7 @@ open class SayanVanish : JavaPlugin() {
     override fun onEnable() {
         StickyNoteBukkitLoader.load(this)
 
-        Platform.setAndRegister(Platform("bukkit", logger, pluginDirectory))
+        Platform.setAndRegister(Platform("bukkit", logger, pluginDirectory, settings.general.serverId))
 
         SayanVanishBukkitAPI()
 

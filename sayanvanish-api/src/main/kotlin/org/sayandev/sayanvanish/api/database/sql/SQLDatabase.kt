@@ -163,7 +163,7 @@ class SQLDatabase<U : User>(
                     .setStatementValue(3, user.serverId)
             ).result?.close()
         } else {
-            if (user.serverId != Platform.get().id) {
+            if (user.serverId != Platform.get().serverId) {
                 updateBasicUser(user)
             }
         }

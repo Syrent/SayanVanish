@@ -18,7 +18,7 @@ class SayanVanish : Plugin() {
         downloadLibraries()
 
         StickyNoteBungeeLoader.load(this)
-        Platform.setAndRegister(Platform("bungeecord", logger, dataDirectory))
+        Platform.setAndRegister(Platform("bungeecord", logger, dataDirectory, settings.general.serverId))
 
         SayanVanishBungeeAPI()
 

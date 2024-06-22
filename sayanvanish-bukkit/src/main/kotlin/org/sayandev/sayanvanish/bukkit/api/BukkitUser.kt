@@ -5,7 +5,6 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
 import org.sayandev.sayanvanish.api.Permission
-import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.feature.Features
@@ -14,6 +13,7 @@ import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.config.language
+import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureLevel
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.plugin
@@ -31,7 +31,7 @@ open class BukkitUser(
     override var username: String
 ) : User {
 
-    override var serverId = Platform.get().id
+    override var serverId = settings.general.serverId
     override var currentOptions = VanishOptions.defaultOptions()
     override var isVanished = false
     override var isOnline: Boolean = false

@@ -8,11 +8,12 @@ import java.util.logging.Logger
 data class Platform(
     val id: String,
     val logger: Logger,
-    val rootDirectory: File
+    val rootDirectory: File,
+    val serverId: String,
 ) {
 
     companion object {
-        private var currentPlatform = Platform("default", Logger.getGlobal(), File("."))
+        private var currentPlatform = Platform("default", Logger.getGlobal(), File("."), "unknown")
 
         @JvmStatic
         fun setPlatform(platform: Platform) {

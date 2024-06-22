@@ -42,7 +42,8 @@ class SQLDatabase<U : User>(
                 config.poolProperties.keepaliveTime,
                 config.poolProperties.connectionTimeout,
                 config.poolProperties.minimumIdle,
-                config.poolProperties.maximumLifetime
+                config.poolProperties.maximumLifetime,
+                config.poolProperties.allowPublicKeyRetrieval
             )
         }
         SQLConfig.SQLMethod.SQLITE -> {

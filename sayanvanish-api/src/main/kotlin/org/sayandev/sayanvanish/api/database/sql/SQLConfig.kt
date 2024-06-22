@@ -22,7 +22,8 @@ data class SQLConfig(
         val keepaliveTime: Long = 0,
         val connectionTimeout: Long = 5000,
         @Setting("use-ssl") val useSSL: Boolean = false,
-        val verifyServerCertificate: Boolean = false
+        val verifyServerCertificate: Boolean = false,
+        val allowPublicKeyRetrieval: Boolean = true,
     )
 
     enum class SQLMethod {

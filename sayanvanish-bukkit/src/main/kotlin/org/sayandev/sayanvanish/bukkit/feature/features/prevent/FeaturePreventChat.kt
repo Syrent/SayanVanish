@@ -18,6 +18,7 @@ class FeaturePreventChat(
 ): ListenedFeature("prevent_chat", category = FeatureCategories.PREVENTION) {
 
     @EventHandler
+    @Suppress("DEPRECATION")
     private fun onPlayerChat(event: AsyncPlayerChatEvent) {
         if (!isActive()) return
         val user = event.player.user() ?: return

@@ -57,6 +57,7 @@ interface User : BasicUser {
     }
 
     override fun save() {
+        serverId = Platform.get().serverId
         SayanVanishAPI.getInstance().addUser(this)
     }
 

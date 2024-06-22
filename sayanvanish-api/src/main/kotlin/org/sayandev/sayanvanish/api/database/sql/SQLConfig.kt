@@ -21,7 +21,8 @@ data class SQLConfig(
         val maximumLifetime: Long = 1800000,
         val keepaliveTime: Long = 0,
         val connectionTimeout: Long = 5000,
-        @Setting("use-ssl") val useSSL: Boolean = false
+        @Setting("use-ssl") val useSSL: Boolean = false,
+        val verifyServerCertificate: Boolean = false
     )
 
     enum class SQLMethod {

@@ -10,6 +10,7 @@ import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.StickyNote
+import org.sayandev.stickynote.bukkit.WrappedStickyNotePlugin
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @RegisteredFeature
@@ -22,14 +23,15 @@ class FeaturePreventCreatureTarget: ListenedFeature("prevent_creature_target", c
         val user = event.user
         val player = user.player() ?: return
         if (StickyNote.isFolia()) {
-            // TODO: Creature modification cannot be off region thread
-            player.world.entities
-                .filterIsInstance<Creature>()
-                .forEach { creature ->
-                    if (creature.target?.uniqueId == player.uniqueId) {
-                        creature.target = null
+            player.server.regionScheduler.execute(WrappedStickyNotePlugin.getPlugin().main, player.location) {
+                player.world.entities
+                    .filterIsInstance<Creature>()
+                    .forEach { creature ->
+                        if (creature.target?.uniqueId == player.uniqueId) {
+                            creature.target = null
+                        }
                     }
-                }
+            }
         } else {
             player.world.entities
                 .filterIsInstance<Creature>()

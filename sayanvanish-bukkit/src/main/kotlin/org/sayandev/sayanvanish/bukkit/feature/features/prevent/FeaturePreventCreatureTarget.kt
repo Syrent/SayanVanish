@@ -1,5 +1,6 @@
 package org.sayandev.sayanvanish.bukkit.feature.features.prevent
 
+import org.bukkit.Bukkit
 import org.bukkit.entity.Creature
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -24,13 +25,10 @@ class FeaturePreventCreatureTarget: ListenedFeature("prevent_creature_target", c
         val player = user.player() ?: return
         if (StickyNote.isFolia()) {
             player.server.regionScheduler.execute(WrappedStickyNotePlugin.getPlugin().main, player.location) {
-                player.world.entities
-                    .filterIsInstance<Creature>()
-                    .forEach { creature ->
-                        if (creature.target?.uniqueId == player.uniqueId) {
-                            creature.target = null
-                        }
-                    }
+                val entity = Bukkit.getEntity(player.uniqueId)
+                if (entity is Creature) {
+                    entity.target = null
+                }
             }
         } else {
             player.world.entities

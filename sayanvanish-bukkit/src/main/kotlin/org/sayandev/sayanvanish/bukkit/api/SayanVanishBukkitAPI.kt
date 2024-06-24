@@ -1,6 +1,7 @@
 package org.sayandev.sayanvanish.bukkit.api
 
 import org.bukkit.OfflinePlayer
+import org.bukkit.entity.Player
 import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.database.databaseConfig
 import java.util.*
@@ -8,6 +9,11 @@ import java.util.*
 val database = SayanVanishBukkitAPI.getInstance().database
 
 class SayanVanishBukkitAPI : SayanVanishAPI<BukkitUser>(BukkitUser::class) {
+
+    fun canSee(player: Player, otherPlayer: Player): Boolean {
+        return player.user()?.canSee(otherPlayer.user() ?: return false) ?: false
+    }
+
     companion object {
         private val defaultInstance = SayanVanishBukkitAPI()
 

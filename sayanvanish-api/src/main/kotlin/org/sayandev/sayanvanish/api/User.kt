@@ -56,6 +56,10 @@ interface User : BasicUser {
         return hasPermission(permission.permission())
     }
 
+    fun canSee(otherUser: User): Boolean {
+        return vanishLevel >= otherUser.vanishLevel
+    }
+
     override fun save() {
         serverId = Platform.get().serverId
         SayanVanishAPI.getInstance().addUser(this)

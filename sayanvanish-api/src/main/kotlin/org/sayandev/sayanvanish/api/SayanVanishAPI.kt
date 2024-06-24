@@ -57,6 +57,10 @@ open class SayanVanishAPI<U: User>(val type: KClass<out User>) {
         return getUsers(User::isOnline)
     }
 
+    fun canSee(user: U, target: U): Boolean {
+        return user.vanishLevel >= target.vanishLevel
+    }
+
     fun addUser(user: U) {
         database.addUser(user)
     }

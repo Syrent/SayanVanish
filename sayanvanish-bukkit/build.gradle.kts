@@ -38,7 +38,7 @@ tasks {
     }
 
     java {
-        if (gradle.startParameter.getTaskNames().isNotEmpty() && gradle.startParameter.getTaskNames().contains("runServer")) {
+        if (gradle.startParameter.getTaskNames().isNotEmpty() && (gradle.startParameter.getTaskNames().contains("runServer") || gradle.startParameter.getTaskNames().contains("runFolia"))) {
             toolchain.languageVersion = JavaLanguageVersion.of(21)
         }
     }

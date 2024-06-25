@@ -11,10 +11,8 @@ import org.sayandev.stickynote.core.database.Query
 import org.sayandev.stickynote.core.database.mysql.MySQLCredentials
 import org.sayandev.stickynote.core.database.mysql.MySQLDatabase
 import org.sayandev.stickynote.core.database.sqlite.SQLiteDatabase
-import sun.awt.www.content.audio.wav
 import java.io.File
 import java.util.*
-import java.util.function.Consumer
 import kotlin.reflect.KClass
 import kotlin.reflect.safeCast
 
@@ -70,8 +68,29 @@ class SQLDatabase<U : User>(
         cache.clear()
     }
 
-    override fun getUser(uniqueId: UUID, useCache: Boolean, type: KClass<out User>): U? {
-        if (useCache && cache.contains(uniqueId)) {
+    override fun addUserAsync(user: U, result: () -> Unit) {
+        cache[user.uniqueId] = user
+        hasUserAsync(user.uniqueId) { hasUser ->
+            if (!hasUser) {
+                database.queueQuery(
+                    Query.query("INSERT ${if (config.method == SQLConfig.SQLMethod.MYSQL) "IGNORE " else ""}INTO ${config.tablePrefix}users (UUID, username, server, is_vanished, is_online, vanish_level) VALUES (?,?,?,?,?,?);")
+                        .setStatementValue(1, user.uniqueId.toString())
+                        .setStatementValue(2, user.username)
+                        .setStatementValue(3, user.serverId)
+                        .setStatementValue(4, user.isVanished)
+                        .setStatementValue(5, user.isOnline)
+                        .setStatementValue(6, user.vanishLevel)
+                )
+            } else {
+                updateUserAsync(user) {
+                    result()
+                }
+            }
+        }
+    }
+
+    override fun getUser(uniqueId: UUID, type: KClass<out User>): U? {
+        if (cache.contains(uniqueId)) {
             return cache[uniqueId]
         }
 
@@ -93,15 +112,39 @@ class SQLDatabase<U : User>(
         return typedUser
     }
 
-    override fun getUsers(useCache: Boolean): List<U> {
-        return getUsers(useCache, User::class)
+    override fun getUsers(): List<U> {
+        return getUsers(User::class)
     }
 
-    override fun getUsers(useCache: Boolean, type: KClass<out User>): List<U> {
-        /*if (useCache) {
-            return cache.values.toList()
-        }*/
+    override fun getUsersAsync(result: (List<U>) -> Unit) {
+        getUsersAsync(User::class, result)
+    }
 
+    override fun getUsersAsync(type: KClass<out User>, result: (List<U>) -> Unit) {
+        database.queueQuery(Query.query("SELECT * FROM ${config.tablePrefix}users;")).completableFuture.whenComplete { resultSet, error ->
+            error?.printStackTrace()
+
+            val users = mutableListOf<U>()
+            while (resultSet.next()) {
+                val user = object : User {
+                    override val uniqueId: UUID = UUID.fromString(resultSet.getString("UUID"))
+                    override var username: String = resultSet.getString("username")
+                    override var serverId: String = resultSet.getString("server")
+                    override var currentOptions: VanishOptions = VanishOptions.defaultOptions()
+
+                    override var isVanished: Boolean = resultSet.getBoolean("is_vanished")
+                    override var isOnline: Boolean = resultSet.getBoolean("is_online")
+                    override var vanishLevel: Int = resultSet.getInt("vanish_level")
+                }
+                users.add((type.safeCast(user) as? U) ?: (user.cast(type) as U))
+            }
+            resultSet.close()
+
+            result(users)
+        }
+    }
+
+    override fun getUsers(type: KClass<out User>): List<U> {
         val result = database.runQuery(Query.query("SELECT * FROM ${config.tablePrefix}users;")).result ?: return emptyList()
         val users = mutableListOf<U>()
         while (result.next()) {
@@ -142,13 +185,69 @@ class SQLDatabase<U : User>(
         return users
     }
 
-    override fun getUser(uniqueId: UUID, useCache: Boolean): U? {
-        return getUser(uniqueId, useCache, User::class)
+    override fun getBasicUsersAsync(result: (List<BasicUser>) -> Unit) {
+        database.queueQuery(Query.query("SELECT * FROM ${config.tablePrefix}basic_users;")).completableFuture.whenComplete { resultSet, error ->
+            error?.printStackTrace()
+
+            val users = mutableListOf<BasicUser>()
+            while (resultSet.next()) {
+                val user = BasicUser.create(
+                    UUID.fromString(resultSet.getString("UUID")),
+                    resultSet.getString("username"),
+                    resultSet.getString("server")
+                )
+                users.add(user)
+            }
+            resultSet.close()
+
+            result(users)
+        }
+    }
+
+    override fun getUser(uniqueId: UUID): U? {
+        return getUser(uniqueId, User::class)
+    }
+
+    override fun getUserAsync(uniqueId: UUID, result: (U?) -> Unit) {
+        getUserAsync(uniqueId, User::class, result)
+    }
+
+
+    override fun getUserAsync(uniqueId: UUID, type: KClass<out User>, result: (U?) -> Unit) {
+        if (cache.contains(uniqueId)) {
+            result(cache[uniqueId])
+            return
+        }
+
+        database.queueQuery(Query.query("SELECT * FROM ${config.tablePrefix}users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).completableFuture.whenComplete { resultSet, error ->
+            error?.printStackTrace()
+
+            if (!resultSet.next()) {
+                result(null)
+                return@whenComplete
+            }
+
+            val user = object : User {
+                override val uniqueId: UUID = UUID.fromString(resultSet.getString("UUID"))
+                override var username: String = resultSet.getString("username")
+                override var serverId: String = resultSet.getString("server")
+                override var currentOptions: VanishOptions = VanishOptions.defaultOptions()
+
+                override var isVanished: Boolean = resultSet.getBoolean("is_vanished")
+                override var isOnline: Boolean = resultSet.getBoolean("is_online")
+                override var vanishLevel: Int = resultSet.getInt("vanish_level")
+            }
+            val typedUser = (type.safeCast(user) as? U) ?: (user.cast(type) as U)
+            cache[uniqueId] = typedUser
+            resultSet.close()
+
+            result(typedUser)
+        }
     }
 
     override fun addUser(user: U) {
         cache[user.uniqueId] = user
-        if (!hasUser(user.uniqueId, false)) {
+        if (!hasUser(user.uniqueId)) {
             database.runQuery(
                 Query.query("INSERT ${if (config.method == SQLConfig.SQLMethod.MYSQL) "IGNORE " else ""}INTO ${config.tablePrefix}users (UUID, username, server, is_vanished, is_online, vanish_level) VALUES (?,?,?,?,?,?);")
                     .setStatementValue(1, user.uniqueId.toString())
@@ -179,15 +278,37 @@ class SQLDatabase<U : User>(
         }
     }
 
-    override fun hasUser(uniqueId: UUID, useCache: Boolean): Boolean {
-        if (useCache) {
-            return cache.contains(uniqueId)
+    override fun hasUser(uniqueId: UUID): Boolean {
+        if (cache.contains(uniqueId)) {
+            return true
         }
+
         val queryResult = database.runQuery(Query.query("SELECT * FROM ${config.tablePrefix}users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString()))
         val result = queryResult.result ?: return false
         val hasNext = result.next()
         result.close()
         return hasNext
+    }
+
+    override fun hasUserAsync(uniqueId: UUID, result: (Boolean) -> Unit) {
+        database.queueQuery(Query.query("SELECT * FROM ${config.tablePrefix}users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).completableFuture.whenComplete { resultSet, error ->
+            error?.printStackTrace()
+
+            val hasNext = resultSet.next()
+            result(hasNext)
+        }
+    }
+
+    override fun updateUserAsync(user: U, result: () -> Unit) {
+        cache[user.uniqueId] = user
+        database.queueQuery(
+            Query.query("UPDATE ${config.tablePrefix}users SET username = ?, is_vanished = ?, is_online = ?, vanish_level = ? WHERE UUID = ?;")
+                .setStatementValue(1, user.username)
+                .setStatementValue(2, user.isVanished)
+                .setStatementValue(3, user.isOnline)
+                .setStatementValue(4, user.vanishLevel)
+                .setStatementValue(5, user.uniqueId.toString())
+        )
     }
 
     override fun hasBasicUser(uniqueId: UUID, useCache: Boolean): Boolean {
@@ -204,6 +325,14 @@ class SQLDatabase<U : User>(
     override fun removeUser(uniqueId: UUID) {
         cache.remove(uniqueId)
         database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).result?.close()
+    }
+
+    override fun removeUserAsync(uniqueId: UUID, result: () -> Unit) {
+        cache.remove(uniqueId)
+        database.queueQuery(Query.query("DELETE FROM ${config.tablePrefix}users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).completableFuture.whenComplete { _, error ->
+            error?.printStackTrace()
+            result()
+        }
     }
 
     override fun removeBasicUser(uniqueId: UUID) {
@@ -233,12 +362,12 @@ class SQLDatabase<U : User>(
         ).result?.close()
     }
 
-    override fun isInQueue(uniqueId: UUID, inQueue: Consumer<Boolean>) {
+    override fun isInQueue(uniqueId: UUID, inQueue: (Boolean) -> Unit) {
         database.queueQuery(Query.query("SELECT * FROM ${config.tablePrefix}queue WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).completableFuture.whenComplete { result, error ->
             error?.printStackTrace()
 
             val hasNext = result.next()
-            inQueue.accept(hasNext)
+            inQueue(hasNext)
         }
     }
 
@@ -252,12 +381,12 @@ class SQLDatabase<U : User>(
         }
     }
 
-    override fun getFromQueue(uniqueId: UUID, result: Consumer<Boolean>) {
+    override fun getFromQueue(uniqueId: UUID, result: (Boolean) -> Unit) {
         database.queueQuery(Query.query("SELECT * FROM ${config.tablePrefix}queue WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).completableFuture.whenComplete { resultSet, error ->
             error?.printStackTrace()
 
-            if (!resultSet.next()) result.accept(false)
-            result.accept(resultSet.getString("vanished").toBoolean())
+            if (!resultSet.next()) result(false)
+            result(resultSet.getString("vanished").toBoolean())
         }
     }
 

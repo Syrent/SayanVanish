@@ -56,7 +56,14 @@ class RedisDatabase<U : User>(
         redis.close()
     }
 
-    override fun getUser(uniqueId: UUID, useCache: Boolean, type: KClass<out User>): U? {
+    override fun addUserAsync(user: U, result: () -> Unit) {
+        Thread {
+            addUser(user)
+            result()
+        }.start()
+    }
+
+    override fun getUser(uniqueId: UUID, type: KClass<out User>): U? {
         val user = redis.hget("users", uniqueId.toString())
         return if (user != null) {
             val user = User.fromJson(user)
@@ -67,12 +74,23 @@ class RedisDatabase<U : User>(
         }
     }
 
-    override fun getUsers(useCache: Boolean): List<U> {
+    override fun getUsers(): List<U> {
         val users = redis.hgetAll("users")
-        return getUsers(useCache, User::class)
+        return getUsers(User::class)
     }
 
-    override fun getUsers(useCache: Boolean, type: KClass<out User>): List<U> {
+    override fun getUsersAsync(result: (List<U>) -> Unit) {
+        getUsersAsync(User::class, result)
+    }
+
+    override fun getUsersAsync(type: KClass<out User>, result: (List<U>) -> Unit) {
+        Thread {
+            val users = getUsers(type)
+            result(users)
+        }.start()
+    }
+
+    override fun getUsers(type: KClass<out User>): List<U> {
         val users = redis.hgetAll("users")
         return users.map {
             val user = User.fromJson(it.value)
@@ -85,8 +103,26 @@ class RedisDatabase<U : User>(
         return users.map { BasicUser.fromJson(it.value) }
     }
 
-    override fun getUser(uniqueId: UUID, useCache: Boolean): U? {
-        return getUser(uniqueId, useCache, User::class)
+    override fun getBasicUsersAsync(result: (List<BasicUser>) -> Unit) {
+        Thread {
+            val users = getBasicUsers(true)
+            result(users)
+        }.start()
+    }
+
+    override fun getUser(uniqueId: UUID): U? {
+        return getUser(uniqueId, User::class)
+    }
+
+    override fun getUserAsync(uniqueId: UUID, result: (U?) -> Unit) {
+        getUserAsync(uniqueId, User::class, result)
+    }
+
+    override fun getUserAsync(uniqueId: UUID, type: KClass<out User>, result: (U?) -> Unit) {
+        Thread {
+            val user = getUser(uniqueId, type)
+            result(user)
+        }.start()
     }
 
     override fun addUser(user: U) {
@@ -97,8 +133,21 @@ class RedisDatabase<U : User>(
         redis.hset("basic_users", user.uniqueId.toString(), user.toJson())
     }
 
-    override fun hasUser(uniqueId: UUID, useCache: Boolean): Boolean {
+    override fun hasUser(uniqueId: UUID): Boolean {
         return redis.hexists("users", uniqueId.toString())
+    }
+
+    override fun hasUserAsync(uniqueId: UUID, result: (Boolean) -> Unit) {
+        Thread {
+            result(hasUser(uniqueId))
+        }.start()
+    }
+
+    override fun updateUserAsync(user: U, result: () -> Unit) {
+        Thread {
+            updateUser(user)
+            result()
+        }.start()
     }
 
     override fun hasBasicUser(uniqueId: UUID, useCache: Boolean): Boolean {
@@ -107,6 +156,13 @@ class RedisDatabase<U : User>(
 
     override fun removeUser(uniqueId: UUID) {
         redis.hdel("users", uniqueId.toString())
+    }
+
+    override fun removeUserAsync(uniqueId: UUID, result: () -> Unit) {
+        Thread {
+            removeUser(uniqueId)
+            result()
+        }.start()
     }
 
     override fun removeBasicUser(uniqueId: UUID) {
@@ -121,8 +177,8 @@ class RedisDatabase<U : User>(
         addBasicUser(user)
     }
 
-    override fun isInQueue(uniqueId: UUID, result: Consumer<Boolean>) {
-        redis.get("queue:$uniqueId")?.let { result.accept(true) } ?: result.accept(false)
+    override fun isInQueue(uniqueId: UUID, result: (Boolean) -> Unit) {
+        redis.get("queue:$uniqueId")?.let { result(true) } ?: result(false)
     }
 
     override fun addToQueue(uniqueId: UUID, vanished: Boolean) {
@@ -133,8 +189,8 @@ class RedisDatabase<U : User>(
         redis.del("queue:$uniqueId")
     }
 
-    override fun getFromQueue(uniqueId: UUID, result: Consumer<Boolean>) {
-        redis.get("queue:$uniqueId")?.let { result.accept(it.toBoolean()) } ?: result.accept(false)
+    override fun getFromQueue(uniqueId: UUID, result: (Boolean) -> Unit) {
+        redis.get("queue:$uniqueId")?.let { result(it.toBoolean()) } ?: result(false)
     }
 
     override fun purgeCache() {

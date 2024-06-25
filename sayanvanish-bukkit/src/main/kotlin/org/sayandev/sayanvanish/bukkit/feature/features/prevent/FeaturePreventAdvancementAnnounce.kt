@@ -2,6 +2,7 @@ package org.sayandev.sayanvanish.bukkit.feature.features.prevent
 
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerAdvancementDoneEvent
+import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
@@ -12,7 +13,10 @@ import org.sayandev.stickynote.lib.xseries.ReflectionUtils
 
 @RegisteredFeature
 @ConfigSerializable
-class FeaturePreventAdvancementAnnounce: ListenedFeature("prevent_advancement_announce", category = FeatureCategories.PREVENTION) {
+class FeaturePreventAdvancementAnnounce(
+    @Configurable val disableMessage: Boolean = true,
+    @Configurable val revokeCriteria: Boolean = false
+): ListenedFeature("prevent_advancement_announce", category = FeatureCategories.PREVENTION) {
 
     @Transient
     override var condition: Boolean = StickyNote.isPaper() && ReflectionUtils.supports(13)
@@ -22,9 +26,13 @@ class FeaturePreventAdvancementAnnounce: ListenedFeature("prevent_advancement_an
         if (!isActive()) return
         val user = event.player.user() ?: return
         if (user.isVanished) {
-//            event.message(null)
-            for (criteria in event.advancement.criteria) {
-                event.player.getAdvancementProgress(event.advancement).revokeCriteria(criteria)
+            if (disableMessage) {
+                event.message(null)
+            }
+            if (revokeCriteria) {
+                for (criteria in event.advancement.criteria) {
+                    event.player.getAdvancementProgress(event.advancement).revokeCriteria(criteria)
+                }
             }
         }
     }

@@ -14,6 +14,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+          tags: true
       - name: Checkout Repository
         uses: actions/checkout@v4
       - name: Validate Gradle Wrapper

@@ -46,7 +46,7 @@ fun lastReleaseCommitMessages(): String {
     connection.requestMethod = "GET"
     connection.setRequestProperty("Accept", "application/vnd.github.v3+json")
     val response = connection.inputStream.bufferedReader().use { it.readText() }
-    val targetCommitish = JsonParser.parseString(response).asJsonArray.get(1).asJsonObject.get("target_commitish").asString
+    val targetCommitish = JsonParser.parseString(response).asJsonArray.get(0).asJsonObject.get("target_commitish").asString
 
     val sha = if (targetCommitish.matches(Regex("^[a-f0-9]{40}$"))) {
         targetCommitish

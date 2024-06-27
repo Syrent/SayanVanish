@@ -10,6 +10,10 @@ jobs:
     name: Build artifacts job
     runs-on: ubuntu-22.04
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Checkout Repository
         uses: actions/checkout@v4
       - name: Validate Gradle Wrapper

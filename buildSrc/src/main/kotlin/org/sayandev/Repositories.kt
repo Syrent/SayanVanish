@@ -45,6 +45,15 @@ val bungeecordAPI = Dependency(
     modules = listOf(Module.BUNGEECORD)
 )
 
+val advancedServerList = Dependency(
+    group = "ch.andre601.asl-api",
+    artifact = "api",
+    version = "3.3.0",
+    relocation = null,
+    type = Dependency.Type.COMPILE_ONLY,
+    modules = listOf(Module.BUKKIT, Module.VELOCITY)
+)
+
 val essentialsX = Dependency(
     group = "net.essentialsx",
     artifact = "EssentialsX",
@@ -153,6 +162,13 @@ val repositories = listOf(
         repos = listOf("https://oss.sonatype.org/content/repositories/snapshots"),
         dependencies = listOf(
             bungeecordAPI,
+        )
+    ),
+    Repository(
+        id = "codeberg",
+        repos = listOf("https://codeberg.org/api/packages/Andre601/maven/"),
+        dependencies = listOf(
+            advancedServerList,
         )
     ),
     Repository(

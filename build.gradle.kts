@@ -46,20 +46,11 @@ fun lastReleaseCommitMessages(): String {
     connection.requestMethod = "GET"
     connection.setRequestProperty("Accept", "application/vnd.github.v3+json")
     val response = connection.inputStream.bufferedReader().use { it.readText() }
-    val targetCommitish = JsonParser.parseString(response).asJsonArray.get(0).asJsonObject.get("target_commitish").asString
+    val previousReleaseVersion = JsonParser.parseString(response).asJsonArray.get(1).asJsonObject.get("tag_name").asString
 
-    val sha = if (targetCommitish.matches(Regex("^[a-f0-9]{40}$"))) {
-        targetCommitish
-    } else {
-        val branchUrl = URL("https://api.github.com/repos/Syrent/$name/git/refs/heads/$targetCommitish")
-        val branchConnection = branchUrl.openConnection() as HttpURLConnection
-        branchConnection.requestMethod = "GET"
-        branchConnection.setRequestProperty("Accept", "application/vnd.github.v3+json")
-        val branchResponse = branchConnection.inputStream.bufferedReader().use { it.readText() }
-        JsonParser.parseString(branchResponse).asJsonObject.get("object").asJsonObject.get("sha").asString
-    }
+    val currentProjectVersion = version.toString()
 
-    return executeGitCommand("log", "--pretty=format:%s%n", "$sha..HEAD")
+    return executeGitCommand("log", "--pretty=format:%s%n", "$previousReleaseVersion..$currentProjectVersion")
 }
 
 val versionString: String = findProperty("version")!! as String

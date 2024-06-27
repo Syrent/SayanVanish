@@ -7,7 +7,7 @@ import java.util.UUID
 
 val database = SayanVanishVelocityAPI.getInstance().database
 
-class SayanVanishVelocityAPI() : SayanVanishAPI<VelocityUser>(VelocityUser::class) {
+class SayanVanishVelocityAPI() : SayanVanishAPI<VelocityUser>(VelocityUser::class.java) {
     companion object {
         private val defaultInstance = SayanVanishVelocityAPI()
 
@@ -19,18 +19,18 @@ class SayanVanishVelocityAPI() : SayanVanishAPI<VelocityUser>(VelocityUser::clas
             return getInstance().getUser(this)
         }
 
-        public fun Player.user(useCache: Boolean = databaseConfig.useCacheWhenAvailable): VelocityUser? {
-            return getInstance().getUser(this.uniqueId, useCache)
+        public fun Player.user(): VelocityUser? {
+            return getInstance().getUser(this.uniqueId)
         }
 
-        fun Player.getOrCreateUser(useCache: Boolean = databaseConfig.useCacheWhenAvailable): VelocityUser {
-            return getInstance().getUser(this.uniqueId, useCache) ?: VelocityUser(this.uniqueId, this.username ?: "N/A")
+        fun Player.getOrCreateUser(): VelocityUser {
+            return getInstance().getUser(this.uniqueId) ?: VelocityUser(this.uniqueId, this.username ?: "N/A")
         }
 
-        fun Player.getOrAddUser(useCache: Boolean = databaseConfig.useCacheWhenAvailable): VelocityUser {
-            return getInstance().getUser(this.uniqueId, useCache) ?: let {
+        fun Player.getOrAddUser(): VelocityUser {
+            return getInstance().getUser(this.uniqueId) ?: let {
                 val newUser = VelocityUser(this.uniqueId, this.username ?: "N/A")
-                getInstance().addUser(newUser)
+                getInstance().database.addUser(newUser)
                 newUser
             }
         }

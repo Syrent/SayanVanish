@@ -17,7 +17,7 @@ object VanishManager {
     @Subscribe
     private fun onPostLogin(event: ServerPostConnectEvent) {
         val player = event.player ?: return
-        SayanVanishVelocityAPI.getInstance().addBasicUser(BasicUser.create(player.uniqueId, player.username, player.currentServer.getOrNull()?.serverInfo?.name ?: Platform.get().id))
+        SayanVanishVelocityAPI.getInstance().database.addBasicUser(BasicUser.create(player.uniqueId, player.username, player.currentServer.getOrNull()?.serverInfo?.name ?: Platform.get().id))
         val user = player.getOrCreateUser()
         if (user.isVanished) {
             server.eventManager.fireAndForget(VelocityUserVanishEvent(user, user.currentOptions))
@@ -29,7 +29,7 @@ object VanishManager {
     @Subscribe
     private fun onDisconnect(event: DisconnectEvent) {
         val player = event.player ?: return
-        SayanVanishVelocityAPI.getInstance().removeBasicUser(player.uniqueId)
+        SayanVanishVelocityAPI.getInstance().database.removeBasicUser(player.uniqueId)
     }
 
 }

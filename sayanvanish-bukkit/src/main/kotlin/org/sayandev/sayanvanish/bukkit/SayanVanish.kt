@@ -11,11 +11,7 @@ import org.sayandev.sayanvanish.bukkit.config.LanguageConfig
 import org.sayandev.sayanvanish.bukkit.config.SettingsConfig
 import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.stickynote.bukkit.*
-import org.sayandev.stickynote.bukkit.utils.ServerVersion
-import org.sayandev.stickynote.lib.libby.BukkitLibraryManager
-import org.sayandev.stickynote.lib.libby.Library
 import org.sayandev.stickynote.loader.bukkit.StickyNoteBukkitLoader
-import org.slf4j.LoggerFactory
 
 open class SayanVanish : JavaPlugin() {
 
@@ -38,8 +34,12 @@ open class SayanVanish : JavaPlugin() {
         SayanVanishCommand()
 
         runAsync({
-            SayanVanishBukkitAPI.getInstance().database.updateBasicCache()
-        }, 100, 100)
+            SayanVanishBukkitAPI.getInstance().database.updateCacheAsync()
+        }, 0, 100)
+
+        runAsync({
+            SayanVanishBukkitAPI.getInstance().database.updateBasicCacheAsync()
+        }, 0, 20)
     }
 
     override fun onDisable() {

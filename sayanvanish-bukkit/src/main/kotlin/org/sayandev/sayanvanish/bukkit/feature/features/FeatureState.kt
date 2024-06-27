@@ -31,7 +31,7 @@ class FeatureState(
     private fun onJoin(event: PlayerJoinEvent) {
         if (!isActive()) return
         val player = event.player
-        val user = player.user(false)
+        val user = player.user()
         val vanishJoinOptions = VanishOptions.Builder().sendMessage(false).notifyStatusChangeToOthers(false).isOnJoin(true).build()
 
         if (user == null) {
@@ -65,7 +65,7 @@ class FeatureState(
 
         if (user.isVanished) {
             if (user.currentOptions.notifyJoinQuitVanished) {
-                for (vanishedUser in SayanVanishBukkitAPI.getInstance().getUsers { it.hasPermission(Permission.VANISH) && it.vanishLevel >= user.vanishLevel }) {
+                for (vanishedUser in SayanVanishBukkitAPI.getInstance().database.getUsers().filter { it.hasPermission(Permission.VANISH) && it.vanishLevel >= user.vanishLevel }) {
                     vanishedUser.sendMessage(language.vanish.joinedTheServerWhileVanished.component(Placeholder.unparsed("player", user.username)))
                 }
             }
@@ -78,11 +78,11 @@ class FeatureState(
     @EventHandler(priority = EventPriority.LOWEST)
     private fun updateUserOnQuit(event: PlayerQuitEvent) {
         val player = event.player
-        val user = player.user(false) ?: return
+        val user = player.user() ?: return
 
         if (user.isVanished) {
             if (user.currentOptions.notifyJoinQuitVanished) {
-                for (vanishedUser in SayanVanishBukkitAPI.getInstance().getUsers { it.hasPermission(Permission.VANISH) && it.vanishLevel >= user.vanishLevel }) {
+                for (vanishedUser in SayanVanishBukkitAPI.getInstance().database.getUsers().filter { it.hasPermission(Permission.VANISH) && it.vanishLevel >= user.vanishLevel }) {
                     vanishedUser.sendMessage(language.vanish.leftTheServerWhileVanished.component(Placeholder.unparsed("player", user.username)))
                 }
             }

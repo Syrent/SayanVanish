@@ -34,7 +34,7 @@ open class BukkitUser(
     override var serverId = settings.general.serverId
     override var currentOptions = VanishOptions.defaultOptions()
     override var isVanished = false
-    override var isOnline: Boolean = false
+    override var isOnline: Boolean = Bukkit.getPlayer(uniqueId) != null
     override var vanishLevel: Int = 1
         get() = if (Features.getFeature<FeatureLevel>().levelMethod == FeatureLevel.LevelMethod.PERMISSION) {
             player()?.let { player ->

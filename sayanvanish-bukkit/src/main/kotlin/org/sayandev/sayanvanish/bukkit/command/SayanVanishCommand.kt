@@ -4,6 +4,7 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.sayandev.sayanvanish.api.Permission
+import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.database.DatabaseConfig
 import org.sayandev.sayanvanish.api.database.databaseConfig
@@ -11,7 +12,6 @@ import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.Features
 import org.sayandev.sayanvanish.api.feature.RegisteredFeatureHandler
 import org.sayandev.sayanvanish.api.utils.Paste
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrAddUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.config.LanguageConfig
@@ -363,20 +363,43 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
             .permission(constructBasePermission("test.database"))
             .optional("amount", IntegerParser.integerParser(1, 10000), DefaultValue.constant(100))
             .optional("tries", IntegerParser.integerParser(1, 10), DefaultValue.constant(5))
+            .flag(CommandFlag.builder("no-cache"))
             .handler { context ->
                 val sender = context.sender().bukkitSender()
                 val amount = context.get<Int>("amount")
+                val database = SayanVanishAPI.getInstance().database
+                if (context.flags().hasFlag("no-cache")) {
+                    database.useCache = false
+                }
 
                 repeat(context.get("tries")) {
                     val counter = MilliCounter()
                     counter.start()
-                    sender.sendMessage("<gold>[${it + 1}] <gray>Trying <green>${amount} Get Vanished Users</green> sync database operation".component())
+                    sender.sendMessage("<gold>[${it + 1}] <gray>Trying <green>${amount} Get Users</green> from data storage".component())
                     repeat(amount) {
-                        SayanVanishBukkitAPI.getInstance().getVanishedUsers(false)
+                        database.getUsers()
                     }
                     counter.stop()
                     sender.sendMessage("<gold>[${it + 1}] <gray>Took <green>${counter.get()}ms</green>".component())
                 }
+
+                database.useCache = true
+            }
+            .build())
+
+        manager.command(testLiteral
+            .literal("performance")
+            .permission(constructBasePermission("test.performance"))
+            .handler { context ->
+                val sender = context.sender().bukkitSender()
+                /*val spark = Features.getFeature<FeatureHookSpark>().hook?.spark ?: let {
+                    sender.sendMessage("<red><gold>spark</gold> is not installed on this server.".component())
+                    return@handler
+                }
+
+                spark.gc()?.values?.forEach { gc ->
+                    gc.
+                }*/
             }
             .build())
     }

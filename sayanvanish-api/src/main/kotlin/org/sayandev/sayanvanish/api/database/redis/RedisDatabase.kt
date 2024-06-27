@@ -2,20 +2,22 @@ package org.sayandev.sayanvanish.api.database.redis
 
 import org.sayandev.sayanvanish.api.BasicUser
 import org.sayandev.sayanvanish.api.User
-import org.sayandev.sayanvanish.api.User.Companion.cast
+import org.sayandev.sayanvanish.api.User.Companion.convert
 import org.sayandev.sayanvanish.api.database.Database
 import org.sayandev.stickynote.lib.jedis.clients.jedis.DefaultJedisClientConfig
 import org.sayandev.stickynote.lib.jedis.clients.jedis.HostAndPort
 import org.sayandev.stickynote.lib.jedis.clients.jedis.JedisPooled
 import java.util.*
-import java.util.function.Consumer
-import kotlin.reflect.KClass
 import kotlin.reflect.safeCast
 
 
 class RedisDatabase<U : User>(
-    val config: RedisConfig
+    val config: RedisConfig,
+    val type: Class<out User>
 ) : Database<U> {
+
+    override var cache = mutableMapOf<UUID, U>()
+    override var useCache = false
 
     lateinit var redis: JedisPooled
 
@@ -40,61 +42,35 @@ class RedisDatabase<U : User>(
     }
 
     override fun connect() {
-        /*redis.resource.use {
-            if (config.standalone.password.isNotEmpty()) {
-                if (config.standalone.user.isNotEmpty()) {
-                    it.auth(config.standalone.user, config.standalone.password)
-                } else {
-                    it.auth(config.standalone.password)
-                }
-            }
-            it.connect()
-        }*/
     }
 
     override fun disconnect() {
         redis.close()
     }
 
-    override fun addUserAsync(user: U, result: () -> Unit) {
-        Thread {
-            addUser(user)
-            result()
-        }.start()
-    }
-
-    override fun getUser(uniqueId: UUID, type: KClass<out User>): U? {
+    override fun getUser(uniqueId: UUID): U? {
         val user = redis.hget("users", uniqueId.toString())
         return if (user != null) {
             val user = User.fromJson(user)
-            val typedUser = (type.safeCast(user) as? U) ?: (user.cast(type) as U)
+            val typedUser = (type.kotlin.safeCast(user) as? U) ?: (user.convert(type) as U)
             typedUser
         } else {
             null
         }
     }
 
-    override fun getUsers(): List<U> {
-        val users = redis.hgetAll("users")
-        return getUsers(User::class)
-    }
-
     override fun getUsersAsync(result: (List<U>) -> Unit) {
-        getUsersAsync(User::class, result)
-    }
-
-    override fun getUsersAsync(type: KClass<out User>, result: (List<U>) -> Unit) {
         Thread {
-            val users = getUsers(type)
+            val users = getUsers()
             result(users)
         }.start()
     }
 
-    override fun getUsers(type: KClass<out User>): List<U> {
+    override fun getUsers(): List<U> {
         val users = redis.hgetAll("users")
         return users.map {
             val user = User.fromJson(it.value)
-            (type.safeCast(user) as? U) ?: (user.cast(type) as U)
+            (type.kotlin.safeCast(user) as? U) ?: (user.convert(type) as U)
         }
     }
 
@@ -110,21 +86,6 @@ class RedisDatabase<U : User>(
         }.start()
     }
 
-    override fun getUser(uniqueId: UUID): U? {
-        return getUser(uniqueId, User::class)
-    }
-
-    override fun getUserAsync(uniqueId: UUID, result: (U?) -> Unit) {
-        getUserAsync(uniqueId, User::class, result)
-    }
-
-    override fun getUserAsync(uniqueId: UUID, type: KClass<out User>, result: (U?) -> Unit) {
-        Thread {
-            val user = getUser(uniqueId, type)
-            result(user)
-        }.start()
-    }
-
     override fun addUser(user: U) {
         redis.hset("users", user.uniqueId.toString(), user.toJson())
     }
@@ -137,32 +98,12 @@ class RedisDatabase<U : User>(
         return redis.hexists("users", uniqueId.toString())
     }
 
-    override fun hasUserAsync(uniqueId: UUID, result: (Boolean) -> Unit) {
-        Thread {
-            result(hasUser(uniqueId))
-        }.start()
-    }
-
-    override fun updateUserAsync(user: U, result: () -> Unit) {
-        Thread {
-            updateUser(user)
-            result()
-        }.start()
-    }
-
     override fun hasBasicUser(uniqueId: UUID, useCache: Boolean): Boolean {
         return redis.hexists("basic_users", uniqueId.toString())
     }
 
     override fun removeUser(uniqueId: UUID) {
         redis.hdel("users", uniqueId.toString())
-    }
-
-    override fun removeUserAsync(uniqueId: UUID, result: () -> Unit) {
-        Thread {
-            removeUser(uniqueId)
-            result()
-        }.start()
     }
 
     override fun removeBasicUser(uniqueId: UUID) {
@@ -207,7 +148,10 @@ class RedisDatabase<U : User>(
         purgeBasic()
     }
 
-    override fun updateBasicCache() {
+    override fun updateCacheAsync() {
+    }
+
+    override fun updateBasicCacheAsync() {
     }
 
 }

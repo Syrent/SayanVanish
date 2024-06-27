@@ -1,7 +1,6 @@
 package org.sayandev.sayanvanish.velocity
 
 import com.google.inject.Inject
-import com.velocitypowered.api.event.PostOrder
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.plugin.annotation.DataDirectory
@@ -12,9 +11,11 @@ import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
 import org.sayandev.stickynote.lib.libby.Library
 import org.sayandev.stickynote.lib.libby.VelocityLibraryManager
 import org.sayandev.stickynote.loader.velocity.StickyNoteVelocityLoader
+import org.sayandev.stickynote.velocity.StickyNote
 import org.sayandev.stickynote.velocity.registerListener
 import org.slf4j.LoggerFactory
 import java.nio.file.Path
+import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
 
 class SayanVanish @Inject constructor(
@@ -41,6 +42,14 @@ class SayanVanish @Inject constructor(
             }
             SayanVanishVelocityAPI.getInstance().database.purgeBasic(settings.general.serverId)
         }
+
+        StickyNote.run({
+            SayanVanishVelocityAPI.getInstance().database.updateBasicCacheAsync()
+        }, 5, TimeUnit.SECONDS, 5, TimeUnit.SECONDS)
+
+        StickyNote.run({
+            SayanVanishVelocityAPI.getInstance().database.updateCacheAsync()
+        }, 1, TimeUnit.SECONDS, 1, TimeUnit.SECONDS)
     }
 
     private fun downloadLibraries() {

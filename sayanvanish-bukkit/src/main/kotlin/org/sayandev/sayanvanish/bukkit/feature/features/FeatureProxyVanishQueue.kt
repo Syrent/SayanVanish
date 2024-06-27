@@ -4,8 +4,8 @@ import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.Feature
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrAddUser
-import org.sayandev.sayanvanish.bukkit.api.database
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.runSync
@@ -23,10 +23,10 @@ class FeatureProxyVanishQueue(
         runSync({
             if (!isActive()) return@runSync
             for (player in onlinePlayers) {
-                database.isInQueue(player.uniqueId) { inQueue ->
+                SayanVanishBukkitAPI.getInstance().database.isInQueue(player.uniqueId) { inQueue ->
                     if (inQueue) {
-                        database.getFromQueue(player.uniqueId) { isVanished ->
-                            database.removeFromQueue(player.uniqueId)
+                        SayanVanishBukkitAPI.getInstance().database.getFromQueue(player.uniqueId) { isVanished ->
+                            SayanVanishBukkitAPI.getInstance().database.removeFromQueue(player.uniqueId)
                             runSync {
                                 val user = player.getOrAddUser()
                                 user.sendMessage(language.vanish.vanishFromQueue.component(Placeholder.parsed("state", user.stateText(isVanished))))

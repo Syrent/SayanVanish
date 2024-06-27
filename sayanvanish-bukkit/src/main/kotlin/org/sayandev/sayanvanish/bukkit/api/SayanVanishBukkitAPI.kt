@@ -4,11 +4,10 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.database.databaseConfig
+import org.sayandev.sayanvanish.bukkit.config.settings
 import java.util.*
 
-val database = SayanVanishBukkitAPI.getInstance().database
-
-class SayanVanishBukkitAPI : SayanVanishAPI<BukkitUser>(BukkitUser::class) {
+class SayanVanishBukkitAPI : SayanVanishAPI<BukkitUser>(BukkitUser::class.java) {
 
     fun canSee(player: Player, otherPlayer: Player): Boolean {
         return player.user()?.canSee(otherPlayer.user() ?: return false) ?: false
@@ -21,18 +20,12 @@ class SayanVanishBukkitAPI : SayanVanishAPI<BukkitUser>(BukkitUser::class) {
             return defaultInstance
         }
 
-        fun UUID.user(useCache: Boolean = databaseConfig.useCacheWhenAvailable): BukkitUser? {
-            return getInstance().getUser(this, useCache)
+        fun UUID.bukkitUser(): BukkitUser? {
+            return getInstance().getUser(this)
         }
 
-        fun OfflinePlayer.user(useCache: Boolean = databaseConfig.useCacheWhenAvailable): BukkitUser? {
-            /*val onlinePlayer = this.player
-            if (onlinePlayer != null) {
-                if (!onlinePlayer.hasPermission(Permission.VANISH.permission())) {
-                    return null
-                }
-            }*/
-            return getInstance().getUser(this.uniqueId, useCache)
+        fun OfflinePlayer.user(): BukkitUser? {
+            return getInstance().database.getUser(this.uniqueId)
         }
 
         fun OfflinePlayer.getOrCreateUser(): BukkitUser {
@@ -42,7 +35,7 @@ class SayanVanishBukkitAPI : SayanVanishAPI<BukkitUser>(BukkitUser::class) {
         fun OfflinePlayer.getOrAddUser(): BukkitUser {
             return getInstance().getUser(this.uniqueId) ?: let {
                 val newUser = BukkitUser(this.uniqueId, this.name ?: "N/A")
-                getInstance().addUser(newUser)
+                getInstance().database.addUser(newUser)
                 newUser
             }
         }

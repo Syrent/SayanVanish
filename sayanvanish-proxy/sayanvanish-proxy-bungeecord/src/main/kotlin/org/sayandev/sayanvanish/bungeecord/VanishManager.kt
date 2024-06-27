@@ -14,13 +14,13 @@ object VanishManager : Listener {
     @EventHandler
     fun onPostLogin(event: ServerConnectedEvent) {
         val player = event.player ?: return
-        SayanVanishBungeeAPI.getInstance().addBasicUser(BasicUser.create(player.uniqueId, player.name, player.server.info.name ?: Platform.get().id))
+        SayanVanishBungeeAPI.getInstance().database.addBasicUser(BasicUser.create(player.uniqueId, player.name, player.server.info.name ?: Platform.get().id))
         val user = player.getOrCreateUser()
     }
 
     fun onDisconnect(event: PlayerDisconnectEvent) {
         val player = event.player ?: return
-        SayanVanishBungeeAPI.getInstance().removeBasicUser(player.uniqueId)
+        SayanVanishBungeeAPI.getInstance().database.removeBasicUser(player.uniqueId)
     }
 
 }

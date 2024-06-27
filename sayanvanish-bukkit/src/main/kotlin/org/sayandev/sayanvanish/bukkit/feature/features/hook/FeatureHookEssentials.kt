@@ -3,9 +3,9 @@ package org.sayandev.sayanvanish.bukkit.feature.features.hook
 import net.ess3.api.events.AfkStatusChangeEvent
 import net.ess3.api.events.PrivateMessagePreSendEvent
 import org.bukkit.event.EventHandler
+import org.sayandev.sayanvanish.api.SayanVanishAPI.Companion.user
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.feature.HookFeature
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @RegisteredFeature

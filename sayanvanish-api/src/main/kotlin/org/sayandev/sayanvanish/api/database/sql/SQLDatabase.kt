@@ -3,7 +3,7 @@ package org.sayandev.sayanvanish.api.database.sql
 import org.sayandev.sayanvanish.api.BasicUser
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.User
-import org.sayandev.sayanvanish.api.User.Companion.cast
+import org.sayandev.sayanvanish.api.User.Companion.convert
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.database.Database
 import org.sayandev.sayanvanish.api.database.DatabaseMethod
@@ -13,16 +13,17 @@ import org.sayandev.stickynote.core.database.mysql.MySQLDatabase
 import org.sayandev.stickynote.core.database.sqlite.SQLiteDatabase
 import java.io.File
 import java.util.*
-import kotlin.reflect.KClass
 import kotlin.reflect.safeCast
 
 
 class SQLDatabase<U : User>(
-    val config: SQLConfig
+    val config: SQLConfig,
+    val type: Class<out User>,
+    override var useCache: Boolean = true
 ) : Database<U> {
 
-    val cache = mutableMapOf<UUID, U>()
-    val basicCache = mutableMapOf<UUID, BasicUser>()
+    override var cache = mutableMapOf<UUID, U>()
+    var basicCache = mutableMapOf<UUID, BasicUser>()
     val driverClass = try {
         Class.forName("com.mysql.cj.jdbc.Driver")
         "com.mysql.cj.jdbc.Driver"
@@ -68,30 +69,13 @@ class SQLDatabase<U : User>(
         cache.clear()
     }
 
-    override fun addUserAsync(user: U, result: () -> Unit) {
-        cache[user.uniqueId] = user
-        hasUserAsync(user.uniqueId) { hasUser ->
-            if (!hasUser) {
-                database.queueQuery(
-                    Query.query("INSERT ${if (config.method == SQLConfig.SQLMethod.MYSQL) "IGNORE " else ""}INTO ${config.tablePrefix}users (UUID, username, server, is_vanished, is_online, vanish_level) VALUES (?,?,?,?,?,?);")
-                        .setStatementValue(1, user.uniqueId.toString())
-                        .setStatementValue(2, user.username)
-                        .setStatementValue(3, user.serverId)
-                        .setStatementValue(4, user.isVanished)
-                        .setStatementValue(5, user.isOnline)
-                        .setStatementValue(6, user.vanishLevel)
-                )
-            } else {
-                updateUserAsync(user) {
-                    result()
-                }
+    override fun getUser(uniqueId: UUID): U? {
+        val cacheUser = cache[uniqueId]
+        if (useCache) {
+            if (cacheUser == null) {
+                return null
             }
-        }
-    }
-
-    override fun getUser(uniqueId: UUID, type: KClass<out User>): U? {
-        if (cache.contains(uniqueId)) {
-            return cache[uniqueId]
+            return (type.kotlin.safeCast(cacheUser) as? U) ?: (cacheUser.convert(type) as U)
         }
 
         val result = database.runQuery(Query.query("SELECT * FROM ${config.tablePrefix}users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).result ?: return null
@@ -106,21 +90,13 @@ class SQLDatabase<U : User>(
             override var isOnline: Boolean = result.getBoolean("is_online")
             override var vanishLevel: Int = result.getInt("vanish_level")
         }
-        val typedUser = (type.safeCast(user) as? U) ?: (user.cast(type) as U)
+        val typedUser = (type.kotlin.safeCast(user) as? U) ?: (user.convert(type) as U)
         cache[uniqueId] = typedUser
         result.close()
         return typedUser
     }
 
-    override fun getUsers(): List<U> {
-        return getUsers(User::class)
-    }
-
     override fun getUsersAsync(result: (List<U>) -> Unit) {
-        getUsersAsync(User::class, result)
-    }
-
-    override fun getUsersAsync(type: KClass<out User>, result: (List<U>) -> Unit) {
         database.queueQuery(Query.query("SELECT * FROM ${config.tablePrefix}users;")).completableFuture.whenComplete { resultSet, error ->
             error?.printStackTrace()
 
@@ -136,7 +112,7 @@ class SQLDatabase<U : User>(
                     override var isOnline: Boolean = resultSet.getBoolean("is_online")
                     override var vanishLevel: Int = resultSet.getInt("vanish_level")
                 }
-                users.add((type.safeCast(user) as? U) ?: (user.cast(type) as U))
+                users.add((type.kotlin.safeCast(user) as? U) ?: (user.convert(type) as U))
             }
             resultSet.close()
 
@@ -144,7 +120,11 @@ class SQLDatabase<U : User>(
         }
     }
 
-    override fun getUsers(type: KClass<out User>): List<U> {
+    override fun getUsers(): List<U> {
+        if (useCache) {
+            return cache.values.toList()
+        }
+
         val result = database.runQuery(Query.query("SELECT * FROM ${config.tablePrefix}users;")).result ?: return emptyList()
         val users = mutableListOf<U>()
         while (result.next()) {
@@ -158,7 +138,7 @@ class SQLDatabase<U : User>(
                 override var isOnline: Boolean = result.getBoolean("is_online")
                 override var vanishLevel: Int = result.getInt("vanish_level")
             }
-            users.add((type.safeCast(user) as? U) ?: (user.cast(type) as U))
+            users.add((type.kotlin.safeCast(user) as? U) ?: (user.convert(type) as U))
         }
         result.close()
 
@@ -204,47 +184,6 @@ class SQLDatabase<U : User>(
         }
     }
 
-    override fun getUser(uniqueId: UUID): U? {
-        return getUser(uniqueId, User::class)
-    }
-
-    override fun getUserAsync(uniqueId: UUID, result: (U?) -> Unit) {
-        getUserAsync(uniqueId, User::class, result)
-    }
-
-
-    override fun getUserAsync(uniqueId: UUID, type: KClass<out User>, result: (U?) -> Unit) {
-        if (cache.contains(uniqueId)) {
-            result(cache[uniqueId])
-            return
-        }
-
-        database.queueQuery(Query.query("SELECT * FROM ${config.tablePrefix}users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).completableFuture.whenComplete { resultSet, error ->
-            error?.printStackTrace()
-
-            if (!resultSet.next()) {
-                result(null)
-                return@whenComplete
-            }
-
-            val user = object : User {
-                override val uniqueId: UUID = UUID.fromString(resultSet.getString("UUID"))
-                override var username: String = resultSet.getString("username")
-                override var serverId: String = resultSet.getString("server")
-                override var currentOptions: VanishOptions = VanishOptions.defaultOptions()
-
-                override var isVanished: Boolean = resultSet.getBoolean("is_vanished")
-                override var isOnline: Boolean = resultSet.getBoolean("is_online")
-                override var vanishLevel: Int = resultSet.getInt("vanish_level")
-            }
-            val typedUser = (type.safeCast(user) as? U) ?: (user.cast(type) as U)
-            cache[uniqueId] = typedUser
-            resultSet.close()
-
-            result(typedUser)
-        }
-    }
-
     override fun addUser(user: U) {
         cache[user.uniqueId] = user
         if (!hasUser(user.uniqueId)) {
@@ -279,36 +218,11 @@ class SQLDatabase<U : User>(
     }
 
     override fun hasUser(uniqueId: UUID): Boolean {
-        if (cache.contains(uniqueId)) {
-            return true
-        }
-
         val queryResult = database.runQuery(Query.query("SELECT * FROM ${config.tablePrefix}users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString()))
         val result = queryResult.result ?: return false
         val hasNext = result.next()
         result.close()
         return hasNext
-    }
-
-    override fun hasUserAsync(uniqueId: UUID, result: (Boolean) -> Unit) {
-        database.queueQuery(Query.query("SELECT * FROM ${config.tablePrefix}users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).completableFuture.whenComplete { resultSet, error ->
-            error?.printStackTrace()
-
-            val hasNext = resultSet.next()
-            result(hasNext)
-        }
-    }
-
-    override fun updateUserAsync(user: U, result: () -> Unit) {
-        cache[user.uniqueId] = user
-        database.queueQuery(
-            Query.query("UPDATE ${config.tablePrefix}users SET username = ?, is_vanished = ?, is_online = ?, vanish_level = ? WHERE UUID = ?;")
-                .setStatementValue(1, user.username)
-                .setStatementValue(2, user.isVanished)
-                .setStatementValue(3, user.isOnline)
-                .setStatementValue(4, user.vanishLevel)
-                .setStatementValue(5, user.uniqueId.toString())
-        )
     }
 
     override fun hasBasicUser(uniqueId: UUID, useCache: Boolean): Boolean {
@@ -325,14 +239,6 @@ class SQLDatabase<U : User>(
     override fun removeUser(uniqueId: UUID) {
         cache.remove(uniqueId)
         database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).result?.close()
-    }
-
-    override fun removeUserAsync(uniqueId: UUID, result: () -> Unit) {
-        cache.remove(uniqueId)
-        database.queueQuery(Query.query("DELETE FROM ${config.tablePrefix}users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).completableFuture.whenComplete { _, error ->
-            error?.printStackTrace()
-            result()
-        }
     }
 
     override fun removeBasicUser(uniqueId: UUID) {
@@ -414,20 +320,16 @@ class SQLDatabase<U : User>(
         database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}basic_users WHERE server = ?;").setStatementValue(1, serverId)).result?.close()
     }
 
-    override fun updateBasicCache() {
-        val tempCache = mutableMapOf<UUID, BasicUser>()
-        val result = database.runQuery(Query.query("SELECT * FROM ${config.tablePrefix}basic_users;")).result ?: return
-        while (result.next()) {
-            val user = BasicUser.create(
-                UUID.fromString(result.getString("UUID")),
-                result.getString("username"),
-                result.getString("server")
-            )
-            tempCache[user.uniqueId] = user
+    override fun updateCacheAsync() {
+        getUsersAsync {
+            cache = it.associateBy { user -> user.uniqueId }.toMutableMap()
         }
-        result.close()
-        basicCache.clear()
-        basicCache.putAll(tempCache)
+    }
+
+    override fun updateBasicCacheAsync() {
+        getBasicUsersAsync {
+            basicCache = it.associateBy { user -> user.uniqueId }.toMutableMap()
+        }
     }
 
 }

@@ -3,14 +3,13 @@ package org.sayandev.sayanvanish.bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
-import org.bukkit.event.player.*
+import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerQuitEvent
 import org.sayandev.sayanvanish.api.BasicUser
 import org.sayandev.sayanvanish.api.SayanVanishAPI
-import org.sayandev.sayanvanish.api.database.sql.SQLDatabase
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
-import org.sayandev.sayanvanish.bukkit.api.database
 import org.sayandev.sayanvanish.bukkit.config.settings
-import org.sayandev.stickynote.bukkit.*
+import org.sayandev.stickynote.bukkit.registerListener
 
 object VanishManager : Listener {
 
@@ -23,21 +22,21 @@ object VanishManager : Listener {
         if (settings.general.proxyMode) return
 
         val player = event.player
-        SayanVanishAPI.getInstance().addBasicUser(BasicUser.create(player.uniqueId, player.name, null))
+        SayanVanishAPI.getInstance().database.addBasicUser(BasicUser.create(player.uniqueId, player.name, null))
     }
 
     @EventHandler
-    private fun removeBasicUserOnQuit(event: PlayerJoinEvent) {
+    private fun removeBasicUserOnQuit(event: PlayerQuitEvent) {
         if (settings.general.proxyMode) return
 
         val player = event.player
-        (database as? SQLDatabase)?.cache?.remove(player.uniqueId)
-        SayanVanishAPI.getInstance().removeBasicUser(player.uniqueId)
+        SayanVanishAPI.getInstance().database.cache.remove(player.uniqueId)
+        SayanVanishAPI.getInstance().database.removeBasicUser(player.uniqueId)
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     private fun hideVanishedPlayersOnJoin(event: PlayerJoinEvent) {
-        for (user in SayanVanishBukkitAPI.getInstance().getUsers { it.isVanished && it.player() != null }) {
+        for (user in SayanVanishBukkitAPI.getInstance().database.getUsers().filter { it.isVanished && it.player() != null }) {
             user.hideUser(event.player)
         }
     }

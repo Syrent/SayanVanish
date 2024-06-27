@@ -23,7 +23,7 @@ class FeaturePreventServerPing: ListenedFeature("prevent_server_ping", category 
     @EventHandler
     private fun onPreSpawn(event: PaperServerListPingEvent) {
         if (!isActive()) return
-        val vanishedPlayers = SayanVanishBukkitAPI.getInstance().getUsers { it.player() != null }
+        val vanishedPlayers = SayanVanishBukkitAPI.getInstance().database.getUsers().filter { it.player() != null }
         event.numPlayers -= vanishedPlayers.count()
         event.playerSample.removeIf { profile -> vanishedPlayers.map { vanishedPlayer -> vanishedPlayer.uniqueId }.contains(profile.id) }
     }

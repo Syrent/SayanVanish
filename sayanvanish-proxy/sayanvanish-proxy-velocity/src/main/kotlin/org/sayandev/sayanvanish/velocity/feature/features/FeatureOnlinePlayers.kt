@@ -21,7 +21,7 @@ class FeatureOnlinePlayers : ListenedFeature("online_players") {
     fun onProxyPing(event: ProxyPingEvent) {
         if (!isActive()) return
         val pingPlayers = event.ping.players.getOrNull() ?: return
-        val onlineVanishedPlayers = SayanVanishVelocityAPI.getInstance().getVanishedUsers(false).filter { it.isOnline }
+        val onlineVanishedPlayers = SayanVanishVelocityAPI.getInstance().getVanishedUsers().filter { it.isOnline }
         val nonVanishedPlayersCount = pingPlayers.online - onlineVanishedPlayers.count()
         val nonVanishedPlayersSample = pingPlayers.sample.filter { !onlineVanishedPlayers.map { it.username }.contains(it.name) }
         event.ping = event.ping

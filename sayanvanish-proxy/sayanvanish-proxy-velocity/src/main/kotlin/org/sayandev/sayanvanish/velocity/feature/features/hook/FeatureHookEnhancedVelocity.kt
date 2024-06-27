@@ -23,7 +23,7 @@ class FeatureHookEnhancedVelocity : HookFeature("hook_enhancedvelocity", "enhanc
 
 private class EnhancedVelocityImpl : VanishHook {
     override fun setIsVanished(uniqueId: UUID): Boolean {
-        return SayanVanishVelocityAPI.getInstance().isVanished(uniqueId, false)
+        return SayanVanishVelocityAPI.getInstance().isVanished(uniqueId)
     }
 
     override fun setVanished(uniqueId: UUID) {

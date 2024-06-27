@@ -5,24 +5,31 @@ import org.sayandev.sayanvanish.api.database.databaseConfig
 import org.sayandev.sayanvanish.api.database.redis.RedisDatabase
 import org.sayandev.sayanvanish.api.database.sql.SQLDatabase
 import java.util.*
-import kotlin.reflect.KClass
 
-open class SayanVanishAPI<U: User>(val type: KClass<out User>) {
-    constructor(): this(User::class)
+open class SayanVanishAPI<U: User>(val type: Class<out User>) {
+    constructor(): this(User::class.java)
 
     val database = when (databaseConfig.method) {
         DatabaseMethod.SQL -> {
-            SQLDatabase<U>(databaseConfig.sql).apply {
+            SQLDatabase<U>(databaseConfig.sql, type, databaseConfig.useCacheWhenAvailable).apply {
                 this.connect()
                 this.initialize()
             }
         }
         DatabaseMethod.REDIS -> {
-            RedisDatabase<U>(databaseConfig.redis).apply {
+            RedisDatabase<U>(databaseConfig.redis, type).apply {
                 this.initialize()
                 this.connect()
             }
         }
+    }
+
+    init {
+        for (user in database.getUsers().filter { user -> user.serverId == Platform.get().serverId }) {
+            user.isOnline = false
+            user.save()
+        }
+        database.purgeBasic(Platform.get().serverId)
     }
 
     fun getPlatform(): Platform {
@@ -30,11 +37,23 @@ open class SayanVanishAPI<U: User>(val type: KClass<out User>) {
     }
 
     fun isVanished(uniqueId: UUID): Boolean {
-        return database.getUser(uniqueId, type)?.isVanished == true
+        return database.getUser(uniqueId)?.isVanished == true
     }
 
     fun canSee(user: U, target: U): Boolean {
         return user.vanishLevel >= target.vanishLevel
+    }
+
+    fun getUser(uniqueId: UUID): U? {
+        return database.getUser(uniqueId)
+    }
+
+    fun getOnlineUsers(): List<U> {
+        return database.getUsers().filter { it.isOnline }
+    }
+
+    fun getVanishedUsers(): List<U> {
+        return database.getUsers().filter { it.isVanished }
     }
 
     companion object {
@@ -46,12 +65,12 @@ open class SayanVanishAPI<U: User>(val type: KClass<out User>) {
         }
 
         fun UUID.user(): User? {
-            return getInstance().database.getUser(this)
+            return getInstance().getUser(this)
         }
 
-        fun UUID.asyncUser(result: (User?) -> Unit) {
-            getInstance().database.getUserAsync(this, result)
-        }
+        /*fun UUID.asyncUser(result: (User?) -> Unit) {
+            getInstance().getUserAsync(this, result)
+        }*/
     }
 
 }

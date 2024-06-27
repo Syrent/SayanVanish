@@ -5,7 +5,6 @@ import com.google.gson.JsonParser
 import org.sayandev.sayanvanish.api.exception.UnsupportedPlatformException
 import org.sayandev.stickynote.core.utils.Gson
 import java.util.*
-import kotlin.reflect.KClass
 
 interface User : BasicUser {
 
@@ -62,11 +61,11 @@ interface User : BasicUser {
 
     override fun save() {
         serverId = Platform.get().serverId
-        SayanVanishAPI.getInstance().addUser(this)
+        SayanVanishAPI.getInstance().database.addUser(this)
     }
 
     fun delete() {
-        SayanVanishAPI.getInstance().removeUser(uniqueId)
+        SayanVanishAPI.getInstance().database.removeUser(uniqueId)
     }
 
     override fun toJson(): String {
@@ -101,8 +100,9 @@ interface User : BasicUser {
             }
         }
 
-        fun User.cast(to: KClass<out User>): Any {
-            return to.java.getDeclaredMethod("fromUser", User::class.java).invoke(null, this)
+        fun User.convert(to: Class<out User>): Any {
+            val instance = to.getDeclaredMethod("fromUser", User::class.java).invoke(null, this)
+            return instance
         }
     }
 

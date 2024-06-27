@@ -34,15 +34,15 @@ private class VelocitabImpl : VanishIntegration {
         if (player == null) return true
         val otherPlayer = StickyNote.getPlayer(otherName)
         if (otherPlayer == null) return true
-        val user = player.user(false) ?: return true
-        val otherUser = otherPlayer.user(false) ?: return true
+        val user = player.user() ?: return true
+        val otherUser = otherPlayer.user() ?: return true
         return if (isVanished(name) && isVanished(otherName) && user.vanishLevel >= otherUser.vanishLevel) true
         else if (isVanished(otherName)) false
         else true
     }
 
     override fun isVanished(name: String): Boolean {
-        return StickyNote.getPlayer(name)?.user(false)?.isVanished == true
+        return StickyNote.getPlayer(name)?.user()?.isVanished == true
     }
 
     @Subscribe

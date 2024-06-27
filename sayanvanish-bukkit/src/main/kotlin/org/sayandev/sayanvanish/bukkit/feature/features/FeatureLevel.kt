@@ -30,7 +30,7 @@ class FeatureLevel(
         runSync({
             val user = event.user
             for (onlinePlayer in onlinePlayers.filter { it.uniqueId != user.uniqueId }) {
-                val playerVanishLevel = onlinePlayer.user(false)?.vanishLevel ?: -1
+                val playerVanishLevel = onlinePlayer.user()?.vanishLevel ?: -1
                 if (playerVanishLevel < user.vanishLevel || !onlinePlayer.hasPermission(Permission.VANISH.permission())) {
                     user.player()?.let { player ->
                         hidePlayer(onlinePlayer, player)
@@ -51,7 +51,7 @@ class FeatureLevel(
         runSync({
             val user = event.user
             for (onlinePlayer in onlinePlayers.filter { it.uniqueId != user.uniqueId }) {
-                val playerVanishLevel = onlinePlayer.user(false)?.vanishLevel ?: -1
+                val playerVanishLevel = onlinePlayer.user()?.vanishLevel ?: -1
                 if (playerVanishLevel >= user.vanishLevel) {
                     user.player()?.let { player -> NMSUtils.sendPacket(onlinePlayer, PacketUtils.getUpdateGameModePacket(NMSUtils.getServerPlayer(player), player.gameMode)) }
                 }
@@ -65,7 +65,7 @@ class FeatureLevel(
         val player = event.player
         val user = event.player.user() ?: return
         for (onlinePlayer in onlinePlayers.filter { it.uniqueId != user.uniqueId }) {
-            val playerVanishLevel = onlinePlayer.user(false)?.vanishLevel ?: -1
+            val playerVanishLevel = onlinePlayer.user()?.vanishLevel ?: -1
             if (playerVanishLevel >= user.vanishLevel) {
                 NMSUtils.sendPacket(onlinePlayer, PacketUtils.getUpdateGameModePacket(NMSUtils.getServerPlayer(player), player.gameMode))
             } else {
@@ -79,7 +79,7 @@ class FeatureLevel(
         if (!isActive() || !seeAsSpectator) return
         runSync({
             val player = event.player
-            val playerVanishLevel = player.user(false)?.vanishLevel ?: -1
+            val playerVanishLevel = player.user()?.vanishLevel ?: -1
             for (user in SayanVanishBukkitAPI.getInstance().getVanishedUsers().filter { it.player() != null && it.uniqueId != player.uniqueId }) {
                 val vanishedPlayer = user.player() ?: continue
                 if (playerVanishLevel >= user.vanishLevel && user.hasPermission(Permission.VANISH.permission())) {
@@ -94,7 +94,7 @@ class FeatureLevel(
         if (!isActive()) return
         runSync({
             val player = event.player
-            val playerVanishLevel = player.user(false)?.vanishLevel ?: -1
+            val playerVanishLevel = player.user()?.vanishLevel ?: -1
             for (user in SayanVanishBukkitAPI.getInstance().getVanishedUsers().filter { it.player() != null && it.uniqueId != player.uniqueId }) {
                 val vanishedPlayer = user.player() ?: continue
                 if (playerVanishLevel < user.vanishLevel || !player.hasPermission(Permission.VANISH.permission())) {

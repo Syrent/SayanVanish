@@ -12,7 +12,7 @@ interface BasicUser {
     var serverId: String
 
     fun save() {
-        SayanVanishAPI.getInstance().addBasicUser(this)
+        SayanVanishAPI.getInstance().database.addBasicUser(this)
     }
 
     fun toJson(): String {
@@ -38,7 +38,7 @@ interface BasicUser {
             return object : BasicUser {
                 override val uniqueId: UUID = uniqueId
                 override var username: String = username
-                override var serverId: String = serverId ?: Platform.get().id
+                override var serverId: String = serverId ?: Platform.get().serverId
             }
         }
     }

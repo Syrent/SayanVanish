@@ -7,7 +7,7 @@ import java.util.UUID
 
 val database = SayanVanishBungeeAPI.getInstance().database
 
-class SayanVanishBungeeAPI() : SayanVanishAPI<BungeeUser>(BungeeUser::class,) {
+class SayanVanishBungeeAPI() : SayanVanishAPI<BungeeUser>(BungeeUser::class.java) {
     companion object {
         private val defaultInstance = SayanVanishBungeeAPI()
 
@@ -19,18 +19,18 @@ class SayanVanishBungeeAPI() : SayanVanishAPI<BungeeUser>(BungeeUser::class,) {
             return getInstance().getUser(this)
         }
 
-        public fun ProxiedPlayer.user(useCache: Boolean = databaseConfig.useCacheWhenAvailable): BungeeUser? {
-            return getInstance().getUser(this.uniqueId, useCache)
+        public fun ProxiedPlayer.user(): BungeeUser? {
+            return getInstance().getUser(this.uniqueId)
         }
 
-        fun ProxiedPlayer.getOrCreateUser(useCache: Boolean = databaseConfig.useCacheWhenAvailable): BungeeUser {
-            return getInstance().getUser(this.uniqueId, useCache) ?: BungeeUser(this.uniqueId, this.name ?: "N/A")
+        fun ProxiedPlayer.getOrCreateUser(): BungeeUser {
+            return getInstance().getUser(this.uniqueId) ?: BungeeUser(this.uniqueId, this.name ?: "N/A")
         }
 
-        fun ProxiedPlayer.getOrAddUser(useCache: Boolean = databaseConfig.useCacheWhenAvailable): BungeeUser {
-            return getInstance().getUser(this.uniqueId, useCache) ?: let {
+        fun ProxiedPlayer.getOrAddUser(): BungeeUser {
+            return getInstance().getUser(this.uniqueId) ?: let {
                 val newUser = BungeeUser(this.uniqueId, this.name ?: "N/A")
-                getInstance().addUser(newUser)
+                getInstance().database.addUser(newUser)
                 newUser
             }
         }

@@ -3,10 +3,11 @@ package org.sayandev.sayanvanish.api.database
 import org.sayandev.sayanvanish.api.BasicUser
 import org.sayandev.sayanvanish.api.User
 import java.util.*
-import java.util.function.Consumer
-import kotlin.reflect.KClass
 
 interface Database<U: User> {
+
+    var cache: MutableMap<UUID, U>
+    var useCache: Boolean
 
     fun initialize()
 
@@ -15,25 +16,14 @@ interface Database<U: User> {
     fun disconnect()
 
     fun addUser(user: U)
-    fun addUserAsync(user: U, result: () -> Unit)
 
     fun hasUser(uniqueId: UUID): Boolean
-    fun hasUserAsync(uniqueId: UUID, result: (Boolean) -> Unit)
 
     fun updateUser(user: U)
-    fun updateUserAsync(user: U, result: () -> Unit)
 
     fun removeUser(uniqueId: UUID)
-    fun removeUserAsync(uniqueId: UUID, result: () -> Unit)
-
-    fun getUser(uniqueId: UUID, type: KClass<out User>): U?
-    fun getUserAsync(uniqueId: UUID, type: KClass<out User>, result: (U?) -> Unit)
 
     fun getUser(uniqueId: UUID): U?
-    fun getUserAsync(uniqueId: UUID, result: (U?) -> Unit)
-
-    fun getUsers(type: KClass<out User>): List<U>
-    fun getUsersAsync(type: KClass<out User>, result: (List<U>) -> Unit)
 
     fun getUsers(): List<U>
     fun getUsersAsync(result: (List<U>) -> Unit)
@@ -55,6 +45,8 @@ interface Database<U: User> {
     fun purgeCache()
     fun purgeBasic()
     fun purgeBasic(serverId: String)
-    fun updateBasicCache()
+
+    fun updateCacheAsync()
+    fun updateBasicCacheAsync()
 
 }

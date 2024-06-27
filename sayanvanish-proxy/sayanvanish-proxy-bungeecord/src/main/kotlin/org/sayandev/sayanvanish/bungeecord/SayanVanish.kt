@@ -5,12 +5,14 @@ import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.bungeecord.api.SayanVanishBungeeAPI
 import org.sayandev.sayanvanish.proxy.config.settings
 import org.sayandev.sayanvanish.velocity.VanishManager
+import org.sayandev.stickynote.bungeecord.StickyNote
 import org.sayandev.stickynote.bungeecord.dataDirectory
 import org.sayandev.stickynote.bungeecord.registerListener
 import org.sayandev.stickynote.bungeecord.server
 import org.sayandev.stickynote.lib.libby.BungeeLibraryManager
 import org.sayandev.stickynote.lib.libby.Library
 import org.sayandev.stickynote.loader.bungee.StickyNoteBungeeLoader
+import java.util.concurrent.TimeUnit
 
 class SayanVanish : Plugin() {
 
@@ -30,6 +32,14 @@ class SayanVanish : Plugin() {
             }
             SayanVanishBungeeAPI.getInstance().database.purgeBasic(settings.general.serverId)
         }
+
+        StickyNote.run({
+            SayanVanishBungeeAPI.getInstance().database.updateBasicCacheAsync()
+        }, 5, 5, TimeUnit.SECONDS)
+
+        StickyNote.run({
+            SayanVanishBungeeAPI.getInstance().database.updateCacheAsync()
+        }, 1, 1, TimeUnit.SECONDS)
     }
 
     private fun downloadLibraries() {

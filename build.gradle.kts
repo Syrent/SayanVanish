@@ -46,12 +46,11 @@ fun lastReleaseCommitMessages(): String {
     connection.requestMethod = "GET"
     connection.setRequestProperty("Accept", "application/vnd.github.v3+json")
     val response = connection.inputStream.bufferedReader().use { it.readText() }
-    val targetCommitish = JsonParser.parseString(response).asJsonArray.get(0).asJsonObject.get("target_commitish").asString
+    val targetCommitish = JsonParser.parseString(response).asJsonArray.get(1).asJsonObject.get("target_commitish").asString
 
     val sha = if (targetCommitish.matches(Regex("^[a-f0-9]{40}$"))) {
         targetCommitish
     } else {
-        // If target_commitish is a branch name, fetch the latest commit hash from that branch
         val branchUrl = URL("https://api.github.com/repos/Syrent/$name/git/refs/heads/$targetCommitish")
         val branchConnection = branchUrl.openConnection() as HttpURLConnection
         branchConnection.requestMethod = "GET"

@@ -48,7 +48,7 @@ fun lastReleaseCommitMessages(): String {
     val response = connection.inputStream.bufferedReader().use { it.readText() }
     val previousReleaseVersion = JsonParser.parseString(response).asJsonArray.get(1).asJsonObject.get("tag_name").asString
 
-    val currentProjectVersion = version.toString()
+    val currentProjectVersion = versionString
 
     return executeGitCommand("log", "--pretty=format:%s%n", "$previousReleaseVersion..$currentProjectVersion")
 }

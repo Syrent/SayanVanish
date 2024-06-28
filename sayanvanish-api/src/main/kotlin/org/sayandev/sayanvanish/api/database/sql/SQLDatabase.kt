@@ -322,13 +322,17 @@ class SQLDatabase<U : User>(
 
     override fun updateCacheAsync() {
         getUsersAsync {
-            cache = it.associateBy { user -> user.uniqueId }.toMutableMap()
+            if (it.isNotEmpty()) {
+                cache = it.associateBy { user -> user.uniqueId }.toMutableMap()
+            }
         }
     }
 
     override fun updateBasicCacheAsync() {
         getBasicUsersAsync {
-            basicCache = it.associateBy { user -> user.uniqueId }.toMutableMap()
+            if (it.isNotEmpty()) {
+                basicCache = it.associateBy { user -> user.uniqueId }.toMutableMap()
+            }
         }
     }
 

@@ -26,7 +26,7 @@ object RegisteredFeatureHandler {
         for (annotatedClass in annotatedClasses) {
             createNewInstance(annotatedClass)
         }
-        Platform.get().logger.info("Enabled ${Features.features.size} features.")
+        Platform.get().logger.info("Enabled ${Features.features.filter { it.isActive() }.size} features.")
     }
 
     private fun createNewInstance(clazz: Class<*>) {

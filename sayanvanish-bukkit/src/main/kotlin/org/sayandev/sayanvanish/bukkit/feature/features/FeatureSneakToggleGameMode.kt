@@ -8,6 +8,7 @@ import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.StickyNote.runSync
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
+import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @RegisteredFeature
@@ -39,6 +40,13 @@ class FeatureSneakToggleGameMode(
                 sneakList.remove(player)
             }, 8)
         }
+    }
+
+    @EventHandler
+    private fun onUnVanish(event: BukkitUserUnVanishEvent) {
+        val user = event.user
+        val player = user.player() ?: return
+        player.gameMode = sneakMap[player] ?: fallbackMode
     }
 
 }

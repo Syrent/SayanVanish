@@ -61,7 +61,7 @@ class FeatureLevel(
 
     @EventHandler
     private fun onGameModeChange(event: PlayerGameModeChangeEvent) {
-        if (!isActive() || seeAsSpectator) return
+        if (!isActive() || !seeAsSpectator) return
         val player = event.player
         val user = event.player.user() ?: return
         for (onlinePlayer in onlinePlayers.filter { it.uniqueId != user.uniqueId }) {

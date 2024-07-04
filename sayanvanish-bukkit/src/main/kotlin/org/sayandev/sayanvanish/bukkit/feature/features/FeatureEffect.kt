@@ -19,12 +19,13 @@ import java.lang.reflect.Type
 
 @RegisteredFeature
 @ConfigSerializable
+@Suppress("DEPRECATION")
 class FeatureEffect(
     val effects: List<PotionEffectData> = listOf(
         PotionEffectData(
             ServerVersion.supports(9),
             false,
-            PotionEffectType.NIGHT_VISION,
+            PotionEffectType.NIGHT_VISION.name,
             Int.MAX_VALUE,
             0,
             false,
@@ -33,7 +34,7 @@ class FeatureEffect(
         PotionEffectData(
             false,
             false,
-            PotionEffectType.WATER_BREATHING,
+            PotionEffectType.WATER_BREATHING.name,
             Int.MAX_VALUE,
             0,
             false,
@@ -42,7 +43,7 @@ class FeatureEffect(
         PotionEffectData(
             false,
             false,
-            PotionEffectType.FIRE_RESISTANCE,
+            PotionEffectType.FIRE_RESISTANCE.name,
             Int.MAX_VALUE,
             0,
             false,
@@ -70,10 +71,10 @@ class FeatureEffect(
         val player = event.user.player() ?: return
         for (effect in effects.filter { !it.keepAfterAppear }) {
             if (effect.usePacket) {
-                player.sendPacket(PacketUtils.getRemoveMobEffectPacket(player, effect.type))
+                player.sendPacket(PacketUtils.getRemoveMobEffectPacket(player, PotionEffectType.getByName(effect.type)!!))
             } else {
-                if (player.activePotionEffects.find { it.type == effect.type && it.amplifier == effect.amplifier && it.isAmbient == effect.ambient && it.hasParticles() == effect.particles } != null) {
-                    player.removePotionEffect(effect.type)
+                if (player.activePotionEffects.find { it.type.name == effect.type && it.amplifier == effect.amplifier && it.isAmbient == effect.ambient && it.hasParticles() == effect.particles } != null) {
+                    player.removePotionEffect(PotionEffectType.getByName(effect.type)!!)
                 }
             }
         }
@@ -85,13 +86,13 @@ class FeatureEffect(
 data class PotionEffectData(
     val usePacket: Boolean,
     val keepAfterAppear: Boolean = false,
-    val type: PotionEffectType,
+    val type: String,
     val duration: Int,
     val amplifier: Int,
     val ambient: Boolean,
     val particles: Boolean,
 ) {
-    fun toPotionEffect() = PotionEffect(type, if (ServerVersion.supports(19) && duration == Int.MAX_VALUE) -1 else duration, amplifier, ambient, particles)
+    fun toPotionEffect() = PotionEffect(PotionEffectType.getByName(type)!!, if (ServerVersion.supports(19) && duration == Int.MAX_VALUE) -1 else duration, amplifier, ambient, particles)
 }
 
 class PotionEffectTypeSerializer : TypeSerializer<PotionEffectType> {

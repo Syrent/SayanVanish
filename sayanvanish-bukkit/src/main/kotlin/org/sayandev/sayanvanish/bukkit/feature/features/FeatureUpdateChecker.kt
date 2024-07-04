@@ -22,6 +22,7 @@ class FeatureUpdateChecker(
     @Configurable val checkEveryXMinutes: Int = 60,
     @Configurable val notifyPermission: String = "sayanvanish.feature.updatechecker.notify",
     @Configurable val notifyOnJoin: Boolean = true,
+    @Configurable val notifyForSnapshotBuilds: Boolean = false,
     val content: List<String> = listOf(
         "<green>A new version of <white>SayanVanish</white> is available!",
         "<gold> - Latest release: <white><latest_release_name>",
@@ -82,14 +83,11 @@ class FeatureUpdateChecker(
     private fun send(sender: CommandSender) {
         if (latestRelease == null || latestSnapshot == null) return
         val currentVersion = plugin.description.version // eg: 1.1.0-SNAPSHOT-build.121-ed8f2b2
-        val isSnapshot = currentVersion.contains("SNAPSHOT")
-        if (isSnapshot) {
-            val snapshotVersion = latestSnapshot!!.name // eg: 1.1.0-SNAPSHOT-build.121
-            val commitHash = currentVersion.split("-").last()
-            if (currentVersion.removeSuffix("-${commitHash}") == snapshotVersion) return
-        } else {
+        val commitHash = currentVersion.split("-").last()
+        val snapshotVersion = latestSnapshot!!.name // eg: 1.1.0-SNAPSHOT-build.121
+        if (currentVersion.removeSuffix("-${commitHash}") == snapshotVersion) return
+        if (!notifyForSnapshotBuilds) {
             val releaseVersion = latestRelease!!.name // eg: 1.0.1-263f0bf
-            val commitHash = currentVersion.split("-").last()
             if (currentVersion.removeSuffix("-${commitHash}") == releaseVersion) return
         }
 

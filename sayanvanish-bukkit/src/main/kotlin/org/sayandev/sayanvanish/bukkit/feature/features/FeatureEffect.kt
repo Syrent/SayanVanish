@@ -8,9 +8,9 @@ import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.NMSUtils
+import org.sayandev.stickynote.bukkit.NMSUtils.sendPacket
 import org.sayandev.stickynote.bukkit.PacketUtils
 import org.sayandev.stickynote.bukkit.utils.ServerVersion
-import org.sayandev.stickynote.bukkit.warn
 import org.sayandev.stickynote.lib.spongepowered.configurate.ConfigurationNode
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.sayandev.stickynote.lib.spongepowered.configurate.serialize.TypeSerializer
@@ -57,7 +57,7 @@ class FeatureEffect(
         val player = event.user.player() ?: return
         for (effect in effects) {
             if (effect.usePacket) {
-                NMSUtils.sendPacket(player, PacketUtils.getUpdateMobEffectPacket(player, effect.toPotionEffect()))
+                player.sendPacket(PacketUtils.getUpdateMobEffectPacket(player, effect.toPotionEffect()))
             } else {
                 player.addPotionEffect(effect.toPotionEffect())
             }
@@ -70,7 +70,7 @@ class FeatureEffect(
         val player = event.user.player() ?: return
         for (effect in effects.filter { !it.keepAfterAppear }) {
             if (effect.usePacket) {
-                NMSUtils.sendPacket(player, PacketUtils.getRemoveMobEffectPacket(player, effect.type))
+                player.sendPacket(PacketUtils.getRemoveMobEffectPacket(player, effect.type))
             } else {
                 if (player.activePotionEffects.find { it.type == effect.type && it.amplifier == effect.amplifier && it.isAmbient == effect.ambient && it.hasParticles() == effect.particles } != null) {
                     player.removePotionEffect(effect.type)

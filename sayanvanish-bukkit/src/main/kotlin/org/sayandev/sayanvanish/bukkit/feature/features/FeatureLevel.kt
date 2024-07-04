@@ -14,6 +14,7 @@ import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.*
+import org.sayandev.stickynote.bukkit.NMSUtils.sendPacket
 import org.sayandev.stickynote.bukkit.utils.ServerVersion
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
 
@@ -34,11 +35,11 @@ class FeatureLevel(
                 if (playerVanishLevel < user.vanishLevel || !onlinePlayer.hasPermission(Permission.VANISH.permission())) {
                     user.player()?.let { player ->
                         hidePlayer(onlinePlayer, player)
-                        NMSUtils.sendPacket(onlinePlayer, PacketUtils.getRemoveEntitiesPacket(player.entityId))
+                        onlinePlayer.sendPacket(PacketUtils.getRemoveEntitiesPacket(player.entityId))
                     }
                 } else {
                     if (seeAsSpectator) {
-                        user.player()?.let { player -> NMSUtils.sendPacket(onlinePlayer, PacketUtils.getUpdateGameModePacket(NMSUtils.getServerPlayer(player), GameMode.SPECTATOR)) }
+                        user.player()?.let { player -> onlinePlayer.sendPacket(PacketUtils.getUpdateGameModePacket(NMSUtils.getServerPlayer(player), GameMode.SPECTATOR)) }
                     }
                 }
             }
@@ -53,7 +54,7 @@ class FeatureLevel(
             for (onlinePlayer in onlinePlayers.filter { it.uniqueId != user.uniqueId }) {
                 val playerVanishLevel = onlinePlayer.user()?.vanishLevel ?: -1
                 if (playerVanishLevel >= user.vanishLevel) {
-                    user.player()?.let { player -> NMSUtils.sendPacket(onlinePlayer, PacketUtils.getUpdateGameModePacket(NMSUtils.getServerPlayer(player), player.gameMode)) }
+                    user.player()?.let { player -> onlinePlayer.sendPacket(PacketUtils.getUpdateGameModePacket(NMSUtils.getServerPlayer(player), player.gameMode)) }
                 }
             }
         }, 1)
@@ -67,9 +68,9 @@ class FeatureLevel(
         for (onlinePlayer in onlinePlayers.filter { it.uniqueId != user.uniqueId }) {
             val playerVanishLevel = onlinePlayer.user()?.vanishLevel ?: -1
             if (playerVanishLevel >= user.vanishLevel) {
-                NMSUtils.sendPacket(onlinePlayer, PacketUtils.getUpdateGameModePacket(NMSUtils.getServerPlayer(player), player.gameMode))
+                onlinePlayer.sendPacket(PacketUtils.getUpdateGameModePacket(NMSUtils.getServerPlayer(player), player.gameMode))
             } else {
-                NMSUtils.sendPacket(onlinePlayer, PacketUtils.getUpdateGameModePacket(NMSUtils.getServerPlayer(player), GameMode.SPECTATOR))
+                onlinePlayer.sendPacket(PacketUtils.getUpdateGameModePacket(NMSUtils.getServerPlayer(player), GameMode.SPECTATOR))
             }
         }
     }
@@ -83,7 +84,7 @@ class FeatureLevel(
             for (user in SayanVanishBukkitAPI.getInstance().getVanishedUsers().filter { it.player() != null && it.uniqueId != player.uniqueId }) {
                 val vanishedPlayer = user.player() ?: continue
                 if (playerVanishLevel >= user.vanishLevel && user.hasPermission(Permission.VANISH.permission())) {
-                    NMSUtils.sendPacket(player, PacketUtils.getUpdateGameModePacket(NMSUtils.getServerPlayer(vanishedPlayer), GameMode.SPECTATOR))
+                    player.sendPacket(PacketUtils.getUpdateGameModePacket(NMSUtils.getServerPlayer(vanishedPlayer), GameMode.SPECTATOR))
                 }
             }
         }, 1)
@@ -99,7 +100,7 @@ class FeatureLevel(
                 val vanishedPlayer = user.player() ?: continue
                 if (playerVanishLevel < user.vanishLevel || !player.hasPermission(Permission.VANISH.permission())) {
                     hidePlayer(player, vanishedPlayer)
-                    NMSUtils.sendPacket(player, PacketUtils.getRemoveEntitiesPacket(vanishedPlayer.entityId))
+                    player.sendPacket(PacketUtils.getRemoveEntitiesPacket(vanishedPlayer.entityId))
                 }
             }
         }, 1)

@@ -14,7 +14,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.papermc.hangar-publish-plugin") version "0.1.2"
     id("com.modrinth.minotaur") version "2.8.7"
-    id("org.sayandev.stickynote") version "1.1.14"
+    id("org.sayandev.stickynote") version "1.1.15"
 }
 
 val slug = findProperty("slug")!! as String
@@ -84,6 +84,8 @@ allprojects {
         loaderVersion(findProperty("stickynoteVersion")!! as String)
         modules(StickyNoteModules.CORE)
         useLoader(true)
+        relocate(true)
+        relocation("org.sayandev.stickynote", "org.sayandev.sayanvanish.lib.stickynote")
     }
 
     repositories {
@@ -146,6 +148,8 @@ subprojects {
             archiveClassifier.set(null as String?)
             destinationDirectory.set(file(rootProject.projectDir.path + "/bin"))
             from("LICENSE")
+
+            relocate("org.sayandev.stickynote", "org.sayandev.sayanvanish.lib.stickynote")
 //            minimize()
         }
 

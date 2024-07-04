@@ -10,9 +10,8 @@ import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.StickyNote
 import org.sayandev.stickynote.bukkit.onlinePlayers
-import org.sayandev.stickynote.bukkit.warn
+import org.sayandev.stickynote.bukkit.utils.ServerVersion
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
-import org.sayandev.stickynote.lib.xseries.ReflectionUtils
 import kotlin.collections.all
 import kotlin.collections.filter
 
@@ -21,7 +20,7 @@ import kotlin.collections.filter
 class FeaturePreventSpawnerSpawn: ListenedFeature("prevent_spawner_spawn", category = FeatureCategories.PREVENTION) {
 
     @Transient
-    override var condition: Boolean = StickyNote.isPaper() && ReflectionUtils.supports(16)
+    override var condition: Boolean = StickyNote.isPaper() && ServerVersion.supports(16)
 
     @EventHandler
     private fun onPreSpawn(event: PreSpawnerSpawnEvent) {

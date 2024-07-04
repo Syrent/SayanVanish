@@ -7,8 +7,8 @@ import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.StickyNote
+import org.sayandev.stickynote.bukkit.utils.ServerVersion
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
-import org.sayandev.stickynote.lib.xseries.ReflectionUtils
 import kotlin.collections.contains
 import kotlin.collections.count
 import kotlin.collections.map
@@ -18,7 +18,7 @@ import kotlin.collections.map
 class FeaturePreventServerPing: ListenedFeature("prevent_server_ping", category = FeatureCategories.PREVENTION) {
 
     @Transient
-    override var condition: Boolean = StickyNote.isPaper() && ReflectionUtils.supports(16)
+    override var condition: Boolean = StickyNote.isPaper() && ServerVersion.supports(16)
 
     @EventHandler
     private fun onPreSpawn(event: PaperServerListPingEvent) {

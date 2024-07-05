@@ -16,9 +16,7 @@ import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.Confi
 
 @RegisteredFeature
 @ConfigSerializable
-class FeatureHookPlaceholderAPI(
-    @Configurable val cacheCooldown: Long = 1000L
-): HookFeature("hook_placeholderapi", "PlaceholderAPI") {
+class FeatureHookPlaceholderAPI: HookFeature("hook_placeholderapi", "PlaceholderAPI") {
 
     @Transient private var hook: Any? = null
 
@@ -26,7 +24,7 @@ class FeatureHookPlaceholderAPI(
         if (hasPlugin()) {
             var hook = hook as? HookPlaceholderAPI?
             if (hook == null || hook.isRegistered() == false) {
-                hook = HookPlaceholderAPI(cacheCooldown)
+                hook = HookPlaceholderAPI()
                 hook.register()
                 this.hook = hook
             }
@@ -45,7 +43,7 @@ class FeatureHookPlaceholderAPI(
     }
 }
 
-private class HookPlaceholderAPI(val cacheCooldown: Long) : PlaceholderExpansion() {
+private class HookPlaceholderAPI : PlaceholderExpansion() {
 
     override fun getIdentifier(): String {
         return StickyNote.plugin().description.name.lowercase()

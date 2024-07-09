@@ -16,22 +16,27 @@ class SayanVanishBukkitAPI : SayanVanishAPI<BukkitUser>(BukkitUser::class.java) 
     companion object {
         private val defaultInstance = SayanVanishBukkitAPI()
 
+        @JvmStatic
         fun getInstance(): SayanVanishAPI<BukkitUser> {
             return defaultInstance
         }
 
+        @JvmStatic
         fun UUID.bukkitUser(): BukkitUser? {
             return getInstance().getUser(this)
         }
 
+        @JvmStatic
         fun OfflinePlayer.user(): BukkitUser? {
             return getInstance().database.getUser(this.uniqueId)
         }
 
+        @JvmStatic
         fun OfflinePlayer.getOrCreateUser(): BukkitUser {
             return getInstance().getUser(this.uniqueId) ?: BukkitUser(this.uniqueId, this.name ?: "N/A")
         }
 
+        @JvmStatic
         fun OfflinePlayer.getOrAddUser(): BukkitUser {
             return getInstance().getUser(this.uniqueId) ?: let {
                 val newUser = BukkitUser(this.uniqueId, this.name ?: "N/A")

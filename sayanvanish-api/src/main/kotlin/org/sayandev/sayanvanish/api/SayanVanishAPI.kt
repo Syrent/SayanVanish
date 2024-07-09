@@ -64,6 +64,7 @@ open class SayanVanishAPI<U: User>(val type: Class<out User>) {
             return defaultInstance
         }
 
+        @JvmStatic
         fun UUID.user(): User? {
             return getInstance().getUser(this)
         }

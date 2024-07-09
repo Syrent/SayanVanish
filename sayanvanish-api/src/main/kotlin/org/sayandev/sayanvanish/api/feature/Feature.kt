@@ -1,5 +1,6 @@
 package org.sayandev.sayanvanish.api.feature
 
+import org.sayandev.sayanvanish.api.BasicUser
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.stickynote.core.configuration.Config
@@ -30,6 +31,10 @@ abstract class Feature(
 
     open fun isActive(): Boolean {
         return enabled && condition
+    }
+
+    open fun isActive(user: BasicUser): Boolean {
+        return enabled && condition && Features.userFeatures(user).find { it.id == this.id }?.enabled != false
     }
 
     open fun enable() {

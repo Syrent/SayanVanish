@@ -19,8 +19,8 @@ class FeaturePreventPickup: ListenedFeature("prevent_pickup", category = Feature
 
     @EventHandler
     private fun onPickupItem(event: EntityPickupItemEvent) {
-        if (!isActive()) return
         val user = (event.entity as? Player)?.user() ?: return
+        if (!isActive()) return
         if (user.isVanished) {
             event.isCancelled = true
         }
@@ -36,8 +36,8 @@ class FeatureLegacyPreventPickup: ListenedFeature("legacy_prevent_pickup", categ
     @EventHandler
     @Suppress("DEPRECATION")
     private fun onPickupItem(event: PlayerPickupItemEvent) {
-        if (!isActive()) return
         val user = event.player.user() ?: return
+        if (!isActive()) return
         if (user.isVanished) {
             event.isCancelled = true
         }

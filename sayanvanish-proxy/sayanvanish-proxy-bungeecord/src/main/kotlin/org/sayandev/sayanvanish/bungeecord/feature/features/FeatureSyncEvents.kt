@@ -1,16 +1,13 @@
-package org.sayandev.sayanvanish.velocity.feature.features
+package org.sayandev.sayanvanish.bungeecord.feature.features
 
-import net.kyori.adventure.text.Component
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
-import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
-import org.sayandev.sayanvanish.velocity.event.VelocityUserUnVanishEvent
-import org.sayandev.sayanvanish.velocity.event.VelocityUserVanishEvent
-import org.sayandev.sayanvanish.velocity.feature.ListenedFeature
+import org.sayandev.sayanvanish.bungeecord.api.SayanVanishBungeeAPI
+import org.sayandev.sayanvanish.bungeecord.event.BungeeUserUnVanishEvent
+import org.sayandev.sayanvanish.bungeecord.feature.ListenedFeature
+import org.sayandev.stickynote.bungeecord.StickyNote
+import org.sayandev.stickynote.bungeecord.plugin
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
-import org.sayandev.stickynote.velocity.StickyNote
-import org.sayandev.stickynote.velocity.server
-import org.sayandev.stickynote.velocity.warn
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 @RegisteredFeature
@@ -23,7 +20,7 @@ class FeatureSyncEvents(
 
     override fun enable() {
         StickyNote.run({
-            for (user in SayanVanishVelocityAPI.getInstance().database.getUsers()) {
+            for (user in SayanVanishBungeeAPI.getInstance().database.getUsers()) {
                 if (previousUsers[user.uniqueId] == null) {
                     previousUsers[user.uniqueId] = user.isVanished
                     continue
@@ -31,15 +28,15 @@ class FeatureSyncEvents(
 
                 if (previousUsers[user.uniqueId] == false && user.isVanished) {
                     previousUsers[user.uniqueId] = true
-                    server.eventManager.fireAndForget(VelocityUserVanishEvent(user, user.currentOptions))
+                    plugin.proxy.pluginManager.callEvent(BungeeUserUnVanishEvent(user, user.currentOptions))
                 }
 
                 if (previousUsers[user.uniqueId] == true && !user.isVanished) {
                     previousUsers[user.uniqueId] = false
-                    server.eventManager.fireAndForget(VelocityUserUnVanishEvent(user, user.currentOptions))
+                    plugin.proxy.pluginManager.callEvent(BungeeUserUnVanishEvent(user, user.currentOptions))
                 }
             }
-        }, checkFrequencyMillis, TimeUnit.MILLISECONDS, checkFrequencyMillis, TimeUnit.MILLISECONDS)
+        }, checkFrequencyMillis, checkFrequencyMillis, TimeUnit.MILLISECONDS)
         super.enable()
     }
 }

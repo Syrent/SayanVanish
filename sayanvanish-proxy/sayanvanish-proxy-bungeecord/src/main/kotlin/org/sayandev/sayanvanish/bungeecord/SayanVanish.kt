@@ -35,11 +35,11 @@ class SayanVanish : Plugin() {
 
         StickyNote.run({
             SayanVanishBungeeAPI.getInstance().database.updateBasicCacheAsync()
-        }, 5, 5, TimeUnit.SECONDS)
+        }, settings.general.basicCacheUpdateFrequencyMillis, settings.general.basicCacheUpdateFrequencyMillis, TimeUnit.MILLISECONDS)
 
         StickyNote.run({
             SayanVanishBungeeAPI.getInstance().database.updateCacheAsync()
-        }, 1, 1, TimeUnit.SECONDS)
+        }, settings.general.cacheUpdateFrequencyMillis, settings.general.cacheUpdateFrequencyMillis, TimeUnit.MILLISECONDS)
     }
 
     private fun downloadLibraries() {

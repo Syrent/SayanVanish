@@ -23,7 +23,9 @@ class SettingsConfig(
     @ConfigSerializable
     data class General(
         val serverId: String = "${Platform.get().id}-${UUID.randomUUID()}",
-        val purgeOnlineHistoryOnStartup: Boolean = true
+        val purgeOnlineHistoryOnStartup: Boolean = true,
+        val cacheUpdateFrequencyMillis: Long = 150,
+        val basicCacheUpdateFrequencyMillis: Long = 5000,
     )
 
     companion object {

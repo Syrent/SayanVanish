@@ -13,10 +13,10 @@ import org.sayandev.stickynote.lib.libby.VelocityLibraryManager
 import org.sayandev.stickynote.loader.velocity.StickyNoteVelocityLoader
 import org.sayandev.stickynote.velocity.StickyNote
 import org.sayandev.stickynote.velocity.registerListener
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.nio.file.Path
 import java.util.concurrent.TimeUnit
-import java.util.logging.Logger
 
 class SayanVanish @Inject constructor(
     val server: ProxyServer,
@@ -30,7 +30,7 @@ class SayanVanish @Inject constructor(
 
         StickyNoteVelocityLoader.load(this, PLUGIN_ID, server, logger, dataDirectory)
 
-        Platform.setAndRegister(Platform("velocity", logger, dataDirectory.toFile(), settings.general.serverId))
+        Platform.setAndRegister(Platform("velocity", java.util.logging.Logger.getLogger("sayanvanish"), dataDirectory.toFile(), settings.general.serverId))
 
         SayanVanishVelocityAPI()
 

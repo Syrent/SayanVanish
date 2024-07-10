@@ -72,6 +72,15 @@ val citizens = Dependency(
     modules = listOf(Module.BUKKIT)
 )
 
+val discordsrv = Dependency(
+    group = "com.discordsrv",
+    artifact = "discordsrv",
+    version = "1.27.0",
+    relocation = null,
+    type = Dependency.Type.COMPILE_ONLY,
+    modules = listOf(Module.BUKKIT)
+)
+
 val squaremap = Dependency(
     group = "xyz.jpenilla",
     artifact = "squaremap-api",
@@ -176,6 +185,15 @@ val repositories = listOf(
         repos = emptyList(),
         dependencies = listOf(
             squaremap,
+        )
+    ),
+    Repository(
+        id = "scarsz",
+        repos = listOf(
+            "https://nexus.scarsz.me/content/groups/public/"
+        ),
+        dependencies = listOf(
+            discordsrv,
         )
     ),
 )

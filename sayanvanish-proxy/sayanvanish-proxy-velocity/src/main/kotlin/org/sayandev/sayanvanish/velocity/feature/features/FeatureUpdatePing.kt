@@ -15,7 +15,7 @@ import kotlin.jvm.optionals.getOrNull
 
 @RegisteredFeature
 @ConfigSerializable
-class FeatureOnlinePlayers : ListenedFeature("online_players") {
+class FeatureUpdatePing : ListenedFeature("update_ping") {
 
     @Subscribe
     fun onProxyPing(event: ProxyPingEvent) {

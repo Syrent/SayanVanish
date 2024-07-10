@@ -1,10 +1,12 @@
 package org.sayandev.sayanvanish.bukkit.feature.features.hook
 
 import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.HookFeature
+import org.sayandev.stickynote.bukkit.registerListener
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
 import xyz.jpenilla.squaremap.api.SquaremapProvider
 
@@ -20,7 +22,12 @@ class FeatureHookSquareMap: HookFeature("hook_squaremap", "squaremap") {
     }
 }
 
-private class SquaremapHookImpl(val feature: FeatureHookSquareMap) {
+private class SquaremapHookImpl(val feature: FeatureHookSquareMap): Listener {
+
+    init {
+        registerListener(this)
+    }
+
     @EventHandler
     private fun onVanish(event: BukkitUserVanishEvent) {
         if (!feature.isActive()) return

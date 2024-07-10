@@ -5,10 +5,12 @@ import net.citizensnpcs.api.ai.speech.event.NPCSpeechEvent
 import net.citizensnpcs.api.ai.speech.event.SpeechEvent
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.sayanvanish.bukkit.feature.HookFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
+import org.sayandev.stickynote.bukkit.registerListener
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @RegisteredFeature
@@ -24,7 +26,11 @@ class FeatureHookCitizens: HookFeature("hook_citizens", "Citizens") {
 
 }
 
-private class CitizensHookImpl(val feature: FeatureHookCitizens) {
+private class CitizensHookImpl(val feature: FeatureHookCitizens): Listener {
+
+    init {
+        registerListener(this)
+    }
 
     @EventHandler
     private fun onNPCSpeech(event: NPCSpeechEvent) {

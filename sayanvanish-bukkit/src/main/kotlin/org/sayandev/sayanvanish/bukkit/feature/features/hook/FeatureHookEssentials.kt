@@ -3,9 +3,11 @@ package org.sayandev.sayanvanish.bukkit.feature.features.hook
 import net.ess3.api.events.AfkStatusChangeEvent
 import net.ess3.api.events.PrivateMessagePreSendEvent
 import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
 import org.sayandev.sayanvanish.api.SayanVanishAPI.Companion.user
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.feature.HookFeature
+import org.sayandev.stickynote.bukkit.registerListener
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @RegisteredFeature
@@ -24,7 +26,11 @@ class FeatureHookEssentials(
 
 }
 
-private class EssentialsHookImpl(val feature: FeatureHookEssentials) {
+private class EssentialsHookImpl(val feature: FeatureHookEssentials): Listener {
+
+    init {
+        registerListener(this)
+    }
 
     @EventHandler
     private fun onNPCSpeech(event: AfkStatusChangeEvent) {

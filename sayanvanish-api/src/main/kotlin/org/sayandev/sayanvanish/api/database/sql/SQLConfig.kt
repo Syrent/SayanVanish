@@ -8,7 +8,7 @@ data class SQLConfig(
     val method: SQLMethod = SQLMethod.SQLITE,
     val host: String = "localhost",
     val port: Int = 3306,
-    val database: String = "root",
+    val database: String = "sayanvanish",
     val username: String = "minecraft",
     val password: String = "",
     val poolProperties: PoolProperties = PoolProperties(),

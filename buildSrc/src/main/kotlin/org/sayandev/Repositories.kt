@@ -81,6 +81,15 @@ val discordsrv = Dependency(
     modules = listOf(Module.BUKKIT)
 )
 
+val luckperms = Dependency(
+    group = "net.luckperms",
+    artifact = "api",
+    version = "5.4",
+    relocation = null,
+    type = Dependency.Type.COMPILE_ONLY,
+    modules = listOf(Module.BUKKIT)
+)
+
 val squaremap = Dependency(
     group = "xyz.jpenilla",
     artifact = "squaremap-api",
@@ -185,6 +194,7 @@ val repositories = listOf(
         repos = emptyList(),
         dependencies = listOf(
             squaremap,
+            luckperms
         )
     ),
     Repository(

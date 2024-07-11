@@ -35,11 +35,11 @@ class FeatureState(
         val vanishJoinOptions = VanishOptions.Builder().sendMessage(false).notifyStatusChangeToOthers(false).isOnJoin(true).build()
 
         if (user == null) {
-            val tempUser = player.getOrCreateUser()
-
-            if (checkPermissionOnQuit && !tempUser.hasPermission(Permission.VANISH)) {
+            if (!player.hasPermission(Permission.VANISH.permission())) {
                 return
             }
+
+            val tempUser = player.getOrCreateUser()
 
             if (tempUser.hasPermission(Permission.VANISH_ON_JOIN) || vanishOnJoin) {
                 tempUser.isOnline = true

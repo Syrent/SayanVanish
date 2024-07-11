@@ -45,11 +45,11 @@ class SayanVanish @Inject constructor(
 
         StickyNote.run({
             SayanVanishVelocityAPI.getInstance().database.updateBasicCacheAsync()
-        }, settings.general.basicCacheUpdateFrequencyMillis, TimeUnit.MILLISECONDS, settings.general.basicCacheUpdateFrequencyMillis, TimeUnit.MILLISECONDS)
+        }, settings.general.basicCacheUpdatePeriodMillis, TimeUnit.MILLISECONDS, settings.general.basicCacheUpdatePeriodMillis, TimeUnit.MILLISECONDS)
 
         StickyNote.run({
             SayanVanishVelocityAPI.getInstance().database.updateCacheAsync()
-        }, settings.general.cacheUpdateFrequencyMillis, TimeUnit.MILLISECONDS, settings.general.cacheUpdateFrequencyMillis, TimeUnit.MILLISECONDS)
+        }, settings.general.cacheUpdatePeriodMillis, TimeUnit.MILLISECONDS, settings.general.cacheUpdatePeriodMillis, TimeUnit.MILLISECONDS)
     }
 
     private fun downloadLibraries() {

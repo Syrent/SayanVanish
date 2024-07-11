@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit
 @RegisteredFeature
 @ConfigSerializable
 class FeatureSyncEvents(
-    val checkFrequencyMillis: Long = 50
+    val checkPeriodMillis: Long = 50
 ) : ListenedFeature("sync_events") {
 
     @Transient val previousUsers = mutableMapOf<UUID, Boolean>()
@@ -36,7 +36,7 @@ class FeatureSyncEvents(
                     plugin.proxy.pluginManager.callEvent(BungeeUserUnVanishEvent(user, user.currentOptions))
                 }
             }
-        }, checkFrequencyMillis, checkFrequencyMillis, TimeUnit.MILLISECONDS)
+        }, checkPeriodMillis, checkPeriodMillis, TimeUnit.MILLISECONDS)
         super.enable()
     }
 }

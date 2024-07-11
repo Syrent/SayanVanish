@@ -1,6 +1,5 @@
 package org.sayandev.sayanvanish.velocity.feature.features
 
-import net.kyori.adventure.text.Component
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
 import org.sayandev.sayanvanish.velocity.event.VelocityUserUnVanishEvent
@@ -9,14 +8,13 @@ import org.sayandev.sayanvanish.velocity.feature.ListenedFeature
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.sayandev.stickynote.velocity.StickyNote
 import org.sayandev.stickynote.velocity.server
-import org.sayandev.stickynote.velocity.warn
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 @RegisteredFeature
 @ConfigSerializable
 class FeatureSyncEvents(
-    val checkFrequencyMillis: Long = 50
+    val checkPeriodMillis: Long = 50
 ) : ListenedFeature("sync_events") {
 
     @Transient val previousUsers = mutableMapOf<UUID, Boolean>()
@@ -39,7 +37,7 @@ class FeatureSyncEvents(
                     server.eventManager.fireAndForget(VelocityUserUnVanishEvent(user, user.currentOptions))
                 }
             }
-        }, checkFrequencyMillis, TimeUnit.MILLISECONDS, checkFrequencyMillis, TimeUnit.MILLISECONDS)
+        }, checkPeriodMillis, TimeUnit.MILLISECONDS, checkPeriodMillis, TimeUnit.MILLISECONDS)
         super.enable()
     }
 }

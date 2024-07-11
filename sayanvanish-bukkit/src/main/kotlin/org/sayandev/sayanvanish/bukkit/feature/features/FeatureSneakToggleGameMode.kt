@@ -26,7 +26,11 @@ class FeatureSneakToggleGameMode(
         if (!player.isSneaking || player.user()?.isVanished != true || !isActive()) return
         if (sneakList.contains(player)) {
             if (player.gameMode == GameMode.SPECTATOR) {
+                val allowFlight = player.allowFlight
+                val isFlying = player.isFlying
                 player.gameMode = sneakMap[player] ?: fallbackMode
+                player.allowFlight = allowFlight
+                player.isFlying = isFlying
             } else {
                 sneakMap[player] = player.gameMode
                 player.gameMode = GameMode.SPECTATOR
@@ -46,7 +50,11 @@ class FeatureSneakToggleGameMode(
     private fun onUnVanish(event: BukkitUserUnVanishEvent) {
         val user = event.user
         val player = user.player() ?: return
+        val allowFlight = player.allowFlight
+        val isFlying = player.isFlying
         player.gameMode = sneakMap[player] ?: fallbackMode
+        player.allowFlight = allowFlight
+        player.isFlying = isFlying
     }
 
 }

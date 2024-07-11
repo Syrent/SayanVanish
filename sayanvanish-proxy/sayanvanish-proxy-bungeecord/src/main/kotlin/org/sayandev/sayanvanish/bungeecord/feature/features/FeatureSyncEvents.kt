@@ -29,12 +29,12 @@ class FeatureSyncEvents(
 
                 if (previousUsers[user.uniqueId] == false && user.isVanished) {
                     previousUsers[user.uniqueId] = true
-                    plugin.proxy.pluginManager.callEvent(BungeeUserUnVanishEvent(user, user.currentOptions))
+                    plugin.proxy.pluginManager.callEvent(BungeeUserVanishEvent(user, user.currentOptions))
                 }
 
                 if (previousUsers[user.uniqueId] == true && !user.isVanished) {
                     previousUsers[user.uniqueId] = false
-                    plugin.proxy.pluginManager.callEvent(BungeeUserVanishEvent(user, user.currentOptions))
+                    plugin.proxy.pluginManager.callEvent(BungeeUserUnVanishEvent(user, user.currentOptions))
                 }
             }
         }, checkPeriodMillis, checkPeriodMillis, TimeUnit.MILLISECONDS)

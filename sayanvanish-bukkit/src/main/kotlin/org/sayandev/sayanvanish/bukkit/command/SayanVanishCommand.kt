@@ -78,16 +78,17 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
                 }
             }
 
+            if (target.isPresent) {
+                if (!player.isOnline) {
+                    sender.sendMessage(language.vanish.offlineOnVanish.component(Placeholder.unparsed("player", player.name ?: "N/A"), Placeholder.parsed("state", user.stateText())))
+                    options.sendMessage = false
+                }
+            }
+
             when (state) {
                 "on" -> user.vanish(options)
                 "off" -> user.unVanish(options)
                 else -> user.toggleVanish(options)
-            }
-
-            if (target.isPresent) {
-                if (!player.isOnline) {
-                    sender.sendMessage(language.vanish.offlineOnVanish.component(Placeholder.unparsed("player", player.name ?: "N/A"), Placeholder.parsed("state", user.stateText())))
-                }
             }
         }
 

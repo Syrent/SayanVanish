@@ -8,7 +8,8 @@ data class VanishOptions(
     var sendMessage: Boolean = true,
     var notifyStatusChangeToOthers: Boolean = true,
     var notifyJoinQuitVanished: Boolean = true,
-    var isOnJoin: Boolean = false
+    var isOnJoin: Boolean = false,
+    var isOnQuit: Boolean = false,
 ) {
 
     class Builder {
@@ -16,7 +17,7 @@ data class VanishOptions(
         private var notifyStatusChangeToOthers = true
         private var notifyJoinQuitVanished = true
         private var isOnJoin = false
-
+        private var isOnQuit = false
 
         fun sendMessage(sendMessage: Boolean): Builder {
             this.sendMessage = sendMessage
@@ -38,6 +39,11 @@ data class VanishOptions(
             return this
         }
 
+        fun isOnQuit(isOnQuit: Boolean): Builder {
+            this.isOnQuit = isOnQuit
+            return this
+        }
+
         fun build(): VanishOptions {
             return VanishOptions(sendMessage, notifyStatusChangeToOthers, notifyJoinQuitVanished, isOnJoin)
         }
@@ -49,6 +55,7 @@ data class VanishOptions(
         json.addProperty("notify-status-change-to-others", notifyStatusChangeToOthers)
         json.addProperty("notify-join-quit-vanished", notifyJoinQuitVanished)
         json.addProperty("is-on-join", isOnJoin)
+        json.addProperty("is-on-quit", isOnQuit)
         return Gson.gson.toJson(json)
     }
 

@@ -9,7 +9,6 @@ import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.HookFeature
 import org.sayandev.stickynote.bukkit.registerListener
-import org.sayandev.stickynote.bukkit.warn
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @RegisteredFeature
@@ -41,7 +40,7 @@ private class DiscordSRVImpl(val feature: FeatureHookDiscordSRV): Listener {
         if (!feature.sendJoinMessageOnUnvanish) return
         val user = event.user
         val player = user.player() ?: return
-        if (user.currentOptions.isOnJoin) return
+        if (event.options.isOnJoin || event.options.isOnQuit) return
         DiscordSRV.getPlugin().sendJoinMessage(player, feature.joinMessage)
     }
 
@@ -51,7 +50,7 @@ private class DiscordSRVImpl(val feature: FeatureHookDiscordSRV): Listener {
         if (!feature.sendQuitMessageOnVanish) return
         val user = event.user
         val player = user.player() ?: return
-        if (user.currentOptions.isOnJoin) return
+        if (event.options.isOnJoin || event.options.isOnQuit) return
         DiscordSRV.getPlugin().sendLeaveMessage(player, feature.quitMessage)
     }
 

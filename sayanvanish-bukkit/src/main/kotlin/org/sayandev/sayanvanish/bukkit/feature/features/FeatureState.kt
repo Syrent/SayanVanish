@@ -53,7 +53,7 @@ class FeatureState(
         user.isOnline = true
 
         if (checkPermissionOnJoin && !user.hasPermission(Permission.VANISH)) {
-            user.unVanish()
+            user.unVanish(vanishJoinOptions)
             user.delete()
             return
         }
@@ -89,7 +89,7 @@ class FeatureState(
         }
 
         if ((reappearOnQuit && user.isVanished) || (checkPermissionOnQuit && !user.hasPermission(Permission.VANISH))) {
-            user.unVanish(VanishOptions.Builder().isOnJoin(true).build())
+            user.unVanish(VanishOptions.Builder().isOnQuit(true).build())
         }
         user.isOnline = false
 

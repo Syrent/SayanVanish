@@ -73,7 +73,7 @@ class FeatureFakeMessage(
     private fun onVanish(event: BukkitUserVanishEvent) {
         if (!isActive()) return
         if (!event.options.sendMessage) return
-        if (sendFakeQuitMessage && !event.options.isOnJoin) {
+        if (sendFakeQuitMessage && !event.options.isOnJoin && !event.options.isOnQuit) {
             for (player in onlinePlayers) {
                 player.sendMessage(fakeQuitMessage.component(Placeholder.unparsed("player", event.user.username)))
             }
@@ -84,7 +84,7 @@ class FeatureFakeMessage(
     private fun onUnVanish(event: BukkitUserUnVanishEvent) {
         if (!isActive()) return
         if (!event.options.sendMessage) return
-        if (sendFakeJoinMessage && !event.options.isOnJoin) {
+        if (sendFakeJoinMessage && !event.options.isOnJoin && !event.options.isOnQuit) {
             for (player in onlinePlayers) {
                 player.sendMessage(fakeJoinMessage.component(Placeholder.unparsed("player", event.user.username)))
             }

@@ -3,6 +3,7 @@ package org.sayandev.sayanvanish.bungeecord.feature.features
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bungeecord.api.SayanVanishBungeeAPI
 import org.sayandev.sayanvanish.bungeecord.event.BungeeUserUnVanishEvent
+import org.sayandev.sayanvanish.bungeecord.event.BungeeUserVanishEvent
 import org.sayandev.sayanvanish.bungeecord.feature.ListenedFeature
 import org.sayandev.stickynote.bungeecord.StickyNote
 import org.sayandev.stickynote.bungeecord.plugin
@@ -33,7 +34,7 @@ class FeatureSyncEvents(
 
                 if (previousUsers[user.uniqueId] == true && !user.isVanished) {
                     previousUsers[user.uniqueId] = false
-                    plugin.proxy.pluginManager.callEvent(BungeeUserUnVanishEvent(user, user.currentOptions))
+                    plugin.proxy.pluginManager.callEvent(BungeeUserVanishEvent(user, user.currentOptions))
                 }
             }
         }, checkPeriodMillis, checkPeriodMillis, TimeUnit.MILLISECONDS)

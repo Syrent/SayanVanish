@@ -2,6 +2,7 @@ package org.sayandev.sayanvanish.bukkit.feature.features.prevent
 
 import org.bukkit.event.EventHandler
 import org.bukkit.event.player.AsyncPlayerChatEvent
+import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
@@ -14,7 +15,7 @@ import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.Confi
 @RegisteredFeature
 @ConfigSerializable
 class FeaturePreventChat(
-    val bypassChar: String = "!"
+    @Configurable val bypassChar: String = "!"
 ): ListenedFeature("prevent_chat", category = FeatureCategories.PREVENTION) {
 
     @EventHandler

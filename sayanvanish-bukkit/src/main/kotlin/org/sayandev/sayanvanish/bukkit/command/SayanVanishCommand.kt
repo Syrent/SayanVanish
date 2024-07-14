@@ -35,6 +35,7 @@ import org.sayandev.stickynote.lib.incendo.cloud.component.DefaultValue
 import org.sayandev.stickynote.lib.incendo.cloud.parser.flag.CommandFlag
 import org.sayandev.stickynote.lib.incendo.cloud.parser.standard.IntegerParser
 import org.sayandev.stickynote.lib.incendo.cloud.parser.standard.StringParser
+import org.sayandev.stickynote.lib.incendo.cloud.setting.ManagerSetting
 import org.sayandev.stickynote.lib.incendo.cloud.suggestion.Suggestion
 import org.sayandev.stickynote.lib.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import java.io.File

@@ -38,13 +38,13 @@ tasks {
     }
 
     java {
-        if (gradle.startParameter.getTaskNames().isNotEmpty() && (gradle.startParameter.getTaskNames().contains("runServer") || gradle.startParameter.getTaskNames().contains("runFolia"))) {
+        /*if (gradle.startParameter.getTaskNames().isNotEmpty() && (gradle.startParameter.getTaskNames().contains("runServer") || gradle.startParameter.getTaskNames().contains("runFolia"))) {
             toolchain.languageVersion = JavaLanguageVersion.of(21)
-        }
+        }*/
     }
 
     runServer {
-        minecraftVersion("1.21")
+        minecraftVersion("1.20.4")
 
         downloadPlugins {
             url("https://download.luckperms.net/1552/bukkit/loader/LuckPerms-Bukkit-5.4.137.jar")

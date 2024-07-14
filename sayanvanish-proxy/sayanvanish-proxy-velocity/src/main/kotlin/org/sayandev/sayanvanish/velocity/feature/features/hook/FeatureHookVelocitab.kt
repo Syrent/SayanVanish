@@ -4,6 +4,7 @@ import com.velocitypowered.api.event.Subscribe
 import net.william278.velocitab.api.VelocitabAPI
 import net.william278.velocitab.vanish.VanishIntegration
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
+import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI.Companion.getOrCreateUser
 import org.sayandev.sayanvanish.velocity.feature.HookFeature
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI.Companion.user
 import org.sayandev.sayanvanish.velocity.event.VelocityUserUnVanishEvent
@@ -11,6 +12,7 @@ import org.sayandev.sayanvanish.velocity.event.VelocityUserVanishEvent
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.sayandev.stickynote.velocity.StickyNote
 import org.sayandev.stickynote.velocity.registerListener
+import org.sayandev.stickynote.velocity.warn
 
 @RegisteredFeature
 @ConfigSerializable
@@ -30,12 +32,10 @@ private class VelocitabImpl : VanishIntegration {
     }
 
     override fun canSee(name: String, otherName: String): Boolean {
-        val player = StickyNote.getPlayer(name)
-        if (player == null) return true
-        val otherPlayer = StickyNote.getPlayer(otherName)
-        if (otherPlayer == null) return true
-        val user = player.user() ?: return true
-        val otherUser = otherPlayer.user() ?: return true
+        val player = StickyNote.getPlayer(name) ?: return true
+        val otherPlayer = StickyNote.getPlayer(otherName) ?: return true
+        val user = player.getOrCreateUser()
+        val otherUser = otherPlayer.getOrCreateUser()
         return if (isVanished(name) && isVanished(otherName) && user.vanishLevel >= otherUser.vanishLevel) true
         else if (isVanished(otherName)) false
         else true

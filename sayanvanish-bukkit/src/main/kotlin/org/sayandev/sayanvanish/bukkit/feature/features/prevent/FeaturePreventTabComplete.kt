@@ -25,14 +25,15 @@ class FeaturePreventTabComplete: ListenedFeature("prevent_tab_complete", categor
         val player = event.sender as? Player ?: return
         val user = player.getOrCreateUser()
         val vanishedUsers = SayanVanishBukkitAPI.getInstance().getVanishedUsers()
+        val completions = event.completions.toMutableSet()
         if (!user.hasPermission(Permission.VANISH)) {
-            event.completions
-                .removeIf { completion -> vanishedUsers.map(User::username).contains(completion) }
+            event.completions = completions
+                .filter { completion -> !vanishedUsers.map(User::username).contains(completion) }
             return
         }
 
-        event.completions.removeIf { completion ->
-            vanishedUsers
+        event.completions = completions.filter { completion ->
+            !vanishedUsers
                 .filter { vanishedUser -> vanishedUser.vanishLevel > user.vanishLevel }
                 .map(User::username).contains(completion)
         }

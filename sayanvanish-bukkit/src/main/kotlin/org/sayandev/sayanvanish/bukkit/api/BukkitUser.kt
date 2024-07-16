@@ -15,6 +15,7 @@ import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureLevel
+import org.sayandev.sayanvanish.bukkit.feature.features.hook.FeatureLuckPermsHook
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.plugin
 import org.sayandev.stickynote.bukkit.server
@@ -94,7 +95,12 @@ open class BukkitUser(
     }
 
     override fun hasPermission(permission: String): Boolean {
-        return player()?.hasPermission(permission) == true
+        val luckPermsFeature = Features.getFeature<FeatureLuckPermsHook>()
+        return if (luckPermsFeature.isActive() && luckPermsFeature.checkPermissionViaLuckPerms) {
+            luckPermsFeature.hasPermission(uniqueId, permission)
+        } else {
+            player()?.hasPermission(permission) == true
+        }
     }
 
     override fun sendMessage(content: String) {

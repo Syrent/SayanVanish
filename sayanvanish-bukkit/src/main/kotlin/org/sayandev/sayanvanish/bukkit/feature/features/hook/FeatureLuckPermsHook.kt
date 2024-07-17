@@ -38,7 +38,7 @@ class FeatureLuckPermsHook(
 
     fun hasPermission(uniqueId: UUID, permission: String): Boolean {
         if (!isActive()) {
-            warn("tried to check permission using LuckPerms, but the `${this.id}` feature is not active, fallback to bukkit check permission.")
+            warn("tried to check permission using LuckPerms, but the `${this.id}` feature is not active, fallback to bukkit permission check.")
             return Bukkit.getPlayer(uniqueId)?.hasPermission(permission) == true
         }
         val user = LuckPermsProvider.get().userManager.getUser(uniqueId) ?: return false

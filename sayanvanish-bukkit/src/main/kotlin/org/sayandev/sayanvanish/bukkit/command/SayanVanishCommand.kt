@@ -73,6 +73,10 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
             val player = if (target.isPresent) context.optional<OfflinePlayer>("player").get() else context.sender().player() ?: return@handler
             val user = player.getOrAddUser()
 
+            if (!user.hasPermission(Permission.VANISH)) {
+                user.sendMessage(language.vanish.dontHaveUsePermission.component(Placeholder.unparsed("permission", Permission.VANISH.permission())))
+            }
+
             val options = VanishOptions.defaultOptions().apply {
                 if (context.flags().hasFlag("silent")) {
                     this.sendMessage = false

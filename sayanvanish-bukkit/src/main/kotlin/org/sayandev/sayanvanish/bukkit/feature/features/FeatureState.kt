@@ -53,6 +53,7 @@ class FeatureState(
         user.isOnline = true
 
         if (checkPermissionOnJoin && !user.hasPermission(Permission.VANISH)) {
+            user.sendMessage(language.vanish.noPermissionToKeepVanished.component(Placeholder.unparsed("permission", Permission.VANISH.permission())))
             user.unVanish(vanishJoinOptions)
             user.delete()
             return

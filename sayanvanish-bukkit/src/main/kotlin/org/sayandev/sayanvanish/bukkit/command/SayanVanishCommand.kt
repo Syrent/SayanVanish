@@ -27,7 +27,6 @@ import org.sayandev.stickynote.bukkit.runAsync
 import org.sayandev.stickynote.bukkit.runSync
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendMessage
-import org.sayandev.stickynote.bukkit.warn
 import org.sayandev.stickynote.core.utils.MilliCounter
 import org.sayandev.stickynote.lib.incendo.cloud.bukkit.parser.OfflinePlayerParser
 import org.sayandev.stickynote.lib.incendo.cloud.component.CommandComponent
@@ -35,11 +34,11 @@ import org.sayandev.stickynote.lib.incendo.cloud.component.DefaultValue
 import org.sayandev.stickynote.lib.incendo.cloud.parser.flag.CommandFlag
 import org.sayandev.stickynote.lib.incendo.cloud.parser.standard.IntegerParser
 import org.sayandev.stickynote.lib.incendo.cloud.parser.standard.StringParser
-import org.sayandev.stickynote.lib.incendo.cloud.setting.ManagerSetting
 import org.sayandev.stickynote.lib.incendo.cloud.suggestion.Suggestion
 import org.sayandev.stickynote.lib.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import java.io.File
 import java.util.concurrent.CompletableFuture
+import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 
 class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
@@ -115,29 +114,41 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
                 val sender = context.sender().bukkitSender()
                 sender.sendMessage(language.paste.generating.component())
                 runAsync {
-                    Paste("yaml", SettingsConfig.settingsFile.readLines()).post().whenComplete { settingsKey, settingsError ->
-                        sendPasteError(sender, settingsError)
+                    val blockedWords = listOf(
+                        "host",
+                        "port",
+                        "database",
+                        "username",
+                        "password",
+                    )
+                    Paste("yaml", databaseConfig.file.readLines().filter { !blockedWords.contains(it) }).post().whenComplete { databaseKey, databaseError ->
+                        sendPasteError(sender, databaseError)
 
-                        val latestLogFile = File(File(pluginDirectory.parentFile.parentFile, "logs"), "latest.log")
-                        if (latestLogFile.exists()) {
-                            Paste("log", latestLogFile.readLines()).post().whenComplete { logKey, logError ->
+                        Paste("yaml", SettingsConfig.settingsFile.readLines()).post().whenComplete { settingsKey, settingsError ->
+                            sendPasteError(sender, settingsError)
 
-                                val featurePastes = mutableMapOf<String, List<String>>()
-                                for (feature in Features.features()) {
-                                    featurePastes[feature.id] = feature.file.readLines()
+                            val latestLogFile = File(File(pluginDirectory.parentFile.parentFile, "logs"), "latest.log")
+                            if (latestLogFile.exists()) {
+                                Paste("log", latestLogFile.readLines()).post().whenComplete { logKey, logError ->
+
+                                    val featurePastes = mutableMapOf<String, List<String>>()
+                                    for (feature in Features.features()) {
+                                        featurePastes[feature.id] = feature.file.readLines()
+                                    }
+                                    Paste("yaml", featurePastes.map { "${it.key}:\n     ${it.value.joinToString("\n     ")}" }).post().whenComplete { featureKey, featureError ->
+                                        sendPasteError(sender, featureError)
+                                        generateMainPaste(sender, mapOf(
+                                            "database.yml" to "${Paste.PASTE_URL}/$databaseKey",
+                                            "settings.yml" to "${Paste.PASTE_URL}/$settingsKey",
+                                            "latest.log" to "${Paste.PASTE_URL}/$logKey",
+                                            "features" to "${Paste.PASTE_URL}/$featureKey"
+                                        ))
+                                    }
+                                    sendPasteError(sender, logError)
                                 }
-                                Paste("yaml", featurePastes.map { "${it.key}:\n     ${it.value.joinToString("\n     ")}" }).post().whenComplete { featureKey, featureError ->
-                                    sendPasteError(sender, featureError)
-                                    generateMainPaste(sender, mapOf(
-                                        "settings.yml" to "${Paste.PASTE_URL}/$settingsKey",
-                                        "latest.log" to "${Paste.PASTE_URL}/$logKey",
-                                        "features" to "${Paste.PASTE_URL}/$featureKey"
-                                    ))
-                                }
-                                sendPasteError(sender, logError)
+                            } else {
+                                generateMainPaste(sender, mapOf("settings.yml" to "${Paste.PASTE_URL}/$settingsKey"))
                             }
-                        } else {
-                            generateMainPaste(sender, mapOf("settings.yml" to "${Paste.PASTE_URL}/$settingsKey"))
                         }
                     }
                 }
@@ -364,9 +375,52 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
             .literal("test")
             .permission(constructBasePermission("test"))
 
-        manager.command(testLiteral
+        val testDatabaseLiteral = testLiteral
             .literal("database")
             .permission(constructBasePermission("test.database"))
+
+        manager.command(testDatabaseLiteral
+            .literal("data")
+            .permission(constructBasePermission("test.database.data"))
+            .optional("limit", IntegerParser.integerParser(1, 10000), DefaultValue.constant(100))
+            .flag(CommandFlag.builder("no-cache"))
+            .handler { context ->
+                val sender = context.sender().bukkitSender()
+                val limit = context.get<Int>("limit")
+                val database = SayanVanishAPI.getInstance().database
+                if (context.flags().hasFlag("no-cache")) {
+                    database.useCache = false
+                }
+
+                val users = database.getUsers()
+
+                val limitedUsers = users.take(limit)
+
+                val counter = MilliCounter()
+                counter.start()
+                for ((index, user) in limitedUsers.withIndex()) {
+                    val userProperties = user::class.memberProperties
+                        .filterIsInstance<KProperty1<Any, *>>()
+                        .joinToString(" <green>|</green> ") { prop ->
+                            try {
+                                "<gray>${prop.name}: <white>${prop.call(user)}"
+                            } catch (e: Exception) {
+                                "<gray>${prop.name}: <red>Access Error"
+                            }
+                        }
+
+                    sender.sendMessage("<gold>[${index + 1}] <gray>$userProperties".component())
+                }
+                counter.stop()
+                sender.sendMessage("<gray>Took <green>${counter.get()}ms</green>".component())
+
+                database.useCache = true
+            }
+            .build())
+
+        manager.command(testDatabaseLiteral
+            .literal("performance")
+            .permission(constructBasePermission("test.database.performance"))
             .optional("amount", IntegerParser.integerParser(1, 10000), DefaultValue.constant(100))
             .optional("tries", IntegerParser.integerParser(1, 10), DefaultValue.constant(5))
             .flag(CommandFlag.builder("no-cache"))
@@ -393,21 +447,21 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
             }
             .build())
 
-        manager.command(testLiteral
+        /*manager.command(testLiteral
             .literal("performance")
             .permission(constructBasePermission("test.performance"))
             .handler { context ->
                 val sender = context.sender().bukkitSender()
-                /*val spark = Features.getFeature<FeatureHookSpark>().hook?.spark ?: let {
+                val spark = Features.getFeature<FeatureHookSpark>().hook?.spark ?: let {
                     sender.sendMessage("<red><gold>spark</gold> is not installed on this server.".component())
                     return@handler
                 }
 
                 spark.gc()?.values?.forEach { gc ->
                     gc.
-                }*/
+                }
             }
-            .build())
+            .build())*/
     }
 
     private fun sendPasteError(sender: CommandSender, error: Throwable?) {

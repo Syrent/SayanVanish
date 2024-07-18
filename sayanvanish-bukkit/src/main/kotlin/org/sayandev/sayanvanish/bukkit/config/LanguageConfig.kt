@@ -52,7 +52,7 @@ data class LanguageConfig(
         val cantChatWhileVanished: String = "<gray>You can't chat while you are vanished, add <gold><bold><char></bold></gold> at the beginning of your message to bypass this.",
         val levelSet: String = "<gray><gold><player></gold> vanish level has been set to <gold><level></gold>",
         val levelGet: String = "<gray><gold><player></gold> vanish level is <gold><level></gold>",
-        val dontHaveUsePermission: String = "<red>You got vanished but you don't have permission to use vanish <gray>(<permission>)</gray> you vanish status will not be persistent between sessions.",
+        val dontHaveUsePermission: String = "<red>You got vanished but you don't have permission to use vanish <gray>(<permission>)</gray>. your vanish status will not be persistent between sessions.",
         val noPermissionToKeepVanished: String = "<red>You don't have <gray><permission></gray> permission to keep your vanish status.",
     )
 

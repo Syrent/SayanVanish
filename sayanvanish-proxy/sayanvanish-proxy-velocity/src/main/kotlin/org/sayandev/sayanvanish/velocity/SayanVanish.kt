@@ -29,9 +29,9 @@ class SayanVanish @Inject constructor(
         downloadLibraries()
 
         StickyNoteVelocityLoader.load(this, PLUGIN_ID, server, logger, dataDirectory)
-        SayanVanishVelocityAPI
 
         Platform.setAndRegister(Platform("velocity", java.util.logging.Logger.getLogger("sayanvanish"), dataDirectory.toFile(), settings.general.serverId))
+        SayanVanishVelocityAPI
 
 
         registerListener(VanishManager)

@@ -31,6 +31,10 @@ class FeaturePreventPush: ListenedFeature("prevent_push", enabled = false, categ
         if (!isActive()) return
         val user = event.user
         val player = user.player() ?: return
+        /* Make sure the player has `Vanished` team before removing it. Prevents 1.21 players to get kicked with ISE:
+        java.lang.IllegalStateException: Player is either on another team or not on any team. Cannot remove from team 'Vanished'.*/
+        val teams = player.scoreboard.teams
+        if (teams.find { it.name == "Vanished" } == null) return
         player.scoreboard.getTeam("Vanished")?.removeEntry(player.name)
     }
 

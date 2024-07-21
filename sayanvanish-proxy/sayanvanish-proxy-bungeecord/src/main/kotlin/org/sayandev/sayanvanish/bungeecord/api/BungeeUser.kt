@@ -12,6 +12,7 @@ import org.sayandev.stickynote.bungeecord.utils.AdventureUtils.sendActionbar
 import org.sayandev.stickynote.bungeecord.StickyNote
 import org.sayandev.stickynote.bungeecord.plugin
 import org.sayandev.stickynote.lib.kyori.adventure.text.Component
+import org.sayandev.stickynote.lib.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import java.util.UUID
 
 
@@ -56,20 +57,12 @@ open class BungeeUser(
         return player()?.hasPermission(permission) == true
     }
 
-    override fun sendMessage(content: String) {
+    override fun sendComponent(content: String, vararg placeholder: TagResolver) {
         player()?.sendMessage(content.component())
     }
 
-    fun sendMessage(content: Component) {
-        player()?.sendMessage(content)
-    }
-
-    override fun sendActionbar(content: String) {
+    override fun sendActionbar(content: String, vararg placeholder: TagResolver) {
         player()?.sendActionbar(content.component())
-    }
-
-    fun sendActionbar(content: Component) {
-        player()?.sendActionbar(content)
     }
 
     companion object {

@@ -7,6 +7,7 @@ import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.proxy.config.settings
 import org.sayandev.sayanvanish.velocity.event.VelocityUserUnVanishEvent
 import org.sayandev.sayanvanish.velocity.event.VelocityUserVanishEvent
+import org.sayandev.stickynote.lib.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.sayandev.stickynote.velocity.StickyNote
 import org.sayandev.stickynote.velocity.server
 import org.sayandev.stickynote.velocity.utils.AdventureUtils.component
@@ -56,20 +57,12 @@ open class VelocityUser(
         return player()?.hasPermission(permission) == true
     }
 
-    override fun sendMessage(content: String) {
+    override fun sendComponent(content: String, vararg placeholder: TagResolver) {
         player()?.sendMessage(content.component())
     }
 
-    fun sendMessage(content: Component) {
-        player()?.sendMessage(content)
-    }
-
-    override fun sendActionbar(content: String) {
+    override fun sendActionbar(content: String, vararg placeholder: TagResolver) {
         player()?.sendActionBar(content.component())
-    }
-
-    fun sendActionbar(content: Component) {
-        player()?.sendActionBar(content)
     }
 
     companion object {

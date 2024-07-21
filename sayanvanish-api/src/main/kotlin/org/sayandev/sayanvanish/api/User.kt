@@ -4,6 +4,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import org.sayandev.sayanvanish.api.exception.UnsupportedPlatformException
 import org.sayandev.stickynote.core.utils.Gson
+import org.sayandev.stickynote.lib.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import java.util.*
 
 interface User : BasicUser {
@@ -39,15 +40,15 @@ interface User : BasicUser {
         toggleVanish(VanishOptions.defaultOptions())
     }
 
-    open fun sendMessage(content: String) {
+    fun sendComponent(content: String, vararg placeholder: TagResolver) {
         throw UnsupportedPlatformException("sendMessage")
     }
 
-    open fun sendActionbar(content: String) {
+    fun sendActionbar(content: String, vararg placeholder: TagResolver) {
         throw UnsupportedPlatformException("sendActionbar")
     }
 
-    open fun hasPermission(permission: String): Boolean {
+    fun hasPermission(permission: String): Boolean {
         throw UnsupportedPlatformException("hasPermission")
     }
 

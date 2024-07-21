@@ -13,7 +13,7 @@ import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
-import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendMessage
+import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendComponent
 import org.sayandev.stickynote.bukkit.warn
 import org.sayandev.stickynote.lib.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
@@ -75,7 +75,7 @@ class FeatureFakeMessage(
         if (!event.options.sendMessage) return
         if (sendFakeQuitMessage && !event.options.isOnJoin && !event.options.isOnQuit) {
             for (player in onlinePlayers) {
-                player.sendMessage(fakeQuitMessage.component(Placeholder.unparsed("player", event.user.username)))
+                player.sendComponent(fakeQuitMessage, Placeholder.unparsed("player", event.user.username))
             }
         }
     }
@@ -86,7 +86,7 @@ class FeatureFakeMessage(
         if (!event.options.sendMessage) return
         if (sendFakeJoinMessage && !event.options.isOnJoin && !event.options.isOnQuit) {
             for (player in onlinePlayers) {
-                player.sendMessage(fakeJoinMessage.component(Placeholder.unparsed("player", event.user.username)))
+                player.sendComponent(fakeJoinMessage, Placeholder.unparsed("player", event.user.username))
             }
         }
     }

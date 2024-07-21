@@ -6,14 +6,14 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerJoinEvent
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
-import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.sayanvanish.bukkit.utils.HangarUtils
 import org.sayandev.sayanvanish.bukkit.utils.VersionInfo
-import org.sayandev.stickynote.bukkit.*
-import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
-import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendMessage
-import org.sayandev.stickynote.lib.kyori.adventure.text.Component
+import org.sayandev.stickynote.bukkit.log
+import org.sayandev.stickynote.bukkit.plugin
+import org.sayandev.stickynote.bukkit.runAsync
+import org.sayandev.stickynote.bukkit.runSync
+import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendComponent
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @RegisteredFeature
@@ -73,13 +73,6 @@ class FeatureUpdateChecker(
         }
     }
 
-    @EventHandler
-    private fun onUnVanish(event: BukkitUserUnVanishEvent) {
-        if (!isActive()) return
-        val user = event.user
-        user.sendActionbar(Component.empty())
-    }
-
     private fun send(sender: CommandSender) {
         if (latestRelease == null || latestSnapshot == null) return
         val currentVersion = plugin.description.version // eg: 1.1.0-SNAPSHOT-build.121-ed8f2b2
@@ -92,7 +85,7 @@ class FeatureUpdateChecker(
         }
 
         for (line in content) {
-            sender.sendMessage(line
+            sender.sendComponent(line
                 .replace("<latest_release_name>", latestRelease?.name ?: "Unknown")
                 .replace("<latest_release_url_paper>", latestRelease?.downloads?.PAPER?.downloadUrl() ?: "https://hangar.papermc.io/Syrent/SayanVanish")
                 .replace("<latest_release_url_velocity>", latestRelease?.downloads?.VELOCITY?.downloadUrl() ?: "https://hangar.papermc.io/Syrent/SayanVanish")
@@ -103,7 +96,6 @@ class FeatureUpdateChecker(
                 .replace("<latest_snapshot_url_velocity>", latestSnapshot?.downloads?.VELOCITY?.downloadUrl() ?: "https://hangar.papermc.io/Syrent/SayanVanish")
                 .replace("<latest_snapshot_url_waterfall>", latestSnapshot?.downloads?.WATERFALL?.downloadUrl() ?: "https://hangar.papermc.io/Syrent/SayanVanish")
                 .replace("<latest_snapshot_changelog>", shortDescription(latestSnapshot?.description) ?: "Unknown")
-                .component()
             )
         }
     }

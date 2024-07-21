@@ -29,7 +29,7 @@ class FeatureProxyVanishQueue(
                             SayanVanishBukkitAPI.getInstance().database.removeFromQueue(player.uniqueId)
                             runSync {
                                 val user = player.getOrAddUser()
-                                user.sendMessage(language.vanish.vanishFromQueue.component(Placeholder.parsed("state", user.stateText(isVanished))))
+                                user.sendComponent(language.vanish.vanishFromQueue, Placeholder.parsed("state", user.stateText(isVanished)))
                                 val options = user.currentOptions.apply {
                                     this.sendMessage = false
                                 }

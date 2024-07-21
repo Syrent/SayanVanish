@@ -28,7 +28,7 @@ class FeaturePreventChat(
         if (message.startsWith(bypassChar)) {
             event.message = message.removePrefix(bypassChar)
         } else {
-            user.sendMessage(language.vanish.cantChatWhileVanished.component(Placeholder.unparsed("char", bypassChar)))
+            user.sendComponent(language.vanish.cantChatWhileVanished, Placeholder.unparsed("char", bypassChar))
             event.isCancelled = true
         }
     }

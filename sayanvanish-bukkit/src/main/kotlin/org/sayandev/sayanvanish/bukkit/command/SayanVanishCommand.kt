@@ -26,7 +26,7 @@ import org.sayandev.stickynote.bukkit.pluginDirectory
 import org.sayandev.stickynote.bukkit.runAsync
 import org.sayandev.stickynote.bukkit.runSync
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
-import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendMessage
+import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendComponent
 import org.sayandev.stickynote.core.utils.MilliCounter
 import org.sayandev.stickynote.lib.incendo.cloud.bukkit.parser.OfflinePlayerParser
 import org.sayandev.stickynote.lib.incendo.cloud.component.CommandComponent
@@ -60,12 +60,12 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
             val state = context.flags().get<String>("state")
 
             if (!target.isPresent && sender !is Player) {
-                sender.sendMessage(language.general.haveToProvidePlayer.component())
+                sender.sendComponent(language.general.haveToProvidePlayer)
                 return@handler
             }
 
             if (target.isPresent && !sender.hasPermission(Permission.VANISH_OTHERS.permission())) {
-                sender.sendMessage(language.general.dontHavePermission.component())
+                sender.sendComponent(language.general.dontHavePermission)
                 return@handler
             }
 
@@ -73,7 +73,7 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
             val user = player.getOrAddUser()
 
             if (!user.hasPermission(Permission.VANISH)) {
-                user.sendMessage(language.vanish.dontHaveUsePermission.component(Placeholder.unparsed("permission", Permission.VANISH.permission())))
+                user.sendComponent(language.vanish.dontHaveUsePermission, Placeholder.unparsed("permission", Permission.VANISH.permission()))
             }
 
             val options = VanishOptions.defaultOptions().apply {
@@ -84,7 +84,7 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
 
             if (target.isPresent) {
                 if (!player.isOnline) {
-                    sender.sendMessage(language.vanish.offlineOnVanish.component(Placeholder.unparsed("player", player.name ?: "N/A"), Placeholder.parsed("state", user.stateText())))
+                    sender.sendComponent(language.vanish.offlineOnVanish, Placeholder.unparsed("player", player.name ?: "N/A"), Placeholder.parsed("state", user.stateText()))
                     options.sendMessage = false
                 }
             }
@@ -112,7 +112,7 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
             .permission(constructBasePermission("paste"))
             .handler { context ->
                 val sender = context.sender().bukkitSender()
-                sender.sendMessage(language.paste.generating.component())
+                sender.sendComponent(language.paste.generating)
                 runAsync {
                     val blockedWords = listOf(
                         "host",
@@ -168,7 +168,7 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
                 RegisteredFeatureHandler.process()
                 settings = SettingsConfig.fromConfig() ?: SettingsConfig.defaultConfig()
                 databaseConfig = DatabaseConfig.fromConfig() ?: DatabaseConfig.defaultConfig()
-                sender.sendMessage(language.general.reloaded.component())
+                sender.sendComponent(language.general.reloaded)
             }
             .build())
 
@@ -186,7 +186,7 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
                 val target = context.get<OfflinePlayer>("player")
 
                 if (!target.hasPlayedBefore()) {
-                    sender.sendMessage(language.general.playerNotFound.component())
+                    sender.sendComponent(language.general.playerNotFound)
                     return@handler
                 }
 
@@ -195,11 +195,11 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
                 user.save()
 
                 if (Features.getFeature<FeatureLevel>().levelMethod == FeatureLevel.LevelMethod.PERMISSION) {
-                    sender.sendMessage(language.feature.permissionLevelMethodWarning.component(Placeholder.unparsed("method", FeatureLevel.LevelMethod.PERMISSION.name), Placeholder.unparsed("methods", FeatureLevel.LevelMethod.entries.joinToString(", ") { it.name })))
+                    sender.sendComponent(language.feature.permissionLevelMethodWarning, Placeholder.unparsed("method", FeatureLevel.LevelMethod.PERMISSION.name), Placeholder.unparsed("methods", FeatureLevel.LevelMethod.entries.joinToString(", ") { it.name }))
                     return@handler
                 }
 
-                sender.sendMessage(language.vanish.levelSet.component(Placeholder.unparsed("level", user.vanishLevel.toString()), Placeholder.unparsed("player", user.username)))
+                sender.sendComponent(language.vanish.levelSet, Placeholder.unparsed("level", user.vanishLevel.toString()), Placeholder.unparsed("player", user.username))
             }
             .build())
 
@@ -212,13 +212,13 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
                 val target = context.get<OfflinePlayer>("player")
 
                 if (!target.hasPlayedBefore()) {
-                    sender.sendMessage(language.general.playerNotFound.component())
+                    sender.sendComponent(language.general.playerNotFound)
                     return@handler
                 }
 
                 val user = target.user()
 
-                sender.sendMessage(language.vanish.levelGet.component(Placeholder.unparsed("player", target.name ?: "N/A"), Placeholder.unparsed("level", (user?.vanishLevel ?: 0).toString())))
+                sender.sendComponent(language.vanish.levelGet, Placeholder.unparsed("player", target.name ?: "N/A"), Placeholder.unparsed("level", (user?.vanishLevel ?: 0).toString()))
             }
             .build())
 
@@ -239,18 +239,18 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
             .handler { context ->
                 val sender = context.sender().bukkitSender()
                 val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
-                    sender.sendMessage(language.feature.notFound.component())
+                    sender.sendComponent(language.feature.notFound)
                     return@handler
                 }
 
                 if (!feature.enabled) {
-                    sender.sendMessage(language.feature.alreadyDisabled.component(Placeholder.unparsed("feature", feature.id)))
+                    sender.sendComponent(language.feature.alreadyDisabled, Placeholder.unparsed("feature", feature.id))
                     return@handler
                 }
 
                 feature.disable()
                 feature.save()
-                sender.sendMessage(language.feature.disabled.component(Placeholder.unparsed("feature", feature.id)))
+                sender.sendComponent(language.feature.disabled, Placeholder.unparsed("feature", feature.id))
             }
             .build())
 
@@ -260,18 +260,18 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
             .handler { context ->
                 val sender = context.sender().bukkitSender()
                 val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
-                    sender.sendMessage(language.feature.notFound.component())
+                    sender.sendComponent(language.feature.notFound)
                     return@handler
                 }
 
                 if (feature.enabled) {
-                    sender.sendMessage(language.feature.alreadyEnabled.component(Placeholder.unparsed("feature", feature.id)))
+                    sender.sendComponent(language.feature.alreadyEnabled, Placeholder.unparsed("feature", feature.id))
                     return@handler
                 }
 
                 feature.enable()
                 feature.save()
-                sender.sendMessage(language.feature.enabled.component(Placeholder.unparsed("feature", feature.id)))
+                sender.sendComponent(language.feature.enabled, Placeholder.unparsed("feature", feature.id))
             }
             .build())
 
@@ -281,7 +281,7 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
             .handler { context ->
                 val sender = context.sender().bukkitSender()
                 val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
-                    sender.sendMessage(language.feature.notFound.component())
+                    sender.sendComponent(language.feature.notFound)
                     return@handler
                 }
 
@@ -293,7 +293,7 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
                 }
                 freshFeature.save()
                 Features.features.add(freshFeature)
-                sender.sendMessage(language.feature.reset.component(Placeholder.unparsed("feature", feature.id)))
+                sender.sendComponent(language.feature.reset, Placeholder.unparsed("feature", feature.id))
             }
             .build())
 
@@ -332,13 +332,13 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
             .handler { context ->
                 val sender = context.sender().bukkitSender()
                 val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
-                    sender.sendMessage(language.feature.notFound.component())
+                    sender.sendComponent(language.feature.notFound)
                     return@handler
                 }
 
                 val field = feature::class.java.declaredFields.find { it.name == context.get("option") }
                 if (field == null) {
-                    sender.sendMessage(language.feature.invalidOption.component(Placeholder.unparsed("options", feature::class.memberProperties.joinToString(", ") { it.name })))
+                    sender.sendComponent(language.feature.invalidOption, Placeholder.unparsed("options", feature::class.memberProperties.joinToString(", ") { it.name }))
                     return@handler
                 }
 
@@ -362,12 +362,12 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
                         }
                     }
                 } catch (_: Exception) {
-                    sender.sendMessage(language.feature.invalidValue.component(Placeholder.unparsed("values", field.type.simpleName ?: "N/A")))
+                    sender.sendComponent(language.feature.invalidValue, Placeholder.unparsed("values", field.type.simpleName ?: "N/A"))
                     return@handler
                 }
                 feature.save()
 
-                sender.sendMessage(language.feature.updated.component(Placeholder.unparsed("feature", feature.id), Placeholder.unparsed("option", field.name), Placeholder.unparsed("state", value)))
+                sender.sendComponent(language.feature.updated, Placeholder.unparsed("feature", feature.id), Placeholder.unparsed("option", field.name), Placeholder.unparsed("state", value))
             }
             .build())
 
@@ -409,10 +409,10 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
                             }
                         }
 
-                    sender.sendMessage("<gold>[${index + 1}] <gray>$userProperties".component())
+                    sender.sendComponent("<gold>[${index + 1}] <gray>$userProperties")
                 }
                 counter.stop()
-                sender.sendMessage("<gray>Took <green>${counter.get()}ms</green>".component())
+                sender.sendComponent("<gray>Took <green>${counter.get()}ms</green>")
 
                 database.useCache = true
             }
@@ -435,12 +435,12 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
                 repeat(context.get("tries")) {
                     val counter = MilliCounter()
                     counter.start()
-                    sender.sendMessage("<gold>[${it + 1}] <gray>Trying <green>${amount} Get Users</green> from data storage".component())
+                    sender.sendComponent("<gold>[${it + 1}] <gray>Trying <green>${amount} Get Users</green> from data storage")
                     repeat(amount) {
                         database.getUsers()
                     }
                     counter.stop()
-                    sender.sendMessage("<gold>[${it + 1}] <gray>Took <green>${counter.get()}ms</green>".component())
+                    sender.sendComponent("<gold>[${it + 1}] <gray>Took <green>${counter.get()}ms</green>")
                 }
 
                 database.useCache = true
@@ -467,7 +467,7 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
     private fun sendPasteError(sender: CommandSender, error: Throwable?) {
         if (error != null) {
             runSync {
-                sender.sendMessage(language.paste.failedToGenerate.component())
+                sender.sendComponent(language.paste.failedToGenerate)
             }
             error.printStackTrace()
         }
@@ -485,7 +485,7 @@ class SayanVanishCommand : StickyCommand("sayanvanish", "vanish", "v") {
             sendPasteError(sender, generalError)
 
             runSync {
-                sender.sendMessage(language.paste.use.replace("<key>", key ?: "N/A").component())
+                sender.sendComponent(language.paste.use.replace("<key>", key ?: "N/A"))
             }
         }
     }

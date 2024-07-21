@@ -53,7 +53,7 @@ class FeatureState(
         user.isOnline = true
 
         if (checkPermissionOnJoin && !user.hasPermission(Permission.VANISH)) {
-            user.sendMessage(language.vanish.noPermissionToKeepVanished.component(Placeholder.unparsed("permission", Permission.VANISH.permission())))
+            user.sendComponent(language.vanish.noPermissionToKeepVanished, Placeholder.unparsed("permission", Permission.VANISH.permission()))
             user.unVanish(vanishJoinOptions)
             user.delete()
             return
@@ -67,7 +67,7 @@ class FeatureState(
         if (user.isVanished) {
             if (user.currentOptions.notifyJoinQuitVanished) {
                 for (vanishedUser in SayanVanishBukkitAPI.getInstance().database.getUsers().filter { it.hasPermission(Permission.VANISH) && it.vanishLevel >= user.vanishLevel }) {
-                    vanishedUser.sendMessage(language.vanish.joinedTheServerWhileVanished.component(Placeholder.unparsed("player", user.username)))
+                    vanishedUser.sendComponent(language.vanish.joinedTheServerWhileVanished, Placeholder.unparsed("player", user.username))
                 }
             }
         }
@@ -84,7 +84,7 @@ class FeatureState(
         if (user.isVanished) {
             if (user.currentOptions.notifyJoinQuitVanished) {
                 for (vanishedUser in SayanVanishBukkitAPI.getInstance().database.getUsers().filter { it.hasPermission(Permission.VANISH) && it.vanishLevel >= user.vanishLevel }) {
-                    vanishedUser.sendMessage(language.vanish.leftTheServerWhileVanished.component(Placeholder.unparsed("player", user.username)))
+                    vanishedUser.sendComponent(language.vanish.leftTheServerWhileVanished, Placeholder.unparsed("player", user.username))
                 }
             }
         }

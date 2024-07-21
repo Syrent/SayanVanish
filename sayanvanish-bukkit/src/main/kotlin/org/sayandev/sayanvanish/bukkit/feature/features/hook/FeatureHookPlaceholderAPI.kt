@@ -10,6 +10,7 @@ import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.sayanvanish.bukkit.feature.HookFeature
 import org.sayandev.stickynote.bukkit.StickyNote
+import org.sayandev.stickynote.bukkit.hook.PlaceholderAPIHook
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.warn
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
@@ -28,6 +29,7 @@ class FeatureHookPlaceholderAPI: HookFeature("hook_placeholderapi", "Placeholder
                 hook.register()
                 this.hook = hook
             }
+            PlaceholderAPIHook.injectComponent(true)
         }
         super.enable()
     }
@@ -38,6 +40,7 @@ class FeatureHookPlaceholderAPI: HookFeature("hook_placeholderapi", "Placeholder
             if (hook?.isRegistered() == true) {
                 hook.unregister()
             }
+            PlaceholderAPIHook.injectComponent(false)
         }
         super.disable()
     }

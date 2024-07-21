@@ -19,12 +19,11 @@ import org.sayandev.sayanvanish.bukkit.feature.features.hook.FeatureLuckPermsHoo
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.plugin
 import org.sayandev.stickynote.bukkit.server
-import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
-import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendActionbar
-import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendMessage
+import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendComponent
+import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendComponentActionbar
 import org.sayandev.stickynote.bukkit.utils.ServerVersion
-import org.sayandev.stickynote.lib.kyori.adventure.text.Component
 import org.sayandev.stickynote.lib.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import org.sayandev.stickynote.lib.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import java.util.*
 
 open class BukkitUser(
@@ -71,7 +70,7 @@ open class BukkitUser(
 
         super.vanish(options)
 
-        sendMessage(language.vanish.vanishStateUpdate.component(Placeholder.parsed("state", stateText())))
+        sendComponent(language.vanish.vanishStateUpdate, Placeholder.parsed("state", stateText()))
     }
 
     override fun unVanish(options: VanishOptions) {
@@ -91,7 +90,7 @@ open class BukkitUser(
 
         super.unVanish(options)
 
-        sendMessage(language.vanish.vanishStateUpdate.component(Placeholder.parsed("state", stateText())))
+        sendComponent(language.vanish.vanishStateUpdate, Placeholder.parsed("state", stateText()))
     }
 
     override fun hasPermission(permission: String): Boolean {
@@ -103,20 +102,12 @@ open class BukkitUser(
         }
     }
 
-    override fun sendMessage(content: String) {
-        player()?.sendMessage(content.component())
+    override fun sendComponent(content: String, vararg placeholder: TagResolver) {
+        player()?.sendComponent(content, *placeholder)
     }
 
-    fun sendMessage(content: Component) {
-        player()?.sendMessage(content)
-    }
-
-    override fun sendActionbar(content: String) {
-        player()?.sendActionbar(content.component())
-    }
-
-    fun sendActionbar(content: Component) {
-        player()?.sendActionbar(content)
+    override fun sendActionbar(content: String, vararg placeholder: TagResolver) {
+        player()?.sendComponentActionbar(content, *placeholder)
     }
 
     fun hideUser() {
@@ -125,7 +116,7 @@ open class BukkitUser(
         }
         if (currentOptions.notifyStatusChangeToOthers) {
             for (otherUsers in SayanVanishBukkitAPI.getInstance().getOnlineUsers().filter { it.username != username && it.vanishLevel >= vanishLevel }) {
-                otherUsers.sendMessage(language.vanish.vanishStateOther.component(Placeholder.parsed("player", username), Placeholder.parsed("state", stateText(true))))
+                otherUsers.sendComponent(language.vanish.vanishStateOther, Placeholder.parsed("player", username), Placeholder.parsed("state", stateText(true)))
             }
         }
     }
@@ -142,7 +133,7 @@ open class BukkitUser(
         }
         if (currentOptions.notifyStatusChangeToOthers) {
             for (otherUsers in SayanVanishBukkitAPI.getInstance().getOnlineUsers().filter { it.username != this.username && it.vanishLevel >= this.vanishLevel }) {
-                otherUsers.sendMessage(language.vanish.vanishStateOther.component(Placeholder.parsed("player", username), Placeholder.parsed("state", stateText(false))))
+                otherUsers.sendComponent(language.vanish.vanishStateOther, Placeholder.parsed("player", username), Placeholder.parsed("state", stateText(false)))
             }
         }
     }

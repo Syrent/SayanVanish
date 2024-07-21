@@ -17,7 +17,9 @@ import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.Confi
 
 @RegisteredFeature
 @ConfigSerializable
-class FeatureHookPlaceholderAPI: HookFeature("hook_placeholderapi", "PlaceholderAPI") {
+class FeatureHookPlaceholderAPI(
+    @Configurable val injectPlaceholders: Boolean = true
+): HookFeature("hook_placeholderapi", "PlaceholderAPI") {
 
     @Transient private var hook: Any? = null
 
@@ -29,7 +31,9 @@ class FeatureHookPlaceholderAPI: HookFeature("hook_placeholderapi", "Placeholder
                 hook.register()
                 this.hook = hook
             }
-            PlaceholderAPIHook.injectComponent(true)
+            if (injectPlaceholders) {
+                PlaceholderAPIHook.injectComponent(true)
+            }
         }
         super.enable()
     }

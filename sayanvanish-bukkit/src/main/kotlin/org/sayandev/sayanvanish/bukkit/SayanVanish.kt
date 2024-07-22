@@ -10,7 +10,10 @@ import org.sayandev.sayanvanish.bukkit.command.SayanVanishCommand
 import org.sayandev.sayanvanish.bukkit.config.LanguageConfig
 import org.sayandev.sayanvanish.bukkit.config.SettingsConfig
 import org.sayandev.sayanvanish.bukkit.config.settings
-import org.sayandev.stickynote.bukkit.*
+import org.sayandev.stickynote.bukkit.StickyNote
+import org.sayandev.stickynote.bukkit.error
+import org.sayandev.stickynote.bukkit.pluginDirectory
+import org.sayandev.stickynote.bukkit.runAsync
 import org.sayandev.stickynote.loader.bukkit.StickyNoteBukkitLoader
 
 open class SayanVanish : JavaPlugin() {

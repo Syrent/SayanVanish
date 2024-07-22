@@ -12,6 +12,7 @@ public var settings: SettingsConfig = SettingsConfig.fromConfig() ?: SettingsCon
 @ConfigSerializable
 data class SettingsConfig(
     val general: General = General(),
+    val command: Command = Command(),
 ) : Config(
     pluginDirectory,
     fileName,
@@ -26,6 +27,16 @@ data class SettingsConfig(
         val serverId: String = "${Platform.get().id}-${UUID.randomUUID()}",
         val language: String = LanguageConfig.Language.EN_US.id,
         val proxyMode: Boolean = false
+    )
+
+    @ConfigSerializable
+    data class Command(
+        val name: String = "sayanvanish",
+        val aliases: List<String> = listOf(
+            "v",
+            "vanish",
+            "sv"
+        )
     )
 
     companion object {

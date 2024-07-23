@@ -2,8 +2,10 @@ package org.sayandev.sayanvanish.bukkit.feature.features
 
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
+import org.bukkit.event.inventory.InventoryType
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
@@ -21,10 +23,11 @@ class FeatureInventoryInspect(
 
     val playerInventoryMap = mutableListOf<UUID>()
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     private fun onInteractPlayer(event: PlayerInteractAtEntityEvent) {
         if (!isActive()) return
         val player = event.player
+        if (player.openInventory.type != InventoryType.CRAFTING) return
         val user = player.user() ?: return
         if (!user.isVanished) return
         val target = event.rightClicked as? Player ?: return

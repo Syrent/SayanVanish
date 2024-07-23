@@ -39,9 +39,11 @@ object RegisteredFeatureHandler {
                     Features.addFeature(instance)
                 }
                 else -> {
-                    throw NullPointerException("Tried to add item to Items but the type ${clazz.name} is not supported")
+                    throw NullPointerException("Tried to add feature to Features but the type ${clazz.name} is not supported")
                 }
             }
+        } catch (e: NoClassDefFoundError) {
+            Platform.get().logger.warning("Couldn't enable feature ${clazz.simpleName} on your server software/version.")
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -87,4 +89,5 @@ object RegisteredFeatureHandler {
 
         return classes
     }
+
 }

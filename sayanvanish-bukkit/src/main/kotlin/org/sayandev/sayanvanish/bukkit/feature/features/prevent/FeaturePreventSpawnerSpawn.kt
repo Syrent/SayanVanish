@@ -3,7 +3,7 @@ package org.sayandev.sayanvanish.bukkit.feature.features.prevent
 import com.destroystokyo.paper.event.entity.PreSpawnerSpawnEvent
 import org.bukkit.GameMode
 import org.bukkit.event.EventHandler
-import org.bukkit.event.entity.SpawnerSpawnEvent
+import org.bukkit.event.Listener
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
@@ -12,8 +12,6 @@ import org.sayandev.stickynote.bukkit.StickyNote
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.utils.ServerVersion
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
-import kotlin.collections.all
-import kotlin.collections.filter
 
 @RegisteredFeature
 @ConfigSerializable

@@ -1,6 +1,7 @@
 package org.sayandev.sayanvanish.bukkit.feature.features.prevent
 
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
@@ -18,9 +19,10 @@ class FeaturePreventChat(
     @Configurable val bypassChar: String = "!"
 ): ListenedFeature("prevent_chat", category = FeatureCategories.PREVENTION) {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     @Suppress("DEPRECATION")
     private fun onPlayerChat(event: AsyncPlayerChatEvent) {
+        if (event.isCancelled) return
         if (!isActive()) return
         val user = event.player.user() ?: return
         if (!user.isVanished) return

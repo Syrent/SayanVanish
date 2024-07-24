@@ -19,7 +19,7 @@ class FeaturePreventChat(
     @Configurable val bypassChar: String = "!"
 ): ListenedFeature("prevent_chat", category = FeatureCategories.PREVENTION) {
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGHEST)
     @Suppress("DEPRECATION")
     private fun onPlayerChat(event: AsyncPlayerChatEvent) {
         if (event.isCancelled) return

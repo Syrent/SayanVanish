@@ -145,6 +145,11 @@ val repositories = listOf(
         )
     ),
     Repository(
+        id = "jitpack",
+        repos = listOf("https://jitpack.io"),
+        dependencies = emptyList()
+    ),
+    Repository(
         id = "papermc",
         repos = listOf("https://repo.papermc.io/repository/maven-public/"),
         dependencies = listOf(

@@ -19,13 +19,13 @@ import org.sayandev.sayanvanish.bukkit.config.SettingsConfig
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureLevel
+import org.sayandev.sayanvanish.bukkit.feature.features.FeatureUpdate
 import org.sayandev.sayanvanish.bukkit.utils.ServerUtils
 import org.sayandev.stickynote.bukkit.command.StickyCommand
 import org.sayandev.stickynote.bukkit.command.StickySender
 import org.sayandev.stickynote.bukkit.pluginDirectory
 import org.sayandev.stickynote.bukkit.runAsync
 import org.sayandev.stickynote.bukkit.runSync
-import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendComponent
 import org.sayandev.stickynote.core.utils.MilliCounter
 import org.sayandev.stickynote.lib.incendo.cloud.bukkit.parser.OfflinePlayerParser
@@ -106,6 +106,43 @@ class SayanVanishCommand : StickyCommand(settings.command.name, *settings.comman
             .permission(constructBasePermission("help"))
             .handler { context ->
                 help.queryCommands("$name ${context.getOrDefault("query", "")}", context.sender())
+            }
+            .build())
+
+        var forceUpdateConfirm = false
+        manager.command(builder
+            .literal("forceupdate")
+            .permission(constructBasePermission("forceupdate"))
+            .handler { context ->
+                val sender = context.sender().bukkitSender()
+                if (!forceUpdateConfirm) {
+                    sender.sendComponent(language.general.confirmUpdate)
+                    forceUpdateConfirm = true
+                    runSync({
+                        forceUpdateConfirm = false
+                    }, 100)
+                    return@handler
+                }
+
+                sender.sendComponent(language.general.updating)
+
+                runAsync {
+                    val updateFeature = Features.getFeature<FeatureUpdate>()
+                    updateFeature.update().whenComplete { isSuccessful, error ->
+                        error?.printStackTrace()
+
+                        runSync {
+                            if (isSuccessful) {
+                                sender.sendComponent(language.general.updated, Placeholder.unparsed("version", updateFeature.latestVersion()))
+                                if (settings.general.proxyMode && updateFeature.willAffectProxy()) {
+                                    sender.sendComponent(language.general.proxyUpdateWarning)
+                                }
+                            } else {
+                                sender.sendComponent(language.general.updateFailed)
+                            }
+                        }
+                    }
+                }
             }
             .build())
 

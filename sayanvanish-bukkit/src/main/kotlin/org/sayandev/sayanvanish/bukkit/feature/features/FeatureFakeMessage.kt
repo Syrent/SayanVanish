@@ -12,9 +12,7 @@ import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.onlinePlayers
-import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendComponent
-import org.sayandev.stickynote.bukkit.warn
 import org.sayandev.stickynote.lib.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
 

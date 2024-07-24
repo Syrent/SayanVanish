@@ -15,10 +15,14 @@ import org.sayandev.stickynote.bukkit.error
 import org.sayandev.stickynote.bukkit.pluginDirectory
 import org.sayandev.stickynote.bukkit.runAsync
 import org.sayandev.stickynote.loader.bukkit.StickyNoteBukkitLoader
+import java.io.File
+
+public lateinit var sayanvanish: SayanVanish
 
 open class SayanVanish : JavaPlugin() {
 
     override fun onEnable() {
+        sayanvanish = this
         StickyNoteBukkitLoader.load(this)
 
         Platform.setAndRegister(Platform("bukkit", logger, pluginDirectory, settings.general.serverId))
@@ -48,6 +52,10 @@ open class SayanVanish : JavaPlugin() {
     override fun onDisable() {
         SayanVanishBukkitAPI.getInstance().database.disconnect()
         StickyNote.shutdown()
+    }
+
+    fun pluginFile(): File {
+        return this.file
     }
 
 }

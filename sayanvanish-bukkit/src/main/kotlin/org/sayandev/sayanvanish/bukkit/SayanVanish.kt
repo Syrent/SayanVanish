@@ -38,11 +38,11 @@ open class SayanVanish : JavaPlugin() {
 
         runAsync({
             SayanVanishBukkitAPI.getInstance().database.updateCacheAsync()
-        }, 0, 100)
+        }, 0, settings.general.cacheUpdatePeriodTicks)
 
         runAsync({
             SayanVanishBukkitAPI.getInstance().database.updateBasicCacheAsync()
-        }, 0, 20)
+        }, 0, settings.general.basicCacheUpdatePeriodTicks)
     }
 
     override fun onDisable() {

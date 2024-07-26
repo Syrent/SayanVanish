@@ -160,7 +160,7 @@ class SayanVanishCommand : StickyCommand(settings.command.name, *settings.comman
                         "username",
                         "password",
                     )
-                    Paste("yaml", databaseConfig.file.readLines().filter { !blockedWords.contains(it) }).post().whenComplete { databaseKey, databaseError ->
+                    Paste("yaml", databaseConfig.file.readLines().filter { !blockedWords.any { blockedWord -> it.contains(blockedWord) } }).post().whenComplete { databaseKey, databaseError ->
                         sendPasteError(sender, databaseError)
 
                         Paste("yaml", SettingsConfig.settingsFile.readLines()).post().whenComplete { settingsKey, settingsError ->

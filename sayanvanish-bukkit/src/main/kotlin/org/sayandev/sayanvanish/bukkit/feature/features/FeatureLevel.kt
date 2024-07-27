@@ -67,12 +67,14 @@ class FeatureLevel(
         if (!isActive() || !seeAsSpectator) return
         val player = event.player
         val user = event.player.user() ?: return
+        if (!user.isVanished) return
         for (onlinePlayer in onlinePlayers.filter { it.uniqueId != user.uniqueId }) {
             val playerVanishLevel = onlinePlayer.user()?.vanishLevel ?: -1
             if (playerVanishLevel >= user.vanishLevel) {
-                onlinePlayer.sendPacket(PacketUtils.getUpdateGameModePacket(NMSUtils.getServerPlayer(player), player.gameMode))
-            } else {
                 onlinePlayer.sendPacket(PacketUtils.getUpdateGameModePacket(NMSUtils.getServerPlayer(player), GameMode.SPECTATOR))
+            } else {
+                hidePlayer(onlinePlayer, player)
+                player.sendPacket(PacketUtils.getRemoveEntitiesPacket(player.entityId))
             }
         }
     }

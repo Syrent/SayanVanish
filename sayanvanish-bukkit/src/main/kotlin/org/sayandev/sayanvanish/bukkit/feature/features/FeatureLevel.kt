@@ -74,7 +74,7 @@ class FeatureLevel(
                 onlinePlayer.sendPacket(PacketUtils.getUpdateGameModePacket(NMSUtils.getServerPlayer(player), GameMode.SPECTATOR))
             } else {
                 hidePlayer(onlinePlayer, player)
-                player.sendPacket(PacketUtils.getRemoveEntitiesPacket(player.entityId))
+                onlinePlayer.sendPacket(PacketUtils.getRemoveEntitiesPacket(player.entityId))
             }
         }
     }

@@ -16,8 +16,8 @@ data class SQLConfig(
 ) {
     @ConfigSerializable
     data class PoolProperties(
-        val maximumPoolSize: Int = 10,
-        val minimumIdle: Int = 10,
+        val maximumPoolSize: Int = 5,
+        val minimumIdle: Int = 5,
         val maximumLifetime: Long = 1800000,
         val keepaliveTime: Long = 0,
         val connectionTimeout: Long = 5000,

@@ -23,7 +23,7 @@ import java.util.concurrent.CompletableFuture
 @RegisteredFeature
 @ConfigSerializable
 class FeatureUpdate(
-    @Configurable val checkEveryXMinutes: Int = 60,
+    @Configurable val checkEveryXMinutes: Int = 60 * 24,
     @Configurable val notifyPermission: String = "sayanvanish.feature.update.notify",
     @Configurable val notifyOnJoin: Boolean = true,
     @Configurable val notifyForSnapshotBuilds: Boolean = true,

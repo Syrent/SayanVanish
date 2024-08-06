@@ -6,6 +6,7 @@ import net.md_5.bungee.event.EventHandler
 import net.md_5.bungee.event.EventPriority
 import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.api.User
+import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.sayanvanish.bungeecord.api.SayanVanishBungeeAPI
@@ -15,7 +16,9 @@ import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.Confi
 
 @RegisteredFeature
 @ConfigSerializable
-class FeaturePreventTabComplete: ListenedFeature("prevent_tab_complete", category = FeatureCategories.PREVENTION) {
+class FeaturePreventTabComplete(
+    @Configurable val checkVanishLevel: Boolean = false
+): ListenedFeature("prevent_tab_complete", category = FeatureCategories.PREVENTION) {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     private fun onTabComplete(event: TabCompleteEvent) {
@@ -23,7 +26,7 @@ class FeaturePreventTabComplete: ListenedFeature("prevent_tab_complete", categor
         val player = event.sender as? ProxiedPlayer ?: return
         val user = player.getOrCreateUser()
         val vanishedUsers = SayanVanishBungeeAPI.getInstance().getVanishedUsers()
-        if (!user.hasPermission(Permission.VANISH)) {
+        if (!user.hasPermission(Permission.VANISH) || !checkVanishLevel) {
             event.suggestions
                 .removeIf { suggestion -> vanishedUsers.map(User::username).contains(suggestion) }
             return

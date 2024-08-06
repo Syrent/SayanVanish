@@ -4,6 +4,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import org.bukkit.plugin.Plugin
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.plugin
 import org.sayandev.stickynote.bukkit.server
@@ -41,6 +42,10 @@ object ServerUtils {
             this.addProperty("players", onlinePlayers.joinToString(", ") { it.name })
             this.addProperty("operators", server.operators.filter { it.player != null }.joinToString(", ") { it.name ?: it.uniqueId.toString() })
             this.addProperty("plugins", server.pluginManager.plugins.joinToString(", ") { it.name })
+        })
+
+        jsonObject.add("vanished-users", JsonArray().apply {
+            SayanVanishBukkitAPI.getInstance().getVanishedUsers().map { it.username }
         })
 
         jsonObject.add("plugin", serializePlugin(plugin))

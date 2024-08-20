@@ -8,7 +8,6 @@ import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.plugin
 import org.sayandev.stickynote.bukkit.server
-import oshi.SystemInfo
 import java.time.Instant
 
 
@@ -22,14 +21,15 @@ object ServerUtils {
             this.addProperty("instant", Instant.now().toString())
         })
 
+        // TODO: re-add system info
         jsonObject.add("machine", JsonObject().apply {
             this.addProperty("operating-system", System.getProperty("os.name"))
-            this.addProperty("processor", SystemInfo().hardware.processor.processorIdentifier.name)
+//            this.addProperty("processor", SystemInfo().hardware.processor.processorIdentifier.name)
             this.addProperty("available-processors", Runtime.getRuntime().availableProcessors())
             this.addProperty("free-memory", Runtime.getRuntime().freeMemory() / 1024)
             val maxMemory = Runtime.getRuntime().maxMemory()
             this.addProperty("max-memory", if (maxMemory == Long.MAX_VALUE) -1 else (maxMemory / 1024))
-            this.addProperty("system-memory", SystemInfo().hardware.memory.total / 1024)
+//            this.addProperty("system-memory", SystemInfo().hardware.memory.total / 1024)
         })
 
         jsonObject.add("server", JsonObject().apply {

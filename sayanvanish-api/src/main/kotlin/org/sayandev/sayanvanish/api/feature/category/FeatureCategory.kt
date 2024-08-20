@@ -1,6 +1,6 @@
 package org.sayandev.sayanvanish.api.feature.category
 
-import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @ConfigSerializable
 interface FeatureCategory {

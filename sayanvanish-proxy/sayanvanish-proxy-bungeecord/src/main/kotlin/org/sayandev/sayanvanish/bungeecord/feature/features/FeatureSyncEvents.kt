@@ -7,7 +7,7 @@ import org.sayandev.sayanvanish.bungeecord.event.BungeeUserVanishEvent
 import org.sayandev.sayanvanish.bungeecord.feature.ListenedFeature
 import org.sayandev.stickynote.bungeecord.StickyNote
 import org.sayandev.stickynote.bungeecord.plugin
-import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import java.util.*
 import java.util.concurrent.TimeUnit
 

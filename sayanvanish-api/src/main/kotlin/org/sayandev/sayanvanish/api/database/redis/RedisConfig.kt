@@ -1,6 +1,6 @@
 package org.sayandev.sayanvanish.api.database.redis
 
-import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @ConfigSerializable
 data class RedisConfig(

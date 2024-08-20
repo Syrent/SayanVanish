@@ -6,7 +6,7 @@ import com.velocitypowered.api.proxy.server.ServerPing
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
 import org.sayandev.sayanvanish.velocity.feature.ListenedFeature
-import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import kotlin.collections.count
 import kotlin.collections.filter
 import kotlin.collections.map

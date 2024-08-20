@@ -4,8 +4,8 @@ import org.sayandev.sayanvanish.api.BasicUser
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.stickynote.core.configuration.Config
-import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
-import org.sayandev.stickynote.lib.spongepowered.configurate.serialize.TypeSerializerCollection
+import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.serialize.TypeSerializerCollection
 import java.io.File
 
 @ConfigSerializable

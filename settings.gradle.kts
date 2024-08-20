@@ -7,7 +7,12 @@ pluginManagement {
     }
 }
 
+plugins {
+    id("org.sayandev.stickynote.settings") version "1.7.15"
+}
+
 rootProject.name = "SayanVanish"
+
 
 include("sayanvanish-api")
 include("sayanvanish-bukkit")

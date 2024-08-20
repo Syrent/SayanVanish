@@ -4,9 +4,9 @@ import org.sayandev.sayanvanish.api.BasicUser
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.User.Companion.convert
 import org.sayandev.sayanvanish.api.database.Database
-import org.sayandev.stickynote.lib.jedis.clients.jedis.DefaultJedisClientConfig
-import org.sayandev.stickynote.lib.jedis.clients.jedis.HostAndPort
-import org.sayandev.stickynote.lib.jedis.clients.jedis.JedisPooled
+import redis.clients.jedis.DefaultJedisClientConfig
+import redis.clients.jedis.HostAndPort
+import redis.clients.jedis.JedisPooled
 import java.util.*
 import kotlin.reflect.safeCast
 

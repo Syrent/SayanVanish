@@ -3,7 +3,7 @@ package org.sayandev.sayanvanish.bukkit.config
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.stickynote.bukkit.pluginDirectory
 import org.sayandev.stickynote.core.configuration.Config
-import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import java.io.File
 import java.util.*
 

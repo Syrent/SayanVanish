@@ -1,5 +1,7 @@
 package org.sayandev.sayanvanish.bukkit.api
 
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
@@ -16,14 +18,12 @@ import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureLevel
 import org.sayandev.sayanvanish.bukkit.feature.features.hook.FeatureLuckPermsHook
+import org.sayandev.stickynote.bukkit.extension.sendComponent
+import org.sayandev.stickynote.bukkit.extension.sendComponentActionbar
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.plugin
 import org.sayandev.stickynote.bukkit.server
-import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendComponent
-import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendComponentActionbar
 import org.sayandev.stickynote.bukkit.utils.ServerVersion
-import org.sayandev.stickynote.lib.kyori.adventure.text.minimessage.tag.resolver.Placeholder
-import org.sayandev.stickynote.lib.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import java.util.*
 
 open class BukkitUser(

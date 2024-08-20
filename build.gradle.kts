@@ -8,13 +8,12 @@ import java.net.HttpURLConnection
 import com.google.gson.JsonParser
 
 plugins {
-    kotlin("jvm") version "2.0.0"
     `java-library`
+    kotlin("jvm") version "2.0.0"
     `maven-publish`
-    id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.papermc.hangar-publish-plugin") version "0.1.2"
     id("com.modrinth.minotaur") version "2.8.7"
-    id("org.sayandev.stickynote") version "1.3.3"
+    id("org.sayandev.stickynote.project")
 }
 
 val slug = findProperty("slug")!! as String
@@ -76,17 +75,8 @@ allprojects {
     plugins.apply("java-library")
     plugins.apply("maven-publish")
     plugins.apply("kotlin")
-    plugins.apply("com.github.johnrengelman.shadow")
-    plugins.apply("org.sayandev.stickynote")
+    plugins.apply("org.sayandev.stickynote.project")
     plugins.apply("com.modrinth.minotaur")
-
-    stickynote {
-        loaderVersion(findProperty("stickynoteVersion")!! as String)
-        modules(StickyNoteModules.CORE)
-        useLoader(true)
-        relocate(true)
-        relocation("org.sayandev.stickynote", "org.sayandev.sayanvanish.lib.stickynote")
-    }
 
     repositories {
         mavenLocal()
@@ -148,13 +138,6 @@ subprojects {
             archiveClassifier.set(null as String?)
             destinationDirectory.set(file(rootProject.projectDir.path + "/bin"))
             from("LICENSE")
-
-            relocate("org.sayandev.stickynote", "org.sayandev.sayanvanish.lib.stickynote")
-//            minimize()
-        }
-
-        named("sourcesJar") {
-            dependsOn(createStickyNoteLoader)
         }
     }
 

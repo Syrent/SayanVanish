@@ -12,12 +12,13 @@ import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.sayanvanish.bukkit.sayanvanish
 import org.sayandev.sayanvanish.bukkit.utils.HangarUtils
 import org.sayandev.sayanvanish.bukkit.utils.VersionInfo
+import org.sayandev.stickynote.bukkit.extension.sendComponent
 import org.sayandev.stickynote.bukkit.log
 import org.sayandev.stickynote.bukkit.plugin
 import org.sayandev.stickynote.bukkit.runAsync
 import org.sayandev.stickynote.bukkit.runSync
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendComponent
-import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import java.util.concurrent.CompletableFuture
 
 @RegisteredFeature

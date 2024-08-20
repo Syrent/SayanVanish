@@ -2,7 +2,7 @@ package org.sayandev.sayanvanish.bungeecord.feature
 
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.stickynote.bungeecord.hasPlugin
-import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @ConfigSerializable
 abstract class HookFeature(

@@ -10,8 +10,8 @@ import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.runSync
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
-import org.sayandev.stickynote.lib.kyori.adventure.text.minimessage.tag.resolver.Placeholder
-import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import org.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @RegisteredFeature
 @ConfigSerializable

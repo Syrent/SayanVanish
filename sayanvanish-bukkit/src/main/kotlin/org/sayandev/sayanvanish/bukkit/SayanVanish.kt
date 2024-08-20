@@ -22,8 +22,8 @@ public lateinit var sayanvanish: SayanVanish
 open class SayanVanish : JavaPlugin() {
 
     override fun onEnable() {
+        StickyNoteBukkitLoader(this)
         sayanvanish = this
-        StickyNoteBukkitLoader.load(this)
 
         Platform.setAndRegister(Platform("bukkit", logger, pluginDirectory, settings.general.serverId))
 

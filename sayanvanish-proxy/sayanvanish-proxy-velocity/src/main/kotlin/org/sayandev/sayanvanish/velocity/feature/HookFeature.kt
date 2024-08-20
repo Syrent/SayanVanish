@@ -1,7 +1,7 @@
 package org.sayandev.sayanvanish.velocity.feature
 
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
-import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.sayandev.stickynote.velocity.hasPlugin
 
 @ConfigSerializable

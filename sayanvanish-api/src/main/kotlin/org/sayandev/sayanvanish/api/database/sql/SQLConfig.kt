@@ -1,7 +1,7 @@
 package org.sayandev.sayanvanish.api.database.sql
 
-import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
-import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.meta.Setting
+import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.objectmapping.meta.Setting
 
 @ConfigSerializable
 data class SQLConfig(

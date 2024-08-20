@@ -2,7 +2,7 @@ package org.sayandev.sayanvanish.bukkit.config
 
 import org.sayandev.stickynote.bukkit.pluginDirectory
 import org.sayandev.stickynote.core.configuration.Config
-import org.sayandev.stickynote.lib.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import java.io.File
 
 public var language: LanguageConfig = LanguageConfig.fromConfig() ?: LanguageConfig.defaultConfig()

@@ -2,9 +2,9 @@ package org.sayandev.sayanvanish.api
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.sayandev.sayanvanish.api.exception.UnsupportedPlatformException
 import org.sayandev.stickynote.core.utils.Gson
-import org.sayandev.stickynote.lib.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import java.util.*
 
 interface User : BasicUser {

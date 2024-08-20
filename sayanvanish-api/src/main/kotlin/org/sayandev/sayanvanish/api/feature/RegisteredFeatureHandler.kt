@@ -1,7 +1,7 @@
 package org.sayandev.sayanvanish.api.feature
 
+import org.reflections.Reflections
 import org.sayandev.sayanvanish.api.Platform
-import org.sayandev.stickynote.lib.reflections.Reflections
 import java.io.IOException
 import java.net.URL
 import java.security.CodeSource

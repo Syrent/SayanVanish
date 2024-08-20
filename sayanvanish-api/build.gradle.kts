@@ -8,4 +8,5 @@ repositories {
 
 dependencies {
     applyDependencies(Module.API)
+    stickynote.implementation("redis.clients:jedis:5.1.4")
 }

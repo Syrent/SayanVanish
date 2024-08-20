@@ -1,14 +1,23 @@
 package org.sayandev.sayanvanish.bukkit.command
 
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.incendo.cloud.bukkit.parser.OfflinePlayerParser
+import org.incendo.cloud.component.CommandComponent
+import org.incendo.cloud.context.CommandContext
+import org.incendo.cloud.description.Description
+import org.incendo.cloud.kotlin.MutableCommandBuilder
+import org.incendo.cloud.parser.standard.IntegerParser
+import org.incendo.cloud.parser.standard.StringParser
+import org.incendo.cloud.setting.ManagerSetting
+import org.incendo.cloud.suggestion.Suggestion
 import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.database.DatabaseConfig
 import org.sayandev.sayanvanish.api.database.databaseConfig
-import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.Features
 import org.sayandev.sayanvanish.api.feature.RegisteredFeatureHandler
 import org.sayandev.sayanvanish.api.utils.Paste
@@ -21,99 +30,86 @@ import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureLevel
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureUpdate
 import org.sayandev.sayanvanish.bukkit.utils.ServerUtils
-import org.sayandev.stickynote.bukkit.command.StickyCommand
+import org.sayandev.stickynote.bukkit.command.Command
 import org.sayandev.stickynote.bukkit.command.StickySender
+import org.sayandev.stickynote.bukkit.command.literalWithPermission
+import org.sayandev.stickynote.bukkit.command.required
+import org.sayandev.stickynote.bukkit.extension.sendComponent
 import org.sayandev.stickynote.bukkit.pluginDirectory
 import org.sayandev.stickynote.bukkit.runAsync
 import org.sayandev.stickynote.bukkit.runSync
-import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendComponent
 import org.sayandev.stickynote.core.utils.MilliCounter
-import org.sayandev.stickynote.lib.incendo.cloud.bukkit.parser.OfflinePlayerParser
-import org.sayandev.stickynote.lib.incendo.cloud.component.CommandComponent
-import org.sayandev.stickynote.lib.incendo.cloud.component.DefaultValue
-import org.sayandev.stickynote.lib.incendo.cloud.parser.flag.CommandFlag
-import org.sayandev.stickynote.lib.incendo.cloud.parser.standard.IntegerParser
-import org.sayandev.stickynote.lib.incendo.cloud.parser.standard.StringParser
-import org.sayandev.stickynote.lib.incendo.cloud.setting.ManagerSetting
-import org.sayandev.stickynote.lib.incendo.cloud.suggestion.Suggestion
-import org.sayandev.stickynote.lib.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import java.io.File
 import java.util.concurrent.CompletableFuture
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 
-class SayanVanishCommand : StickyCommand(settings.command.name, *settings.command.aliases.toTypedArray()) {
+class SayanVanishCommand : Command(settings.command.name, *settings.command.aliases.toTypedArray()) {
 
-    private val command = manager.commandBuilder(this.name, *aliases)
-        .permission(constructBasePermission("vanish"))
-        .optional("player", OfflinePlayerParser.offlinePlayerParser())
-        .flag(
-            CommandFlag.builder<StickySender>("state").withComponent(
-                CommandComponent.builder<StickySender, String>("state", StringParser.stringParser())
-                    .suggestionProvider { _, _ ->
-                        CompletableFuture.completedFuture(listOf("on", "off").map { Suggestion.suggestion(it) })
-                    })
+    override fun rootBuilder(builder: MutableCommandBuilder<StickySender>) {
+        builder.optional("player", OfflinePlayerParser.offlinePlayerParser())
+        builder.flag(
+            "state",
+            emptyArray(),
+            Description.empty(),
+            CommandComponent.builder<StickySender, String>("state", StringParser.stringParser())
+                .suggestionProvider { _, _ ->
+                    CompletableFuture.completedFuture(listOf("on", "off").map { Suggestion.suggestion(it) })
+                }
         )
-        .flag(CommandFlag.builder<StickySender?>("silent").withAliases("s"))
-        .handler { context ->
-            val sender = context.sender().bukkitSender()
-            val target = context.optional<OfflinePlayer>("player")
-            val state = context.flags().get<String>("state")
+        builder.flag("silent", arrayOf("s"))
+    }
 
-            if (!target.isPresent && sender !is Player) {
-                sender.sendComponent(language.general.haveToProvidePlayer)
-                return@handler
-            }
+    override fun rootHandler(context: CommandContext<StickySender>) {
+        val sender = context.sender().bukkitSender()
+        val target = context.optional<OfflinePlayer>("player")
+        val state = context.flags().get<String>("state")
 
-            if (target.isPresent && !sender.hasPermission(Permission.VANISH_OTHERS.permission())) {
-                sender.sendComponent(language.general.dontHavePermission)
-                return@handler
-            }
+        if (!target.isPresent && sender !is Player) {
+            sender.sendComponent(language.general.haveToProvidePlayer)
+            return
+        }
 
-            val player = if (target.isPresent) context.optional<OfflinePlayer>("player").get() else context.sender().player() ?: return@handler
-            val user = player.getOrAddUser()
+        if (target.isPresent && !sender.hasPermission(Permission.VANISH_OTHERS.permission())) {
+            sender.sendComponent(language.general.dontHavePermission)
+            return
+        }
 
-            if (!user.hasPermission(Permission.VANISH)) {
-                user.sendComponent(language.vanish.dontHaveUsePermission, Placeholder.unparsed("permission", Permission.VANISH.permission()))
-            }
+        val player = if (target.isPresent) context.optional<OfflinePlayer>("player").get() else context.sender().player() ?: return
+        val user = player.getOrAddUser()
 
-            val options = VanishOptions.defaultOptions().apply {
-                if (context.flags().hasFlag("silent")) {
-                    this.sendMessage = false
-                }
-            }
+        if (!user.hasPermission(Permission.VANISH)) {
+            user.sendComponent(language.vanish.dontHaveUsePermission, Placeholder.unparsed("permission", Permission.VANISH.permission()))
+        }
 
-            if (target.isPresent) {
-                if (!player.isOnline) {
-                    sender.sendComponent(language.vanish.offlineOnVanish, Placeholder.unparsed("player", player.name ?: "N/A"), Placeholder.parsed("state", user.stateText()))
-                    options.sendMessage = false
-                }
-            }
-
-            when (state) {
-                "on" -> user.vanish(options)
-                "off" -> user.unVanish(options)
-                else -> user.toggleVanish(options)
+        val options = VanishOptions.defaultOptions().apply {
+            if (context.flags().hasFlag("silent")) {
+                this.sendMessage = false
             }
         }
 
+        if (target.isPresent) {
+            if (!player.isOnline) {
+                sender.sendComponent(language.vanish.offlineOnVanish, Placeholder.unparsed("player", player.name ?: "N/A"), Placeholder.parsed("state", user.stateText()))
+                options.sendMessage = false
+            }
+        }
+
+        when (state) {
+            "on" -> user.vanish(options)
+            "off" -> user.unVanish(options)
+            else -> user.toggleVanish(options)
+        }
+    }
+
     init {
         manager.settings().set(ManagerSetting.OVERRIDE_EXISTING_COMMANDS, true)
-        manager.command(command.build())
-
-        manager.command(builder
-            .literal("help")
-            .permission(constructBasePermission("help"))
-            .handler { context ->
-                help.queryCommands("$name ${context.getOrDefault("query", "")}", context.sender())
-            }
-            .build())
+        registerHelpLiteral()
 
         var forceUpdateConfirm = false
-        manager.command(builder
-            .literal("forceupdate")
-            .permission(constructBasePermission("forceupdate"))
-            .handler { context ->
+        rawCommandBuilder().registerCopy {
+            literalWithPermission("forceupdate")
+            handler { context ->
                 val sender = context.sender().bukkitSender()
                 if (!forceUpdateConfirm) {
                     sender.sendComponent(language.general.confirmUpdate)
@@ -144,12 +140,11 @@ class SayanVanishCommand : StickyCommand(settings.command.name, *settings.comman
                     }
                 }
             }
-            .build())
+        }
 
-        manager.command(builder
-            .literal("paste")
-            .permission(constructBasePermission("paste"))
-            .handler { context ->
+        rawCommandBuilder().registerCopy {
+            literalWithPermission("paste")
+            handler { context ->
                 val sender = context.sender().bukkitSender()
                 sender.sendComponent(language.paste.generating)
                 runAsync {
@@ -192,12 +187,11 @@ class SayanVanishCommand : StickyCommand(settings.command.name, *settings.comman
                     }
                 }
             }
-            .build())
+        }
 
-        manager.command(builder
-            .literal("reload")
-            .permission(constructBasePermission("reload"))
-            .handler { context ->
+        rawCommandBuilder().registerCopy {
+            literalWithPermission("reload")
+            handler { context ->
                 val sender = context.sender().bukkitSender()
                 language = LanguageConfig.fromConfig() ?: LanguageConfig.defaultConfig()
                 Features.features.forEach { feature ->
@@ -209,18 +203,17 @@ class SayanVanishCommand : StickyCommand(settings.command.name, *settings.comman
                 databaseConfig = DatabaseConfig.fromConfig() ?: DatabaseConfig.defaultConfig()
                 sender.sendComponent(language.general.reloaded)
             }
-            .build())
+        }
 
-        val levelLiteral = builder
-            .literal("level")
-            .permission(constructBasePermission("level"))
+        val levelLiteral = rawCommandBuilder().registerCopy {
+            literalWithPermission("level")
+        }
 
-        manager.command(levelLiteral
-            .literal("set")
-            .permission(constructBasePermission("level.set"))
-            .required("player", OfflinePlayerParser.offlinePlayerParser())
-            .required("level", IntegerParser.integerParser(0))
-            .handler { context ->
+        levelLiteral.registerCopy {
+            literalWithPermission("set")
+            required("player", OfflinePlayerParser.offlinePlayerParser())
+            required("level", IntegerParser.integerParser(0))
+            handler { context ->
                 val sender = context.sender().bukkitSender()
                 val target = context.get<OfflinePlayer>("player")
 
@@ -240,13 +233,12 @@ class SayanVanishCommand : StickyCommand(settings.command.name, *settings.comman
 
                 sender.sendComponent(language.vanish.levelSet, Placeholder.unparsed("level", user.vanishLevel.toString()), Placeholder.unparsed("player", user.username))
             }
-            .build())
+        }
 
-        manager.command(levelLiteral
-            .literal("get")
-            .permission(constructBasePermission("level.get"))
-            .required("player", OfflinePlayerParser.offlinePlayerParser())
-            .handler { context ->
+        levelLiteral.registerCopy {
+            literalWithPermission("get")
+            required("player", OfflinePlayerParser.offlinePlayerParser())
+            handler { context ->
                 val sender = context.sender().bukkitSender()
                 val target = context.get<OfflinePlayer>("player")
 
@@ -259,23 +251,16 @@ class SayanVanishCommand : StickyCommand(settings.command.name, *settings.comman
 
                 sender.sendComponent(language.vanish.levelGet, Placeholder.unparsed("player", target.name ?: "N/A"), Placeholder.unparsed("level", (user?.vanishLevel ?: 0).toString()))
             }
-            .build())
+        }
 
-        val featureLiteral = builder
-            .literal("feature")
-            .permission(constructBasePermission("feature"))
-            .required(
-                "feature",
-                CommandComponent.builder<StickySender, String>("state", StringParser.stringParser())
-                    .suggestionProvider { _, _ ->
-                        CompletableFuture.completedFuture(Features.features.map { Suggestion.suggestion(it.id) })
-                    }
-            )
+        val featureLiteral = rawCommandBuilder().registerCopy {
+            literalWithPermission("feature")
+            required("feature", Features.features.map { it.id })
+        }
 
-        manager.command(featureLiteral
-            .literal("disable")
-            .permission(constructBasePermission("feature.disable"))
-            .handler { context ->
+        featureLiteral.registerCopy {
+            literalWithPermission("disable")
+            handler { context ->
                 val sender = context.sender().bukkitSender()
                 val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
                     sender.sendComponent(language.feature.notFound)
@@ -291,12 +276,11 @@ class SayanVanishCommand : StickyCommand(settings.command.name, *settings.comman
                 feature.save()
                 sender.sendComponent(language.feature.disabled, Placeholder.unparsed("feature", feature.id))
             }
-            .build())
+        }
 
-        manager.command(featureLiteral
-            .literal("enable")
-            .permission(constructBasePermission("feature.enable"))
-            .handler { context ->
+        featureLiteral.registerCopy {
+            literalWithPermission("enable")
+            handler { context ->
                 val sender = context.sender().bukkitSender()
                 val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
                     sender.sendComponent(language.feature.notFound)
@@ -312,12 +296,11 @@ class SayanVanishCommand : StickyCommand(settings.command.name, *settings.comman
                 feature.save()
                 sender.sendComponent(language.feature.enabled, Placeholder.unparsed("feature", feature.id))
             }
-            .build())
+        }
 
-        manager.command(featureLiteral
-            .literal("reset")
-            .permission(constructBasePermission("feature.reset"))
-            .handler { context ->
+        featureLiteral.registerCopy {
+            literalWithPermission("reset")
+            handler { context ->
                 val sender = context.sender().bukkitSender()
                 val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
                     sender.sendComponent(language.feature.notFound)
@@ -334,48 +317,20 @@ class SayanVanishCommand : StickyCommand(settings.command.name, *settings.comman
                 Features.features.add(freshFeature)
                 sender.sendComponent(language.feature.reset, Placeholder.unparsed("feature", feature.id))
             }
-            .build())
+        }
 
-        manager.command(featureLiteral
-            .literal("update")
-            .permission(constructBasePermission("feature.update"))
-            .required(
-                "option",
-                CommandComponent.builder<StickySender, String>("state", StringParser.stringParser())
-                    .suggestionProvider { context, _ ->
-                        val feature = Features.features.find { it.id == context.get<String>("feature") } ?: return@suggestionProvider CompletableFuture.completedFuture(emptyList())
-                        CompletableFuture.completedFuture(feature::class.java.declaredFields.filter { it.isAnnotationPresent(Configurable::class.java) }.map { Suggestion.suggestion(it.name) })
-                    }
-            )
-            .required("value",
-                CommandComponent.builder<StickySender, String>("value", StringParser.stringParser(StringParser.StringMode.QUOTED))
-                    .suggestionProvider { context, _ ->
-                        val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
-                            return@suggestionProvider CompletableFuture.completedFuture(emptyList())
-                        }
-
-                        val field = feature::class.java.declaredFields.find { it.name == context.get("option") } ?: let {
-                            return@suggestionProvider CompletableFuture.completedFuture(emptyList())
-                        }
-                        field.isAccessible = true
-
-                        when (field.type) {
-                            Boolean::class.java -> CompletableFuture.completedFuture(listOf("true", "false").map { Suggestion.suggestion(it) })
-                            Int::class.java -> CompletableFuture.completedFuture(listOf("0", "1", "2", "3", "4", "5").map { Suggestion.suggestion(it) })
-                            Double::class.java -> CompletableFuture.completedFuture(listOf("0.0", "0.1", "0.2", "0.3", "0.4", "0.5").map { Suggestion.suggestion(it) })
-                            Float::class.java -> CompletableFuture.completedFuture(listOf("0.0", "0.1", "0.2", "0.3", "0.4", "0.5").map { Suggestion.suggestion(it) })
-                            else -> CompletableFuture.completedFuture(listOf(field.get(feature).toString()).map { Suggestion.suggestion(it) })
-                        }
-                    }
-                )
-            .handler { context ->
+        featureLiteral.registerCopy {
+            literalWithPermission("update")
+            required("option", Features.features.flatMap { it::class.memberProperties.map { it.name } })
+            required("value", StringParser.stringParser(StringParser.StringMode.QUOTED))
+            handler { context ->
                 val sender = context.sender().bukkitSender()
                 val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
                     sender.sendComponent(language.feature.notFound)
                     return@handler
                 }
 
-                val field = feature::class.java.declaredFields.find { it.name == context.get("option") }
+                val field = feature.javaClass.getDeclaredField(context.get<String>("option"))
                 if (field == null) {
                     sender.sendComponent(language.feature.invalidOption, Placeholder.unparsed("options", feature::class.memberProperties.joinToString(", ") { it.name }))
                     return@handler
@@ -408,22 +363,21 @@ class SayanVanishCommand : StickyCommand(settings.command.name, *settings.comman
 
                 sender.sendComponent(language.feature.updated, Placeholder.unparsed("feature", feature.id), Placeholder.unparsed("option", field.name), Placeholder.unparsed("state", value))
             }
-            .build())
+        }
 
-        val testLiteral = builder
-            .literal("test")
-            .permission(constructBasePermission("test"))
+        val testLiteral = rawCommandBuilder().registerCopy {
+            literalWithPermission("test")
+        }
 
-        val testDatabaseLiteral = testLiteral
-            .literal("database")
-            .permission(constructBasePermission("test.database"))
+        val testDatabaseLiteral = testLiteral.registerCopy {
+            literalWithPermission("database")
+        }
 
-        manager.command(testDatabaseLiteral
-            .literal("data")
-            .permission(constructBasePermission("test.database.data"))
-            .optional("limit", IntegerParser.integerParser(1, 10000), DefaultValue.constant(100))
-            .flag(CommandFlag.builder("no-cache"))
-            .handler { context ->
+        testDatabaseLiteral.registerCopy {
+            literalWithPermission("data")
+            optional("limit", IntegerParser.integerParser(1, 10000))
+            flag("no-cache")
+            handler { context ->
                 val sender = context.sender().bukkitSender()
                 val limit = context.get<Int>("limit")
                 val database = SayanVanishAPI.getInstance().database
@@ -455,15 +409,14 @@ class SayanVanishCommand : StickyCommand(settings.command.name, *settings.comman
 
                 database.useCache = true
             }
-            .build())
+        }
 
-        manager.command(testDatabaseLiteral
-            .literal("performance")
-            .permission(constructBasePermission("test.database.performance"))
-            .optional("amount", IntegerParser.integerParser(1, 10000), DefaultValue.constant(100))
-            .optional("tries", IntegerParser.integerParser(1, 10), DefaultValue.constant(5))
-            .flag(CommandFlag.builder("no-cache"))
-            .handler { context ->
+        testDatabaseLiteral.registerCopy {
+            literalWithPermission("performance")
+            optional("amount", IntegerParser.integerParser(1, 10000))
+            optional("tries", IntegerParser.integerParser(1, 10))
+            flag("no-cache")
+            handler { context ->
                 val sender = context.sender().bukkitSender()
                 val amount = context.get<Int>("amount")
                 val database = SayanVanishAPI.getInstance().database
@@ -484,23 +437,8 @@ class SayanVanishCommand : StickyCommand(settings.command.name, *settings.comman
 
                 database.useCache = true
             }
-            .build())
+        }
 
-        /*manager.command(testLiteral
-            .literal("performance")
-            .permission(constructBasePermission("test.performance"))
-            .handler { context ->
-                val sender = context.sender().bukkitSender()
-                val spark = Features.getFeature<FeatureHookSpark>().hook?.spark ?: let {
-                    sender.sendMessage("<red><gold>spark</gold> is not installed on this server.".component())
-                    return@handler
-                }
-
-                spark.gc()?.values?.forEach { gc ->
-                    gc.
-                }
-            }
-            .build())*/
     }
 
     private fun sendPasteError(sender: CommandSender, error: Throwable?) {

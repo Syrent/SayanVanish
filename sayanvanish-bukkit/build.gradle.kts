@@ -3,7 +3,7 @@ import org.sayandev.plugin.StickyNoteModules
 
 plugins {
     id("xyz.jpenilla.run-paper") version "2.3.0"
-    id("io.papermc.paperweight.userdev") version "1.7.1"
+//    id("io.papermc.paperweight.userdev") version "1.7.2"
     id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
 }
 
@@ -13,12 +13,13 @@ stickynote {
 
 repositories {
     mavenCentral()
-    maven("https://repo.papermc.io/repository/maven-public/")
     applyRepositories(Module.BUKKIT)
+    maven("https://repo.papermc.io/repository/maven-public/")
 }
 
 dependencies {
-    paperweight.paperDevBundle("1.20.4-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT")
+//    paperweight.paperDevBundle("1.21.1-R0.1-SNAPSHOT")
     implementation(project(":sayanvanish-api"))
 
     applyDependencies(Module.BUKKIT)
@@ -61,7 +62,7 @@ tasks {
         folia.registerTask()
     }
 
-    paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION
+//    paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION
 }
 
 bukkit {

@@ -2,12 +2,12 @@ package org.sayandev.sayanvanish.velocity.api
 
 import com.velocitypowered.api.proxy.Player
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.proxy.config.settings
 import org.sayandev.sayanvanish.velocity.event.VelocityUserUnVanishEvent
 import org.sayandev.sayanvanish.velocity.event.VelocityUserVanishEvent
-import org.sayandev.stickynote.lib.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.sayandev.stickynote.velocity.StickyNote
 import org.sayandev.stickynote.velocity.server
 import org.sayandev.stickynote.velocity.utils.AdventureUtils.component

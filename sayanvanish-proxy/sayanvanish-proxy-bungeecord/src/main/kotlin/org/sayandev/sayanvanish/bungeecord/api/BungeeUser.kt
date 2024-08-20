@@ -1,5 +1,6 @@
 package org.sayandev.sayanvanish.bungeecord.api
 
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.md_5.bungee.api.connection.ProxiedPlayer
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishOptions
@@ -11,8 +12,6 @@ import org.sayandev.stickynote.bungeecord.utils.AdventureUtils.sendMessage
 import org.sayandev.stickynote.bungeecord.utils.AdventureUtils.sendActionbar
 import org.sayandev.stickynote.bungeecord.StickyNote
 import org.sayandev.stickynote.bungeecord.plugin
-import org.sayandev.stickynote.lib.kyori.adventure.text.Component
-import org.sayandev.stickynote.lib.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import java.util.UUID
 
 

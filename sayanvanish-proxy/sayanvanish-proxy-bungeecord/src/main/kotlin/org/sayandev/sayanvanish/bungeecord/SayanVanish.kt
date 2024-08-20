@@ -9,17 +9,13 @@ import org.sayandev.stickynote.bungeecord.StickyNote
 import org.sayandev.stickynote.bungeecord.dataDirectory
 import org.sayandev.stickynote.bungeecord.registerListener
 import org.sayandev.stickynote.bungeecord.server
-import org.sayandev.stickynote.lib.libby.BungeeLibraryManager
-import org.sayandev.stickynote.lib.libby.Library
 import org.sayandev.stickynote.loader.bungee.StickyNoteBungeeLoader
 import java.util.concurrent.TimeUnit
 
 class SayanVanish : Plugin() {
 
     override fun onEnable() {
-        downloadLibraries()
-
-        StickyNoteBungeeLoader.load(this)
+        StickyNoteBungeeLoader(this)
         Platform.setAndRegister(Platform("bungeecord", logger, dataDirectory, settings.general.serverId))
 
         SayanVanishBungeeAPI()
@@ -40,35 +36,5 @@ class SayanVanish : Plugin() {
         StickyNote.run({
             SayanVanishBungeeAPI.getInstance().database.updateCacheAsync()
         }, settings.general.cacheUpdatePeriodMillis, settings.general.cacheUpdatePeriodMillis, TimeUnit.MILLISECONDS)
-    }
-
-    private fun downloadLibraries() {
-        proxy.logger.info("Trying to download required libraries, make sure your machine is connected to internet.")
-        val libraryManager = BungeeLibraryManager(this)
-        libraryManager.addMavenLocal()
-        libraryManager.addMavenCentral()
-        libraryManager.addRepository("https://repo.sayandev.org/snapshots")
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver")
-        } catch (_: Exception) {
-            libraryManager.loadLibrary(
-                Library.builder()
-                    .groupId("com{}mysql")
-                    .artifactId("mysql-connector-j")
-                    .version("8.4.0")
-                    .build()
-            )
-        }
-        try {
-            Class.forName("org.xerial.sqlite-jdbc")
-        } catch (_: Exception) {
-            libraryManager.loadLibrary(
-                Library.builder()
-                    .groupId("org{}xerial")
-                    .artifactId("sqlite-jdbc")
-                    .version("3.46.0.0")
-                    .build()
-            )
-        }
     }
 }

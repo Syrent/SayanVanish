@@ -1,5 +1,6 @@
 package org.sayandev.sayanvanish.velocity
 
+import com.alessiodp.libby.VelocityLibraryManager
 import com.google.inject.Inject
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
@@ -8,9 +9,7 @@ import com.velocitypowered.api.proxy.ProxyServer
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.proxy.config.settings
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
-import org.sayandev.stickynote.lib.libby.Library
-import org.sayandev.stickynote.lib.libby.VelocityLibraryManager
-import org.sayandev.stickynote.loader.velocity.StickyNoteVelocityLoader
+import org.sayandev.stickynote.loader.bungee.StickyNoteVelocityLoader
 import org.sayandev.stickynote.velocity.StickyNote
 import org.sayandev.stickynote.velocity.registerListener
 import org.slf4j.Logger
@@ -26,9 +25,7 @@ class SayanVanish @Inject constructor(
 
     @Subscribe
     fun onProxyInitialize(event: ProxyInitializeEvent) {
-        downloadLibraries()
-
-        StickyNoteVelocityLoader.load(this, PLUGIN_ID, server, logger, dataDirectory)
+        StickyNoteVelocityLoader(this, PLUGIN_ID, server, logger, dataDirectory)
 
         Platform.setAndRegister(Platform("velocity", java.util.logging.Logger.getLogger("sayanvanish"), dataDirectory.toFile(), settings.general.serverId))
         SayanVanishVelocityAPI
@@ -50,35 +47,6 @@ class SayanVanish @Inject constructor(
         StickyNote.run({
             SayanVanishVelocityAPI.getInstance().database.updateCacheAsync()
         }, settings.general.cacheUpdatePeriodMillis, TimeUnit.MILLISECONDS, settings.general.cacheUpdatePeriodMillis, TimeUnit.MILLISECONDS)
-    }
-
-    private fun downloadLibraries() {
-        logger.info("Trying to download required libraries, make sure your machine is connected to internet.")
-        val libraryManager = VelocityLibraryManager(this, LoggerFactory.getLogger(this::class.java), dataDirectory, server.pluginManager)
-        libraryManager.addMavenLocal()
-        libraryManager.addMavenCentral()
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver")
-        } catch (_: Exception) {
-            libraryManager.loadLibrary(
-                Library.builder()
-                    .groupId("com{}mysql")
-                    .artifactId("mysql-connector-j")
-                    .version("8.4.0")
-                    .build()
-            )
-        }
-        try {
-            Class.forName("org.xerial.sqlite-jdbc")
-        } catch (_: Exception) {
-            libraryManager.loadLibrary(
-                Library.builder()
-                    .groupId("org{}xerial")
-                    .artifactId("sqlite-jdbc")
-                    .version("3.46.0.0")
-                    .build()
-            )
-        }
     }
 
     companion object {

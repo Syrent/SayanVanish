@@ -20,6 +20,9 @@ class FeaturePreventSpawnerSpawn: ListenedFeature("prevent_spawner_spawn", categ
     @Transient
     override var condition: Boolean = StickyNote.isPaper() && ServerVersion.supports(16)
 
+    /**
+    * @note This feature will be too performance intense if i want to check feature is active or not on a per-player basis
+    * */
     @EventHandler
     private fun onPreSpawn(event: PreSpawnerSpawnEvent) {
         if (!isActive()) return

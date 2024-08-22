@@ -36,9 +36,9 @@ private class DiscordSRVImpl(val feature: FeatureHookDiscordSRV): Listener {
 
     @EventHandler
     private fun onUnVanish(event: BukkitUserUnVanishEvent) {
-        if (!feature.isActive()) return
-        if (!feature.sendJoinMessageOnUnvanish) return
         val user = event.user
+        if (!feature.isActive(user)) return
+        if (!feature.sendJoinMessageOnUnvanish) return
         val player = user.player() ?: return
         if (event.options.isOnJoin || event.options.isOnQuit) return
         DiscordSRV.getPlugin().sendJoinMessage(player, feature.joinMessage)
@@ -46,9 +46,9 @@ private class DiscordSRVImpl(val feature: FeatureHookDiscordSRV): Listener {
 
     @EventHandler
     private fun onVanish(event: BukkitUserVanishEvent) {
-        if (!feature.isActive()) return
-        if (!feature.sendQuitMessageOnVanish) return
         val user = event.user
+        if (!feature.isActive(user)) return
+        if (!feature.sendQuitMessageOnVanish) return
         val player = user.player() ?: return
         if (event.options.isOnJoin || event.options.isOnQuit) return
         DiscordSRV.getPlugin().sendLeaveMessage(player, feature.quitMessage)

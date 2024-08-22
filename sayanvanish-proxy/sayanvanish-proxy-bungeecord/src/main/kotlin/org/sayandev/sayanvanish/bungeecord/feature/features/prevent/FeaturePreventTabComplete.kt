@@ -22,9 +22,9 @@ class FeaturePreventTabComplete(
 
     @EventHandler(priority = EventPriority.HIGHEST)
     private fun onTabComplete(event: TabCompleteEvent) {
-        if (!isActive()) return
         val player = event.sender as? ProxiedPlayer ?: return
         val user = player.getOrCreateUser()
+        if (!isActive(user)) return
         val vanishedUsers = SayanVanishBungeeAPI.getInstance().getVanishedUsers()
         if (!user.hasPermission(Permission.VANISH) || !checkVanishLevel) {
             event.suggestions

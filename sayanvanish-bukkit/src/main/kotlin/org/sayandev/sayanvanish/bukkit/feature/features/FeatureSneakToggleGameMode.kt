@@ -23,7 +23,8 @@ class FeatureSneakToggleGameMode(
     @EventHandler
     private fun onToggleSneak(event: PlayerToggleSneakEvent) {
         val player = event.player
-        if (!player.isSneaking || player.user()?.isVanished != true || !isActive()) return
+        val user = player.user() ?: return
+        if (!player.isSneaking || !user.isVanished || !isActive(user)) return
         if (sneakList.contains(player)) {
             if (player.gameMode == GameMode.SPECTATOR) {
                 val allowFlight = player.allowFlight

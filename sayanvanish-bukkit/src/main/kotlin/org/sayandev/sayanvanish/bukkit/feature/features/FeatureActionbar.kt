@@ -22,22 +22,22 @@ class FeatureActionbar(
 
     @EventHandler
     private fun onVanish(event: BukkitUserVanishEvent) {
-        if (!isActive()) return
         val user = event.user
+        if (!isActive(user)) return
         user.sendActionbar(content)
     }
 
     @EventHandler
     private fun onUnVanish(event: BukkitUserUnVanishEvent) {
-        if (!isActive()) return
         val user = event.user
+        if (!isActive(user)) return
         user.sendActionbar("")
     }
 
     override fun enable() {
         runSync({
-            if (!enabled) return@runSync
             for (user in onlinePlayers.filter { it.hasPermission(Permission.VANISH.permission()) }.mapNotNull { it.user() }.filter { it.isVanished }) {
+                if (!isActive(user)) continue
                 user.sendActionbar(content)
             }
         }, delay, period)

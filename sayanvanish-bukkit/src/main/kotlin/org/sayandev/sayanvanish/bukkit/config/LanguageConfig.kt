@@ -23,6 +23,7 @@ data class LanguageConfig(
     data class General(
         val reloaded: String = "<green>Plugin successfully reloaded. <red>Please note that some changes may require a server restart to take effect. Subsequent reloads may cause issues.",
         val playerNotFound: String = "<red>Player not found",
+        val userNotFound: String = "<red>Couldn't get user data for player <gold><player></gold>",
         val haveToProvidePlayer: String = "<red>You have to provide a player.",
         val dontHavePermission: String = "<red>You don't have permission to do that.",
         val confirmUpdate: String = "<red>Execute update again to update the plugin.",
@@ -43,6 +44,8 @@ data class LanguageConfig(
         val invalidOption: String = "<red>Invalid option, valid options are <gold><options></gold>.",
         val invalidValue: String = "<red>Invalid value, valid values are <gold><values></gold>.",
         val reset: String = "<gray><gold><feature></gold> has been reset.",
+        val togglePlayer: String = "<gray><gold><player></gold> <aqua><feature></aqua> feature state has been updated to <state>.",
+        val togglePlayerOther: String = "<red>You don't have permission to change change other players feature state.",
         val permissionLevelMethodWarning: String = "<red>This server uses <method> for vanish levels. To change the vanish level, use a permission system like LuckPerms or another available method. Available methods: <gold><methods></gold>."
     )
 

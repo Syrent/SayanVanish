@@ -5,10 +5,12 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.incendo.cloud.bukkit.parser.OfflinePlayerParser
+import org.incendo.cloud.bukkit.parser.PlayerParser
 import org.incendo.cloud.component.CommandComponent
 import org.incendo.cloud.context.CommandContext
 import org.incendo.cloud.description.Description
 import org.incendo.cloud.kotlin.MutableCommandBuilder
+import org.incendo.cloud.meta.CommandMeta
 import org.incendo.cloud.parser.standard.IntegerParser
 import org.incendo.cloud.parser.standard.StringParser
 import org.incendo.cloud.setting.ManagerSetting
@@ -30,6 +32,7 @@ import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureLevel
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureUpdate
 import org.sayandev.sayanvanish.bukkit.utils.ServerUtils
+import org.sayandev.stickynote.bukkit.StickyNote.onlinePlayers
 import org.sayandev.stickynote.bukkit.command.Command
 import org.sayandev.stickynote.bukkit.command.StickySender
 import org.sayandev.stickynote.bukkit.command.literalWithPermission
@@ -38,9 +41,11 @@ import org.sayandev.stickynote.bukkit.extension.sendComponent
 import org.sayandev.stickynote.bukkit.pluginDirectory
 import org.sayandev.stickynote.bukkit.runAsync
 import org.sayandev.stickynote.bukkit.runSync
+import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import org.sayandev.stickynote.core.utils.MilliCounter
 import java.io.File
 import java.util.concurrent.CompletableFuture
+import kotlin.jvm.optionals.getOrNull
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 
@@ -198,6 +203,7 @@ class SayanVanishCommand : Command(settings.command.name, *settings.command.alia
                     feature.disable()
                 }
                 Features.features.clear()
+                Features.userFeatures.clear()
                 RegisteredFeatureHandler.process()
                 settings = SettingsConfig.fromConfig() ?: SettingsConfig.defaultConfig()
                 databaseConfig = DatabaseConfig.fromConfig() ?: DatabaseConfig.defaultConfig()
@@ -256,6 +262,43 @@ class SayanVanishCommand : Command(settings.command.name, *settings.command.alia
         val featureLiteral = rawCommandBuilder().registerCopy {
             literalWithPermission("feature")
             required("feature", Features.features.map { it.id })
+        }
+
+        featureLiteral.registerCopy {
+            literalWithPermission("toggleplayer")
+            optional("player", PlayerParser.playerParser())
+            handler { context ->
+                val targetArg = context.optional<Player>("player").getOrNull()
+
+                val sender = context.sender().bukkitSender()
+                if (targetArg != null && !sender.hasPermission(Permission.FEATURE_PLAYER_TOGGLE.permission())) {
+                    sender.sendComponent(language.feature.togglePlayerOther)
+                    return@handler
+                }
+
+                if (targetArg == null && sender !is Player) {
+                    sender.sendComponent(language.general.haveToProvidePlayer)
+                    return@handler
+                }
+
+                val target = targetArg ?: sender as Player
+
+                val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
+                    sender.sendComponent(language.feature.notFound)
+                    return@handler
+                }
+
+                val user = target.user() ?: let {
+                    sender.sendComponent(language.general.userNotFound, Placeholder.unparsed("player", target.name))
+                    return@handler
+                }
+
+                val userFeature = Features.userFeatures(user).find { it.id == feature.id }!!
+
+                userFeature.toggle()
+                sender.sendComponent(language.feature.togglePlayer, Placeholder.unparsed("player", target.name), Placeholder.unparsed("feature", feature.id), Placeholder.unparsed("state", if (userFeature.enabled) "enabled" else "disabled"))
+                return@handler
+            }
         }
 
         featureLiteral.registerCopy {

@@ -23,8 +23,8 @@ class FeaturePreventAdvancementAnnounce(
 
     @EventHandler
     private fun onAdvancementDone(event: PlayerAdvancementDoneEvent) {
-        if (!isActive()) return
         val user = event.player.user() ?: return
+        if (!isActive(user)) return
         if (user.isVanished) {
             if (disableMessage) {
                 event.message(null)

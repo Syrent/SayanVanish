@@ -22,8 +22,8 @@ class FeaturePreventChat(
     @Suppress("DEPRECATION")
     private fun onPlayerChat(event: AsyncPlayerChatEvent) {
         if (event.isCancelled) return
-        if (!isActive()) return
         val user = event.player.user() ?: return
+        if (!isActive(user)) return
         if (!user.isVanished) return
         val message = event.message
         if (message.startsWith(bypassChar)) {

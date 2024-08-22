@@ -19,8 +19,8 @@ class FeaturePreventSculkSensor: ListenedFeature("prevent_sculk_sensor", categor
 
     @EventHandler
     private fun onBlockReceive(event: BlockReceiveGameEvent) {
-        if (!isActive()) return
         val user = (event.entity as? Player)?.user() ?: return
+        if (!isActive(user)) return
         if (user.isVanished) {
             event.isCancelled = true
         }

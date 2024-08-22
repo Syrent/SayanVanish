@@ -22,11 +22,11 @@ class FeaturePreventInteract(
 
     @EventHandler
     private fun onInteract(event: PlayerInteractEvent) {
-        if (!isActive()) return
         if (ServerVersion.supports(13)) {
             if (event.clickedBlock?.state is Container) return
         }
         val user = event.player.user() ?: return
+        if (!isActive(user)) return
         if (user.isVanished) {
             val isPressurePlate = pressurePlateTrigger && event.action == Action.PHYSICAL && event.clickedBlock?.type?.name?.contains("PLATE") == true
             val isDripLeaf = dripLeaf && event.action == Action.PHYSICAL && event.clickedBlock?.type?.name?.equals("BIG_DRIPLEAF") == true

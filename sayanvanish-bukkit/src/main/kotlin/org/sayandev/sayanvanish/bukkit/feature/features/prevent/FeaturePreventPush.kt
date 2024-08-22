@@ -15,8 +15,8 @@ class FeaturePreventPush: ListenedFeature("prevent_push", enabled = false, categ
 
     @EventHandler
     private fun onVanish(event: BukkitUserVanishEvent) {
-        if (!isActive()) return
         val user = event.user
+        if (!isActive(user)) return
         val player = user.player() ?: return
         var team = player.scoreboard.getTeam("Vanished")
         if (team == null) {
@@ -28,8 +28,8 @@ class FeaturePreventPush: ListenedFeature("prevent_push", enabled = false, categ
 
     @EventHandler
     private fun onUnVanish(event: BukkitUserUnVanishEvent) {
-        if (!isActive()) return
         val user = event.user
+        if (!isActive(user)) return
         val player = user.player() ?: return
         /* Make sure the player has `Vanished` team before removing it. Prevents 1.21 players to get kicked with ISE:
         java.lang.IllegalStateException: Player is either on another team or not on any team. Cannot remove from team 'Vanished'.*/

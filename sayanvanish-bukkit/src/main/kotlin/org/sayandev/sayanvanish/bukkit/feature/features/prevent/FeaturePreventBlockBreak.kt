@@ -14,8 +14,8 @@ class FeaturePreventBlockBreak: ListenedFeature("prevent_block_break", false, ca
 
     @EventHandler
     private fun onBlockBreak(event: BlockBreakEvent) {
-        if (!isActive()) return
         val user = event.player.user() ?: return
+        if (!isActive(user)) return
         if (user.isVanished) {
             event.isCancelled = true
         }

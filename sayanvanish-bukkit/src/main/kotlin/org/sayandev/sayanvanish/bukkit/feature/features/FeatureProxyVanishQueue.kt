@@ -11,6 +11,7 @@ import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.runSync
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @RegisteredFeature
@@ -21,8 +22,9 @@ class FeatureProxyVanishQueue(
 
     override fun enable() {
         runSync({
-            if (!isActive()) return@runSync
             for (player in onlinePlayers) {
+                val user = player.user()
+                if (((user != null && !isActive(user)) || !isActive())) return@runSync
                 SayanVanishBukkitAPI.getInstance().database.isInQueue(player.uniqueId) { inQueue ->
                     if (inQueue) {
                         SayanVanishBukkitAPI.getInstance().database.getFromQueue(player.uniqueId) { isVanished ->

@@ -19,8 +19,8 @@ class FeaturePreventRaidTrigger: ListenedFeature("prevent_raid_trigger", categor
 
     @EventHandler
     private fun onRaidTrigger(event: RaidTriggerEvent) {
-        if (!isActive()) return
         val user = event.player.user() ?: return
+        if (!isActive(user)) return
         if (user.isVanished) {
             event.isCancelled = true
         }

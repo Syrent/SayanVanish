@@ -17,8 +17,8 @@ class FeatureFly(
 
     @EventHandler
     private fun onVanish(event: BukkitUserVanishEvent) {
-        if (!isActive()) return
         val user = event.user
+        if (!isActive(user)) return
         if (user.hasPermission(Permission.FLY)) {
             user.player()?.allowFlight = true
             user.player()?.isFlying = true
@@ -27,8 +27,8 @@ class FeatureFly(
 
     @EventHandler
     private fun onUnVanish(event: BukkitUserUnVanishEvent) {
-        if (!isActive()) return
         val user = event.user
+        if (!isActive(user)) return
         if (!user.hasPermission(Permission.FLY_KEEP_AFTER_REAPPEAR) && disableOnReappear) {
             user.player()?.allowFlight = false
             user.player()?.isFlying = false

@@ -15,8 +15,8 @@ class FeaturePreventDamage: ListenedFeature("prevent_damage", category = Feature
 
     @EventHandler
     private fun onEntityDamage(event: EntityDamageByEntityEvent) {
-        if (!isActive()) return
         val user = (event.entity as? Player)?.user() ?: return
+        if (!isActive(user)) return
         if (user.isVanished) {
             event.isCancelled = true
         }

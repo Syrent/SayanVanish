@@ -29,9 +29,9 @@ class FeatureState(
 
     @EventHandler(priority = EventPriority.LOWEST)
     private fun onJoin(event: PlayerJoinEvent) {
-        if (!isActive()) return
         val player = event.player
         val user = player.user()
+        if ((user != null && !isActive(user)) || !isActive()) return
         val vanishJoinOptions = VanishOptions.Builder().sendMessage(false).notifyStatusChangeToOthers(false).isOnJoin(true).build()
 
         if (user == null) {

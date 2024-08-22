@@ -21,9 +21,9 @@ class FeaturePreventTabComplete(
 
     @Subscribe(order = PostOrder.LAST)
     fun onTabComplete(event: TabCompleteEvent) {
-        if (!isActive()) return
         val player = event.player ?: return
         val user = player.getOrCreateUser()
+        if (!isActive(user)) return
         val vanishedUsers = SayanVanishVelocityAPI.getInstance().getVanishedUsers()
         if (!user.hasPermission(Permission.VANISH) || !checkVanishLevel) {
             event.suggestions

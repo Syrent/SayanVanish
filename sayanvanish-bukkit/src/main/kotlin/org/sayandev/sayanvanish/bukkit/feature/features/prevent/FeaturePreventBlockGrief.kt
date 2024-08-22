@@ -15,8 +15,8 @@ class FeaturePreventBlockGrief: ListenedFeature("prevent_block_grief", category 
 
     @EventHandler
     private fun onChangeBlock(event: EntityChangeBlockEvent) {
-        if (!isActive()) return
         val user = (event.entity as? Player)?.user() ?: return
+        if (!isActive(user)) return
         if (user.isVanished) {
             event.isCancelled = true
         }

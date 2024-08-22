@@ -95,6 +95,14 @@ open class BukkitUser(
 
     override fun hasPermission(permission: String): Boolean {
         val luckPermsFeature = Features.getFeature<FeatureLuckPermsHook>()
+        /*
+        * I have to check if the player is op or not and luckperms feature is enabled so it doesn't disable all feature for op players
+        * (bukkit permission check return true for all permissions if the player is op)
+        * */
+        if (permission.startsWith("sayanvanish.feature.disable.") && !luckPermsFeature.isActive() && player()?.isOp == true) {
+            return false
+        }
+        // Can't use luckperms feature isActive per-player, because per-player features check for player permissions and it causes stackoverflow
         return if (luckPermsFeature.isActive() && luckPermsFeature.checkPermissionViaLuckPerms) {
             luckPermsFeature.hasPermission(uniqueId, permission)
         } else {

@@ -53,8 +53,9 @@ class FeatureEffect(
 
     @EventHandler
     private fun onVanish(event: BukkitUserVanishEvent) {
-        if (!isActive()) return
-        val player = event.user.player() ?: return
+        val user = event.user
+        if (!isActive(user)) return
+        val player = user.player() ?: return
         for (effect in effects) {
             if (effect.usePacket) {
                 player.sendPacket(PacketUtils.getUpdateMobEffectPacket(player, effect.toPotionEffect()))
@@ -66,8 +67,9 @@ class FeatureEffect(
 
     @EventHandler
     private fun onUnVanish(event: BukkitUserUnVanishEvent) {
-        if (!isActive()) return
-        val player = event.user.player() ?: return
+        val user = event.user
+        if (!isActive(user)) return
+        val player = user.player() ?: return
         for (effect in effects.filter { !it.keepAfterAppear }) {
             if (effect.usePacket) {
                 player.sendPacket(PacketUtils.getRemoveMobEffectPacket(player, PotionEffectType.getByName(effect.type)!!))

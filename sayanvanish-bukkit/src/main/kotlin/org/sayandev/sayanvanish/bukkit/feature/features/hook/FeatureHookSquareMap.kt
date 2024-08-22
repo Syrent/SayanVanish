@@ -30,15 +30,15 @@ private class SquaremapHookImpl(val feature: FeatureHookSquareMap): Listener {
 
     @EventHandler
     private fun onVanish(event: BukkitUserVanishEvent) {
-        if (!feature.isActive()) return
         val user = event.user
+        if (!feature.isActive(user)) return
         user.player()?.uniqueId?.let { SquaremapProvider.get().playerManager().hide(it, true) }
     }
 
     @EventHandler
     private fun onUnVanish(event: BukkitUserUnVanishEvent) {
-        if (!feature.isActive()) return
         val user = event.user
+        if (!feature.isActive(user)) return
         user.player()?.uniqueId?.let { SquaremapProvider.get().playerManager().show(it, true) }
     }
 }

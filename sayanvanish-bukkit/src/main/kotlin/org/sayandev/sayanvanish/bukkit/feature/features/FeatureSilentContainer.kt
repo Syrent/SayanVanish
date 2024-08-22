@@ -28,12 +28,12 @@ class FeatureSilentContainer: ListenedFeature("silent_container") {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private fun onPlayerInteract(event: PlayerInteractEvent) {
-        if (!isActive()) return
         val player = event.player
+        val user = player.user() ?: return
+        if (!isActive(user)) return
         if (event.action != Action.RIGHT_CLICK_BLOCK) return
         val clickedBlock = event.clickedBlock ?: return
         if (clickedBlock.state !is Container) return
-        val user = player.user() ?: return
         if (!user.isVanished) return
         if (player.gameMode == GameMode.SPECTATOR) return
 

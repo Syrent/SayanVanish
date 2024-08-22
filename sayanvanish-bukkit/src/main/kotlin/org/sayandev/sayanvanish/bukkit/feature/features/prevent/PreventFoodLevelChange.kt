@@ -15,9 +15,9 @@ class PreventFoodLevelChange: ListenedFeature("prevent_food_level_change", categ
 
     @EventHandler
     private fun onBlockBreak(event: FoodLevelChangeEvent) {
-        if (!isActive()) return
         val player = event.entity as? Player ?: return
         val user = player.user() ?: return
+        if (!isActive(user)) return
         if (user.isVanished) {
             event.isCancelled = true
         }

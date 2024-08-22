@@ -14,8 +14,8 @@ class FeaturePreventBlockPlace: ListenedFeature("prevent_block_place", false, ca
 
     @EventHandler
     private fun onBlockPlace(event: BlockPlaceEvent) {
-        if (!isActive()) return
         val user = event.player.user() ?: return
+        if (!isActive(user)) return
         if (user.isVanished) {
             event.isCancelled = true
         }

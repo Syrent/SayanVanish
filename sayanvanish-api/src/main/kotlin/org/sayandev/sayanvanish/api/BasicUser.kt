@@ -2,6 +2,7 @@ package org.sayandev.sayanvanish.api
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import org.sayandev.sayanvanish.api.exception.UnsupportedPlatformException
 import org.sayandev.stickynote.core.utils.Gson
 import java.util.*
 
@@ -10,6 +11,14 @@ interface BasicUser {
     val uniqueId: UUID
     var username: String
     var serverId: String
+
+    fun hasPermission(permission: String): Boolean {
+        throw UnsupportedPlatformException("hasPermission")
+    }
+
+    fun hasPermission(permission: Permission): Boolean {
+        return hasPermission(permission.permission())
+    }
 
     fun save() {
         SayanVanishAPI.getInstance().database.addBasicUser(this)

@@ -7,6 +7,7 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.utils.DownloadUtils
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.sayanvanish.bukkit.sayanvanish
@@ -77,8 +78,9 @@ class FeatureUpdate(
 
     @EventHandler
     private fun onVanish(event: PlayerJoinEvent) {
-        if (!isActive()) return
         val player = event.player
+        val user = player.user() ?: return
+        if (!isActive(user)) return
         if (notifyOnJoin && player.hasPermission(notifyPermission) && latestRelease != null && latestSnapshot != null) {
             if (!settings.general.proxyMode) {
                 sendUpdateNotification(player)

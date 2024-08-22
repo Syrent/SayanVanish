@@ -25,10 +25,10 @@ class FeatureInventoryInspect(
 
     @EventHandler(priority = EventPriority.HIGHEST)
     private fun onInteractPlayer(event: PlayerInteractAtEntityEvent) {
-        if (!isActive()) return
         val player = event.player
-        if (player.openInventory.type != InventoryType.CRAFTING) return
         val user = player.user() ?: return
+        if (!isActive(user)) return
+        if (player.openInventory.type != InventoryType.CRAFTING) return
         if (!user.isVanished) return
         val target = event.rightClicked as? Player ?: return
 
@@ -38,9 +38,9 @@ class FeatureInventoryInspect(
 
     @EventHandler
     private fun onClickPlayerInventory(event: InventoryClickEvent) {
-        if (!isActive()) return
-        val inventory = event.inventory
         val player = event.whoClicked as? Player ?: return
+        val user = player.user() ?: return
+        if (!isActive(user)) return
         if (!playerInventoryMap.contains(player.uniqueId)) return
         if (player.hasPermission(modificationPermission)) return
         event.isCancelled = true

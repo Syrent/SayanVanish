@@ -6,6 +6,7 @@ import org.bukkit.event.entity.EntityTargetEvent
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 
@@ -15,9 +16,10 @@ class FeaturePreventCreatureTarget: ListenedFeature("prevent_creature_target", c
 
     @EventHandler
     private fun onEntityTarget(event: EntityTargetEvent) {
-        if (!isActive()) return
         val target = event.target as? Player ?: return
-        if (!SayanVanishBukkitAPI.getInstance().isVanished(target.uniqueId)) return
+        val user = target.user() ?: return
+        if (!isActive(user)) return
+        if (!user.isVanished) return
         event.isCancelled = true
     }
 

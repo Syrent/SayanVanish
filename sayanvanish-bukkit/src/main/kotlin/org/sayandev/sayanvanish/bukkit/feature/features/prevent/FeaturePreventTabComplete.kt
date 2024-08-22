@@ -22,9 +22,9 @@ class FeaturePreventTabComplete(
 
     @EventHandler(priority = EventPriority.HIGHEST)
     private fun onTabComplete(event: TabCompleteEvent) {
-        if (!isActive()) return
         val player = event.sender as? Player ?: return
         val user = player.getOrCreateUser()
+        if (!isActive(user)) return
         val vanishedUsers = SayanVanishBukkitAPI.getInstance().getVanishedUsers()
         val completions = event.completions.toMutableSet()
         if (!user.hasPermission(Permission.VANISH) || !checkVanishLevel) {

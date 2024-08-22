@@ -48,14 +48,6 @@ interface User : BasicUser {
         throw UnsupportedPlatformException("sendActionbar")
     }
 
-    fun hasPermission(permission: String): Boolean {
-        throw UnsupportedPlatformException("hasPermission")
-    }
-
-    fun hasPermission(permission: Permission): Boolean {
-        return hasPermission(permission.permission())
-    }
-
     fun canSee(otherUser: User): Boolean {
         return vanishLevel >= otherUser.vanishLevel
     }

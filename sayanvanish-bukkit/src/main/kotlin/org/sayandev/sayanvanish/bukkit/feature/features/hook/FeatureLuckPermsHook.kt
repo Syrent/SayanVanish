@@ -11,6 +11,7 @@ import net.luckperms.api.node.types.PermissionNode
 import net.luckperms.api.query.QueryOptions
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import org.sayandev.sayanvanish.api.SayanVanishAPI.Companion.user
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrCreateUser
@@ -37,6 +38,7 @@ class FeatureLuckPermsHook(
     }
 
     fun hasPermission(uniqueId: UUID, permission: String): Boolean {
+        // Can't check permissions on a per-player basis to prevent stackoverflow
         if (!isActive()) {
             warn("tried to check permission using LuckPerms, but the `${this.id}` feature is not active, fallback to bukkit permission check.")
             return Bukkit.getPlayer(uniqueId)?.hasPermission(permission) == true

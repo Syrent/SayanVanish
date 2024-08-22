@@ -34,8 +34,8 @@ private class EssentialsHookImpl(val feature: FeatureHookEssentials): Listener {
 
     @EventHandler
     private fun onNPCSpeech(event: AfkStatusChangeEvent) {
-        if (!feature.isActive() || feature.preventAfkStatusChange) return
         val user = event.affected.uuid?.user() ?: return
+        if (!feature.isActive(user) || feature.preventAfkStatusChange) return
         if (user.isVanished) {
             event.isCancelled = true
         }
@@ -43,8 +43,8 @@ private class EssentialsHookImpl(val feature: FeatureHookEssentials): Listener {
 
     @EventHandler
     private fun onNPCSpeech(event: PrivateMessagePreSendEvent) {
-        if (!feature.isActive() || feature.preventPrivateMessage) return
         val user = event.recipient.uuid?.user() ?: return
+        if (!feature.isActive(user) || feature.preventPrivateMessage) return
         if (user.isVanished) {
             event.sender.sendMessage(com.earth2me.essentials.I18n.tl("errorWithMessage", com.earth2me.essentials.I18n.tl("playerNotFound")))
             event.isCancelled = true

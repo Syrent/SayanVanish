@@ -30,8 +30,8 @@ class FeatureFakeMessage(
 
     @EventHandler(priority = EventPriority.LOWEST)
     private fun onJoin(event: PlayerJoinEvent) {
-        if (!isActive()) return
         val user = event.player.user() ?: return
+        if (!isActive(user)) return
         if (!user.isVanished && !user.hasPermission(Permission.VANISH_ON_JOIN)) return
         if (disableJoinMessageIfVanished) {
             event.joinMessage = null
@@ -40,8 +40,8 @@ class FeatureFakeMessage(
 
     @EventHandler(priority = EventPriority.LOWEST)
     private fun onQuit(event: PlayerQuitEvent) {
-        if (!isActive()) return
         val user = event.player.user() ?: return
+        if (!isActive(user)) return
         if (!user.isVanished) return
         if (disableQuitMessageIfVanished) {
             event.quitMessage = null
@@ -50,8 +50,8 @@ class FeatureFakeMessage(
 
     @EventHandler(priority = EventPriority.HIGHEST)
     private fun onJoinLast(event: PlayerJoinEvent) {
-        if (!isActive()) return
         val user = event.player.user() ?: return
+        if (!isActive(user)) return
         if (!user.isVanished && !user.hasPermission(Permission.VANISH_ON_JOIN)) return
         if (disableJoinMessageIfVanished) {
             event.joinMessage = null
@@ -60,8 +60,8 @@ class FeatureFakeMessage(
 
     @EventHandler(priority = EventPriority.HIGHEST)
     private fun onQuitLast(event: PlayerQuitEvent) {
-        if (!isActive()) return
         val user = event.player.user() ?: return
+        if (!isActive(user)) return
         if (!user.isVanished) return
         if (disableQuitMessageIfVanished) {
             event.quitMessage = null
@@ -70,19 +70,20 @@ class FeatureFakeMessage(
 
     @EventHandler
     private fun onVanish(event: BukkitUserVanishEvent) {
-        if (!isActive()) return
+        val user = event.user
+        if (!isActive(user)) return
         if (!event.options.sendMessage) return
         if (sendFakeQuitMessage && !event.options.isOnJoin && !event.options.isOnQuit) {
             for (player in onlinePlayers) {
-                player.sendComponent(fakeQuitMessage, Placeholder.unparsed("player", event.user.username))
+                player.sendComponent(fakeQuitMessage, Placeholder.unparsed("player", user.username))
             }
         }
     }
 
     @EventHandler
     private fun onUnVanish(event: BukkitUserUnVanishEvent) {
-        if (!isActive()) return
         if (!event.options.sendMessage) return
+        if (!isActive(event.user)) return
         if (sendFakeJoinMessage && !event.options.isOnJoin && !event.options.isOnQuit) {
             for (player in onlinePlayers) {
                 player.sendComponent(fakeJoinMessage, Placeholder.unparsed("player", event.user.username))

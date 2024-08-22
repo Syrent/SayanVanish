@@ -34,7 +34,7 @@ abstract class Feature(
     }
 
     open fun isActive(user: BasicUser): Boolean {
-        return (!user.hasPermission("sayanvanish.feature.disable.${id}")) && Features.userFeatures(user).find { it.id == this.id }?.enabled != false
+        return !user.hasPermission("sayanvanish.feature.disable.${id}") && Features.userFeatures(user).find { it.id == this.id }?.enabled != false
     }
 
     open fun enable() {

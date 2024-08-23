@@ -13,6 +13,10 @@
       "optional": true
     },
     {
+      "id": "miniplaceholders",
+      "optional": true
+    },
+    {
       "id": "velocitab",
       "optional": true
     }

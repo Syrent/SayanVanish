@@ -10,7 +10,8 @@ public var settings: SettingsConfig = SettingsConfig.fromConfig() ?: SettingsCon
 
 @ConfigSerializable
 class SettingsConfig(
-    val general: General = General()
+    val general: General = General(),
+    val command: Command = Command()
 ) : Config(
     Platform.get().rootDirectory,
     fileName
@@ -26,6 +27,17 @@ class SettingsConfig(
         val purgeOnlineHistoryOnStartup: Boolean = true,
         val cacheUpdatePeriodMillis: Long = 300,
         val basicCacheUpdatePeriodMillis: Long = 5000,
+        val language: String = LanguageConfig.Language.EN_US.id,
+    )
+
+    @ConfigSerializable
+    data class Command(
+        val name: String = "sayanvanishproxy",
+        val aliases: List<String> = listOf(
+            "vp",
+            "vanishp",
+            "sv"
+        )
     )
 
     companion object {

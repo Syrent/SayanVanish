@@ -126,6 +126,14 @@ val velocitab = Dependency(
     modules = listOf(Module.VELOCITY)
 )
 
+val miniplaceholders = Dependency(
+    group = "io.github.miniplaceholders",
+    artifact = "miniplaceholders-api",
+    version = "2.2.3",
+    type = Dependency.Type.COMPILE_ONLY,
+    modules = listOf(Module.VELOCITY, Module.BUKKIT)
+)
+
 val repositories = listOf(
     Repository(
         id = "sayandevelopment",
@@ -199,7 +207,8 @@ val repositories = listOf(
         repos = emptyList(),
         dependencies = listOf(
             squaremap,
-            luckperms
+            luckperms,
+            miniplaceholders,
         )
     ),
     Repository(

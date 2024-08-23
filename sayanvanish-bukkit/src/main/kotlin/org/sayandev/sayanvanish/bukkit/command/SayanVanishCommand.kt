@@ -31,9 +31,8 @@ import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureLevel
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureUpdate
 import org.sayandev.sayanvanish.bukkit.utils.ServerUtils
-import org.sayandev.stickynote.bukkit.command.Command
-import org.sayandev.stickynote.bukkit.command.StickySender
-import org.sayandev.stickynote.bukkit.command.literalWithPermission
+import org.sayandev.stickynote.bukkit.command.BukkitCommand
+import org.sayandev.stickynote.bukkit.command.BukkitSender
 import org.sayandev.stickynote.bukkit.command.required
 import org.sayandev.stickynote.bukkit.extension.sendComponent
 import org.sayandev.stickynote.bukkit.plugin
@@ -47,16 +46,16 @@ import kotlin.jvm.optionals.getOrNull
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 
-class SayanVanishCommand : Command(settings.command.name, *settings.command.aliases.toTypedArray()) {
+class SayanVanishCommand : BukkitCommand(settings.command.name, *settings.command.aliases.toTypedArray()) {
 
-    override fun rootBuilder(builder: MutableCommandBuilder<StickySender>) {
+    override fun rootBuilder(builder: MutableCommandBuilder<BukkitSender>) {
         builder.permission("${plugin.name}.commands.use")
         builder.optional("player", OfflinePlayerParser.offlinePlayerParser())
         builder.flag(
             "state",
             emptyArray(),
             Description.empty(),
-            CommandComponent.builder<StickySender, String>("state", StringParser.stringParser())
+            CommandComponent.builder<BukkitSender, String>("state", StringParser.stringParser())
                 .suggestionProvider { _, _ ->
                     CompletableFuture.completedFuture(listOf("on", "off").map { Suggestion.suggestion(it) })
                 }
@@ -64,8 +63,8 @@ class SayanVanishCommand : Command(settings.command.name, *settings.command.alia
         builder.flag("silent", arrayOf("s"))
     }
 
-    override fun rootHandler(context: CommandContext<StickySender>) {
-        val sender = context.sender().bukkitSender()
+    override fun rootHandler(context: CommandContext<BukkitSender>) {
+        val sender = context.sender().platformSender()
         val target = context.optional<OfflinePlayer>("player")
         val state = context.flags().get<String>("state")
 
@@ -114,7 +113,7 @@ class SayanVanishCommand : Command(settings.command.name, *settings.command.alia
         rawCommandBuilder().registerCopy {
             literalWithPermission("forceupdate")
             handler { context ->
-                val sender = context.sender().bukkitSender()
+                val sender = context.sender().platformSender()
                 if (!forceUpdateConfirm) {
                     sender.sendComponent(language.general.confirmUpdate)
                     forceUpdateConfirm = true
@@ -149,7 +148,7 @@ class SayanVanishCommand : Command(settings.command.name, *settings.command.alia
         rawCommandBuilder().registerCopy {
             literalWithPermission("paste")
             handler { context ->
-                val sender = context.sender().bukkitSender()
+                val sender = context.sender().platformSender()
                 sender.sendComponent(language.paste.generating)
                 runAsync {
                     val blockedWords = listOf(
@@ -196,7 +195,7 @@ class SayanVanishCommand : Command(settings.command.name, *settings.command.alia
         rawCommandBuilder().registerCopy {
             literalWithPermission("reload")
             handler { context ->
-                val sender = context.sender().bukkitSender()
+                val sender = context.sender().platformSender()
                 language = LanguageConfig.fromConfig() ?: LanguageConfig.defaultConfig()
                 Features.features.forEach { feature ->
                     feature.disable()
@@ -219,7 +218,7 @@ class SayanVanishCommand : Command(settings.command.name, *settings.command.alia
             required("player", OfflinePlayerParser.offlinePlayerParser())
             required("level", IntegerParser.integerParser(0))
             handler { context ->
-                val sender = context.sender().bukkitSender()
+                val sender = context.sender().platformSender()
                 val target = context.get<OfflinePlayer>("player")
 
                 if (!target.hasPlayedBefore()) {
@@ -244,7 +243,7 @@ class SayanVanishCommand : Command(settings.command.name, *settings.command.alia
             literalWithPermission("get")
             required("player", OfflinePlayerParser.offlinePlayerParser())
             handler { context ->
-                val sender = context.sender().bukkitSender()
+                val sender = context.sender().platformSender()
                 val target = context.get<OfflinePlayer>("player")
 
                 if (!target.hasPlayedBefore()) {
@@ -269,7 +268,7 @@ class SayanVanishCommand : Command(settings.command.name, *settings.command.alia
             handler { context ->
                 val targetArg = context.optional<Player>("player").getOrNull()
 
-                val sender = context.sender().bukkitSender()
+                val sender = context.sender().platformSender()
                 if (targetArg != null && !sender.hasPermission(Permission.FEATURE_PLAYER_TOGGLE.permission())) {
                     sender.sendComponent(language.feature.togglePlayerOther)
                     return@handler
@@ -303,7 +302,7 @@ class SayanVanishCommand : Command(settings.command.name, *settings.command.alia
         featureLiteral.registerCopy {
             literalWithPermission("disable")
             handler { context ->
-                val sender = context.sender().bukkitSender()
+                val sender = context.sender().platformSender()
                 val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
                     sender.sendComponent(language.feature.notFound)
                     return@handler
@@ -323,7 +322,7 @@ class SayanVanishCommand : Command(settings.command.name, *settings.command.alia
         featureLiteral.registerCopy {
             literalWithPermission("enable")
             handler { context ->
-                val sender = context.sender().bukkitSender()
+                val sender = context.sender().platformSender()
                 val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
                     sender.sendComponent(language.feature.notFound)
                     return@handler
@@ -343,7 +342,7 @@ class SayanVanishCommand : Command(settings.command.name, *settings.command.alia
         featureLiteral.registerCopy {
             literalWithPermission("reset")
             handler { context ->
-                val sender = context.sender().bukkitSender()
+                val sender = context.sender().platformSender()
                 val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
                     sender.sendComponent(language.feature.notFound)
                     return@handler
@@ -366,7 +365,7 @@ class SayanVanishCommand : Command(settings.command.name, *settings.command.alia
             required("option", Features.features.flatMap { it::class.memberProperties.map { it.name } })
             required("value", StringParser.stringParser(StringParser.StringMode.QUOTED))
             handler { context ->
-                val sender = context.sender().bukkitSender()
+                val sender = context.sender().platformSender()
                 val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
                     sender.sendComponent(language.feature.notFound)
                     return@handler
@@ -420,7 +419,7 @@ class SayanVanishCommand : Command(settings.command.name, *settings.command.alia
             optional("limit", IntegerParser.integerParser(1, 10000))
             flag("no-cache")
             handler { context ->
-                val sender = context.sender().bukkitSender()
+                val sender = context.sender().platformSender()
                 val limit = context.get<Int>("limit")
                 val database = SayanVanishAPI.getInstance().database
                 if (context.flags().hasFlag("no-cache")) {
@@ -459,7 +458,7 @@ class SayanVanishCommand : Command(settings.command.name, *settings.command.alia
             optional("tries", IntegerParser.integerParser(1, 10))
             flag("no-cache")
             handler { context ->
-                val sender = context.sender().bukkitSender()
+                val sender = context.sender().platformSender()
                 val amount = context.get<Int>("amount")
                 val database = SayanVanishAPI.getInstance().database
                 if (context.flags().hasFlag("no-cache")) {

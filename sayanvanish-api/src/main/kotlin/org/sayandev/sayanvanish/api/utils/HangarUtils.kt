@@ -1,4 +1,4 @@
-package org.sayandev.sayanvanish.bukkit.utils
+package org.sayandev.sayanvanish.api.utils
 
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName

@@ -1,36 +1,35 @@
-package org.sayandev.sayanvanish.bukkit.feature.features
+package org.sayandev.sayanvanish.velocity.feature.features
 
-import org.bukkit.Bukkit
-import org.bukkit.command.CommandSender
-import org.bukkit.event.EventHandler
-import org.bukkit.event.player.PlayerJoinEvent
+import com.velocitypowered.api.command.CommandSource
+import com.velocitypowered.api.event.Subscribe
+import com.velocitypowered.api.event.connection.PostLoginEvent
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.utils.DownloadUtils
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
-import org.sayandev.sayanvanish.bukkit.config.settings
-import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
-import org.sayandev.sayanvanish.bukkit.sayanvanish
 import org.sayandev.sayanvanish.api.utils.HangarUtils
 import org.sayandev.sayanvanish.api.utils.VersionInfo
-import org.sayandev.stickynote.bukkit.extension.sendComponent
-import org.sayandev.stickynote.bukkit.log
-import org.sayandev.stickynote.bukkit.plugin
-import org.sayandev.stickynote.bukkit.runAsync
-import org.sayandev.stickynote.bukkit.runSync
+import org.sayandev.sayanvanish.proxy.config.settings
+import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI.Companion.user
+import org.sayandev.sayanvanish.velocity.feature.ListenedFeature
+import org.sayandev.sayanvanish.velocity.sayanvanish
+import org.sayandev.stickynote.velocity.StickyNote
+import org.sayandev.stickynote.velocity.log
+import org.sayandev.stickynote.velocity.plugin
+import org.sayandev.stickynote.velocity.utils.AdventureUtils.component
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.TimeUnit
 
 @RegisteredFeature
 @ConfigSerializable
 class FeatureUpdate(
     @Configurable val checkEveryXMinutes: Int = 60 * 24,
-    @Configurable val notifyPermission: String = "sayanvanish.feature.update.notify",
+    @Configurable val notifyBypassPermission: String = "sayanvanish.feature.update.notify.exempt",
     @Configurable val notifyOnJoin: Boolean = true,
     @Configurable val notifyForSnapshotBuilds: Boolean = true,
     @Configurable val autoUpdateNotification: Boolean = true,
     val updateNotificationContent: List<String> = listOf(
-        "<green>A new version of <white>SayanVanish</white> is available!",
+        "<green>A new version of <white>SayanVanish Velocity</white> is available!",
         "<gold> - Latest release: <white><latest_release_name>",
         "  <yellow>- <gray>Click to download: <blue><click:open_url:'<latest_release_url_paper>'>Paper</click> <gray>|</gray> <aqua><click:open_url:'<latest_release_url_velocity>'>Velocity</click> <gray>|</gray> <blue><click:open_url:'<latest_release_url_waterfall>'>Waterfall</click>",
         "  <yellow>- <gray>Changelog: <white><latest_release_changelog>",
@@ -41,7 +40,7 @@ class FeatureUpdate(
         "  <yellow>- <gray><click:open_url:'https://hangar.papermc.io/Syrent/SayanVanish/versions/<latest_snapshot_name>'>Click to see full changelog"
     ),
     val updateRequestContent: List<String> = listOf(
-        "<green>A new version of <white>SayanVanish</white> is available!",
+        "<green>A new version of <white>SayanVanish Velocity</white> is available!",
         "<hover:show_text:'<red>Click to update'><click:run_command:'/${settings.command.name} forceupdate'><aqua>You can install version <version> by clicking on this message</click></hover>",
         "<red>Make sure to read the changelog before doing any update to prevent unexpected behaviors",
     )
@@ -51,8 +50,8 @@ class FeatureUpdate(
     @Transient var latestSnapshot: VersionInfo? = null
 
     override fun enable() {
-        runAsync({
-            if (!isActive()) return@runAsync
+        StickyNote.run({
+            if (!isActive()) return@run
             log("Checking for updates...")
             HangarUtils.getLatestRelease().whenComplete { latestRelease, releaseError ->
                 releaseError?.printStackTrace()
@@ -66,24 +65,23 @@ class FeatureUpdate(
                     log("Checked latest snapshot")
                     this.latestSnapshot = latestSnapshot
 
-                    runSync {
-                        sendUpdateNotification(Bukkit.getConsoleSender())
+                    StickyNote.run {
+                        sendUpdateNotification(plugin.server.consoleCommandSource)
                     }
                 }
             }
-        }, 0, checkEveryXMinutes * 60 * 20L)
+        }, 0, TimeUnit.MILLISECONDS, checkEveryXMinutes.toLong(), TimeUnit.MINUTES)
         super.enable()
     }
 
-    @EventHandler
-    private fun onJoin(event: PlayerJoinEvent) {
+    @Subscribe
+    private fun onLogin(event: PostLoginEvent) {
         val player = event.player
         val user = player.user() ?: return
         if (!isActive(user)) return
-        if (notifyOnJoin && player.hasPermission(notifyPermission) && latestRelease != null && latestSnapshot != null) {
-            if (!settings.general.proxyMode) {
-                sendUpdateNotification(player)
-            }
+        if (player.hasPermission(notifyBypassPermission)) return
+        if (notifyOnJoin && latestRelease != null && latestSnapshot != null) {
+            sendUpdateNotification(player)
 
             if (autoUpdateNotification) {
                 sendUpdateRequest(player)
@@ -91,11 +89,11 @@ class FeatureUpdate(
         }
     }
 
-    private fun sendUpdateNotification(sender: CommandSender) {
-        if (!isNewerVersionAvailable(notifyForSnapshotBuilds) || settings.general.proxyMode) return
+    private fun sendUpdateNotification(sender: CommandSource) {
+        if (!isNewerVersionAvailable(notifyForSnapshotBuilds)) return
 
         for (line in updateNotificationContent) {
-            sender.sendComponent(line
+            sender.sendMessage(line
                 .replace("<latest_release_name>", latestRelease?.name ?: "Unknown")
                 .replace("<latest_release_url_paper>", latestRelease?.downloads?.PAPER?.downloadUrl() ?: "https://hangar.papermc.io/Syrent/SayanVanish")
                 .replace("<latest_release_url_velocity>", latestRelease?.downloads?.VELOCITY?.downloadUrl() ?: "https://hangar.papermc.io/Syrent/SayanVanish")
@@ -106,21 +104,22 @@ class FeatureUpdate(
                 .replace("<latest_snapshot_url_velocity>", latestSnapshot?.downloads?.VELOCITY?.downloadUrl() ?: "https://hangar.papermc.io/Syrent/SayanVanish")
                 .replace("<latest_snapshot_url_waterfall>", latestSnapshot?.downloads?.WATERFALL?.downloadUrl() ?: "https://hangar.papermc.io/Syrent/SayanVanish")
                 .replace("<latest_snapshot_changelog>", shortDescription(latestSnapshot?.description) ?: "Unknown")
+                .component()
             )
         }
     }
 
-    private fun sendUpdateRequest(sender: CommandSender) {
+    private fun sendUpdateRequest(sender: CommandSource) {
         if (!isNewerVersionAvailable(notifyForSnapshotBuilds)) return
 
         for (line in updateRequestContent) {
-            sender.sendComponent(line.replace("<version>", latestVersion()))
+            sender.sendMessage(line.replace("<version>", latestVersion()).component())
         }
     }
 
     private fun isNewerVersionAvailable(includeSnapshots: Boolean): Boolean {
         if (latestRelease == null || latestSnapshot == null) return false
-        val currentVersion = plugin.description.version // eg: 1.1.0-SNAPSHOT-build.121-ed8f2b2
+        val currentVersion = plugin.container.description.version.get() // eg: 1.1.0-SNAPSHOT-build.121-ed8f2b2
         val commitHash = currentVersion.split("-").last()
         val snapshotVersion = latestSnapshot!!.name // eg: 1.1.0-SNAPSHOT-build.121
         if (currentVersion.removeSuffix("-${commitHash}") == snapshotVersion) return false
@@ -135,9 +134,14 @@ class FeatureUpdate(
         val future = CompletableFuture<Boolean>()
         if (!isNewerVersionAvailable(notifyForSnapshotBuilds)) future.complete(false)
 
-        if (plugin.description.version.contains("SNAPSHOT")) {
+        val pluginFile = sayanvanish.pluginFile() ?: let {
+            future.complete(false)
+            return future
+        }
+
+        if (plugin.container.description.version.get().contains("SNAPSHOT")) {
             latestSnapshot?.let { snapshot ->
-                DownloadUtils.download(snapshot.downloads.PAPER!!.downloadUrl!!, sayanvanish.pluginFile()).whenComplete { result, error ->
+                DownloadUtils.download(snapshot.downloads.VELOCITY!!.downloadUrl!!, pluginFile).whenComplete { result, error ->
                     error?.printStackTrace()
                     future.complete(result)
                 }
@@ -146,7 +150,7 @@ class FeatureUpdate(
             }
         } else {
             latestRelease?.let { release ->
-                DownloadUtils.download(release.downloads.PAPER!!.downloadUrl!!, sayanvanish.pluginFile()).whenComplete { result, error ->
+                DownloadUtils.download(release.downloads.VELOCITY!!.downloadUrl!!, pluginFile).whenComplete { result, error ->
                     error?.printStackTrace()
                     future.complete(result)
                 }
@@ -160,11 +164,6 @@ class FeatureUpdate(
 
     fun latestVersion(): String {
         return (if (notifyForSnapshotBuilds) latestSnapshot?.name else latestRelease?.name) ?: "N/A"
-    }
-
-    val proxyWords = listOf("proxy", "velocity", "bungee")
-    fun willAffectProxy(): Boolean {
-        return (if (notifyForSnapshotBuilds) proxyWords.any { latestSnapshot?.description?.contains(it) ?: false } else proxyWords.any { latestRelease?.description?.contains(it) ?: false }) ?: false
     }
 
     private fun shortDescription(description: String?): String? {

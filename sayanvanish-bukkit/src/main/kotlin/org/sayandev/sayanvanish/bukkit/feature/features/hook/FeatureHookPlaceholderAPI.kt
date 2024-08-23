@@ -88,7 +88,7 @@ private class HookPlaceholderAPI : PlaceholderExpansion() {
         }
 
         if (params.startsWith("online_")) {
-            val type = params.substring(7)
+            val type = params.removePrefix("online_")
             val vanishedOnlineUsers = SayanVanishBukkitAPI.getInstance().database.getUsers().filter { user -> user.isVanished && user.isOnline }
 
             return if (type.equals("here", true)) {

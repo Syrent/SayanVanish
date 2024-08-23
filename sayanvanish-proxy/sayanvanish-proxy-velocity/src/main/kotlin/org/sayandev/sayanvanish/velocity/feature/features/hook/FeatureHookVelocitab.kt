@@ -1,6 +1,9 @@
 package org.sayandev.sayanvanish.velocity.feature.features.hook
 
 import com.velocitypowered.api.event.Subscribe
+import com.velocitypowered.api.event.connection.PostLoginEvent
+import com.velocitypowered.api.event.player.ServerPostConnectEvent
+import com.velocitypowered.api.event.player.ServerPreConnectEvent
 import net.william278.velocitab.api.VelocitabAPI
 import net.william278.velocitab.vanish.VanishIntegration
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
@@ -56,5 +59,27 @@ private class VelocitabImpl : VanishIntegration {
     private fun onUnVanish(event: VelocityUserUnVanishEvent) {
         val player = event.user.player() ?: return
         VelocitabAPI.getInstance().unVanishPlayer(player)
+    }
+
+    @Subscribe
+    private fun onServerPostConnect(event: ServerPostConnectEvent) {
+        val player = event.player ?: return
+        val user = player.user() ?: return
+        if (user.isVanished) {
+            VelocitabAPI.getInstance().vanishPlayer(player)
+        } else {
+            VelocitabAPI.getInstance().unVanishPlayer(player)
+        }
+    }
+
+    @Subscribe
+    private fun onPostLogin(event: PostLoginEvent) {
+        val player = event.player ?: return
+        val user = player.user() ?: return
+        if (user.isVanished) {
+            VelocitabAPI.getInstance().vanishPlayer(player)
+        } else {
+            VelocitabAPI.getInstance().unVanishPlayer(player)
+        }
     }
 }

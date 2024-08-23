@@ -51,9 +51,10 @@ class FeatureSneakToggleGameMode(
     private fun onUnVanish(event: BukkitUserUnVanishEvent) {
         val user = event.user
         val player = user.player() ?: return
-        val allowFlight = player.allowFlight
-        val isFlying = player.isFlying
         player.gameMode = sneakMap[player] ?: fallbackMode
+        if (player.gameMode == GameMode.SPECTATOR || sneakMap[player] == GameMode.SPECTATOR) return
+        val isFlying = player.isFlying
+        val allowFlight = player.allowFlight
         player.allowFlight = allowFlight
         player.isFlying = isFlying
     }

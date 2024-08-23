@@ -10,7 +10,6 @@ import org.incendo.cloud.component.CommandComponent
 import org.incendo.cloud.context.CommandContext
 import org.incendo.cloud.description.Description
 import org.incendo.cloud.kotlin.MutableCommandBuilder
-import org.incendo.cloud.meta.CommandMeta
 import org.incendo.cloud.parser.standard.IntegerParser
 import org.incendo.cloud.parser.standard.StringParser
 import org.incendo.cloud.setting.ManagerSetting
@@ -32,16 +31,15 @@ import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureLevel
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureUpdate
 import org.sayandev.sayanvanish.bukkit.utils.ServerUtils
-import org.sayandev.stickynote.bukkit.StickyNote.onlinePlayers
 import org.sayandev.stickynote.bukkit.command.Command
 import org.sayandev.stickynote.bukkit.command.StickySender
 import org.sayandev.stickynote.bukkit.command.literalWithPermission
 import org.sayandev.stickynote.bukkit.command.required
 import org.sayandev.stickynote.bukkit.extension.sendComponent
+import org.sayandev.stickynote.bukkit.plugin
 import org.sayandev.stickynote.bukkit.pluginDirectory
 import org.sayandev.stickynote.bukkit.runAsync
 import org.sayandev.stickynote.bukkit.runSync
-import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import org.sayandev.stickynote.core.utils.MilliCounter
 import java.io.File
 import java.util.concurrent.CompletableFuture
@@ -52,6 +50,7 @@ import kotlin.reflect.full.memberProperties
 class SayanVanishCommand : Command(settings.command.name, *settings.command.aliases.toTypedArray()) {
 
     override fun rootBuilder(builder: MutableCommandBuilder<StickySender>) {
+        builder.permission("${plugin.name}.commands.use")
         builder.optional("player", OfflinePlayerParser.offlinePlayerParser())
         builder.flag(
             "state",

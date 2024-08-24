@@ -17,9 +17,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable
 class FeatureHookMiniPlaceholders: HookFeature("hook_miniplaceholders", "miniplaceholders") {
 
     override fun enable() {
-        warn("sosis 1")
         if (hasPlugin()) {
-            warn("sosis 2")
             MiniPlaceholdersHookImpl(this).register()
         }
         super.enable()

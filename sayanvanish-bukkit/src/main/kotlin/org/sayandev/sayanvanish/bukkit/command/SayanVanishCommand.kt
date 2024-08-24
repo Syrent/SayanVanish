@@ -10,6 +10,7 @@ import org.incendo.cloud.component.CommandComponent
 import org.incendo.cloud.context.CommandContext
 import org.incendo.cloud.description.Description
 import org.incendo.cloud.kotlin.MutableCommandBuilder
+import org.incendo.cloud.kotlin.extension.commandBuilder
 import org.incendo.cloud.parser.standard.IntegerParser
 import org.incendo.cloud.parser.standard.StringParser
 import org.incendo.cloud.setting.ManagerSetting
@@ -262,7 +263,7 @@ class SayanVanishCommand : BukkitCommand(settings.command.name, *settings.comman
             required("feature", Features.features.map { it.id })
         }
 
-        featureLiteral.registerCopy {
+        val togglePlayerLiteral = featureLiteral.registerCopy {
             literalWithPermission("toggleplayer")
             optional("player", PlayerParser.playerParser())
             handler { context ->
@@ -298,6 +299,7 @@ class SayanVanishCommand : BukkitCommand(settings.command.name, *settings.comman
                 return@handler
             }
         }
+        manager.command(manager.commandBuilder("togglefeature").proxies(togglePlayerLiteral.build()))
 
         featureLiteral.registerCopy {
             literalWithPermission("disable")

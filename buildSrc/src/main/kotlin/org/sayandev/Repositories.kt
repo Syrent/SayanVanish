@@ -87,7 +87,7 @@ val luckperms = Dependency(
     version = "5.4",
     relocation = null,
     type = Dependency.Type.COMPILE_ONLY,
-    modules = listOf(Module.BUKKIT)
+    modules = listOf(Module.BUKKIT, Module.VELOCITY, Module.BUNGEECORD)
 )
 
 val squaremap = Dependency(

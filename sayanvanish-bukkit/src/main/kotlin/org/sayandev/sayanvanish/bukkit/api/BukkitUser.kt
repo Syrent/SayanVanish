@@ -40,8 +40,8 @@ open class BukkitUser(
             player()?.let { player ->
                 player.effectivePermissions
                     .filter { it.permission.startsWith("sayanvanish.level.") }
-                    .maxOfOrNull { it.permission.substringAfter("sayanvanish.level.").toIntOrNull() ?: 1 } ?: 1
-            } ?: 1
+                    .maxOfOrNull { it.permission.substringAfter("sayanvanish.level.").toIntOrNull() ?: field } ?: field
+            } ?: field
         } else {
             field
         }
@@ -123,7 +123,7 @@ open class BukkitUser(
             hideUser(onlinePlayer)
         }
         if (currentOptions.notifyStatusChangeToOthers) {
-            for (otherUsers in SayanVanishBukkitAPI.getInstance().getOnlineUsers().filter { it.username != username && it.vanishLevel >= vanishLevel }) {
+            for (otherUsers in SayanVanishBukkitAPI.getInstance().getOnlineUsers().filter { it.username != username && it.canSee(this) }) {
                 otherUsers.sendComponent(language.vanish.vanishStateOther, Placeholder.parsed("player", username), Placeholder.parsed("state", stateText(true)))
             }
         }
@@ -140,7 +140,7 @@ open class BukkitUser(
             showUser(onlinePlayer)
         }
         if (currentOptions.notifyStatusChangeToOthers) {
-            for (otherUsers in SayanVanishBukkitAPI.getInstance().getOnlineUsers().filter { it.username != this.username && it.vanishLevel >= this.vanishLevel }) {
+            for (otherUsers in SayanVanishBukkitAPI.getInstance().getOnlineUsers().filter { it.username != this.username && it.canSee(this) }) {
                 otherUsers.sendComponent(language.vanish.vanishStateOther, Placeholder.parsed("player", username), Placeholder.parsed("state", stateText(false)))
             }
         }

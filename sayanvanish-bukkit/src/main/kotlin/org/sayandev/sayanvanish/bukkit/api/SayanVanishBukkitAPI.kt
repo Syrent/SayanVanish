@@ -9,8 +9,9 @@ import java.util.*
 
 class SayanVanishBukkitAPI : SayanVanishAPI<BukkitUser>(BukkitUser::class.java) {
 
-    fun canSee(player: Player, otherPlayer: Player): Boolean {
-        return player.user()?.canSee(otherPlayer.user() ?: return false) ?: false
+    fun canSee(player: Player?, otherPlayer: Player): Boolean {
+        val vanishLevel = player?.user()?.vanishLevel ?: -1
+        return vanishLevel >= (otherPlayer.user()?.vanishLevel ?: -1)
     }
 
     companion object {

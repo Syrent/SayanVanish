@@ -1,17 +1,18 @@
 package org.sayandev.sayanvanish.velocity.api
 
 import com.velocitypowered.api.proxy.Player
-import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishOptions
+import org.sayandev.sayanvanish.api.feature.Features
 import org.sayandev.sayanvanish.proxy.config.settings
 import org.sayandev.sayanvanish.velocity.event.VelocityUserUnVanishEvent
 import org.sayandev.sayanvanish.velocity.event.VelocityUserVanishEvent
+import org.sayandev.sayanvanish.velocity.feature.features.hook.FeatureLuckPermsHook
 import org.sayandev.stickynote.velocity.StickyNote
 import org.sayandev.stickynote.velocity.server
 import org.sayandev.stickynote.velocity.utils.AdventureUtils.component
-import java.util.UUID
+import java.util.*
 
 
 open class VelocityUser(
@@ -24,13 +25,24 @@ open class VelocityUser(
     override var isVanished = false
     override var isOnline: Boolean = false
     override var vanishLevel: Int = 1
+        get() = player()?.let { player ->
+                val luckPermsHook = Features.getFeature<FeatureLuckPermsHook>()
+                    if (luckPermsHook.isActive()) {
+                        luckPermsHook.getPermissions(uniqueId)
+                            .filter { it.startsWith("sayanvanish.level.") }
+                            .maxOfOrNull { it.substringAfter("sayanvanish.level.").toIntOrNull() ?: field }
+                            ?: field
+                    } else {
+                        field
+                    }
+            } ?: field
 
     fun stateText(isVanished: Boolean = this.isVanished) = if (isVanished) "<green>ON</green>" else "<red>OFF</red>"
 
     fun player(): Player? = StickyNote.getPlayer(uniqueId)
 
     override fun vanish(options: VanishOptions) {
-        server.eventManager.fire<VelocityUserVanishEvent>(VelocityUserVanishEvent(this, options)).whenComplete { event, error ->
+        server.eventManager.fire(VelocityUserVanishEvent(this, options)).whenComplete { event, error ->
             error?.printStackTrace()
 
             val options = event.options
@@ -42,7 +54,7 @@ open class VelocityUser(
     }
 
     override fun unVanish(options: VanishOptions) {
-        server.eventManager.fire<VelocityUserUnVanishEvent>(VelocityUserUnVanishEvent(this, options)).whenComplete { event, error ->
+        server.eventManager.fire(VelocityUserUnVanishEvent(this, options)).whenComplete { event, error ->
             error?.printStackTrace()
 
             val options = event.options

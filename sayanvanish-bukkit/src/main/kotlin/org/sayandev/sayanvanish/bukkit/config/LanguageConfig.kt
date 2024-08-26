@@ -46,7 +46,8 @@ data class LanguageConfig(
         val reset: String = "<gray><gold><feature></gold> has been reset.",
         val togglePlayer: String = "<gray><gold><player></gold> <aqua><feature></aqua> feature state has been updated to <state>.",
         val togglePlayerOther: String = "<red>You don't have permission to change change other players feature state.",
-        val permissionLevelMethodWarning: String = "<red>This server uses <method> for vanish levels. To change the vanish level, use a permission system like LuckPerms or another available method. Available methods: <gold><methods></gold>."
+        val permissionLevelMethodWarning: String = "<red>This server uses <method> for vanish levels. To change the vanish level, use a permission system like LuckPerms or another available method. Available methods: <gold><methods></gold>.",
+        val flyDisabled: String = "<red>You don't have keep fly after reappear permission, fly has been disabled.",
     )
 
     @ConfigSerializable

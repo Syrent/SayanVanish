@@ -173,7 +173,7 @@ SayanVanishBukkitAPI.getInstance();
 From this class, you can access and modify everything. For example, to add a new user:
 
 ```java
-SayanVanishAPI.getInstance().getDatabase().getUser(User);
+SayanVanishAPI.getInstance().getDatabase().addUser(User);
 ```
 
 #### Events

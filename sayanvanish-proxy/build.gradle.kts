@@ -19,10 +19,3 @@ allprojects {
         stickynote.implementation("org.xerial:sqlite-jdbc:3.46.0.0")
     }
 }
-
-/*
-subprojects {
-    dependencies {
-        compileOnlyApi(project(":sayanvanish-proxy"))
-    }
-}*/

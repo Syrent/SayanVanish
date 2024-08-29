@@ -85,6 +85,10 @@ allprojects {
         maven("https://repo.sayandev.org/snapshots")
     }
 
+    dependencies {
+        stickynote.implementation("redis.clients:jedis:5.1.5")
+    }
+
     tasks {
         processResources {
             filesMatching(listOf("**plugin.yml", "**plugin.json")) {

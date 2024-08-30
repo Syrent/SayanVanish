@@ -7,6 +7,7 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
 import org.sayandev.sayanvanish.api.Permission
+import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.feature.Features
@@ -24,6 +25,7 @@ import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.plugin
 import org.sayandev.stickynote.bukkit.server
 import org.sayandev.stickynote.bukkit.utils.ServerVersion
+import org.sayandev.stickynote.bukkit.warn
 import java.util.*
 
 open class BukkitUser(
@@ -34,7 +36,11 @@ open class BukkitUser(
     override var serverId = settings.general.serverId
     override var currentOptions = VanishOptions.defaultOptions()
     override var isVanished = false
-    override var isOnline: Boolean = Bukkit.getPlayer(uniqueId) != null
+    override var isOnline: Boolean = if (!settings.general.proxyMode) {
+        Bukkit.getPlayer(uniqueId) != null
+    } else {
+        SayanVanishAPI.getInstance().database.hasBasicUser(uniqueId, true)
+    }
     override var vanishLevel: Int = 1
         get() = if (Features.getFeature<FeatureLevel>().levelMethod == FeatureLevel.LevelMethod.PERMISSION) {
             player()?.let { player ->

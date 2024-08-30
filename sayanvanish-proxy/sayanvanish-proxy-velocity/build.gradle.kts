@@ -30,7 +30,7 @@ tasks {
 
         downloadPlugins {
 //            url("https://download.luckperms.net/1543/velocity/LuckPerms-Velocity-5.4.137.jar")
-//            url("https://cdn.modrinth.com/data/Q10irTG0/versions/WOxOraBS/Velocitab-1.7.1-5470d19.jar")
+            url("https://cdn.modrinth.com/data/Q10irTG0/versions/WOxOraBS/Velocitab-1.7.1-5470d19.jar")
             url("https://github.com/Syrent/EnhancedVelocity/releases/download/1.3.3/EnhancedVelocity.v1.3.3.jar")
             url("https://cdn.modrinth.com/data/HQyibRsN/versions/FfO1vuOg/MiniPlaceholders-Velocity-2.2.4.jar")
 //            url("https://hangarcdn.papermc.io/plugins/Andre_601/AdvancedServerList/versions/4.11.1/VELOCITY/AdvancedServerList-Velocity-4.11.1.jar")

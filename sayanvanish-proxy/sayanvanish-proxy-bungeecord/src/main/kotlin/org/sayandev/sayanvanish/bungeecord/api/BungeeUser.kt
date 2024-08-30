@@ -2,6 +2,7 @@ package org.sayandev.sayanvanish.bungeecord.api
 
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.md_5.bungee.api.connection.ProxiedPlayer
+import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.bungeecord.event.BungeeUserUnVanishEvent
@@ -23,7 +24,7 @@ open class BungeeUser(
     override var serverId = settings.general.serverId
     override var currentOptions = VanishOptions.defaultOptions()
     override var isVanished = false
-    override var isOnline: Boolean = false
+    override var isOnline: Boolean = SayanVanishAPI.getInstance().database.hasBasicUser(uniqueId, true)
     override var vanishLevel: Int = 1
 
     fun stateText(isVanished: Boolean = this.isVanished) = if (isVanished) "<green>ON</green>" else "<red>OFF</red>"

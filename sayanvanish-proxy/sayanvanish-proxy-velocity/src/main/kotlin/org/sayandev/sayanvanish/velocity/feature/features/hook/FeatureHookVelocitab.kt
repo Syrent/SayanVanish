@@ -45,7 +45,7 @@ private class VelocitabImpl : VanishIntegration {
 
     override fun isVanished(name: String): Boolean {
         return StickyNote.getPlayer(name)?.getOrCreateUser()?.isVanished == true
-    }
+    }/*
 
     @Subscribe
     private fun onVanish(event: VelocityUserVanishEvent) {
@@ -90,5 +90,5 @@ private class VelocitabImpl : VanishIntegration {
         } else {
             VelocitabAPI.getInstance().unVanishPlayer(player)
         }
-    }
+    }*/
 }

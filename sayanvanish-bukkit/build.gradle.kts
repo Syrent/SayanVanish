@@ -46,7 +46,12 @@ tasks {
         }
     }
 
+    val deleteSayanDevLib = register<Delete>("deleteSayanDevLib") {
+        delete(file("$projectDir/${project.name.lowercase()}-bukkit/run/plugins/${project.name.lowercase()}/lib/org/sayandev"))
+    }
+
     runServer {
+        dependsOn(deleteSayanDevLib)
         minecraftVersion("1.21.1")
 
         downloadPlugins {

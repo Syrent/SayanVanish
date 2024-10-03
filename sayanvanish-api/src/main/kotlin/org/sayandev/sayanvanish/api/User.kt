@@ -1,10 +1,10 @@
 package org.sayandev.sayanvanish.api
 
+import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.sayandev.sayanvanish.api.exception.UnsupportedPlatformException
-import org.sayandev.stickynote.core.utils.Gson
 import java.util.*
 
 interface User : BasicUser {
@@ -74,7 +74,7 @@ interface User : BasicUser {
         json.addProperty("is-online", isOnline)
         json.addProperty("vanish-level", vanishLevel)
         json.addProperty("current-options", currentOptions.toJson())
-        return Gson.gson.toJson(json)
+        return Gson().toJson(json)
     }
 
     companion object {

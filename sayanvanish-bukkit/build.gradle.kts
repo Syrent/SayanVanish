@@ -11,18 +11,17 @@ stickynote {
     modules(StickyNoteModules.BUKKIT, StickyNoteModules.BUKKIT_NMS)
 }
 
-repositories {
-    mavenCentral()
-    applyRepositories(Module.BUKKIT)
-    maven("https://repo.papermc.io/repository/maven-public/")
-}
-
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT")
+    compileOnly(libs.paper.api)
+    compileOnly(libs.folia.api)
+    compileOnly(libs.placeholderapi)
+    compileOnly(libs.essentialsx)
+    compileOnly(libs.citizens.api)
+    compileOnly(libs.squaremap.api)
+
+//    compileOnly("io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT")
 //    paperweight.paperDevBundle("1.21.1-R0.1-SNAPSHOT")
     implementation(project(":sayanvanish-api"))
-
-    applyDependencies(Module.BUKKIT)
 }
 
 tasks {
@@ -33,8 +32,6 @@ tasks {
     }
 
     shadowJar {
-        applyShadowRelocation(Module.BUKKIT)
-
         manifest {
             attributes["paperweight-mappings-namespace"] = "mojang"
         }
@@ -51,15 +48,15 @@ tasks {
     }
 
     runServer {
-        dependsOn(deleteSayanDevLib)
+//        dependsOn(deleteSayanDevLib)
         minecraftVersion("1.21.1")
 
         downloadPlugins {
 //            url("https://github.com/NEZNAMY/TAB/releases/download/4.1.6/TAB.v4.1.6.jar")
-            url("https://download.luckperms.net/1552/bukkit/loader/LuckPerms-Bukkit-5.4.137.jar")
 //            url("https://ci.lucko.me/job/spark/418/artifact/spark-bukkit/build/libs/spark-1.10.73-bukkit.jar")
 //            url("https://github.com/Insprill/custom-join-messages/releases/download/v17.5.0/custom-join-messages-17.5.0.jar")
-            url("https://github.com/EssentialsX/Essentials/releases/download/2.20.1/EssentialsX-2.20.1.jar")
+//            url("https://github.com/EssentialsX/Essentials/releases/download/2.20.1/EssentialsX-2.20.1.jar")
+//            url("https://download.luckperms.net/1552/bukkit/loader/LuckPerms-Bukkit-5.4.137.jar")
         }
     }
 

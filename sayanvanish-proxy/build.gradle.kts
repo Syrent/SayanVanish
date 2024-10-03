@@ -1,16 +1,8 @@
-import org.sayandev.*
-import org.sayandev.applyShadowRelocation
 import org.sayandev.plugin.StickyNoteModules
 
 allprojects {
     stickynote {
         modules(StickyNoteModules.PROXY)
-    }
-
-    repositories {
-        mavenCentral()
-        applyRepositories(Module.VELOCITY)
-        applyRepositories(Module.BUNGEECORD)
     }
 
     dependencies {

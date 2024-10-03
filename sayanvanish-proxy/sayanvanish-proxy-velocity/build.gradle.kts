@@ -1,5 +1,3 @@
-import org.sayandev.*
-import org.sayandev.applyShadowRelocation
 import org.sayandev.plugin.StickyNoteModules
 
 plugins {
@@ -10,21 +8,16 @@ stickynote {
     modules(StickyNoteModules.VELOCITY)
 }
 
-repositories {
-    applyRepositories(Module.VELOCITY)
-}
-
 dependencies {
-    applyDependencies(Module.VELOCITY)
+    compileOnly(libs.velocity.api)
+    compileOnly(libs.velocitab)
+    compileOnly(libs.enhancedvelocity)
+    annotationProcessor(libs.velocity.api)
 
     api(project(":sayanvanish-proxy"))
 }
 
 tasks {
-    shadowJar {
-        applyShadowRelocation(Module.VELOCITY)
-    }
-
     runVelocity {
         velocityVersion("3.3.0-SNAPSHOT")
 

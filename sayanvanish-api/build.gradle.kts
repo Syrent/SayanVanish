@@ -1,11 +1,6 @@
-import org.sayandev.Module
-import org.sayandev.applyDependencies
-import org.sayandev.applyRepositories
-
-repositories {
-    applyRepositories(Module.API)
-}
-
 dependencies {
-    applyDependencies(Module.API)
+    compileOnlyApi(libs.discordsrv)
+    compileOnlyApi(libs.luckperms.api)
+    compileOnlyApi(libs.miniplaceholders.api)
+    compileOnlyApi(libs.advancedserverlist)
 }

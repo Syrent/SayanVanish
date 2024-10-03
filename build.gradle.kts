@@ -1,11 +1,9 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import io.papermc.hangarpublishplugin.model.Platforms
-import org.sayandev.getRelocations
-import org.sayandev.plugin.StickyNoteModules
-import java.io.ByteArrayOutputStream
-import java.net.URL
-import java.net.HttpURLConnection
 import com.google.gson.JsonParser
+import io.papermc.hangarpublishplugin.model.Platforms
+import java.io.ByteArrayOutputStream
+import java.net.HttpURLConnection
+import java.net.URL
 
 plugins {
     `java-library`
@@ -82,7 +80,60 @@ allprojects {
         mavenLocal()
         mavenCentral()
 
-        maven("https://repo.sayandev.org/snapshots")
+        maven {
+            name = "sayandevelopment-snapshots"
+            url = uri("https://repo.sayandev.org/snapshots")
+        }
+
+        maven {
+            name = "sayandevelopment-releases"
+            url = uri("https://repo.sayandev.org/releases")
+        }
+
+        maven {
+            name = "velocitab"
+            url = uri("https://repo.william278.net/releases")
+        }
+
+        maven {
+            name = "jitpack"
+            url = uri("https://jitpack.io")
+        }
+
+        maven {
+            name = "papermc"
+            url = uri("https://repo.papermc.io/repository/maven-public/")
+        }
+
+        maven {
+            name = "extendedclip"
+            url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+        }
+
+        maven {
+            name = "citizens"
+            url = uri("https://repo.citizensnpcs.co/")
+        }
+
+        maven {
+            name = "essentialsx"
+            url = uri("https://repo.essentialsx.net/releases/")
+        }
+
+        maven {
+            name = "snatype-snapshots"
+            url = uri("https://oss.sonatype.org/content/repositories/snapshots")
+        }
+
+        maven {
+            name = "codeberg"
+            url = uri("https://codeberg.org/api/packages/Andre601/maven/")
+        }
+
+        maven {
+            name = "scarsz"
+            url = uri("https://nexus.scarsz.me/content/groups/public/")
+        }
     }
 
     dependencies {
@@ -147,25 +198,14 @@ subprojects {
 
     artifacts.archives(tasks.shadowJar)
 
-    tasks.named<Jar>("sourcesJar") {
-        getRelocations().forEach { (from, to) ->
-            val filePattern = Regex("(.*)${from.replace('.', '/')}((?:/|$).*)")
-            val textPattern = Regex.fromLiteral(from)
-            eachFile {
-                filter {
-                    it.replaceFirst(textPattern, to)
-                }
-                path = path.replaceFirst(filePattern, "$1${to.replace('.', '/')}$2")
-            }
-        }
-    }
-
     publishing {
         publications {
             create<MavenPublication>("maven") {
-                shadow.component(this)
-                artifact(tasks["sourcesJar"])
+//                shadow.component(this)
+//                artifact(tasks["sourcesJar"])
+                from(components["java"])
                 this.version = versionString
+
                 setPom(this)
             }
         }

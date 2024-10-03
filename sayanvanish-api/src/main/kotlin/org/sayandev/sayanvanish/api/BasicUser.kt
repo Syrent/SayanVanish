@@ -1,9 +1,9 @@
 package org.sayandev.sayanvanish.api
 
+import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import org.sayandev.sayanvanish.api.exception.UnsupportedPlatformException
-import org.sayandev.stickynote.core.utils.Gson
 import java.util.*
 
 interface BasicUser {
@@ -29,7 +29,7 @@ interface BasicUser {
         json.addProperty("unique-id", uniqueId.toString())
         json.addProperty("username", username)
         json.addProperty("server-id", serverId)
-        return Gson.gson.toJson(json)
+        return Gson().toJson(json)
     }
 
     companion object {

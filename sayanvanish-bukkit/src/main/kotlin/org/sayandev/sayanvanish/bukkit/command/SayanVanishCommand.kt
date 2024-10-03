@@ -372,7 +372,7 @@ class SayanVanishCommand : BukkitCommand(settings.command.name, *settings.comman
                     return@handler
                 }
 
-                val field = feature.javaClass.getDeclaredField(context.get<String>("option"))
+                val field = feature.javaClass.getDeclaredField(context.get("option"))
                 if (field == null) {
                     sender.sendComponent(language.feature.invalidOption, Placeholder.unparsed("options", feature::class.memberProperties.joinToString(", ") { it.name }))
                     return@handler

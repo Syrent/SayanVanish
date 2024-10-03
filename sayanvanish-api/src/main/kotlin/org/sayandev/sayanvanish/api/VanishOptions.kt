@@ -1,8 +1,8 @@
 package org.sayandev.sayanvanish.api
 
+import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import org.sayandev.stickynote.core.utils.Gson
 
 data class VanishOptions(
     var sendMessage: Boolean = true,
@@ -56,7 +56,7 @@ data class VanishOptions(
         json.addProperty("notify-join-quit-vanished", notifyJoinQuitVanished)
         json.addProperty("is-on-join", isOnJoin)
         json.addProperty("is-on-quit", isOnQuit)
-        return Gson.gson.toJson(json)
+        return Gson().toJson(json)
     }
 
     companion object {

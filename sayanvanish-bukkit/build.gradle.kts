@@ -90,5 +90,6 @@ bukkit {
         "PlaceholderAPI",
         "MiniPlaceholders",
         "Citizens",
+        "packetevents"
     )
 }

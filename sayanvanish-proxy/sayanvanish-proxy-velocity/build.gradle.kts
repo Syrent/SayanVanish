@@ -22,7 +22,7 @@ tasks {
         velocityVersion("3.3.0-SNAPSHOT")
 
         downloadPlugins {
-//            url("https://download.luckperms.net/1543/velocity/LuckPerms-Velocity-5.4.137.jar")
+            url("https://download.luckperms.net/1556/velocity/LuckPerms-Velocity-5.4.141.jar")
             url("https://cdn.modrinth.com/data/Q10irTG0/versions/WOxOraBS/Velocitab-1.7.1-5470d19.jar")
             url("https://github.com/Syrent/EnhancedVelocity/releases/download/1.3.3/EnhancedVelocity.v1.3.3.jar")
             url("https://cdn.modrinth.com/data/HQyibRsN/versions/FfO1vuOg/MiniPlaceholders-Velocity-2.2.4.jar")

@@ -25,7 +25,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable
 class FeatureLevel(
     @Configurable val seeAsSpectator: Boolean = ServerVersion.supports(9),
     val levelMethod: LevelMethod = LevelMethod.PERMISSION
-): ListenedFeature("level") {
+): ListenedFeature("level", critical = true) {
 
     @EventHandler
     private fun onVanish(event: BukkitUserVanishEvent) {

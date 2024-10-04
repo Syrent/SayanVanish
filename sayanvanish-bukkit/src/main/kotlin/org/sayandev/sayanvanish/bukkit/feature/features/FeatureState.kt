@@ -25,7 +25,7 @@ class FeatureState(
     @Configurable val reappearOnQuit: Boolean = false,
     @Configurable val checkPermissionOnQuit: Boolean = true,
     @Configurable val checkPermissionOnJoin: Boolean = true,
-) : ListenedFeature("state") {
+) : ListenedFeature("state", critical = true) {
 
     @EventHandler(priority = EventPriority.LOWEST)
     private fun onJoin(event: PlayerJoinEvent) {

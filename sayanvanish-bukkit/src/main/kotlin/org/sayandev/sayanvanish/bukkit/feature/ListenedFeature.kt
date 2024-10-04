@@ -13,8 +13,9 @@ abstract class ListenedFeature(
     id: String,
     enabled: Boolean = true,
     category: FeatureCategories = FeatureCategories.DEFAULT,
-    additionalSerializers: TypeSerializerCollection = TypeSerializerCollection.defaults()
-) : Feature(id, enabled, category, additionalSerializers), Listener {
+    additionalSerializers: TypeSerializerCollection = TypeSerializerCollection.defaults(),
+    critical: Boolean = false
+) : Feature(id, enabled, category, additionalSerializers, critical), Listener {
 
     override fun enable() {
         if (!condition) return

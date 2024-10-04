@@ -13,20 +13,13 @@ abstract class Feature(
     val id: String,
     var enabled: Boolean = true,
     @Transient val category: FeatureCategories = FeatureCategories.DEFAULT,
-    @Transient val additionalSerializers: TypeSerializerCollection = TypeSerializerCollection.defaults()
+    @Transient val additionalSerializers: TypeSerializerCollection = TypeSerializerCollection.defaults(),
+    val critical: Boolean = false
 ) : Config(
-    when (category.directory) {
-        null -> {
-            File(Platform.get().rootDirectory, "features")
-        }
-        else -> {
-            File(File(Platform.get().rootDirectory, "features"), category.directory)
-        }
-    },
+    directory(category),
     "${id}.yml",
     additionalSerializers
 ) {
-
     @Transient open var condition: Boolean = true
 
     open fun isActive(): Boolean {
@@ -42,18 +35,35 @@ abstract class Feature(
     }
 
     open fun disable() {
+        if (critical) {
+            onCriticalDisabled()
+        }
         enabled = false
     }
 
     fun toggle() {
-        if (enabled) {
+        if (enabled && condition) {
             disable()
         } else {
             enable()
         }
     }
 
+    fun onCriticalDisabled() {
+        Platform.get().logger.warning("the feature '$id' is critical and currently disabled. We strongly recommend re-enabling it to avoid potential unexpected behavior. (path: ${directory(category).path}/${id}.yml)")
+    }
+
     companion object {
+        fun directory(category: FeatureCategories) =
+            when (category.directory) {
+                null -> {
+                    File(Platform.get().rootDirectory, "features")
+                }
+                else -> {
+                    File(File(Platform.get().rootDirectory, "features"), category.directory)
+                }
+            }
+
         fun createFromConfig(type: Class<out Feature>): Feature {
             val freshInstance = type.getDeclaredConstructor().newInstance()
             val category = freshInstance.category
@@ -66,6 +76,8 @@ abstract class Feature(
                 freshInstance.additionalSerializers)?.get(type) ?: freshInstance
             if (instance.enabled) {
                 instance.enable()
+            } else {
+                instance.disable()
             }
             return instance
         }

@@ -25,7 +25,6 @@ import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.plugin
 import org.sayandev.stickynote.bukkit.server
 import org.sayandev.stickynote.bukkit.utils.ServerVersion
-import org.sayandev.stickynote.bukkit.warn
 import java.util.*
 
 open class BukkitUser(

@@ -1,3 +1,4 @@
+import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 import org.sayandev.*
 import org.sayandev.plugin.StickyNoteModules
 
@@ -79,6 +80,12 @@ bukkit {
     foliaSupported = true
 
     apiVersion = "1.13"
+
+    permissions {
+        register("sayanvanish.action.vanish.onjoin") {
+            default = BukkitPluginDescription.Permission.Default.FALSE
+        }
+    }
 
     softDepend = listOf(
         "Essentials",

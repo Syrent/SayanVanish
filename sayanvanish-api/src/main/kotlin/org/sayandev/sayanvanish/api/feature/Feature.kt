@@ -14,7 +14,7 @@ abstract class Feature(
     var enabled: Boolean = true,
     @Transient val category: FeatureCategories = FeatureCategories.DEFAULT,
     @Transient val additionalSerializers: TypeSerializerCollection = TypeSerializerCollection.defaults(),
-    val critical: Boolean = false
+    @Transient val critical: Boolean = false
 ) : Config(
     directory(category),
     "${id}.yml",

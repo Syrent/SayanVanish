@@ -6,9 +6,11 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.block.Action
+import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.player.PlayerTeleportEvent
+import org.bukkit.inventory.Inventory
 import org.bukkit.util.Vector
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
@@ -24,7 +26,7 @@ import java.util.*
 class FeatureSilentContainer: ListenedFeature("silent_container") {
 
     override var condition: Boolean = ServerVersion.supports(13)
-    @Transient private val containerPlayers = mutableMapOf<UUID, ContainerPlayerData>()
+    @Transient private val containerPlayersData = mutableMapOf<UUID, ContainerPlayerData>()
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     private fun onPlayerInteract(event: PlayerInteractEvent) {
@@ -37,7 +39,7 @@ class FeatureSilentContainer: ListenedFeature("silent_container") {
         if (!user.isVanished) return
         if (player.gameMode == GameMode.SPECTATOR) return
 
-        containerPlayers[player.uniqueId] = ContainerPlayerData(player.gameMode, player.allowFlight, player.isFlying)
+        containerPlayersData[player.uniqueId] = ContainerPlayerData(player.gameMode, player.allowFlight, player.isFlying)
 
         player.allowFlight = true
         player.isFlying = true
@@ -45,15 +47,15 @@ class FeatureSilentContainer: ListenedFeature("silent_container") {
         player.gameMode = GameMode.SPECTATOR
 
         runSync({
-            containerPlayers[player.uniqueId]?.apply(player)
-            containerPlayers.remove(player.uniqueId)
+            containerPlayersData[player.uniqueId]?.apply(player)
+            containerPlayersData.remove(player.uniqueId)
         }, 1)
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     private fun onTeleport(event: PlayerTeleportEvent) {
         val player = event.player
-        if (!containerPlayers.contains(player.uniqueId) && event.cause != PlayerTeleportEvent.TeleportCause.SPECTATE) return
+        if (!containerPlayersData.contains(player.uniqueId) && event.cause != PlayerTeleportEvent.TeleportCause.SPECTATE) return
         event.isCancelled = true
     }
 
@@ -61,16 +63,35 @@ class FeatureSilentContainer: ListenedFeature("silent_container") {
     private fun onUnVanish(event: BukkitUserUnVanishEvent) {
         val player = event.user.player()
         if (player != null) {
-            containerPlayers[player.uniqueId]?.apply(player)
+            containerPlayersData[player.uniqueId]?.apply(player)
         }
 
-        containerPlayers.remove(event.user.uniqueId)
+        containerPlayersData.remove(event.user.uniqueId)
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     private fun onQuit(event: PlayerQuitEvent) {
-        containerPlayers[event.player.uniqueId]?.apply(event.player)
-        containerPlayers.remove(event.player.uniqueId)
+        containerPlayersData[event.player.uniqueId]?.apply(event.player)
+        containerPlayersData.remove(event.player.uniqueId)
+    }
+
+    @EventHandler
+    private fun onInventoryClose(event: InventoryCloseEvent) {
+        val player = event.player as? Player ?: return
+        val user = player.user() ?: return
+        if (!user.isVanished) return
+
+        containerPlayersData[player.uniqueId] = ContainerPlayerData(player.gameMode, player.allowFlight, player.isFlying)
+
+        player.allowFlight = true
+        player.isFlying = true
+        player.velocity = Vector(0.0, 0.0, 0.0)
+        player.gameMode = GameMode.SPECTATOR
+
+        runSync({
+            containerPlayersData[player.uniqueId]?.apply(player)
+            containerPlayersData.remove(player.uniqueId)
+        }, 1)
     }
 
     data class ContainerPlayerData(

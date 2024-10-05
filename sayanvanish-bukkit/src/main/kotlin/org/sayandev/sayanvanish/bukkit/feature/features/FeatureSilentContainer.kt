@@ -10,7 +10,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.player.PlayerTeleportEvent
-import org.bukkit.inventory.Inventory
 import org.bukkit.util.Vector
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
@@ -55,6 +54,8 @@ class FeatureSilentContainer: ListenedFeature("silent_container") {
     @EventHandler(priority = EventPriority.HIGHEST)
     private fun onTeleport(event: PlayerTeleportEvent) {
         val player = event.player
+        // Allow spectators to teleport via their hotbar
+        if (event.cause == PlayerTeleportEvent.TeleportCause.SPECTATE) return
         if (!containerPlayersData.contains(player.uniqueId) && event.cause != PlayerTeleportEvent.TeleportCause.SPECTATE) return
         event.isCancelled = true
     }

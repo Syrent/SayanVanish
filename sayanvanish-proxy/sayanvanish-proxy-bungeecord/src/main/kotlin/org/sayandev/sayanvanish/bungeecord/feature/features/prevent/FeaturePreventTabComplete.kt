@@ -21,7 +21,7 @@ class FeaturePreventTabComplete(
 ): ListenedFeature("prevent_tab_complete", category = FeatureCategories.PREVENTION) {
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    private fun onTabComplete(event: TabCompleteEvent) {
+    fun onTabComplete(event: TabCompleteEvent) {
         val player = event.sender as? ProxiedPlayer ?: return
         val user = player.getOrCreateUser()
         if (!isActive(user)) return

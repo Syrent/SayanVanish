@@ -3,18 +3,19 @@ package org.sayandev.sayanvanish.velocity.feature.features.hook
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.PostLoginEvent
 import com.velocitypowered.api.event.player.ServerPostConnectEvent
+import com.velocitypowered.api.proxy.Player
 import net.william278.velocitab.api.VelocitabAPI
 import net.william278.velocitab.vanish.VanishIntegration
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI.Companion.getOrCreateUser
-import org.sayandev.sayanvanish.velocity.feature.HookFeature
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI.Companion.user
 import org.sayandev.sayanvanish.velocity.event.VelocityUserUnVanishEvent
 import org.sayandev.sayanvanish.velocity.event.VelocityUserVanishEvent
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.sayandev.sayanvanish.velocity.feature.HookFeature
 import org.sayandev.stickynote.velocity.StickyNote
 import org.sayandev.stickynote.velocity.registerListener
+import org.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @RegisteredFeature
 @ConfigSerializable
@@ -45,19 +46,18 @@ private class VelocitabImpl : VanishIntegration {
 
     override fun isVanished(name: String): Boolean {
         return StickyNote.getPlayer(name)?.getOrCreateUser()?.isVanished == true
-    }/*
+    }
 
     @Subscribe
     private fun onVanish(event: VelocityUserVanishEvent) {
         val player = event.user.player() ?: return
-        VelocitabAPI.getInstance().vanishPlayer(player)
-        VelocitabAPI.getInstance().tabList.updateDisplayNames()
+        vanish(player)
     }
 
     @Subscribe
     private fun onUnVanish(event: VelocityUserUnVanishEvent) {
         val player = event.user.player() ?: return
-        VelocitabAPI.getInstance().unVanishPlayer(player)
+        unVanish(player)
     }
 
     @Subscribe
@@ -65,14 +65,14 @@ private class VelocitabImpl : VanishIntegration {
         val player = event.player ?: return
         for (vanishedUser in SayanVanishVelocityAPI.getInstance().getVanishedUsers()) {
             val vanishedPlayer = vanishedUser.player() ?: continue
-            VelocitabAPI.getInstance().vanishPlayer(vanishedPlayer)
+            vanish(vanishedPlayer)
         }
 
         val user = player.user() ?: return
         if (user.isVanished) {
-            VelocitabAPI.getInstance().vanishPlayer(player)
+            vanish(player)
         } else {
-            VelocitabAPI.getInstance().unVanishPlayer(player)
+            unVanish(player)
         }
     }
 
@@ -81,14 +81,26 @@ private class VelocitabImpl : VanishIntegration {
         val player = event.player ?: return
         for (vanishedUser in SayanVanishVelocityAPI.getInstance().getVanishedUsers()) {
             val vanishedPlayer = vanishedUser.player() ?: continue
-            VelocitabAPI.getInstance().vanishPlayer(vanishedPlayer)
+            vanish(vanishedPlayer)
         }
 
         val user = player.user() ?: return
         if (user.isVanished) {
-            VelocitabAPI.getInstance().vanishPlayer(player)
+            vanish(player)
         } else {
-            VelocitabAPI.getInstance().unVanishPlayer(player)
+            unVanish(player)
         }
-    }*/
+    }
+
+    private fun vanish(player: Player) {
+        val tabPlayer = VelocitabAPI.getInstance().tabList.getTabPlayer(player.uniqueId)
+        if (tabPlayer.isEmpty) return
+        VelocitabAPI.getInstance().vanishPlayer(player)
+    }
+
+    private fun unVanish(player: Player) {
+        val tabPlayer = VelocitabAPI.getInstance().tabList.getTabPlayer(player.uniqueId)
+        if (tabPlayer.isEmpty) return
+        VelocitabAPI.getInstance().unVanishPlayer(player)
+    }
 }

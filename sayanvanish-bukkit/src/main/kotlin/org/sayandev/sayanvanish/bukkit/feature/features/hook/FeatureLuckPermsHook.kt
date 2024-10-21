@@ -25,7 +25,7 @@ import java.util.*
 @ConfigSerializable
 class FeatureLuckPermsHook(
     @Configurable val registerCustomContext: Boolean = true,
-    @Configurable val checkPermissionViaLuckPerms: Boolean = true,
+    @Configurable val checkPermissionViaLuckPerms: Boolean = false,
 ): HookFeature("hook_luckperms", "LuckPerms") {
 
     override fun enable() {

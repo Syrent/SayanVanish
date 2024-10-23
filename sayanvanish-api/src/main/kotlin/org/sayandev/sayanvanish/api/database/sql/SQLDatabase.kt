@@ -187,7 +187,8 @@ class SQLDatabase<U : User>(
         cache[user.uniqueId] = user
         if (!hasUser(user.uniqueId)) {
             database.runQuery(
-                Query.query("INSERT ${if (config.method == SQLConfig.SQLMethod.MYSQL) "IGNORE " else ""}INTO ${config.tablePrefix}users (UUID, username, server, is_vanished, is_online, vanish_level) VALUES (?,?,?,?,?,?);")
+//                ${if (config.method == SQLConfig.SQLMethod.MYSQL) "IGNORE " else ""}
+                Query.query("INSERT INTO ${config.tablePrefix}users (UUID, username, server, is_vanished, is_online, vanish_level) VALUES (?,?,?,?,?,?);")
                     .setStatementValue(1, user.uniqueId.toString())
                     .setStatementValue(2, user.username)
                     .setStatementValue(3, user.serverId)

@@ -45,7 +45,7 @@ object ServerUtils {
         })
 
         jsonObject.add("vanished-users", JsonArray().apply {
-            SayanVanishBukkitAPI.getInstance().getVanishedUsers().map { it.username }
+            SayanVanishBukkitAPI.getInstance().getVanishedUsers().map { it.username }.forEach(this::add)
         })
 
         jsonObject.add("plugin", serializePlugin(plugin))

@@ -56,7 +56,7 @@ class Paste(
         private const val POST_URL = "$BASE_URL/post"
         private const val USER_AGENT: String = "Mozilla/5.0"
 
-        const val PASTE_URL = "https://paste.sayandev.org"
+        const val PASTE_URL = "https://pastes.dev"
     }
 
 }

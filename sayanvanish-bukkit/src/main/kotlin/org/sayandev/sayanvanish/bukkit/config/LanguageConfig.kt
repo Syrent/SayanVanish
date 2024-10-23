@@ -67,7 +67,7 @@ data class LanguageConfig(
 
     @ConfigSerializable
     data class Paste(
-        val use: String = "<gray>Your paste key is <gold><key></gold>, <red>Make sure to check the content before sharing it with others and remove the data you don't want to share. <white><click:open_url:'https://paste.sayandev.org/<key>'>(Click to open in sayandev paste)</click>",
+        val use: String = "<gray>Your paste key is <gold><key></gold>, <red>Make sure to check the content before sharing it with others and remove the data you don't want to share. <white><click:open_url:'https://pastes.dev/<key>'>(Click to open in pastes.dev)</click>",
         val generating: String = "<gold>Generating paste, please wait...",
         val failedToGenerate: String = "<red>Failed to generate paste, please try again later and make sure your machine is connected to internet.",
     )

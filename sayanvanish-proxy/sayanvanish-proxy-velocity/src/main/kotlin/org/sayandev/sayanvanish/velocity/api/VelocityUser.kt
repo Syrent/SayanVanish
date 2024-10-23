@@ -14,6 +14,7 @@ import org.sayandev.stickynote.velocity.StickyNote
 import org.sayandev.stickynote.velocity.server
 import org.sayandev.stickynote.velocity.utils.AdventureUtils.component
 import java.util.*
+import kotlin.jvm.optionals.getOrNull
 
 
 open class VelocityUser(
@@ -21,7 +22,9 @@ open class VelocityUser(
     override var username: String
 ) : User {
 
-    override var serverId = settings.general.serverId
+    override var serverId: String
+        get() = StickyNote.getPlayer(uniqueId)?.currentServer?.getOrNull()?.serverInfo?.name ?: settings.general.serverId
+        set(_) {}
     override var currentOptions = VanishOptions.defaultOptions()
     override var isVanished = false
     override var isOnline: Boolean = SayanVanishAPI.getInstance().database.hasBasicUser(uniqueId, true)

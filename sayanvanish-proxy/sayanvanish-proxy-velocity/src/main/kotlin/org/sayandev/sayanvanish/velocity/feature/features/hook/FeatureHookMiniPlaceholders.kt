@@ -9,8 +9,8 @@ import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI.Companion.user
 import org.sayandev.sayanvanish.velocity.feature.HookFeature
 import org.sayandev.stickynote.velocity.plugin
-import org.sayandev.stickynote.velocity.warn
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import kotlin.jvm.optionals.getOrNull
 
 @RegisteredFeature
 @ConfigSerializable
@@ -57,6 +57,12 @@ private class MiniPlaceholdersHookImpl(val feature: FeatureHookMiniPlaceholders)
                 val vanishedOnlineUsers = SayanVanishVelocityAPI.getInstance().database.getUsers().filter { user -> user.isVanished && user.isOnline }
                 TagsUtils.staticTag(SayanVanishAPI.getInstance().database.getBasicUsers(false).filter { it.serverId.lowercase() == server.serverInfo.name.lowercase() && !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString())
             }
+        }
+
+        builder.audiencePlaceholder("online_here") { audience, queue, context ->
+            val player = audience as? Player ?: return@audiencePlaceholder TagsUtils.staticTag("0")
+            val currentServerVanishedOnlineUsers = SayanVanishVelocityAPI.getInstance().database.getUsers().filter { user -> user.isVanished && user.isOnline && user.serverId == player.currentServer.getOrNull()?.serverInfo?.name }
+            TagsUtils.staticTag(SayanVanishAPI.getInstance().database.getBasicUsers(false).filter { !currentServerVanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString())
         }
 
         builder.globalPlaceholder("online_total") { queue, context ->

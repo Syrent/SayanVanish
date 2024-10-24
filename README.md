@@ -9,6 +9,10 @@
 
 Welcome to the introduction for **SayanVanish**, a versatile vanish system that allows you to disappear and reappear on your server network at will, along with many other features.
 
+# Documentation
+
+You can find the duck documentation for this project on [SayanDevelopment wiki](https://docs.sayandev.ir/sayanvanish).
+
 ### Supported Platforms
 
 SayanVanish is compatible with the following platforms:

@@ -11,7 +11,7 @@ Welcome to the introduction for **SayanVanish**, a versatile vanish system that 
 
 # Documentation
 
-You can find the duck documentation for this project on [SayanDevelopment wiki](https://docs.sayandev.org/sayanvanish).
+You can find the documentation for this project on [SayanDevelopment wiki](https://docs.sayandev.org/sayanvanish).
 
 ### Supported Platforms
 

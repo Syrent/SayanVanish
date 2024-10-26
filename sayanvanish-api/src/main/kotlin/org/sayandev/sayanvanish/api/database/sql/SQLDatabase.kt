@@ -23,20 +23,21 @@ class SQLDatabase<U : User>(
 
     override var cache = mutableMapOf<UUID, U>()
     var basicCache = mutableMapOf<UUID, BasicUser>()
-    val driverClass = try {
-        Class.forName("com.mysql.cj.jdbc.Driver")
-        "com.mysql.cj.jdbc.Driver"
-    } catch (e: ClassNotFoundException) {
-        Class.forName("com.mysql.jdbc.Driver")
-        "com.mysql.jdbc.Driver"
-    }
     val database: org.sayandev.stickynote.core.database.Database = when (config.method) {
         SQLConfig.SQLMethod.MYSQL -> {
             MySQLDatabase(
                 MySQLCredentials.Companion.mySQLCredentials(config.host, config.port, config.database, config.poolProperties.useSSL, config.username, config.password),
                 config.poolProperties.maximumPoolSize,
                 config.poolProperties.verifyServerCertificate,
-                driverClass,
+                let {
+                    try {
+                        Class.forName("com.mysql.cj.jdbc.Driver")
+                        "com.mysql.cj.jdbc.Driver"
+                    } catch (e: ClassNotFoundException) {
+                        Class.forName("com.mysql.jdbc.Driver")
+                        "com.mysql.jdbc.Driver"
+                    }
+                },
                 config.poolProperties.keepaliveTime,
                 config.poolProperties.connectionTimeout,
                 config.poolProperties.minimumIdle,

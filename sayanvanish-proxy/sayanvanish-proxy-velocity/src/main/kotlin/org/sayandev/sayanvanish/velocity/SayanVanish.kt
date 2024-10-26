@@ -31,7 +31,14 @@ class SayanVanish @Inject constructor(
         sayanvanish = this
 
         Platform.setAndRegister(Platform("velocity", java.util.logging.Logger.getLogger("sayanvanish"), dataDirectory.toFile(), settings.general.serverId))
-        SayanVanishVelocityAPI
+
+        try {
+            SayanVanishVelocityAPI
+        } catch (e: ExceptionInInitializerError) {
+            e.printStackTrace()
+            return
+        }
+
         SayanVanishProxyCommandVelocity()
 
 

@@ -19,6 +19,7 @@ import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.database.DatabaseConfig
 import org.sayandev.sayanvanish.api.database.databaseConfig
+import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.Features
 import org.sayandev.sayanvanish.api.feature.RegisteredFeatureHandler
 import org.sayandev.sayanvanish.api.utils.Paste
@@ -363,7 +364,11 @@ class SayanVanishCommand : BukkitCommand(settings.command.name, *settings.comman
 
         featureLiteral.registerCopy {
             literalWithPermission("update")
-            required("option", Features.features.flatMap { it::class.memberProperties.map { it.name } })
+            required(CommandComponent.builder<BukkitSender, String>("state", StringParser.stringParser())
+                .suggestionProvider { context, _ ->
+                    val feature = Features.features.find { it.id == context.get<String>("feature") } ?: return@suggestionProvider CompletableFuture.completedFuture(emptyList())
+                    CompletableFuture.completedFuture(feature::class.java.declaredFields.filter { it.isAnnotationPresent(Configurable::class.java) }.map { Suggestion.suggestion(it.name) })
+                })
             required("value", StringParser.stringParser(StringParser.StringMode.QUOTED))
             handler { context ->
                 val sender = context.sender().platformSender()

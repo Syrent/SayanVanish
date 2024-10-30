@@ -4,12 +4,11 @@ import org.sayandev.sayanvanish.api.feature.RegisteredFeatureHandler
 import java.io.File
 import java.util.logging.Logger
 
-@JvmRecord
 data class Platform(
     val id: String,
     val logger: Logger,
     val rootDirectory: File,
-    val serverId: String,
+    var serverId: String,
 ) {
 
     companion object {

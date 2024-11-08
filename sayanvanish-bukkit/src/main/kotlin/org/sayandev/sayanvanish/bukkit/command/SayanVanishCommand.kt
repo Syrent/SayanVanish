@@ -18,7 +18,9 @@ import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.database.DatabaseConfig
+import org.sayandev.sayanvanish.api.database.DatabaseMethod
 import org.sayandev.sayanvanish.api.database.databaseConfig
+import org.sayandev.sayanvanish.api.database.sql.SQLConfig
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.Features
 import org.sayandev.sayanvanish.api.feature.RegisteredFeatureHandler
@@ -31,15 +33,13 @@ import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureLevel
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureUpdate
+import org.sayandev.sayanvanish.bukkit.health.HealthCache
 import org.sayandev.sayanvanish.bukkit.utils.ServerUtils
+import org.sayandev.stickynote.bukkit.*
 import org.sayandev.stickynote.bukkit.command.BukkitCommand
 import org.sayandev.stickynote.bukkit.command.BukkitSender
 import org.sayandev.stickynote.bukkit.command.required
 import org.sayandev.stickynote.bukkit.extension.sendComponent
-import org.sayandev.stickynote.bukkit.plugin
-import org.sayandev.stickynote.bukkit.pluginDirectory
-import org.sayandev.stickynote.bukkit.runAsync
-import org.sayandev.stickynote.bukkit.runSync
 import org.sayandev.stickynote.core.utils.MilliCounter
 import java.io.File
 import java.util.concurrent.CompletableFuture
@@ -414,6 +414,16 @@ class SayanVanishCommand : BukkitCommand(settings.command.name, *settings.comman
 
         val testLiteral = rawCommandBuilder().registerCopy {
             literalWithPermission("test")
+        }
+
+        testLiteral.registerCopy {
+            literalWithPermission("health")
+            handler { context ->
+                val sender = context.sender().platformSender()
+                launch {
+                    HealthCache.sendHealthReport(sender)
+                }
+            }
         }
 
         val testDatabaseLiteral = testLiteral.registerCopy {

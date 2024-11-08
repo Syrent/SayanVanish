@@ -1,5 +1,6 @@
 package org.sayandev.sayanvanish.velocity
 
+import com.github.shynixn.mccoroutine.velocity.SuspendingPluginContainer
 import com.google.inject.Inject
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
@@ -9,6 +10,8 @@ import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.proxy.config.settings
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
 import org.sayandev.sayanvanish.velocity.command.SayanVanishProxyCommandVelocity
+import org.sayandev.sayanvanish.velocity.health.HealthCheckMessageSubscriber
+import org.sayandev.sayanvanish.velocity.health.ServerInfoPublisher
 import org.sayandev.stickynote.loader.bungee.StickyNoteVelocityLoader
 import org.sayandev.stickynote.velocity.StickyNote
 import org.sayandev.stickynote.velocity.registerListener
@@ -20,15 +23,23 @@ import java.util.concurrent.TimeUnit
 lateinit var sayanvanish: SayanVanish
 
 class SayanVanish @Inject constructor(
-    val server: ProxyServer,
-    val logger: Logger,
-    @DataDirectory val dataDirectory: Path
+    val suspendingPluginContainer: SuspendingPluginContainer
 ) {
+
+    @Inject
+    lateinit var server: ProxyServer
+
+    @Inject
+    lateinit var logger: Logger
+
+    @Inject
+    @DataDirectory lateinit var dataDirectory: Path
 
     @Subscribe
     fun onProxyInitialize(event: ProxyInitializeEvent) {
-        StickyNoteVelocityLoader(this, PLUGIN_ID, server, logger, dataDirectory)
         sayanvanish = this
+        StickyNoteVelocityLoader(this, PLUGIN_ID, server, logger, dataDirectory)
+        suspendingPluginContainer.initialize(this)
 
         Platform.setAndRegister(Platform("velocity", java.util.logging.Logger.getLogger("sayanvanish"), dataDirectory.toFile(), settings.general.serverId))
 
@@ -38,6 +49,9 @@ class SayanVanish @Inject constructor(
             e.printStackTrace()
             return
         }
+
+        HealthCheckMessageSubscriber().register()
+        ServerInfoPublisher
 
         SayanVanishProxyCommandVelocity()
 

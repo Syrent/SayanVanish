@@ -10,6 +10,8 @@ import org.sayandev.sayanvanish.bukkit.command.SayanVanishCommand
 import org.sayandev.sayanvanish.bukkit.config.LanguageConfig
 import org.sayandev.sayanvanish.bukkit.config.SettingsConfig
 import org.sayandev.sayanvanish.bukkit.config.settings
+import org.sayandev.sayanvanish.bukkit.health.HealthCheckRequestPublisher
+import org.sayandev.sayanvanish.bukkit.health.ServerInfoPublisher
 import org.sayandev.stickynote.bukkit.StickyNote
 import org.sayandev.stickynote.bukkit.error
 import org.sayandev.stickynote.bukkit.pluginDirectory
@@ -28,6 +30,9 @@ open class SayanVanish : JavaPlugin() {
         Platform.setAndRegister(Platform("bukkit", logger, pluginDirectory, settings.general.serverId))
 
         SayanVanishBukkitAPI()
+
+        HealthCheckRequestPublisher
+        ServerInfoPublisher
 
         SettingsConfig
         if (settings.general.proxyMode && databaseConfig.method == DatabaseMethod.SQL && databaseConfig.sql.method == SQLConfig.SQLMethod.SQLITE) {

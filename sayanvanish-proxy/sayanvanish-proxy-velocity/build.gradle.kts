@@ -19,7 +19,7 @@ dependencies {
 
 tasks {
     runVelocity {
-        velocityVersion("3.3.0-SNAPSHOT")
+        velocityVersion("3.4.0-SNAPSHOT")
 
         downloadPlugins {
 //            url("https://download.luckperms.net/1556/velocity/LuckPerms-Velocity-5.4.141.jar")

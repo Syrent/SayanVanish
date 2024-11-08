@@ -2,18 +2,13 @@ package org.sayandev.sayanvanish.bukkit.health
 
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
-import org.bukkit.event.Listener
-import org.bukkit.event.player.PlayerJoinEvent
 import org.sayandev.sayanvanish.api.database.DatabaseMethod
 import org.sayandev.sayanvanish.api.database.sql.SQLConfig
 import org.sayandev.sayanvanish.api.health.HealthCheckData
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.stickynote.bukkit.extension.sendComponent
 import org.sayandev.stickynote.bukkit.log
 import org.sayandev.stickynote.bukkit.onlinePlayers
-import org.sayandev.stickynote.bukkit.registerSuspendingListener
 import org.sayandev.stickynote.bukkit.warn
 import org.sayandev.stickynote.core.messaging.publisher.PayloadWrapper
 import org.sayandev.stickynote.core.utils.CoroutineUtils.awaitWithTimeout
@@ -83,7 +78,8 @@ object HealthCache {
                 }
             }
 
-            val duplicateServers = servers.groupBy { it.id }.filter { it.value.size > 1 }
+            val reachableServers = servers.filter { it.id != null }
+            val duplicateServers = reachableServers.groupBy { it.id }.filter { it.value.size > 1 }
             for (duplicateServer in duplicateServers) {
                 sender.sendComponent("<red>Found duplicate servers with id <yellow>${duplicateServer.key}")
                 for (server in duplicateServer.value) {
@@ -92,7 +88,7 @@ object HealthCache {
                 sender.sendComponent("<red>Make sure to change the server id in your `settings.yml` file.")
             }
 
-            val sqliteServers = servers.filter { it.databaseMethod == DatabaseMethod.SQL && it.sqlMethod == SQLConfig.SQLMethod.SQLITE }
+            val sqliteServers = reachableServers.filter { it.databaseMethod == DatabaseMethod.SQL && it.sqlMethod == SQLConfig.SQLMethod.SQLITE }
             if (sqliteServers.isNotEmpty()) {
                 sender.sendComponent("<red>Found servers using SQLite as their database method.")
                 for (server in sqliteServers) {
@@ -101,7 +97,7 @@ object HealthCache {
                 sender.sendComponent("<red>SQLite will not sync data between servers. Make sure to change the database method to MySQL or Redis.")
             }
 
-            val unrechableServers = servers.filter { it.id == null }
+            val unrechableServers = reachableServers.filter { it.id == null }
             if (unrechableServers.isNotEmpty()) {
                 sender.sendComponent("<red>Found servers that are unreachable.")
                 for (server in unrechableServers) {

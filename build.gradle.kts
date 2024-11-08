@@ -212,12 +212,6 @@ subprojects {
     publishing {
         publications {
             create<MavenPublication>("maven") {
-//                shadow.component(this)
-//                artifact(tasks["sourcesJar"])
-//                from(components["java"])
-                /*tasks.named<ShadowJar>("shadowJar") {
-                    configurations = listOf(this@subprojects.configurations.getByName("compileOnlyApiResolved"))
-                }*/
 //                from(components["shadow"])
                 artifact(publicationShadowJar.get())
                 artifact(tasks["sourcesJar"])

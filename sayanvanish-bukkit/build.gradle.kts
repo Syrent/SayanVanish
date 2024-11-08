@@ -98,20 +98,3 @@ bukkit {
         "packetevents"
     )
 }
-
-// Define a resolvable configuration extending from 'api'
-configurations {
-    create("apiResolved") {
-        isCanBeResolved = true
-        extendsFrom(configurations.getByName("compileOnlyApi"))
-    }
-}
-
-// Task to print all 'api' dependencies, including transitives
-tasks.register("printApiDependencies") {
-    doLast {
-        configurations.getByName("apiResolved").resolvedConfiguration.resolvedArtifacts.forEach { artifact ->
-            println("API Dependency: ${artifact.moduleVersion.id.group}:${artifact.name}:${artifact.moduleVersion.id.version}")
-        }
-    }
-}

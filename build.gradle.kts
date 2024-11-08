@@ -173,10 +173,23 @@ allprojects {
 }
 
 subprojects {
+    configurations {
+        create("compileOnlyApiResolved") {
+            isCanBeResolved = true
+            extendsFrom(configurations.getByName("compileOnlyApi"))
+        }
+    }
+
     java {
         withSourcesJar()
 
         disableAutoTargetJvm()
+    }
+
+    val publicationShadowJar by tasks.registering(com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar::class) {
+        from(sourceSets.main.get().output)
+        configurations = listOf(*configurations.toTypedArray(), this@subprojects.configurations["compileOnlyApiResolved"])
+        archiveClassifier.set("")
     }
 
     tasks {
@@ -196,14 +209,20 @@ subprojects {
         }
     }
 
-    artifacts.archives(tasks.shadowJar)
+    artifacts.archives(publicationShadowJar)
 
     publishing {
         publications {
             create<MavenPublication>("maven") {
 //                shadow.component(this)
 //                artifact(tasks["sourcesJar"])
-                from(components["java"])
+//                from(components["java"])
+                /*tasks.named<ShadowJar>("shadowJar") {
+                    configurations = listOf(this@subprojects.configurations.getByName("compileOnlyApiResolved"))
+                }*/
+//                from(components["shadow"])
+                artifact(publicationShadowJar.get())
+                artifact(tasks["sourcesJar"])
                 this.version = versionString
 
                 setPom(this)

@@ -18,12 +18,8 @@ import org.sayandev.stickynote.bukkit.warn
 import org.sayandev.stickynote.core.messaging.publisher.PayloadWrapper
 import org.sayandev.stickynote.core.utils.CoroutineUtils.awaitWithTimeout
 
-object HealthCache: Listener {
+object HealthCache {
     var cache: HealthCheckData? = null
-
-    init {
-        registerSuspendingListener(this)
-    }
 
     suspend fun updateCache(player: Player?): HealthCheckData? {
         val player = player ?: onlinePlayers.firstOrNull()
@@ -50,12 +46,6 @@ object HealthCache: Listener {
         }
         cache = healthData
         return healthData
-    }
-
-    @EventHandler
-    private suspend fun onPlayerJoin(event: PlayerJoinEvent) {
-        event.player.user() ?: return
-        updateCache(event.player)
     }
 
     suspend fun sendHealthReport(sender: CommandSender) {

@@ -50,7 +50,7 @@ tasks {
 
     runServer {
 //        dependsOn(deleteSayanDevLib)
-        minecraftVersion("1.21.1")
+        minecraftVersion("1.21.3")
 
         downloadPlugins {
             hangar("ViaVersion", "5.0.4-SNAPSHOT+548")

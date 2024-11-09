@@ -364,7 +364,7 @@ class SayanVanishCommand : BukkitCommand(settings.command.name, *settings.comman
 
         featureLiteral.registerCopy {
             literalWithPermission("update")
-            required(CommandComponent.builder<BukkitSender, String>("state", StringParser.stringParser())
+            required(CommandComponent.builder<BukkitSender, String>("option", StringParser.stringParser())
                 .suggestionProvider { context, _ ->
                     val feature = Features.features.find { it.id == context.get<String>("feature") } ?: return@suggestionProvider CompletableFuture.completedFuture(emptyList())
                     CompletableFuture.completedFuture(feature::class.java.declaredFields.filter { it.isAnnotationPresent(Configurable::class.java) }.map { Suggestion.suggestion(it.name) })

@@ -439,6 +439,14 @@ class SayanVanishCommand : BukkitCommand(settings.command.name, *settings.comman
             }
         }
 
+        testLiteral.registerCopy {
+            literalWithPermission("users")
+            handler { context ->
+                val sender = context.sender().platformSender()
+                sender.sendComponent("<green>Vanished Users: <yellow>${SayanVanishAPI.getInstance().getVanishedUsers().map { it.username }}")
+            }
+        }
+
         val testDatabaseLiteral = testLiteral.registerCopy {
             literalWithPermission("database")
         }

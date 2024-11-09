@@ -363,6 +363,19 @@ class SayanVanishCommand : BukkitCommand(settings.command.name, *settings.comman
         }
 
         featureLiteral.registerCopy {
+            literalWithPermission("status")
+            handler { context ->
+                val sender = context.sender().platformSender()
+                val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
+                    sender.sendComponent(language.feature.notFound)
+                    return@handler
+                }
+
+                sender.sendComponent(language.feature.status, Placeholder.unparsed("feature", feature.id), Placeholder.parsed("status", if (feature.enabled) "<green>Enabled</green>" else "<red>Disabled</red>"))
+            }
+        }
+
+        featureLiteral.registerCopy {
             literalWithPermission("update")
             required(CommandComponent.builder<BukkitSender, String>("option", StringParser.stringParser())
                 .suggestionProvider { context, _ ->

@@ -44,6 +44,7 @@ data class LanguageConfig(
         val invalidOption: String = "<red>Invalid option, valid options are <gold><options></gold>.",
         val invalidValue: String = "<red>Invalid value, valid values are <gold><values></gold>.",
         val reset: String = "<gray><gold><feature></gold> has been reset.",
+        val status: String = "<gray><gold><feature></gold> feature status is <status>.",
         val togglePlayer: String = "<gray><gold><player></gold> <aqua><feature></aqua> feature state has been updated to <state>.",
         val togglePlayerOther: String = "<red>You don't have permission to change change other players feature state.",
         val permissionLevelMethodWarning: String = "<red>This server uses <method> for vanish levels. To change the vanish level, use a permission system like LuckPerms or another available method. Available methods: <gold><methods></gold>.",

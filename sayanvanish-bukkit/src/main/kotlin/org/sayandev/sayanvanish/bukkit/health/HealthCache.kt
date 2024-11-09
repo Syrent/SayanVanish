@@ -78,6 +78,15 @@ object HealthCache {
                 }
             }
 
+            val unreachableServers = servers.filter { it.id == null }
+            if (unreachableServers.isNotEmpty()) {
+                sender.sendComponent("<red>Found servers that are unreachable.")
+                for (server in unreachableServers) {
+                    sender.sendComponent("<gray> - <yellow>${server.name}")
+                }
+                sender.sendComponent("<red>These server either don't have SayanVanish installed or is offline or there's no player on this servers. SayanVanish can only check servers which have player on them")
+            }
+
             val reachableServers = servers.filter { it.id != null }
             val duplicateServers = reachableServers.groupBy { it.id }.filter { it.value.size > 1 }
             for (duplicateServer in duplicateServers) {
@@ -95,15 +104,6 @@ object HealthCache {
                     sender.sendComponent("<gray> - <yellow>${server.name}")
                 }
                 sender.sendComponent("<red>SQLite will not sync data between servers. Make sure to change the database method to MySQL or Redis.")
-            }
-
-            val unrechableServers = reachableServers.filter { it.id == null }
-            if (unrechableServers.isNotEmpty()) {
-                sender.sendComponent("<red>Found servers that are unreachable.")
-                for (server in unrechableServers) {
-                    sender.sendComponent("<gray> - <yellow>${server.name}")
-                }
-                sender.sendComponent("<red>These server either don't have SayanVanish installed or is offline.")
             }
         } else {
             sender.sendComponent("<red>No servers found.")

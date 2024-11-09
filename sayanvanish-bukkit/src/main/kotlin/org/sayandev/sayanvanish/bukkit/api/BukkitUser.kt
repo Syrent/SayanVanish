@@ -104,7 +104,7 @@ open class BukkitUser(
         * I have to check if the player is op or not and luckperms feature is enabled so it doesn't disable all feature for op players
         * (bukkit permission check return true for all permissions if the player is op)
         * */
-        if (permission.startsWith("sayanvanish.feature.disable.") && (!luckPermsFeature.isActive() || !luckPermsFeature.checkPermissionViaLuckPerms) && player()?.isOp == true) {
+        if (permission.startsWith("sayanvanish.feature.disable.") && (!luckPermsFeature.isActive() || !luckPermsFeature.checkPermissionViaLuckPerms) && player()?.hasPermission(permission) == true) {
             return false
         }
         // Can't use luckperms feature isActive per-player, because per-player features check for player permissions and it causes stackoverflow

@@ -4,6 +4,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.sayandev.sayanvanish.api.database.DatabaseMethod
 import org.sayandev.sayanvanish.api.database.sql.SQLConfig
+import org.sayandev.sayanvanish.api.feature.Features
 import org.sayandev.sayanvanish.api.health.HealthCheckData
 import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.stickynote.bukkit.extension.sendComponent
@@ -44,8 +45,17 @@ object HealthCache {
     }
 
     suspend fun sendHealthReport(sender: CommandSender) {
+        val disabledCriticalFeatures = Features.features().filter { it.critical && !it.enabled }
+        if (disabledCriticalFeatures.isNotEmpty()) {
+            sender.sendComponent("<red>Found disabled critical features.")
+            for (feature in disabledCriticalFeatures) {
+                sender.sendComponent("<gray> - <yellow>${feature.id}")
+            }
+            sender.sendComponent("<red>Make sure to enable these features. otherwise plugin may not work properly.")
+        }
+
         if (!settings.general.proxyMode) {
-            sender.sendComponent("<red>You need to enable `proxy-mode` to use this feature. Make sure you've checked the installation guide at <gold><click:open_url:'https://docs.sayandev.org/sayanvanish/installation'>SayanVanish docs</click></gold>")
+            sender.sendComponent("<red>You need to enable `proxy-mode` to get full health check. Make sure you've checked the installation guide at <gold><click:open_url:'https://docs.sayandev.org/sayanvanish/installation'>SayanVanish docs</click></gold>")
             return
         }
 

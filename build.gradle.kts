@@ -6,8 +6,8 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 plugins {
-    `java-library`
-    kotlin("jvm") version "2.0.0"
+    java
+    kotlin("jvm") version "2.0.21"
     `maven-publish`
     id("io.papermc.hangar-publish-plugin") version "0.1.2"
     id("com.modrinth.minotaur") version "2.8.7"

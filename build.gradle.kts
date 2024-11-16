@@ -18,11 +18,11 @@ val slug = findProperty("slug")!! as String
 description = findProperty("description")!! as String
 
 fun executeGitCommand(vararg command: String): String {
+    val processBuilder = ProcessBuilder("git", *command)
+    val process = processBuilder.start()
     val byteOut = ByteArrayOutputStream()
-    exec {
-        commandLine = listOf("git", *command)
-        standardOutput = byteOut
-    }
+    process.inputStream.copyTo(byteOut)
+    process.waitFor()
     return byteOut.toString(Charsets.UTF_8).trim()
 }
 

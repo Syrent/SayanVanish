@@ -38,11 +38,6 @@ jobs:
           REPO_SAYAN_USER: ${{ secrets.REPO_SAYAN_USER }}
           REPO_SAYAN_TOKEN: ${{ secrets.REPO_SAYAN_TOKEN }}
         run: ./gradlew build
-      - name: Publish to SayanDevelopment snapshot repo
-        run: ./gradlew publish
-        env:
-          REPO_SAYAN_USER: ${{ secrets.REPO_SAYAN_USER }}
-          REPO_SAYAN_TOKEN: ${{ secrets.REPO_SAYAN_TOKEN }}
       - name: Publish to Hangar
         env:
           HANGAR_API_TOKEN: ${{ secrets.HANGAR_API_TOKEN }}
@@ -57,6 +52,11 @@ jobs:
           MODRINTH_BUILD_CHANNEL: release
           MODRINTH_API_TOKEN: ${{ secrets.MODRINTH_API_TOKEN }}
           # MODRINTH_CHANGELOG: ${{ github.event.release.body }}
+          REPO_SAYAN_USER: ${{ secrets.REPO_SAYAN_USER }}
+          REPO_SAYAN_TOKEN: ${{ secrets.REPO_SAYAN_TOKEN }}
+      - name: Publish to SayanDevelopment snapshot repo
+        run: ./gradlew publish
+        env:
           REPO_SAYAN_USER: ${{ secrets.REPO_SAYAN_USER }}
           REPO_SAYAN_TOKEN: ${{ secrets.REPO_SAYAN_TOKEN }}
 

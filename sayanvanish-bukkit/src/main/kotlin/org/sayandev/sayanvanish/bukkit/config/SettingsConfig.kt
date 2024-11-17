@@ -27,6 +27,7 @@ data class SettingsConfig(
         val serverId: String = "${Platform.get().id}-${UUID.randomUUID()}",
         val language: String = LanguageConfig.Language.EN_US.id,
         val includePrefixInMessages: Boolean = true,
+        val bstats: Boolean = true,
         val proxyMode: Boolean = false,
         val cacheUpdatePeriodTicks: Long = 20,
         val basicCacheUpdatePeriodTicks: Long = 20,

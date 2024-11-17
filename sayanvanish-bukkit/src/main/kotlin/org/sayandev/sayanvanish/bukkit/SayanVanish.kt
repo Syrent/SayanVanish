@@ -5,6 +5,7 @@ import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.database.DatabaseMethod
 import org.sayandev.sayanvanish.api.database.databaseConfig
 import org.sayandev.sayanvanish.api.database.sql.SQLConfig
+import org.sayandev.sayanvanish.bukkit.api.Metrics
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.sayanvanish.bukkit.command.SayanVanishCommand
 import org.sayandev.sayanvanish.bukkit.config.LanguageConfig
@@ -52,6 +53,20 @@ open class SayanVanish : JavaPlugin() {
         runAsync({
             SayanVanishBukkitAPI.getInstance().database.updateBasicCacheAsync()
         }, 0, settings.general.basicCacheUpdatePeriodTicks)
+
+        if (settings.general.bstats) {
+            Metrics(this, 23914).apply {
+                this.addCustomChart(Metrics.SingleLineChart("vanished") {
+                    SayanVanishBukkitAPI.getInstance().getVanishedUsers().count()
+                })
+                this.addCustomChart(Metrics.SimplePie("proxied") {
+                    if (settings.general.proxyMode) "On Proxy" else "No Proxy"
+                })
+                this.addCustomChart(Metrics.SimplePie("database_method") {
+                    databaseConfig.method.name
+                })
+            }
+        }
     }
 
     override fun onDisable() {

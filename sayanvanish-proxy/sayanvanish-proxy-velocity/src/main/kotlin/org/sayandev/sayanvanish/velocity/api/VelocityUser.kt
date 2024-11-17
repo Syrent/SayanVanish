@@ -10,6 +10,7 @@ import org.sayandev.sayanvanish.proxy.config.settings
 import org.sayandev.sayanvanish.velocity.event.VelocityUserUnVanishEvent
 import org.sayandev.sayanvanish.velocity.event.VelocityUserVanishEvent
 import org.sayandev.sayanvanish.velocity.feature.features.hook.FeatureLuckPermsHook
+import org.sayandev.sayanvanish.velocity.utils.PlayerUtils.sendComponent
 import org.sayandev.stickynote.velocity.StickyNote
 import org.sayandev.stickynote.velocity.server
 import org.sayandev.stickynote.velocity.utils.AdventureUtils.component
@@ -74,11 +75,11 @@ open class VelocityUser(
     }
 
     override fun sendComponent(content: String, vararg placeholder: TagResolver) {
-        player()?.sendMessage(content.component())
+        player()?.sendComponent(content, *placeholder)
     }
 
     override fun sendActionbar(content: String, vararg placeholder: TagResolver) {
-        player()?.sendActionBar(content.component())
+        player()?.sendActionBar(content.component(*placeholder))
     }
 
     companion object {

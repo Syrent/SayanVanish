@@ -7,7 +7,7 @@ import org.sayandev.sayanvanish.api.database.sql.SQLConfig
 import org.sayandev.sayanvanish.api.feature.Features
 import org.sayandev.sayanvanish.api.health.HealthCheckData
 import org.sayandev.sayanvanish.bukkit.config.settings
-import org.sayandev.stickynote.bukkit.extension.sendComponent
+import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendComponent
 import org.sayandev.stickynote.bukkit.log
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.warn

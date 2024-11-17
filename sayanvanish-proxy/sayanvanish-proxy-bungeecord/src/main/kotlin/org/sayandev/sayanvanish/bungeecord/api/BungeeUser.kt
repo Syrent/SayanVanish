@@ -7,6 +7,7 @@ import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.bungeecord.event.BungeeUserUnVanishEvent
 import org.sayandev.sayanvanish.bungeecord.event.BungeeUserVanishEvent
+import org.sayandev.sayanvanish.bungeecord.utils.PlayerUtils.sendComponent
 import org.sayandev.sayanvanish.proxy.config.settings
 import org.sayandev.stickynote.bungeecord.utils.AdventureUtils.component
 import org.sayandev.stickynote.bungeecord.utils.AdventureUtils.sendMessage
@@ -58,7 +59,7 @@ open class BungeeUser(
     }
 
     override fun sendComponent(content: String, vararg placeholder: TagResolver) {
-        player()?.sendMessage(content.component())
+        player()?.sendComponent(content.component())
     }
 
     override fun sendActionbar(content: String, vararg placeholder: TagResolver) {

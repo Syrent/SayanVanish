@@ -13,7 +13,7 @@ import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.sayanvanish.bukkit.sayanvanish
 import org.sayandev.sayanvanish.api.utils.HangarUtils
 import org.sayandev.sayanvanish.api.utils.VersionInfo
-import org.sayandev.stickynote.bukkit.extension.sendComponent
+import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendComponent
 import org.sayandev.stickynote.bukkit.log
 import org.sayandev.stickynote.bukkit.plugin
 import org.sayandev.stickynote.bukkit.runAsync

@@ -12,6 +12,7 @@ import org.sayandev.sayanvanish.proxy.config.settings
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI.Companion.user
 import org.sayandev.sayanvanish.velocity.feature.ListenedFeature
 import org.sayandev.sayanvanish.velocity.sayanvanish
+import org.sayandev.sayanvanish.velocity.utils.PlayerUtils.sendComponent
 import org.sayandev.stickynote.velocity.StickyNote
 import org.sayandev.stickynote.velocity.log
 import org.sayandev.stickynote.velocity.plugin
@@ -93,7 +94,7 @@ class FeatureUpdate(
         if (!isNewerVersionAvailable(notifyForSnapshotBuilds)) return
 
         for (line in updateNotificationContent) {
-            sender.sendMessage(line
+            sender.sendComponent(line
                 .replace("<latest_release_name>", latestRelease?.name ?: "Unknown")
                 .replace("<latest_release_url_paper>", latestRelease?.downloads?.PAPER?.downloadUrl() ?: "https://hangar.papermc.io/Syrent/SayanVanish")
                 .replace("<latest_release_url_velocity>", latestRelease?.downloads?.VELOCITY?.downloadUrl() ?: "https://hangar.papermc.io/Syrent/SayanVanish")
@@ -113,7 +114,7 @@ class FeatureUpdate(
         if (!isNewerVersionAvailable(notifyForSnapshotBuilds)) return
 
         for (line in updateRequestContent) {
-            sender.sendMessage(line.replace("<version>", latestVersion()).component())
+            sender.sendComponent(line.replace("<version>", latestVersion()).component())
         }
     }
 

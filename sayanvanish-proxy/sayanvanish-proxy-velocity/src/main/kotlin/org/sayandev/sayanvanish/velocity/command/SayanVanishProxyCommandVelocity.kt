@@ -17,6 +17,7 @@ import org.sayandev.sayanvanish.proxy.command.SayanVanishProxyCommand
 import org.sayandev.sayanvanish.proxy.config.language
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI.Companion.getOrAddUser
 import org.sayandev.sayanvanish.velocity.feature.features.FeatureUpdate
+import org.sayandev.sayanvanish.velocity.utils.PlayerUtils.sendComponent
 import org.sayandev.stickynote.velocity.StickyNote
 import org.sayandev.stickynote.velocity.command.VelocitySender
 import org.sayandev.stickynote.velocity.command.commandManager
@@ -49,12 +50,12 @@ class SayanVanishProxyCommandVelocity : SayanVanishProxyCommand<VelocitySender, 
         val state = context.flags().get<String>("state")
 
         if (!target.isPresent && sender !is Player) {
-            sender.sendMessage(language.general.haveToProvidePlayer.component())
+            sender.sendComponent(language.general.haveToProvidePlayer.component())
             return
         }
 
         if (target.isPresent && !sender.hasPermission(Permission.VANISH_OTHERS.permission())) {
-            sender.sendMessage(language.general.dontHavePermission.component())
+            sender.sendComponent(language.general.dontHavePermission.component())
             return
         }
 
@@ -81,7 +82,7 @@ class SayanVanishProxyCommandVelocity : SayanVanishProxyCommand<VelocitySender, 
             "off" -> user.unVanish(options)
             else -> user.toggleVanish(options)
         }
-        context.sender().platformSender().sendMessage(language.vanish.vanishToggle.component(Placeholder.unparsed("player", targetPlayer.username), Placeholder.parsed("state", user.stateText(!user.isVanished))))
+        context.sender().platformSender().sendComponent(language.vanish.vanishToggle.component(Placeholder.unparsed("player", targetPlayer.username), Placeholder.parsed("state", user.stateText(!user.isVanished))))
     }
 
     init {
@@ -91,7 +92,7 @@ class SayanVanishProxyCommandVelocity : SayanVanishProxyCommand<VelocitySender, 
             handler { context ->
                 val sender = context.sender().platformSender()
                 if (!forceUpdateConfirm) {
-                    sender.sendMessage(language.general.confirmUpdate.component())
+                    sender.sendComponent(language.general.confirmUpdate.component())
                     forceUpdateConfirm = true
                     StickyNote.run({
                         forceUpdateConfirm = false
@@ -99,7 +100,7 @@ class SayanVanishProxyCommandVelocity : SayanVanishProxyCommand<VelocitySender, 
                     return@handler
                 }
 
-                sender.sendMessage(language.general.updating.component())
+                sender.sendComponent(language.general.updating.component())
 
                 StickyNote.run {
                     val updateFeature = Features.getFeature<FeatureUpdate>()
@@ -108,9 +109,9 @@ class SayanVanishProxyCommandVelocity : SayanVanishProxyCommand<VelocitySender, 
 
                         StickyNote.run {
                             if (isSuccessful) {
-                                sender.sendMessage(language.general.updated.component(Placeholder.unparsed("version", updateFeature.latestVersion())))
+                                sender.sendComponent(language.general.updated.component(Placeholder.unparsed("version", updateFeature.latestVersion())))
                             } else {
-                                sender.sendMessage(language.general.updateFailed.component())
+                                sender.sendComponent(language.general.updateFailed.component())
                             }
                         }
                     }

@@ -28,6 +28,7 @@ class SettingsConfig(
         val cacheUpdatePeriodMillis: Long = 300,
         val basicCacheUpdatePeriodMillis: Long = 5000,
         val language: String = LanguageConfig.Language.EN_US.id,
+        val includePrefixInMessages: Boolean = true,
     )
 
     @ConfigSerializable

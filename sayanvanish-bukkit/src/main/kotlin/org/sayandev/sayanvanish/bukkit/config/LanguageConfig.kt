@@ -9,9 +9,9 @@ public var language: LanguageConfig = LanguageConfig.fromConfig() ?: LanguageCon
 
 @ConfigSerializable
 data class LanguageConfig(
+    val general: General = General(),
     val vanish: Vanish = Vanish(),
     val feature: Feature = Feature(),
-    val general: General = General(),
     val paste: Paste = Paste()
 ) : Config(languageDirectory, "${settings.general.language}.yml") {
 
@@ -21,6 +21,7 @@ data class LanguageConfig(
 
     @ConfigSerializable
     data class General(
+        val prefix: String = "<#67e8f9>SayanVanish</#67e8f9> <gray>|</gray> <yellow>",
         val reloaded: String = "<green>Plugin successfully reloaded. <red>Please note that some changes may require a server restart to take effect. Subsequent reloads may cause issues.",
         val playerNotFound: String = "<red>Player not found",
         val userNotFound: String = "<red>Couldn't get user data for player <gold><player></gold>",

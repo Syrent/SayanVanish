@@ -39,7 +39,7 @@ import org.sayandev.stickynote.bukkit.*
 import org.sayandev.stickynote.bukkit.command.BukkitCommand
 import org.sayandev.stickynote.bukkit.command.BukkitSender
 import org.sayandev.stickynote.bukkit.command.required
-import org.sayandev.stickynote.bukkit.extension.sendComponent
+import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendComponent
 import org.sayandev.stickynote.core.utils.MilliCounter
 import java.io.File
 import java.util.concurrent.CompletableFuture

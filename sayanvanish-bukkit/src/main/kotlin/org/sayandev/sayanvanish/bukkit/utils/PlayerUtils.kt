@@ -19,6 +19,10 @@ object PlayerUtils {
         }, *placeholders)
     }
 
+    fun CommandSender.sendRawComponent(content: String, vararg placeholders: TagResolver) {
+        AdventureUtils.sendComponent(this, content, *placeholders)
+    }
+
     fun OfflinePlayer.isPlayingOnThisServer(): Boolean {
         return this.isOnline
     }

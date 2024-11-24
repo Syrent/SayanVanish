@@ -45,8 +45,8 @@ open class BukkitUser(
             player()?.let { player ->
                 player.effectivePermissions
                     .filter { it.permission.startsWith("sayanvanish.level.") }
-                    .maxOfOrNull { it.permission.substringAfter("sayanvanish.level.").toIntOrNull() ?: field } ?: field
-            } ?: field
+                    .maxOfOrNull { it.permission.substringAfter("sayanvanish.level.").toIntOrNull() ?: 1 } ?: 1
+            } ?: 1
         } else {
             field
         }

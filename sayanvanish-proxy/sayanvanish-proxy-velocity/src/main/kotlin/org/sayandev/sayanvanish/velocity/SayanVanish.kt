@@ -7,6 +7,10 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.plugin.annotation.DataDirectory
 import com.velocitypowered.api.proxy.ProxyServer
 import org.sayandev.sayanvanish.api.Platform
+import org.sayandev.sayanvanish.api.SayanVanishAPI
+import org.sayandev.sayanvanish.api.database.DatabaseMethod
+import org.sayandev.sayanvanish.api.database.databaseConfig
+import org.sayandev.sayanvanish.api.database.sql.SQLDatabase
 import org.sayandev.sayanvanish.proxy.config.settings
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
 import org.sayandev.sayanvanish.velocity.command.SayanVanishProxyCommandVelocity
@@ -66,11 +70,19 @@ class SayanVanish @Inject constructor(
         }
 
         StickyNote.run({
-            SayanVanishVelocityAPI.getInstance().database.updateBasicCacheAsync()
+            if (databaseConfig.method == DatabaseMethod.SQL) {
+                SayanVanishVelocityAPI.getInstance().database.getBasicUsersAsync { users ->
+                    (SayanVanishVelocityAPI.getInstance().database as SQLDatabase).basicCache = users.associateBy { it.uniqueId }.toMutableMap()
+                    (SayanVanishAPI.getInstance().database as SQLDatabase).basicCache = users.associateBy { it.uniqueId }.toMutableMap()
+                }
+            }
         }, settings.general.basicCacheUpdatePeriodMillis, TimeUnit.MILLISECONDS, settings.general.basicCacheUpdatePeriodMillis, TimeUnit.MILLISECONDS)
 
         StickyNote.run({
-            SayanVanishVelocityAPI.getInstance().database.updateCacheAsync()
+            SayanVanishVelocityAPI.getInstance().database.getUsersAsync { users ->
+                SayanVanishVelocityAPI.getInstance().database.cache = users.associateBy { it.uniqueId }.toMutableMap()
+                SayanVanishAPI.getInstance().database.cache = users.associateBy { it.uniqueId }.toMutableMap()
+            }
         }, settings.general.cacheUpdatePeriodMillis, TimeUnit.MILLISECONDS, settings.general.cacheUpdatePeriodMillis, TimeUnit.MILLISECONDS)
     }
 

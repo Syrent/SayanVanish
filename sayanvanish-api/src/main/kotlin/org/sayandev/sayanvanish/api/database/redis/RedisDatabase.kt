@@ -148,10 +148,4 @@ class RedisDatabase<U : User>(
         purgeBasic()
     }
 
-    override fun updateCacheAsync() {
-    }
-
-    override fun updateBasicCacheAsync() {
-    }
-
 }

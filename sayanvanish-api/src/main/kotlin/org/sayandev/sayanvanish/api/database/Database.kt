@@ -46,7 +46,4 @@ interface Database<U: User> {
     fun purgeBasic()
     fun purgeBasic(serverId: String)
 
-    fun updateCacheAsync()
-    fun updateBasicCacheAsync()
-
 }

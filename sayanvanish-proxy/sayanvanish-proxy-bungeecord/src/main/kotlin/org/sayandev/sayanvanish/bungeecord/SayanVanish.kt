@@ -2,6 +2,10 @@ package org.sayandev.sayanvanish.bungeecord
 
 import net.md_5.bungee.api.plugin.Plugin
 import org.sayandev.sayanvanish.api.Platform
+import org.sayandev.sayanvanish.api.SayanVanishAPI
+import org.sayandev.sayanvanish.api.database.DatabaseMethod
+import org.sayandev.sayanvanish.api.database.databaseConfig
+import org.sayandev.sayanvanish.api.database.sql.SQLDatabase
 import org.sayandev.sayanvanish.bungeecord.api.SayanVanishBungeeAPI
 import org.sayandev.sayanvanish.proxy.config.settings
 import org.sayandev.sayanvanish.velocity.VanishManager
@@ -32,11 +36,19 @@ class SayanVanish : Plugin() {
         }
 
         StickyNote.run({
-            SayanVanishBungeeAPI.getInstance().database.updateBasicCacheAsync()
+            SayanVanishBungeeAPI.getInstance().database.getUsersAsync { users ->
+                SayanVanishBungeeAPI.getInstance().database.cache = users.associateBy { it.uniqueId }.toMutableMap()
+                SayanVanishAPI.getInstance().database.cache = users.associateBy { it.uniqueId }.toMutableMap()
+            }
         }, settings.general.basicCacheUpdatePeriodMillis, settings.general.basicCacheUpdatePeriodMillis, TimeUnit.MILLISECONDS)
 
         StickyNote.run({
-            SayanVanishBungeeAPI.getInstance().database.updateCacheAsync()
+            if (databaseConfig.method == DatabaseMethod.SQL) {
+                SayanVanishBungeeAPI.getInstance().database.getBasicUsersAsync { users ->
+                    (SayanVanishBungeeAPI.getInstance().database as SQLDatabase).basicCache = users.associateBy { it.uniqueId }.toMutableMap()
+                    (SayanVanishAPI.getInstance().database as SQLDatabase).basicCache = users.associateBy { it.uniqueId }.toMutableMap()
+                }
+            }
         }, settings.general.cacheUpdatePeriodMillis, settings.general.cacheUpdatePeriodMillis, TimeUnit.MILLISECONDS)
     }
 }

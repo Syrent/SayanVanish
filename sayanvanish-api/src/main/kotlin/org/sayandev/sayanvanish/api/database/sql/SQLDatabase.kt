@@ -320,20 +320,4 @@ class SQLDatabase<U : User>(
         database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}basic_users WHERE server = ?;").setStatementValue(1, serverId)).result?.close()
     }
 
-    override fun updateCacheAsync() {
-        getUsersAsync { users ->
-            if (users.isNotEmpty()) {
-                cache = users.associateBy { user -> user.uniqueId }.toMutableMap()
-            }
-        }
-    }
-
-    override fun updateBasicCacheAsync() {
-        getBasicUsersAsync { basicUsers ->
-            if (basicUsers.isNotEmpty()) {
-                basicCache = basicUsers.associateBy { user -> user.uniqueId }.toMutableMap()
-            }
-        }
-    }
-
 }

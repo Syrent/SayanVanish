@@ -2,9 +2,11 @@ package org.sayandev.sayanvanish.bukkit
 
 import org.bukkit.plugin.java.JavaPlugin
 import org.sayandev.sayanvanish.api.Platform
+import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.database.DatabaseMethod
 import org.sayandev.sayanvanish.api.database.databaseConfig
 import org.sayandev.sayanvanish.api.database.sql.SQLConfig
+import org.sayandev.sayanvanish.api.database.sql.SQLDatabase
 import org.sayandev.sayanvanish.bukkit.api.Metrics
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.sayanvanish.bukkit.command.SayanVanishCommand
@@ -47,11 +49,19 @@ open class SayanVanish : JavaPlugin() {
         SayanVanishCommand()
 
         runAsync({
-            SayanVanishBukkitAPI.getInstance().database.updateCacheAsync()
+            SayanVanishBukkitAPI.getInstance().database.getUsersAsync { users ->
+                SayanVanishBukkitAPI.getInstance().database.cache = users.associateBy { it.uniqueId }.toMutableMap()
+                SayanVanishAPI.getInstance().database.cache = users.associateBy { it.uniqueId }.toMutableMap()
+            }
         }, 0, settings.general.cacheUpdatePeriodTicks)
 
         runAsync({
-            SayanVanishBukkitAPI.getInstance().database.updateBasicCacheAsync()
+            if (databaseConfig.method == DatabaseMethod.SQL) {
+                SayanVanishBukkitAPI.getInstance().database.getBasicUsersAsync { users ->
+                    (SayanVanishBukkitAPI.getInstance().database as SQLDatabase).basicCache = users.associateBy { it.uniqueId }.toMutableMap()
+                    (SayanVanishAPI.getInstance().database as SQLDatabase).basicCache = users.associateBy { it.uniqueId }.toMutableMap()
+                }
+            }
         }, 0, settings.general.basicCacheUpdatePeriodTicks)
 
         if (settings.general.bstats) {

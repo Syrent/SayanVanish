@@ -1,9 +1,9 @@
 package org.sayandev.sayanvanish.api
 
-import org.sayandev.sayanvanish.api.database.DatabaseMethod
-import org.sayandev.sayanvanish.api.database.databaseConfig
-import org.sayandev.sayanvanish.api.database.redis.RedisDatabase
-import org.sayandev.sayanvanish.api.database.sql.SQLDatabase
+import org.sayandev.sayanvanish.api.`database-old`.DatabaseMethod
+import org.sayandev.sayanvanish.api.`database-old`.databaseConfig
+import org.sayandev.sayanvanish.api.`database-old`.redis.RedisDatabase
+import org.sayandev.sayanvanish.api.`database-old`.sql.SQLDatabase
 import java.util.*
 
 open class SayanVanishAPI<U: User>(val type: Class<out User>) {

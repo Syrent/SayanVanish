@@ -1,12 +1,12 @@
-package org.sayandev.sayanvanish.api.database.sql
+package org.sayandev.sayanvanish.api.`database-old`.sql
 
 import org.sayandev.sayanvanish.api.BasicUser
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.User.Companion.convert
 import org.sayandev.sayanvanish.api.VanishOptions
-import org.sayandev.sayanvanish.api.database.Database
-import org.sayandev.sayanvanish.api.database.DatabaseMethod
+import org.sayandev.sayanvanish.api.`database-old`.Database
+import org.sayandev.sayanvanish.api.`database-old`.DatabaseMethod
 import org.sayandev.stickynote.core.database.Query
 import org.sayandev.stickynote.core.database.mysql.MySQLCredentials
 import org.sayandev.stickynote.core.database.mysql.MySQLDatabase

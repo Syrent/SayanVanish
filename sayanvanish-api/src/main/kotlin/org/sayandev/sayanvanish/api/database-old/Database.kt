@@ -1,4 +1,4 @@
-package org.sayandev.sayanvanish.api.database
+package org.sayandev.sayanvanish.api.`database-old`
 
 import org.sayandev.sayanvanish.api.BasicUser
 import org.sayandev.sayanvanish.api.User

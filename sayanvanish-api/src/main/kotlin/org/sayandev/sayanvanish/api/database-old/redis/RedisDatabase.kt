@@ -1,9 +1,9 @@
-package org.sayandev.sayanvanish.api.database.redis
+package org.sayandev.sayanvanish.api.`database-old`.redis
 
 import org.sayandev.sayanvanish.api.BasicUser
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.User.Companion.convert
-import org.sayandev.sayanvanish.api.database.Database
+import org.sayandev.sayanvanish.api.`database-old`.Database
 import redis.clients.jedis.DefaultJedisClientConfig
 import redis.clients.jedis.HostAndPort
 import redis.clients.jedis.JedisPooled

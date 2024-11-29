@@ -1,4 +1,4 @@
-package org.sayandev.sayanvanish.api.database.sql
+package org.sayandev.sayanvanish.api.`database-old`.sql
 
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.objectmapping.meta.Setting

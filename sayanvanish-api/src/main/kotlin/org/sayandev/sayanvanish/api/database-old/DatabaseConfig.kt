@@ -1,8 +1,8 @@
-package org.sayandev.sayanvanish.api.database
+package org.sayandev.sayanvanish.api.`database-old`
 
 import org.sayandev.sayanvanish.api.Platform
-import org.sayandev.sayanvanish.api.database.redis.RedisConfig
-import org.sayandev.sayanvanish.api.database.sql.SQLConfig
+import org.sayandev.sayanvanish.api.`database-old`.redis.RedisConfig
+import org.sayandev.sayanvanish.api.`database-old`.sql.SQLConfig
 import org.sayandev.stickynote.core.configuration.Config
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import java.io.File

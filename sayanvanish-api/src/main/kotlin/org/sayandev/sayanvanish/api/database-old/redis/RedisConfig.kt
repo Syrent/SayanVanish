@@ -1,4 +1,4 @@
-package org.sayandev.sayanvanish.api.database.redis
+package org.sayandev.sayanvanish.api.`database-old`.redis
 
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 

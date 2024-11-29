@@ -3,8 +3,6 @@ package org.sayandev.sayanvanish.bukkit.api
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.sayandev.sayanvanish.api.SayanVanishAPI
-import org.sayandev.sayanvanish.api.database.databaseConfig
-import org.sayandev.sayanvanish.bukkit.config.settings
 import java.util.*
 
 class SayanVanishBukkitAPI : SayanVanishAPI<BukkitUser>(BukkitUser::class.java) {

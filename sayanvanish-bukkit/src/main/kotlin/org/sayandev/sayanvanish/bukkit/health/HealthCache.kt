@@ -2,8 +2,8 @@ package org.sayandev.sayanvanish.bukkit.health
 
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.sayandev.sayanvanish.api.database.DatabaseMethod
-import org.sayandev.sayanvanish.api.database.sql.SQLConfig
+import org.sayandev.sayanvanish.api.`database-old`.DatabaseMethod
+import org.sayandev.sayanvanish.api.`database-old`.sql.SQLConfig
 import org.sayandev.sayanvanish.api.feature.Features
 import org.sayandev.sayanvanish.api.health.HealthCheckData
 import org.sayandev.sayanvanish.bukkit.config.settings

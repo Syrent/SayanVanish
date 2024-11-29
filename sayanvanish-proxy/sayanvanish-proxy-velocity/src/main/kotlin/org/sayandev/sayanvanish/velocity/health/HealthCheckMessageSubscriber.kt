@@ -1,9 +1,9 @@
 package org.sayandev.sayanvanish.velocity.health
 
 import kotlinx.coroutines.CompletableDeferred
-import org.sayandev.sayanvanish.api.database.DatabaseMethod
-import org.sayandev.sayanvanish.api.database.databaseConfig
-import org.sayandev.sayanvanish.api.database.sql.SQLConfig
+import org.sayandev.sayanvanish.api.`database-old`.DatabaseMethod
+import org.sayandev.sayanvanish.api.`database-old`.databaseConfig
+import org.sayandev.sayanvanish.api.`database-old`.sql.SQLConfig
 import org.sayandev.sayanvanish.api.health.HealthCheckData
 import org.sayandev.stickynote.core.messaging.publisher.PayloadWrapper
 import org.sayandev.stickynote.core.utils.CoroutineUtils.awaitWithTimeout

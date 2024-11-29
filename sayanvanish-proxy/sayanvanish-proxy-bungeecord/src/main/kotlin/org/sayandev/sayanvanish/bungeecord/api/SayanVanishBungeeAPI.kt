@@ -2,7 +2,6 @@ package org.sayandev.sayanvanish.bungeecord.api
 
 import net.md_5.bungee.api.connection.ProxiedPlayer
 import org.sayandev.sayanvanish.api.SayanVanishAPI
-import org.sayandev.sayanvanish.api.database.databaseConfig
 import java.util.UUID
 
 val database = SayanVanishBungeeAPI.getInstance().database

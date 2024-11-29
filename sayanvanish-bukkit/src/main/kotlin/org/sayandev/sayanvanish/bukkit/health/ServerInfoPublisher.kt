@@ -1,6 +1,6 @@
 package org.sayandev.sayanvanish.bukkit.health
 
-import org.sayandev.sayanvanish.api.database.databaseConfig
+import org.sayandev.sayanvanish.api.`database-old`.databaseConfig
 import org.sayandev.sayanvanish.api.health.HealthCheckData
 import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.stickynote.bukkit.messaging.publisher.PluginMessagePublisher

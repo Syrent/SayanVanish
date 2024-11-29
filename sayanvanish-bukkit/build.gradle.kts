@@ -95,6 +95,8 @@ bukkit {
         "PlaceholderAPI",
         "MiniPlaceholders",
         "Citizens",
-        "packetevents"
+        // just to fix adventure problem on 1.8
+        "packetevents",
+        "TAB"
     )
 }

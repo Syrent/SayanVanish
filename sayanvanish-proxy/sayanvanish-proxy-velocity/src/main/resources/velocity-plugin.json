@@ -19,6 +19,10 @@
     {
       "id": "velocitab",
       "optional": true
+    },
+    {
+      "id": "tab",
+      "optional": true
     }
   ],
   "main": "org.sayandev.sayanvanish.velocity.SayanVanish"

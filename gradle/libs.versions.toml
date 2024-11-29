@@ -4,6 +4,7 @@ discordsrv = "1.27.0"
 luckperms-api = "5.4"
 miniplaceholders-api = "2.2.3"
 advancedserverlist = "3.3.0"
+tab-api = "5.0.2"
 
 # bukkit
 paper-api = "1.20.6-R0.1-SNAPSHOT"
@@ -27,6 +28,7 @@ discordsrv = { group = "com.discordsrv", name="discordsrv", version.ref="discord
 luckperms-api = { group = "net.luckperms", name="api", version.ref="luckperms-api" }
 miniplaceholders-api = { group = "io.github.miniplaceholders", name="miniplaceholders-api", version.ref="miniplaceholders-api" }
 advancedserverlist = { group = "ch.andre601.asl-api", name="api", version.ref="advancedserverlist" }
+tab-api = { group = "com.github.NEZNAMY", name="TAB-API", version.ref="tab-api" }
 
 # bukkit
 paper-api = { group = "io.papermc.paper", name="paper-api", version.ref="paper-api" }

@@ -13,6 +13,7 @@ import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI.Companion.us
 import org.sayandev.sayanvanish.velocity.feature.ListenedFeature
 import org.sayandev.sayanvanish.velocity.sayanvanish
 import org.sayandev.sayanvanish.velocity.utils.PlayerUtils.sendComponent
+import org.sayandev.sayanvanish.velocity.utils.PlayerUtils.sendRawComponent
 import org.sayandev.stickynote.velocity.StickyNote
 import org.sayandev.stickynote.velocity.log
 import org.sayandev.stickynote.velocity.plugin
@@ -33,11 +34,9 @@ class FeatureUpdate(
         "<green>A new version of <white>SayanVanish Velocity</white> is available!",
         "<gold> - Latest release: <white><latest_release_name>",
         "  <yellow>- <gray>Click to download: <blue><click:open_url:'<latest_release_url_paper>'>Paper</click> <gray>|</gray> <aqua><click:open_url:'<latest_release_url_velocity>'>Velocity</click> <gray>|</gray> <blue><click:open_url:'<latest_release_url_waterfall>'>Waterfall</click>",
-        "  <yellow>- <gray>Changelog: <white><latest_release_changelog>",
         "  <yellow>- <gray><click:open_url:'https://hangar.papermc.io/Syrent/SayanVanish/versions/<latest_release_name>'>Click to see full changelog",
         "<gold> - Latest snapshot: <white><latest_snapshot_name>",
         "  <yellow>- <gray>Click to download: <blue><click:open_url:'<latest_snapshot_url_paper>'>Paper</click> <gray>|</gray> <aqua><click:open_url:'<latest_snapshot_url_velocity>'>Velocity</click> <gray>|</gray> <blue><click:open_url:'<latest_snapshot_url_waterfall>'>Waterfall</click>",
-        "  <yellow>- <gray>Changelog: <white><latest_snapshot_changelog>",
         "  <yellow>- <gray><click:open_url:'https://hangar.papermc.io/Syrent/SayanVanish/versions/<latest_snapshot_name>'>Click to see full changelog"
     ),
     val updateRequestContent: List<String> = listOf(
@@ -94,7 +93,7 @@ class FeatureUpdate(
         if (!isNewerVersionAvailable(notifyForSnapshotBuilds)) return
 
         for (line in updateNotificationContent) {
-            sender.sendComponent(line
+            sender.sendRawComponent(line
                 .replace("<latest_release_name>", latestRelease?.name ?: "Unknown")
                 .replace("<latest_release_url_paper>", latestRelease?.downloads?.PAPER?.downloadUrl() ?: "https://hangar.papermc.io/Syrent/SayanVanish")
                 .replace("<latest_release_url_velocity>", latestRelease?.downloads?.VELOCITY?.downloadUrl() ?: "https://hangar.papermc.io/Syrent/SayanVanish")
@@ -105,7 +104,6 @@ class FeatureUpdate(
                 .replace("<latest_snapshot_url_velocity>", latestSnapshot?.downloads?.VELOCITY?.downloadUrl() ?: "https://hangar.papermc.io/Syrent/SayanVanish")
                 .replace("<latest_snapshot_url_waterfall>", latestSnapshot?.downloads?.WATERFALL?.downloadUrl() ?: "https://hangar.papermc.io/Syrent/SayanVanish")
                 .replace("<latest_snapshot_changelog>", shortDescription(latestSnapshot?.description) ?: "Unknown")
-                .component()
             )
         }
     }

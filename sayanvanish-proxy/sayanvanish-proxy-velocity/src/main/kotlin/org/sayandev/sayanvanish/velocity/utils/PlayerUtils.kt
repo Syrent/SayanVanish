@@ -28,4 +28,8 @@ object PlayerUtils {
             content
         })
     }
+
+    fun CommandSource.sendRawComponent(content: String, vararg placeholders: TagResolver) {
+        this.sendMessage(content.component(*placeholders))
+    }
 }

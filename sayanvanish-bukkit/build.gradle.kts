@@ -55,6 +55,7 @@ tasks {
         downloadPlugins {
             hangar("ViaVersion", "5.0.4-SNAPSHOT+548")
             hangar("PlaceholderAPI", "2.11.6")
+            url("https://cdn.modrinth.com/data/16vhQOQN/versions/g55TGTXG/minimotd-bukkit-2.1.4.jar")
 //            url("https://github.com/NEZNAMY/TAB/releases/download/4.1.6/TAB.v4.1.6.jar")
 //            url("https://ci.lucko.me/job/spark/418/artifact/spark-bukkit/build/libs/spark-1.10.73-bukkit.jar")
 //            url("https://github.com/Insprill/custom-join-messages/releases/download/v17.5.0/custom-join-messages-17.5.0.jar")

@@ -50,7 +50,7 @@ tasks {
 
     runServer {
 //        dependsOn(deleteSayanDevLib)
-        minecraftVersion("1.21.3")
+        minecraftVersion("1.21.4")
 
         downloadPlugins {
             hangar("ViaVersion", "5.0.4-SNAPSHOT+548")
@@ -61,7 +61,7 @@ tasks {
 //            url("https://github.com/Insprill/custom-join-messages/releases/download/v17.5.0/custom-join-messages-17.5.0.jar")
             url("https://github.com/NEZNAMY/TAB-Bridge/releases/download/6.0.0/TAB-Bridge.v6.0.0.jar")
             url("https://github.com/EssentialsX/Essentials/releases/download/2.20.1/EssentialsX-2.20.1.jar")
-            url("https://download.luckperms.net/1552/bukkit/loader/LuckPerms-Bukkit-5.4.137.jar")
+            url("https://download.luckperms.net/1567/bukkit/loader/LuckPerms-Bukkit-5.4.150.jar")
         }
     }
 

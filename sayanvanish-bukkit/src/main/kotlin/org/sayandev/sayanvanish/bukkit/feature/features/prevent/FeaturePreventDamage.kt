@@ -21,5 +21,4 @@ class FeaturePreventDamage: ListenedFeature("prevent_damage", category = Feature
             event.isCancelled = true
         }
     }
-
 }

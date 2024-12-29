@@ -13,6 +13,7 @@ placeholderapi = "2.11.6"
 essentialsx = "2.20.1"
 citizens-api = "2.0.28-SNAPSHOT"
 squaremap-api = "1.2.3"
+pl3xmap-api = "1.21.4-512"
 
 # proxy
 # proxy - velocity
@@ -37,6 +38,7 @@ placeholderapi = { group = "me.clip", name="placeholderapi", version.ref="placeh
 essentialsx = { group = "net.essentialsx", name="EssentialsX", version.ref="essentialsx" }
 citizens-api = { group = "net.citizensnpcs", name="citizensapi", version.ref="citizens-api" }
 squaremap-api = { group = "xyz.jpenilla", name="squaremap-api", version.ref="squaremap-api" }
+pl3xmap-api = { group = "maven.modrinth", name="pl3xmap", version.ref="pl3xmap-api" }
 
 # proxy
 # proxy - velocity

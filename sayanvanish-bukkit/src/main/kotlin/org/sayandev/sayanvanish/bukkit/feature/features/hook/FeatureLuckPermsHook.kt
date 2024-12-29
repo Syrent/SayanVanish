@@ -28,13 +28,21 @@ class FeatureLuckPermsHook(
     @Configurable val checkPermissionViaLuckPerms: Boolean = false,
 ): HookFeature("hook_luckperms", "LuckPerms") {
 
+    @Transient var vanishContext: VanishedContext? = null
+
     override fun enable() {
         if (hasPlugin()) {
             if (registerCustomContext) {
-                LuckPermsProvider.get().contextManager.registerCalculator(VanishedContext())
+                vanishContext = VanishedContext()
+                LuckPermsProvider.get().contextManager.registerCalculator(vanishContext!!)
             }
         }
         super.enable()
+    }
+
+    override fun disable() {
+        vanishContext?.let { LuckPermsProvider.get().contextManager.unregisterCalculator(it) }
+        super.disable()
     }
 
     fun hasPermission(uniqueId: UUID, permission: String): Boolean {
@@ -56,7 +64,7 @@ class FeatureLuckPermsHook(
     }
 }
 
-private class VanishedContext: ContextCalculator<Player> {
+class VanishedContext: ContextCalculator<Player> {
 
     override fun calculate(target: Player, contextConsumer: ContextConsumer) {
         contextConsumer.accept("vanished", target.getOrCreateUser().isVanished.toString())

@@ -12,7 +12,7 @@ import org.sayandev.stickynote.velocity.plugin
 
 class HealthCheckMessageSubscriber: ProxySubscriber<Unit, HealthCheckData>(
     plugin.container.description.name.get().lowercase(),
-    "healthcheck",
+    "hc",
     Unit::class.java
 ) {
 

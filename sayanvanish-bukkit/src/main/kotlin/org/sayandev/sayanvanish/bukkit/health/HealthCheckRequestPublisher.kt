@@ -6,7 +6,7 @@ import org.sayandev.stickynote.bukkit.plugin
 
 object HealthCheckRequestPublisher : ProxyPluginMessagePublisher<Unit, HealthCheckData>(
     plugin.name.lowercase(),
-    "healthcheck",
+    "hc",
     Unit::class.java,
     HealthCheckData::class.java
 )

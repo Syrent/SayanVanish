@@ -40,6 +40,7 @@ import org.sayandev.stickynote.bukkit.command.BukkitCommand
 import org.sayandev.stickynote.bukkit.command.BukkitSender
 import org.sayandev.stickynote.bukkit.command.required
 import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendComponent
+import org.sayandev.stickynote.bukkit.utils.ServerVersion
 import org.sayandev.stickynote.core.utils.MilliCounter
 import java.io.File
 import java.util.concurrent.CompletableFuture
@@ -434,6 +435,9 @@ class SayanVanishCommand : BukkitCommand(settings.command.name, *settings.comman
             handler { context ->
                 val sender = context.sender().platformSender()
                 launch {
+                    if (!ServerVersion.supports(9)) {
+                        sender.sendComponent("<red>This feature might not work as expected in your server version!")
+                    }
                     HealthCache.sendHealthReport(sender)
                 }
             }

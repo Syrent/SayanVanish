@@ -32,13 +32,13 @@ private class Pl3xMapHookImpl(val feature: FeatureHookPl3xMap): Listener {
     private fun onVanish(event: BukkitUserVanishEvent) {
         val user = event.user
         if (!feature.isActive(user)) return
-        user.player()?.uniqueId?.let { Pl3xMap.api().playerRegistry.get(it)?.setHidden(true, false) }
+        Pl3xMap.api().playerRegistry.get(user.uniqueId)?.setHidden(true, false)
     }
 
     @EventHandler
     private fun onUnVanish(event: BukkitUserUnVanishEvent) {
         val user = event.user
         if (!feature.isActive(user)) return
-        user.player()?.uniqueId?.let { Pl3xMap.api().playerRegistry.get(it)?.setHidden(false, false) }
+        Pl3xMap.api().playerRegistry.get(user.uniqueId)?.setHidden(false, false)
     }
 }

@@ -56,6 +56,8 @@ tasks {
         downloadPlugins {
             hangar("ViaVersion", "5.0.4-SNAPSHOT+548")
             hangar("PlaceholderAPI", "2.11.6")
+            url("https://cdn.modrinth.com/data/qvdtDX3s/versions/TD9kTO2n/multiverse-inventories-4.2.7-pre.jar")
+            url("https://cdn.modrinth.com/data/3wmN97b8/versions/ehwU9G3y/multiverse-core-4.3.15-pre.2.jar")
             url("https://cdn.modrinth.com/data/16vhQOQN/versions/g55TGTXG/minimotd-bukkit-2.1.4.jar")
 //            url("https://github.com/NEZNAMY/TAB/releases/download/4.1.6/TAB.v4.1.6.jar")
 //            url("https://ci.lucko.me/job/spark/418/artifact/spark-bukkit/build/libs/spark-1.10.73-bukkit.jar")

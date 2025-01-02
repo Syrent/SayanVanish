@@ -10,6 +10,8 @@ import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.event.player.PlayerTeleportEvent
+import org.bukkit.inventory.CraftingInventory
+import org.bukkit.inventory.PlayerInventory
 import org.bukkit.util.Vector
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
@@ -17,6 +19,7 @@ import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.runSync
 import org.sayandev.stickynote.bukkit.utils.ServerVersion
+import org.sayandev.stickynote.bukkit.warn
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import java.util.*
 
@@ -81,6 +84,7 @@ class FeatureSilentContainer: ListenedFeature("silent_container") {
         val player = event.player as? Player ?: return
         val user = player.user() ?: return
         if (!user.isVanished) return
+        if (event.inventory is CraftingInventory) return
 
         containerPlayersData[player.uniqueId] = ContainerPlayerData(player.gameMode, player.allowFlight, player.isFlying)
 

@@ -17,7 +17,7 @@ open class SayanVanishAPI<U: User>(val type: Class<out User>) {
             }
         }
         DatabaseMethod.REDIS -> {
-            RedisDatabase<U>(databaseConfig.redis, type).apply {
+            RedisDatabase<U>(databaseConfig.redis, type, databaseConfig.useCacheWhenAvailable).apply {
                 this.initialize()
                 this.connect()
             }

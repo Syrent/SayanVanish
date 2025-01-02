@@ -1,6 +1,5 @@
 package org.sayandev.sayanvanish.bukkit.feature.features.hook
 
-import net.luckperms.api.LuckPerms
 import net.luckperms.api.LuckPermsProvider
 import net.luckperms.api.context.ContextCalculator
 import net.luckperms.api.context.ContextConsumer
@@ -11,7 +10,6 @@ import net.luckperms.api.node.types.PermissionNode
 import net.luckperms.api.query.QueryOptions
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
-import org.sayandev.sayanvanish.api.SayanVanishAPI.Companion.user
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrCreateUser

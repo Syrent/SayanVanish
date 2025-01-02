@@ -134,6 +134,11 @@ allprojects {
             name = "scarsz"
             url = uri("https://nexus.scarsz.me/content/groups/public/")
         }
+
+        maven {
+            name = "modrinth-repo"
+            url = uri("https://api.modrinth.com/maven/")
+        }
     }
 
     dependencies {

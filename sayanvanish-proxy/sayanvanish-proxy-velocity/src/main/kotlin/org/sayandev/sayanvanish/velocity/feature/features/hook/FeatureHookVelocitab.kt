@@ -16,7 +16,6 @@ import org.sayandev.sayanvanish.velocity.event.VelocityUserVanishEvent
 import org.sayandev.sayanvanish.velocity.feature.HookFeature
 import org.sayandev.stickynote.velocity.StickyNote
 import org.sayandev.stickynote.velocity.registerListener
-import org.sayandev.stickynote.velocity.warn
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import java.util.concurrent.TimeUnit
 

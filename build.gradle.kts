@@ -7,7 +7,7 @@ import java.net.URL
 
 plugins {
     java
-    kotlin("jvm") version "2.0.21"
+    kotlin("jvm") version "2.1.0"
     `maven-publish`
     id("io.papermc.hangar-publish-plugin") version "0.1.2"
     id("com.modrinth.minotaur") version "2.8.7"
@@ -70,7 +70,7 @@ allprojects {
     group = findProperty("group")!! as String
     version = findProperty("version")!! as String
 
-    plugins.apply("java-library")
+    plugins.apply("java")
     plugins.apply("maven-publish")
     plugins.apply("kotlin")
     plugins.apply("org.sayandev.stickynote.project")

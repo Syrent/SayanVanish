@@ -26,7 +26,7 @@ class FeatureHookTAB: HookFeature("hook_tab", "TAB") {
     }
 }
 
-class VanishIntegrationTAB: VanishIntegration(plugin.name) {
+private class VanishIntegrationTAB: VanishIntegration(plugin.name) {
     override fun isVanished(player: TabPlayer): Boolean {
         return SayanVanishBukkitAPI.getInstance().isVanished(player.uniqueId)
     }

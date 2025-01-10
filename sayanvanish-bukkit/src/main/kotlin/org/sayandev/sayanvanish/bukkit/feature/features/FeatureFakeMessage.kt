@@ -1,6 +1,7 @@
 package org.sayandev.sayanvanish.bukkit.feature.features
 
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerJoinEvent
@@ -14,7 +15,9 @@ import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendComponent
 import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendRawComponent
+import org.sayandev.stickynote.bukkit.hook.PlaceholderAPIHook
 import org.sayandev.stickynote.bukkit.onlinePlayers
+import org.sayandev.stickynote.bukkit.utils.AdventureUtils
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendComponent
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 
@@ -25,6 +28,7 @@ class FeatureFakeMessage(
     @Configurable val sendFakeQuitMessage: Boolean = false,
     @Configurable val fakeJoinMessage: String = "<yellow><player> joined the game",
     @Configurable val fakeQuitMessage: String = "<yellow><player> left the game",
+    @Configurable val useLegacyFormatter: Boolean = false,
     @Configurable val disableJoinMessageIfVanished: Boolean = true,
     @Configurable val disableQuitMessageIfVanished: Boolean = true,
 ) : ListenedFeature("fake_message") {
@@ -76,20 +80,38 @@ class FeatureFakeMessage(
         if (!event.options.sendMessage) return
         if (sendFakeQuitMessage && !event.options.isOnJoin && !event.options.isOnQuit) {
             for (player in onlinePlayers) {
-                player.sendRawComponent(fakeQuitMessage, Placeholder.unparsed("player", user.username))
+                if (useLegacyFormatter) {
+                    AdventureUtils.audience.player(player).sendMessage(
+                        LegacyComponentSerializer.legacyAmpersand().deserialize(
+                            PlaceholderAPIHook.injectPlaceholders(player, fakeQuitMessage)
+                                .replace("<player>", user.username)
+                        )
+                    )
+                } else {
+                    player.sendRawComponent(fakeQuitMessage, Placeholder.unparsed("player", user.username))
+                }
             }
         }
     }
 
     @EventHandler
     private fun onUnVanish(event: BukkitUserUnVanishEvent) {
+        val user = event.user
         if (!event.options.sendMessage) return
-        if (!isActive(event.user)) return
+        if (!isActive(user)) return
         if (sendFakeJoinMessage && !event.options.isOnJoin && !event.options.isOnQuit) {
             for (player in onlinePlayers) {
-                player.sendRawComponent(fakeJoinMessage, Placeholder.unparsed("player", event.user.username))
+                if (useLegacyFormatter) {
+                    AdventureUtils.audience.player(player).sendMessage(
+                        LegacyComponentSerializer.legacyAmpersand().deserialize(
+                            PlaceholderAPIHook.injectPlaceholders(player, fakeJoinMessage)
+                                .replace("<player>", user.username)
+                        )
+                    )
+                } else {
+                    player.sendRawComponent(fakeJoinMessage, Placeholder.unparsed("player", user.username))
+                }
             }
         }
     }
-
 }

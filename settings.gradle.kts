@@ -8,7 +8,7 @@ pluginManagement {
 }
 
 plugins {
-    id("org.sayandev.stickynote.settings") version "1.8.6"
+    id("org.sayandev.stickynote.settings") version "1.8.7"
 }
 
 rootProject.name = "SayanVanish"

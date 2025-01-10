@@ -10,6 +10,7 @@ plugins {
 
 stickynote {
     modules(StickyNoteModules.BUKKIT, StickyNoteModules.BUKKIT_NMS)
+    relocate(!gradle.startParameter.getTaskNames().any { it.startsWith("runServer") || it.startsWith("runFolia") || it.startsWith("runVelocity") })
 }
 
 dependencies {
@@ -24,6 +25,14 @@ dependencies {
 //    compileOnly("io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT")
 //    paperweight.paperDevBundle("1.21.1-R0.1-SNAPSHOT")
     implementation(project(":sayanvanish-api"))
+}
+
+tasks.withType(xyz.jpenilla.runtask.task.AbstractRun::class) {
+    javaLauncher = javaToolchains.launcherFor {
+        vendor = JvmVendorSpec.JETBRAINS
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+    jvmArgs("-XX:+AllowEnhancedClassRedefinition")
 }
 
 tasks {

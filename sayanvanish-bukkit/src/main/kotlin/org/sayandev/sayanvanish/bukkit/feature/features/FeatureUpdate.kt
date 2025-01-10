@@ -7,12 +7,12 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.utils.DownloadUtils
+import org.sayandev.sayanvanish.api.utils.HangarUtils
+import org.sayandev.sayanvanish.api.utils.VersionInfo
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.sayanvanish.bukkit.sayanvanish
-import org.sayandev.sayanvanish.api.utils.HangarUtils
-import org.sayandev.sayanvanish.api.utils.VersionInfo
 import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendComponent
 import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendRawComponent
 import org.sayandev.stickynote.bukkit.log

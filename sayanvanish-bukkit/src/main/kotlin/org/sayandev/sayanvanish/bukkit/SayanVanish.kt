@@ -12,6 +12,7 @@ import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.sayanvanish.bukkit.command.SayanVanishCommand
 import org.sayandev.sayanvanish.bukkit.config.LanguageConfig
 import org.sayandev.sayanvanish.bukkit.config.SettingsConfig
+import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.sayanvanish.bukkit.health.HealthCheckRequestPublisher
 import org.sayandev.sayanvanish.bukkit.health.ServerInfoPublisher
@@ -37,12 +38,12 @@ open class SayanVanish : JavaPlugin() {
         HealthCheckRequestPublisher
         ServerInfoPublisher
 
-        SettingsConfig()
+        settings
         if (settings.general.proxyMode && databaseConfig.method == DatabaseMethod.SQL && databaseConfig.sql.method == SQLConfig.SQLMethod.SQLITE) {
             error("The `proxy-mode` is enabled, but the database method is set to SQLite, which might lead to unexpected results. If you're using proxies such as Velocity or BungeeCord, make sure to use a different database method, such as MySQL or Redis.")
         }
 
-        LanguageConfig()
+        language
 
         VanishManager
 

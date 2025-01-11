@@ -2,6 +2,7 @@ package org.sayandev.sayanvanish.velocity.api
 
 import com.velocitypowered.api.proxy.Player
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
+import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishOptions
@@ -29,14 +30,16 @@ open class VelocityUser(
     override var currentOptions = VanishOptions.defaultOptions()
     override var isVanished = false
     override var isOnline: Boolean = SayanVanishAPI.getInstance().database.hasBasicUser(uniqueId, true)
-    override var vanishLevel: Int = 1
+    override var vanishLevel: Int = 0
         get() = player()?.let { player ->
                 val luckPermsHook = Features.getFeature<FeatureLuckPermsHook>()
                     if (luckPermsHook.isActive()) {
                         luckPermsHook.getPermissions(uniqueId)
                             .filter { it.startsWith("sayanvanish.level.") }
                             .maxOfOrNull { it.substringAfter("sayanvanish.level.").toIntOrNull() ?: field }
-                            ?: field
+                            ?: if (hasPermission(Permission.VANISH)) 1 else {
+                                if (isVanished) 1 else field
+                            }
                     } else {
                         field
                     }

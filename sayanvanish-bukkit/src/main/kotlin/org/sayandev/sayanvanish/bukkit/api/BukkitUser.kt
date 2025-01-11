@@ -40,13 +40,16 @@ open class BukkitUser(
     } else {
         SayanVanishAPI.getInstance().database.hasBasicUser(uniqueId, true)
     }
-    override var vanishLevel: Int = 1
+    override var vanishLevel: Int = 0
         get() = if (Features.getFeature<FeatureLevel>().levelMethod == FeatureLevel.LevelMethod.PERMISSION) {
             player()?.let { player ->
                 player.effectivePermissions
                     .filter { it.permission.startsWith("sayanvanish.level.") }
-                    .maxOfOrNull { it.permission.substringAfter("sayanvanish.level.").toIntOrNull() ?: 1 } ?: 1
-            } ?: 1
+                    .maxOfOrNull { it.permission.substringAfter("sayanvanish.level.").toIntOrNull() ?: field }
+                    ?: if (hasPermission(Permission.VANISH)) 1 else {
+                        if (isVanished) 1 else field
+                    }
+            } ?: field
         } else {
             field
         }

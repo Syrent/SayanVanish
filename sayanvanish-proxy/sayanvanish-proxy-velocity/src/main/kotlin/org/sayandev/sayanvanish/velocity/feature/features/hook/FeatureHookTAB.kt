@@ -15,21 +15,15 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable
 class FeatureHookTAB: HookFeature("hook_tab", "tab") {
 
     override fun enable() {
-        warn("checking for tab hook")
         if (hasPlugin()) {
-            warn("found tab. registering integration...")
             VanishIntegrationTAB().register()
-            warn("registered")
         }
         super.enable()
     }
 
     override fun disable() {
-        warn("checking for tab hook")
         if (hasPlugin()) {
-            warn("found tab. unregistering integration...")
             VanishIntegrationTAB().unregister()
-            warn("unregistered")
         }
         super.disable()
     }

@@ -6,7 +6,6 @@ import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
 import org.sayandev.sayanvanish.velocity.feature.HookFeature
 import org.sayandev.stickynote.velocity.plugin
-import org.sayandev.stickynote.velocity.warn
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 
 
@@ -35,8 +34,8 @@ class VanishIntegrationTAB: VanishIntegration(plugin.container.description.name.
     }
 
     override fun canSee(viewer: TabPlayer, target: TabPlayer): Boolean {
-        val viewerUser = SayanVanishVelocityAPI.getInstance().getUser(viewer.uniqueId) ?: return true
         val targetUser = SayanVanishVelocityAPI.getInstance().getUser(target.uniqueId) ?: return true
+        val viewerUser = SayanVanishVelocityAPI.getInstance().getUser(viewer.uniqueId)
         return SayanVanishVelocityAPI.getInstance().canSee(viewerUser, targetUser)
     }
 }

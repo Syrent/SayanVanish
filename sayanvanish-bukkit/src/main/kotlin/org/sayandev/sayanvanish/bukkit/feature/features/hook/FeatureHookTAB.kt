@@ -32,7 +32,7 @@ private class VanishIntegrationTAB: VanishIntegration(plugin.name) {
     }
 
     override fun canSee(viewer: TabPlayer, target: TabPlayer): Boolean {
-        val viewerUser = SayanVanishBukkitAPI.getInstance().getUser(viewer.uniqueId) ?: return true
+        val viewerUser = SayanVanishBukkitAPI.getInstance().getUser(viewer.uniqueId)
         val targetUser = SayanVanishBukkitAPI.getInstance().getUser(target.uniqueId) ?: return true
         return SayanVanishBukkitAPI.getInstance().canSee(viewerUser, targetUser)
     }

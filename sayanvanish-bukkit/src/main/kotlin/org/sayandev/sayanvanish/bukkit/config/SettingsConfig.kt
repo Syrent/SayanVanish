@@ -18,10 +18,6 @@ data class SettingsConfig(
     fileName,
 ) {
 
-    init {
-        load()
-    }
-
     @ConfigSerializable
     data class General(
         val serverId: String = "${Platform.get().id}-${UUID.randomUUID()}",
@@ -49,7 +45,7 @@ data class SettingsConfig(
 
         @JvmStatic
         fun defaultConfig(): SettingsConfig {
-            return SettingsConfig()
+            return SettingsConfig().also { it.save() }
         }
 
         @JvmStatic

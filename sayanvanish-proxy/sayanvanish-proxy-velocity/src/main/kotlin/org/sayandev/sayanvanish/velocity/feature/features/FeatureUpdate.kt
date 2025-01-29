@@ -129,7 +129,7 @@ class FeatureUpdate(
         return true
     }
 
-    fun update(): CompletableFuture<Boolean> {
+    fun updatePlugin(): CompletableFuture<Boolean> {
         val future = CompletableFuture<Boolean>()
         if (!isNewerVersionAvailable(notifyForSnapshotBuilds)) future.complete(false)
 

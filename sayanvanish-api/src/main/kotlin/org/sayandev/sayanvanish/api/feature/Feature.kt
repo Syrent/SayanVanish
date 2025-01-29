@@ -93,7 +93,7 @@ abstract class Feature(
         @JvmStatic
         fun loadAndRegister(feature: Feature) {
             createFromInstance(feature)
-            feature.load()
+            feature.save()
             Features.addFeature(feature)
         }
     }

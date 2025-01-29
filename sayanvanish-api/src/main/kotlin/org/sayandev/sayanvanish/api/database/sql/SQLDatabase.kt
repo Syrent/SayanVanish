@@ -15,7 +15,7 @@ import java.io.File
 import java.util.*
 import kotlin.reflect.safeCast
 
-class SQLDatabase<U : User>(
+class SQLDatabase<U: User>(
     val config: SQLConfig,
     val type: Class<out User>,
     override var useCache: Boolean = true

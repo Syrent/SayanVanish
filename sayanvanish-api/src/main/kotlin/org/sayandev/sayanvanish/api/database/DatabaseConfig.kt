@@ -16,16 +16,12 @@ data class DatabaseConfig(
     val redis: RedisConfig = RedisConfig(),
     val useCacheWhenAvailable: Boolean = true,
 ) : Config(Platform.get().rootDirectory, fileName) {
-    init {
-        load()
-    }
-
     companion object {
         private val fileName = "database.yml"
 
         @JvmStatic
         fun defaultConfig(): DatabaseConfig {
-            return DatabaseConfig()
+            return DatabaseConfig().also { it.save() }
         }
 
         @JvmStatic

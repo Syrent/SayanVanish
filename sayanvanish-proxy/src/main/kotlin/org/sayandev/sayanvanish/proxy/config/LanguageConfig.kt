@@ -13,10 +13,6 @@ data class LanguageConfig(
     val vanish: Vanish = Vanish(),
 ) : Config(languageDirectory, "${settings.general.language}.yml") {
 
-    init {
-        load()
-    }
-
     @ConfigSerializable
     data class General(
         val prefix: String = "<#67e8f9>SayanVanish</#67e8f9> <gray>|</gray> <yellow>",
@@ -47,7 +43,7 @@ data class LanguageConfig(
         @JvmStatic
 
         fun defaultConfig(): LanguageConfig {
-            return LanguageConfig()
+            return LanguageConfig().also { it.save() }
         }
 
         @JvmStatic

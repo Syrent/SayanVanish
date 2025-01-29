@@ -104,7 +104,7 @@ class SayanVanishProxyCommandVelocity : SayanVanishProxyCommand<VelocitySender, 
 
                 StickyNote.run {
                     val updateFeature = Features.getFeature<FeatureUpdate>()
-                    updateFeature.update().whenComplete { isSuccessful, error ->
+                    updateFeature.updatePlugin().whenComplete { isSuccessful, error ->
                         error?.printStackTrace()
 
                         StickyNote.run {

@@ -9,17 +9,13 @@ import java.util.UUID
 public var settings: SettingsConfig = SettingsConfig.fromConfig() ?: SettingsConfig.defaultConfig()
 
 @ConfigSerializable
-class SettingsConfig(
+data class SettingsConfig(
     val general: General = General(),
     val command: Command = Command()
 ) : Config(
     Platform.get().rootDirectory,
     fileName
 ) {
-
-    init {
-        load()
-    }
 
     @ConfigSerializable
     data class General(
@@ -47,7 +43,7 @@ class SettingsConfig(
 
         @JvmStatic
         fun defaultConfig(): SettingsConfig {
-            return SettingsConfig()
+            return SettingsConfig().also { it.save() }
         }
 
         @JvmStatic

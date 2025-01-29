@@ -11,12 +11,13 @@ import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.database.DatabaseMethod
 import org.sayandev.sayanvanish.api.database.databaseConfig
 import org.sayandev.sayanvanish.api.database.sql.SQLDatabase
+import org.sayandev.sayanvanish.proxy.config.language
 import org.sayandev.sayanvanish.proxy.config.settings
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
 import org.sayandev.sayanvanish.velocity.command.SayanVanishProxyCommandVelocity
 import org.sayandev.sayanvanish.velocity.health.HealthCheckMessageSubscriber
 import org.sayandev.sayanvanish.velocity.health.ServerInfoPublisher
-import org.sayandev.stickynote.loader.bungee.StickyNoteVelocityLoader
+import org.sayandev.stickynote.loader.velocity.StickyNoteVelocityLoader
 import org.sayandev.stickynote.velocity.StickyNote
 import org.sayandev.stickynote.velocity.registerListener
 import org.slf4j.Logger
@@ -42,10 +43,16 @@ class SayanVanish @Inject constructor(
     @Subscribe
     fun onProxyInitialize(event: ProxyInitializeEvent) {
         sayanvanish = this
+        Platform.get().rootDirectory = dataDirectory.toFile()
         StickyNoteVelocityLoader(this, PLUGIN_ID, server, logger, dataDirectory)
         suspendingPluginContainer.initialize(this)
 
-        Platform.setAndRegister(Platform("velocity", java.util.logging.Logger.getLogger("sayanvanish"), dataDirectory.toFile(), settings.general.serverId))
+        Platform.setAndRegister(Platform("velocity", java.util.logging.Logger.getLogger("sayanvanish"), dataDirectory.toFile(), ""))
+
+        settings
+        language
+
+        Platform.get().serverId = settings.general.serverId
 
         try {
             SayanVanishVelocityAPI

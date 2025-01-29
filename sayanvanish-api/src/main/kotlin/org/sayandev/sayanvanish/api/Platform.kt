@@ -7,7 +7,7 @@ import java.util.logging.Logger
 data class Platform(
     val id: String,
     val logger: Logger,
-    val rootDirectory: File,
+    var rootDirectory: File,
     var serverId: String,
 ) {
 

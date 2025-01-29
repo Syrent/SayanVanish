@@ -33,7 +33,7 @@ object RegisteredFeatureHandler {
         try {
             if (Features.features.map { it.javaClass }.contains(clazz)) return
             val instance = Feature.createFromConfig(clazz as Class<out Feature>)
-            instance.load()
+            instance.save()
             when (instance) {
                 is Feature -> {
                     Features.addFeature(instance)

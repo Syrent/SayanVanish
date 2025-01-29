@@ -12,10 +12,14 @@ import org.sayandev.sayanvanish.bukkit.feature.HookFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.stickynote.bukkit.registerListener
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.objectmapping.meta.Comment
 
 @RegisteredFeature
 @ConfigSerializable
-class FeatureHookCitizens: HookFeature("hook_citizens", "Citizens") {
+class FeatureHookCitizens(
+    @Comment("Will cancel npc speech event if context of speech contains a vanished player")
+    val checkSpeech: Boolean = true,
+): HookFeature("hook_citizens", "Citizens") {
 
     override fun enable() {
         if (hasPlugin()) {

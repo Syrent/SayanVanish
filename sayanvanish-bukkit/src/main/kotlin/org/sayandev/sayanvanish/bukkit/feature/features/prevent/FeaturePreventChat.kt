@@ -11,10 +11,12 @@ import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.objectmapping.meta.Comment
 
 @RegisteredFeature
 @ConfigSerializable
-class FeaturePreventChat(
+data class FeaturePreventChat(
+    @Comment("The character that vanished players can use to bypass the chat prevention.")
     @Configurable val bypassChar: String = "!"
 ): ListenedFeature("prevent_chat", category = FeatureCategories.PREVENTION) {
 

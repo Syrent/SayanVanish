@@ -14,10 +14,21 @@ import org.sayandev.stickynote.bukkit.hook.PlaceholderAPIHook
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.warn
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.objectmapping.meta.Comment
 
 @RegisteredFeature
 @ConfigSerializable
-class FeatureHookPlaceholderAPI(
+data class FeatureHookPlaceholderAPI(
+    @Comment("""
+    Inject placeholders into PlaceholderAPI
+    Available placeholders:
+    - %sayanvanish_vanished% - Returns true if the player is vanished
+    - %sayanvanish_level% - Returns the vanish level of the player
+    - %sayanvanish_count% - Returns the count of vanished players
+    - %sayanvanish_online_here% - Returns the count of online players that are not vanished
+    - %sayanvanish_online_total% - Returns the count of online players that are not vanished in the total network
+    - %sayanvanish_online_<server_id>% - Returns the count of online players that are not vanished in the specified server
+    """)
     @Configurable val injectPlaceholders: Boolean = true
 ): HookFeature("hook_placeholderapi", "PlaceholderAPI") {
 

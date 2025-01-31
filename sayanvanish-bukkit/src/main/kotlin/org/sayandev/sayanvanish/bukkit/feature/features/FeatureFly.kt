@@ -9,10 +9,12 @@ import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.objectmapping.meta.Comment
 
 @RegisteredFeature
 @ConfigSerializable
 class FeatureFly(
+    @Comment("Disable fly when player reappears and don't have keep fly permission.")
     @Configurable val disableOnReappear: Boolean = true
 ) : ListenedFeature("fly") {
 

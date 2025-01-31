@@ -8,12 +8,14 @@ import org.sayandev.sayanvanish.velocity.feature.ListenedFeature
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.sayandev.stickynote.velocity.StickyNote
 import org.sayandev.stickynote.velocity.server
+import org.spongepowered.configurate.objectmapping.meta.Comment
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 @RegisteredFeature
 @ConfigSerializable
-class FeatureSyncEvents(
+data class FeatureSyncEvents(
+    @Comment("The period of time to check for vanished players. low values may cause performance issues.")
     val checkPeriodMillis: Long = 50
 ) : ListenedFeature("sync_events") {
 

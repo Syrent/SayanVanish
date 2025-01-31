@@ -13,10 +13,12 @@ import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.objectmapping.meta.Comment
 
 @RegisteredFeature
 @ConfigSerializable
-class FeatureProxyVanishQueue(
+data class FeatureProxyVanishQueue(
+    @Comment("The time in milliseconds between each check for players in the queue. low values may cause performance issues.")
     @Configurable val checkEvery: Long = 100
 ) : Feature("proxy_vanish_queue", category = FeatureCategories.PROXY) {
 

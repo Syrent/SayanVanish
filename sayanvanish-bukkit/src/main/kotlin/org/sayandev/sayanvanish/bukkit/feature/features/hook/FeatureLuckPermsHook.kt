@@ -16,13 +16,20 @@ import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrC
 import org.sayandev.sayanvanish.bukkit.feature.HookFeature
 import org.sayandev.stickynote.bukkit.warn
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.objectmapping.meta.Comment
 import java.util.*
 
 
 @RegisteredFeature
 @ConfigSerializable
-class FeatureLuckPermsHook(
+data class FeatureLuckPermsHook(
+    @Comment("""
+    Whether to register custom context for vanished players.
+    This will allow you to check if a player is vanished using the context "vanished".
+    This is useful for checking permissions based on the player's vanish status.
+    """)
     @Configurable val registerCustomContext: Boolean = true,
+    @Comment("Whether to check permission using LuckPerms. If false, it will fallback to bukkit permission check.")
     @Configurable val checkPermissionViaLuckPerms: Boolean = false,
 ): HookFeature("hook_luckperms", "LuckPerms") {
 

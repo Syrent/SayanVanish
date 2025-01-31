@@ -11,12 +11,16 @@ import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.StickyNote.runSync
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.objectmapping.meta.Comment
 
 @RegisteredFeature
 @ConfigSerializable
-class FeatureActionbar(
+data class FeatureActionbar(
+    @Comment("The content of the actionbar message.")
     @Configurable val content: String = "<gray>You are currently vanished!",
+    @Comment("The delay before the actionbar message is sent. doesn't really matter.")
     @Configurable val delay: Long = 20,
+    @Comment("The period between each actionbar message. values higher than 40 will make it not always visible.")
     @Configurable val period: Long = 20,
 ) : ListenedFeature("actionbar") {
 

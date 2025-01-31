@@ -11,12 +11,16 @@ import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.utils.ServerVersion
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.objectmapping.meta.Comment
 
 @RegisteredFeature
 @ConfigSerializable
-class FeaturePreventInteract(
+data class FeaturePreventInteract(
+    @Comment("Prevent players from activating pressure plates while vanished")
     @Configurable val pressurePlateTrigger: Boolean = true,
+    @Comment("Prevent players from interacting with big dripleaf while vanished")
     @Configurable val dripLeaf: Boolean = true,
+    @Comment("Prevent players from interacting")
     @Configurable val interact: Boolean = false,
 ) : ListenedFeature("prevent_interact_event", category = FeatureCategories.PREVENTION) {
 

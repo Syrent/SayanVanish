@@ -16,12 +16,15 @@ import org.sayandev.sayanvanish.velocity.feature.HookFeature
 import org.sayandev.stickynote.velocity.StickyNote
 import org.sayandev.stickynote.velocity.warn
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.objectmapping.meta.Comment
 import java.util.*
 
 @RegisteredFeature
 @ConfigSerializable
-class FeatureLuckPermsHook(
+data class FeatureLuckPermsHook(
+    @Comment("Register custom context for vanished players, this will allow you to check if a player is vanished using LuckPerms.")
     @Configurable val registerCustomContext: Boolean = true,
+    @Comment("Check permission using LuckPerms, if false, will fallback to velocity permission check.")
     @Configurable val checkPermissionViaLuckPerms: Boolean = true,
 ): HookFeature("hook_luckperms", "luckperms") {
 

@@ -12,6 +12,7 @@ import org.sayandev.stickynote.bukkit.nms.PacketUtils
 import org.sayandev.stickynote.bukkit.utils.ServerVersion
 import org.spongepowered.configurate.ConfigurationNode
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.objectmapping.meta.Comment
 import org.spongepowered.configurate.serialize.TypeSerializer
 import org.spongepowered.configurate.serialize.TypeSerializerCollection
 import java.lang.reflect.Type
@@ -19,7 +20,11 @@ import java.lang.reflect.Type
 @RegisteredFeature
 @ConfigSerializable
 @Suppress("DEPRECATION")
-class FeatureEffect(
+data class FeatureEffect(
+    @Comment("""
+    All effects will being sent using packets to prevent conflict with other plugins or desyncs.
+    List of effects to apply when a player vanishes
+    """)
     val effects: List<PotionEffectData> = listOf(
         PotionEffectData(
             ServerVersion.supports(9),

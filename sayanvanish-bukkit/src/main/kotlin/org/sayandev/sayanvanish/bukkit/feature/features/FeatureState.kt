@@ -15,14 +15,25 @@ import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.objectmapping.meta.Comment
 
 @RegisteredFeature
 @ConfigSerializable
-class FeatureState(
+data class FeatureState(
+    @Comment("""
+    This is a CRITICAL feature. It is responsible for handling the state of the player when they join or quit the server.
+    do NOT disable this feature if you don't know what you're doing.
+    
+    If true, players will be remembered when they join the server. (if they were vanished before quitting)
+    """)
     @Configurable val remember: Boolean = true,
+    @Comment("Whether to vanish players when they join the server (they also need vanish on join permission)")
     @Configurable val vanishOnJoin: Boolean = false,
+    @Comment("Whether to reappear players when they quit the server")
     @Configurable val reappearOnQuit: Boolean = false,
+    @Comment("Whether to check permission when a player joins the server")
     @Configurable val checkPermissionOnQuit: Boolean = true,
+    @Comment("Whether to check permission when a player quits the server")
     @Configurable val checkPermissionOnJoin: Boolean = true,
 ) : ListenedFeature("state", critical = true) {
 

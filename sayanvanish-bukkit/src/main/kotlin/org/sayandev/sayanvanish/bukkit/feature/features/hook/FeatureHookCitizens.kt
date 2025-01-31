@@ -16,7 +16,7 @@ import org.spongepowered.configurate.objectmapping.meta.Comment
 
 @RegisteredFeature
 @ConfigSerializable
-class FeatureHookCitizens(
+data class FeatureHookCitizens(
     @Comment("Will cancel npc speech event if context of speech contains a vanished player")
     val checkSpeech: Boolean = true,
 ): HookFeature("hook_citizens", "Citizens") {
@@ -38,6 +38,7 @@ private class CitizensHookImpl(val feature: FeatureHookCitizens): Listener {
 
     @EventHandler
     private fun onNPCSpeech(event: NPCSpeechEvent) {
+        if (!feature.checkSpeech) return
         if (!feature.isActive()) return
         val hasContext = checkContext(event.context)
         if (!hasContext) event.isCancelled = true
@@ -45,6 +46,7 @@ private class CitizensHookImpl(val feature: FeatureHookCitizens): Listener {
 
     @EventHandler
     private fun onSpeech(event: SpeechEvent) {
+        if (!feature.checkSpeech) return
         if (!feature.isActive()) return
         val hasContext = checkContext(event.context)
         if (!hasContext) event.isCancelled = true

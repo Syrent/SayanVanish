@@ -20,16 +20,36 @@ import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendComponent
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.objectmapping.meta.Comment
 
 @RegisteredFeature
 @ConfigSerializable
-class FeatureFakeMessage(
+data class FeatureFakeMessage(
+    @Comment("Whether to send a fake join message when a player vanishes")
     @Configurable val sendFakeJoinMessage: Boolean = false,
+    @Comment("The message to send when a player vanishes")
     @Configurable val sendFakeQuitMessage: Boolean = false,
+    @Comment("""
+    The message to send when a player vanishes
+    
+    Note: All PlaceholderAPI placeholders are supported
+    Internal Placeholders:
+    - <player> - the vanished player's name
+    """)
     @Configurable val fakeJoinMessage: String = "<yellow><player> joined the game",
+    @Comment("""
+    The message to send when a player vanishes
+    
+    Note: All PlaceholderAPI placeholders are supported
+    Internal Placeholders:
+    - <player> - the vanished player's name
+    """)
     @Configurable val fakeQuitMessage: String = "<yellow><player> left the game",
+    @Comment("Whether to use the legacy formatter for the fake messages (NOT RECOMMENDED)")
     @Configurable val useLegacyFormatter: Boolean = false,
+    @Comment("Whether to disable the join message if the player is vanished")
     @Configurable val disableJoinMessageIfVanished: Boolean = true,
+    @Comment("Whether to disable the quit message if the player is vanished")
     @Configurable val disableQuitMessageIfVanished: Boolean = true,
 ) : ListenedFeature("fake_message") {
 

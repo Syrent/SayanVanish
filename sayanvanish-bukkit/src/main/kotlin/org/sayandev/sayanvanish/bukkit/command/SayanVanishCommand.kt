@@ -18,9 +18,7 @@ import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.database.DatabaseConfig
-import org.sayandev.sayanvanish.api.database.DatabaseMethod
 import org.sayandev.sayanvanish.api.database.databaseConfig
-import org.sayandev.sayanvanish.api.database.sql.SQLConfig
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.Features
 import org.sayandev.sayanvanish.api.feature.RegisteredFeatureHandler
@@ -129,7 +127,7 @@ class SayanVanishCommand : BukkitCommand(settings.command.name, *settings.comman
 
                 runAsync {
                     val updateFeature = Features.getFeature<FeatureUpdate>()
-                    updateFeature.update().whenComplete { isSuccessful, error ->
+                    updateFeature.updatePlugin().whenComplete { isSuccessful, error ->
                         error?.printStackTrace()
 
                         runSync {

@@ -10,10 +10,12 @@ import org.sayandev.stickynote.bukkit.StickyNote.runSync
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.objectmapping.meta.Comment
 
 @RegisteredFeature
 @ConfigSerializable
-class FeatureSneakToggleGameMode(
+data class FeatureSneakToggleGameMode(
+    @Comment("The fallback gamemode when the player is not vanished and doesn't have in-memory gamemode.")
     val fallbackMode: GameMode = GameMode.SURVIVAL
 ): ListenedFeature("sneak_toggle_gamemode") {
 

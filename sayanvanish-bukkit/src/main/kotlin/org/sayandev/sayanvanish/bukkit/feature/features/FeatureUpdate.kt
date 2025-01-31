@@ -20,16 +20,23 @@ import org.sayandev.stickynote.bukkit.plugin
 import org.sayandev.stickynote.bukkit.runAsync
 import org.sayandev.stickynote.bukkit.runSync
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.objectmapping.meta.Comment
 import java.util.concurrent.CompletableFuture
 
 @RegisteredFeature
 @ConfigSerializable
-class FeatureUpdate(
+data class FeatureUpdate(
+    @Comment("The interval to check for updates in minutes")
     @Configurable val checkEveryXMinutes: Int = 60 * 24,
+    @Comment("The permission required to receive update notifications")
     @Configurable val notifyPermission: String = "${plugin.name.lowercase()}.feature.update.notify",
+    @Comment("Whether to notify players if an update is available when they join the server")
     @Configurable val notifyOnJoin: Boolean = true,
+    @Comment("Whether to notify players if an update is available for snapshot builds")
     @Configurable val notifyForSnapshotBuilds: Boolean = true,
+    @Comment("Weather to ask players to do an automatic update when they join the server")
     @Configurable val autoUpdateNotification: Boolean = true,
+    @Comment("The content of the update notification message")
     val updateNotificationContent: List<String> = listOf(
         "<green>A new version of <white>SayanVanish</white> is available!",
         "<gold> - Latest release: <white><latest_release_name>",
@@ -39,6 +46,7 @@ class FeatureUpdate(
         "  <yellow>- <gray>Click to download: <blue><click:open_url:'<latest_snapshot_url_paper>'>Paper</click> <gray>|</gray> <aqua><click:open_url:'<latest_snapshot_url_velocity>'>Velocity</click> <gray>|</gray> <blue><click:open_url:'<latest_snapshot_url_waterfall>'>Waterfall</click>",
         "  <yellow>- <gray><click:open_url:'https://hangar.papermc.io/Syrent/SayanVanish/versions/<latest_snapshot_name>'>Click to see full changelog"
     ),
+    @Comment("The content of the update request message")
     val updateRequestContent: List<String> = listOf(
         "<green>A new version of <white>SayanVanish</white> is available!",
         "<hover:show_text:'<red>Click to update'><click:run_command:'/${settings.command.name} forceupdate'><aqua>You can install version <version> by clicking on this message</click></hover>",
@@ -130,7 +138,7 @@ class FeatureUpdate(
         return true
     }
 
-    fun update(): CompletableFuture<Boolean> {
+    fun updatePlugin(): CompletableFuture<Boolean> {
         val future = CompletableFuture<Boolean>()
         if (!isNewerVersionAvailable(notifyForSnapshotBuilds)) future.complete(false)
 

@@ -19,17 +19,24 @@ import org.sayandev.stickynote.velocity.log
 import org.sayandev.stickynote.velocity.plugin
 import org.sayandev.stickynote.velocity.utils.AdventureUtils.component
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.objectmapping.meta.Comment
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
 @RegisteredFeature
 @ConfigSerializable
-class FeatureUpdate(
+data class FeatureUpdate(
+    @Comment("The period of time to check for updates.")
     @Configurable val checkEveryXMinutes: Int = 60 * 24,
+    @Comment("The permission required to bypass update notifications.")
     @Configurable val notifyBypassPermission: String = "sayanvanish.feature.update.notify.exempt",
+    @Comment("Whether to notify players when they join the server.")
     @Configurable val notifyOnJoin: Boolean = true,
+    @Comment("Whether to notify players for snapshot builds.")
     @Configurable val notifyForSnapshotBuilds: Boolean = true,
+    @Comment("Weather to ask players to do an automatic update when they join the server")
     @Configurable val autoUpdateNotification: Boolean = true,
+    @Comment("The content of the update notification message")
     val updateNotificationContent: List<String> = listOf(
         "<green>A new version of <white>SayanVanish Velocity</white> is available!",
         "<gold> - Latest release: <white><latest_release_name>",
@@ -39,6 +46,7 @@ class FeatureUpdate(
         "  <yellow>- <gray>Click to download: <blue><click:open_url:'<latest_snapshot_url_paper>'>Paper</click> <gray>|</gray> <aqua><click:open_url:'<latest_snapshot_url_velocity>'>Velocity</click> <gray>|</gray> <blue><click:open_url:'<latest_snapshot_url_waterfall>'>Waterfall</click>",
         "  <yellow>- <gray><click:open_url:'https://hangar.papermc.io/Syrent/SayanVanish/versions/<latest_snapshot_name>'>Click to see full changelog"
     ),
+    @Comment("The content of the update request message")
     val updateRequestContent: List<String> = listOf(
         "<green>A new version of <white>SayanVanish Velocity</white> is available!",
         "<hover:show_text:'<red>Click to update'><click:run_command:'/${settings.command.name} forceupdate'><aqua>You can install version <version> by clicking on this message</click></hover>",

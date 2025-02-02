@@ -30,7 +30,7 @@ data class FeatureLuckPermsHook(
     """)
     @Configurable val registerCustomContext: Boolean = true,
     @Comment("Whether to check permission using LuckPerms. If false, it will fallback to bukkit permission check.")
-    @Configurable val checkPermissionViaLuckPerms: Boolean = true,
+    @Configurable val checkPermissionViaLuckPerms: Boolean = false,
 ): HookFeature("hook_luckperms", "LuckPerms") {
 
     @Transient var vanishContext: VanishedContext? = null

@@ -23,7 +23,7 @@ interface Database<U: User> {
 
     fun removeUser(uniqueId: UUID)
 
-    fun getUser(uniqueId: UUID): U?
+    fun getUser(uniqueId: UUID, useCache: Boolean = true): U?
 
     fun getUsers(): List<U>
     fun getUsersAsync(result: (List<U>) -> Unit)

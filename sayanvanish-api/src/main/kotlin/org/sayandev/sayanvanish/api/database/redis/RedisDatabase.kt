@@ -51,9 +51,9 @@ class RedisDatabase<U : User>(
         redis.close()
     }
 
-    override fun getUser(uniqueId: UUID): U? {
+    override fun getUser(uniqueId: UUID, useCache: Boolean): U? {
         val cacheUser = cache[uniqueId]
-        if (useCache) {
+        if (this.useCache && useCache) {
             if (cacheUser == null) {
                 return null
             }

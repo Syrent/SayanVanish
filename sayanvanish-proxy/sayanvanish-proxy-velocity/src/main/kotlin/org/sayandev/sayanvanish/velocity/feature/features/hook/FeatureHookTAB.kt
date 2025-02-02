@@ -7,35 +7,38 @@ import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
 import org.sayandev.sayanvanish.velocity.feature.HookFeature
 import org.sayandev.stickynote.velocity.plugin
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.objectmapping.meta.Comment
 
 
 @RegisteredFeature
 @ConfigSerializable
-class FeatureHookTAB: HookFeature("hook_tab", "tab") {
-
+class FeatureHookTAB(
+    @Comment("Whether to use cache data for vanish status. This will improve performance but may cause a small delay in tablist removal after join.")
+    val useCacheData: Boolean = false
+): HookFeature("hook_tab", "TAB") {
     override fun enable() {
         if (hasPlugin()) {
-            VanishIntegrationTAB().register()
+            VanishIntegrationTAB(this).register()
         }
         super.enable()
     }
 
     override fun disable() {
         if (hasPlugin()) {
-            VanishIntegrationTAB().unregister()
+            VanishIntegrationTAB(this).unregister()
         }
         super.disable()
     }
 }
 
-class VanishIntegrationTAB: VanishIntegration(plugin.container.description.name.get()) {
+private class VanishIntegrationTAB(val feature: FeatureHookTAB): VanishIntegration(plugin.container.description.name.get()) {
     override fun isVanished(player: TabPlayer): Boolean {
-        return SayanVanishVelocityAPI.getInstance().isVanished(player.uniqueId)
+        return SayanVanishVelocityAPI.getInstance().isVanished(player.uniqueId, feature.useCacheData)
     }
 
     override fun canSee(viewer: TabPlayer, target: TabPlayer): Boolean {
-        val targetUser = SayanVanishVelocityAPI.getInstance().getUser(target.uniqueId) ?: return true
-        val viewerUser = SayanVanishVelocityAPI.getInstance().getUser(viewer.uniqueId)
+        val viewerUser = SayanVanishVelocityAPI.getInstance().getUser(viewer.uniqueId, feature.useCacheData)
+        val targetUser = SayanVanishVelocityAPI.getInstance().getUser(target.uniqueId, feature.useCacheData) ?: return true
         return SayanVanishVelocityAPI.getInstance().canSee(viewerUser, targetUser)
     }
 }

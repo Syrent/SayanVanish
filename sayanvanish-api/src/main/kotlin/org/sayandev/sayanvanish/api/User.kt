@@ -52,6 +52,7 @@ interface User : BasicUser {
     * @param otherUser The user to check if this user can see
     * */
     fun canSee(otherUser: User): Boolean {
+        if (!otherUser.isVanished) return true
         if (this.uniqueId == otherUser.uniqueId) return true
         val canSee = vanishLevel >= otherUser.vanishLevel
         return canSee

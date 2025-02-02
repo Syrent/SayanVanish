@@ -36,17 +36,18 @@ open class SayanVanishAPI<U: User>(val type: Class<out User>) {
         return Platform.get()
     }
 
-    fun isVanished(uniqueId: UUID): Boolean {
-        return database.getUser(uniqueId)?.isVanished == true
+    fun isVanished(uniqueId: UUID, useCache: Boolean = true): Boolean {
+        return database.getUser(uniqueId, useCache)?.isVanished == true
     }
 
     fun canSee(user: U?, target: U): Boolean {
+        if (!target.isVanished) return true
         val vanishLevel = user?.vanishLevel ?: -1
         return vanishLevel >= target.vanishLevel
     }
 
-    fun getUser(uniqueId: UUID): U? {
-        return database.getUser(uniqueId)
+    fun getUser(uniqueId: UUID, useCache: Boolean = true): U? {
+        return database.getUser(uniqueId, useCache)
     }
 
     fun getOnlineUsers(): List<U> {

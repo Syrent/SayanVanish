@@ -214,8 +214,6 @@ subprojects {
         }
     }
 
-    artifacts.archives(publicationShadowJar)
-
     publishing {
         publications {
             create<MavenPublication>("maven") {

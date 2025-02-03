@@ -25,6 +25,10 @@ interface Database<U: User> {
 
     fun getUser(uniqueId: UUID, useCache: Boolean = true): U?
 
+    fun getUser(uniqueId: UUID): U? {
+        return getUser(uniqueId, true)
+    }
+
     fun getUsers(): List<U>
     fun getUsersAsync(result: (List<U>) -> Unit)
 

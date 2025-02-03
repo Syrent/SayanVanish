@@ -54,6 +54,10 @@ open class SayanVanishAPI<U: User>(val type: Class<out User>) {
         return database.getUser(uniqueId, useCache)
     }
 
+    fun getUser(uniqueId: UUID): U? {
+        return getUser(uniqueId, true)
+    }
+
     fun getOnlineUsers(): List<U> {
         return database.getUsers().filter { it.isOnline }
     }

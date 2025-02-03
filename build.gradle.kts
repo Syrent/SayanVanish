@@ -214,6 +214,8 @@ subprojects {
         }
     }
 
+    artifacts.archives(publicationShadowJar)
+
     publishing {
         publications {
             create<MavenPublication>("maven") {
@@ -229,7 +231,7 @@ subprojects {
         repositories {
             maven {
                 name = "sayandevelopment-repo"
-                url = uri("https://repo.sayandev.org/snapshots/")
+                url = uri(if (versionString.contains("-SNAPSHOT")) "https://repo.sayandev.org/snapshots/" else "https://repo.sayandev.org/releases/")
 
                 credentials {
                     username = System.getenv("REPO_SAYAN_USER") ?: project.findProperty("repo.sayan.user") as? String

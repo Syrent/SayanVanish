@@ -7,7 +7,7 @@ import java.util.UUID
 
 val database = SayanVanishBungeeAPI.getInstance().database
 
-class SayanVanishBungeeAPI() : SayanVanishAPI<BungeeUser>(BungeeUser::class.java) {
+class SayanVanishBungeeAPI : SayanVanishAPI<BungeeUser>(BungeeUser::class.java) {
     companion object {
         private val defaultInstance = SayanVanishBungeeAPI()
 

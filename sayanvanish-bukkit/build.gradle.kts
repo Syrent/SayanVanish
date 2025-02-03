@@ -65,6 +65,7 @@ tasks {
         downloadPlugins {
             hangar("ViaVersion", "5.0.4-SNAPSHOT+548")
             hangar("PlaceholderAPI", "2.11.6")
+            hangar("AdvancedServerList", "5.4.1")
 //            url("https://cdn.modrinth.com/data/qvdtDX3s/versions/TD9kTO2n/multiverse-inventories-4.2.7-pre.jar")
 //            url("https://github.com/SkinsRestorer/SkinsRestorer/releases/download/15.5.1/SkinsRestorer.jar")
 //            url("https://cdn.modrinth.com/data/3wmN97b8/versions/ehwU9G3y/multiverse-core-4.3.15-pre.2.jar")

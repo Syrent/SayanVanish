@@ -169,7 +169,7 @@ data class FeatureUpdate(
         return (if (notifyForSnapshotBuilds) latestSnapshot?.name else latestRelease?.name) ?: "N/A"
     }
 
-    val proxyWords = listOf("proxy", "velocity", "bungee")
+    private val proxyWords = listOf("proxy", "velocity", "bungee")
     fun willAffectProxy(): Boolean {
         return (if (notifyForSnapshotBuilds) proxyWords.any { latestSnapshot?.description?.contains(it) ?: false } else proxyWords.any { latestRelease?.description?.contains(it) ?: false }) ?: false
     }

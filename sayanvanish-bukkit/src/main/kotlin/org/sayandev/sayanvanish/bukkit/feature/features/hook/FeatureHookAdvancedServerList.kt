@@ -2,6 +2,7 @@ package org.sayandev.sayanvanish.bukkit.feature.features.hook
 
 import ch.andre601.advancedserverlist.api.AdvancedServerListAPI
 import ch.andre601.advancedserverlist.api.PlaceholderProvider
+import ch.andre601.advancedserverlist.api.exceptions.InvalidPlaceholderProviderException
 import ch.andre601.advancedserverlist.api.objects.GenericPlayer
 import ch.andre601.advancedserverlist.api.objects.GenericServer
 import org.sayandev.sayanvanish.api.SayanVanishAPI
@@ -17,8 +18,10 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable
 class FeatureHookAdvancedServerList : HookFeature("hook_advanced_server_list", "AdvancedServerList") {
     override fun enable() {
         if (hasPlugin()) {
-            AdvancedServerListAPI.get()
-                .addPlaceholderProvider(AdvancedServerListImpl())
+            try {
+                AdvancedServerListAPI.get()
+                    .addPlaceholderProvider(AdvancedServerListImpl())
+            } catch (_: InvalidPlaceholderProviderException) { }
         }
         super.enable()
     }

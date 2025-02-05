@@ -36,6 +36,7 @@ private class VanishIntegrationTAB(val feature: FeatureHookTAB): VanishIntegrati
     }
 
     override fun canSee(viewer: TabPlayer, target: TabPlayer): Boolean {
+        if (viewer.uniqueId == target.uniqueId) return true
         val viewerUser = SayanVanishBukkitAPI.getInstance().getUser(viewer.uniqueId, feature.useCacheData)
         val targetUser = SayanVanishBukkitAPI.getInstance().getUser(target.uniqueId, feature.useCacheData) ?: return true
         return SayanVanishBukkitAPI.getInstance().canSee(viewerUser, targetUser)

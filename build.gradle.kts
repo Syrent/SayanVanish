@@ -164,6 +164,7 @@ allprojects {
 
         token.set(modrinthApiKey)
         projectId.set("${rootProject.property("modrinthProjectID")}")
+
         versionNumber.set(if (isRelease) versionString else publishVersion.replace("-build.", "-b").replace("-SNAPSHOT", ""))
         versionType.set(System.getenv("MODRINTH_BUILD_CHANNEL") ?: "beta")
         uploadFile.set(tasks.shadowJar.flatMap { it.archiveFile })

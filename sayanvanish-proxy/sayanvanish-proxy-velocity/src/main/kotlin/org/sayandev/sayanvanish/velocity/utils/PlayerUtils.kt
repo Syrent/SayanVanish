@@ -11,6 +11,8 @@ import org.sayandev.stickynote.velocity.utils.AdventureUtils.component
 
 object PlayerUtils {
     fun CommandSource.sendComponent(content: String, vararg placeholders: TagResolver) {
+        if (content.isBlank()) return
+
         val prefix = language.general.prefix.component()
         val contentComponent = content.component(*placeholders)
         this.sendMessage(if (settings.general.includePrefixInMessages) {
@@ -21,6 +23,8 @@ object PlayerUtils {
     }
 
     fun CommandSource.sendComponent(content: Component) {
+        if (content == Component.empty()) return
+
         val prefix = language.general.prefix.component()
         this.sendMessage(if (settings.general.includePrefixInMessages) {
             prefix.append(content)

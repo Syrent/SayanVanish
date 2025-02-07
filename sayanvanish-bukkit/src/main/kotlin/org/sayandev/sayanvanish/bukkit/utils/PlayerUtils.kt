@@ -11,6 +11,8 @@ import org.sayandev.stickynote.bukkit.warn
 object PlayerUtils {
 
     fun CommandSender.sendComponent(content: String, vararg placeholders: TagResolver) {
+        if (content.isBlank()) return
+
         val prefix = language.general.prefix
         AdventureUtils.sendComponent(this, if (settings.general.includePrefixInMessages) {
             prefix + content
@@ -20,11 +22,8 @@ object PlayerUtils {
     }
 
     fun CommandSender.sendRawComponent(content: String, vararg placeholders: TagResolver) {
+        if (content.isBlank()) return
         AdventureUtils.sendComponent(this, content, *placeholders)
-    }
-
-    fun OfflinePlayer.isPlayingOnThisServer(): Boolean {
-        return this.isOnline
     }
 
 }

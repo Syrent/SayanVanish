@@ -20,8 +20,8 @@ abstract class ListenedFeature(
         super.enable()
     }
 
-    override fun disable() {
-        super.disable()
+    override fun disable(reload: Boolean) {
+        super.disable(reload)
     }
 
 }

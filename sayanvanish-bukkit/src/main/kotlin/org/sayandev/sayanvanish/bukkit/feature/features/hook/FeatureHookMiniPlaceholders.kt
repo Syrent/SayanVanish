@@ -23,11 +23,11 @@ class FeatureHookMiniPlaceholders: HookFeature("hook_miniplaceholders", "MiniPla
         super.enable()
     }
 
-    override fun disable() {
+    override fun disable(reload: Boolean) {
         if (hasPlugin()) {
             MiniPlaceholdersHookImpl(this).unregister()
         }
-        super.disable()
+        super.disable(reload)
     }
 
 }

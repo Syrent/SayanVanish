@@ -23,9 +23,9 @@ abstract class ListenedFeature(
         super.enable()
     }
 
-    override fun disable() {
+    override fun disable(reload: Boolean) {
         unregisterListener(this)
-        super.disable()
+        super.disable(reload)
     }
 
 }

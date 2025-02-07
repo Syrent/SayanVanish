@@ -4,6 +4,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import org.bukkit.event.Listener
 import org.incendo.cloud.bukkit.parser.OfflinePlayerParser
 import org.incendo.cloud.bukkit.parser.PlayerParser
 import org.incendo.cloud.component.CommandComponent
@@ -29,6 +30,7 @@ import org.sayandev.sayanvanish.bukkit.config.LanguageConfig
 import org.sayandev.sayanvanish.bukkit.config.SettingsConfig
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.config.settings
+import org.sayandev.sayanvanish.bukkit.feature.HookFeature
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureLevel
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureUpdate
 import org.sayandev.sayanvanish.bukkit.health.HealthCache
@@ -198,7 +200,10 @@ class SayanVanishCommand : BukkitCommand(settings.command.name, *settings.comman
                 val sender = context.sender().platformSender()
                 language = LanguageConfig.fromConfig() ?: LanguageConfig.defaultConfig()
                 Features.features.forEach { feature ->
-                    feature.disable()
+                    feature.disable(true)
+                    if (feature::class.java.isAssignableFrom(Listener::class.java)) {
+                        unregisterListener(feature as Listener)
+                    }
                 }
                 Features.features.clear()
                 Features.userFeatures.clear()

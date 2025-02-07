@@ -45,9 +45,9 @@ data class FeatureLuckPermsHook(
         super.enable()
     }
 
-    override fun disable() {
+    override fun disable(reload: Boolean) {
         vanishContext?.let { LuckPermsProvider.get().contextManager.unregisterCalculator(it) }
-        super.disable()
+        super.disable(reload)
     }
 
     fun hasPermission(uniqueId: UUID, permission: String): Boolean {

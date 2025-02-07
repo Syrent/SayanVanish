@@ -23,11 +23,11 @@ data class FeatureHookTAB(
         super.enable()
     }
 
-    override fun disable() {
+    override fun disable(reload: Boolean) {
         if (hasPlugin()) {
             VanishIntegrationTAB(this).unregister()
         }
-        super.disable()
+        super.disable(reload)
     }
 }
 

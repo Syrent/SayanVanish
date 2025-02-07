@@ -34,9 +34,13 @@ abstract class Feature(
         enabled = true
     }
 
-    open fun disable() {
+    fun disable() {
+        disable(false)
+    }
+
+    open fun disable(reload: Boolean) {
         if (critical) {
-            onCriticalDisabled()
+            onCriticalDisabled(reload)
         }
         enabled = false
     }
@@ -50,7 +54,13 @@ abstract class Feature(
     }
 
     fun onCriticalDisabled() {
-        Platform.get().logger.warning("the feature '$id' is critical and currently disabled. We strongly recommend re-enabling it to avoid potential unexpected behavior. (path: ${directory(category).path}/${id}.yml)")
+        onCriticalDisabled(false)
+    }
+
+    fun onCriticalDisabled(reload: Boolean) {
+        if (!reload) {
+            Platform.get().logger.warning("the feature '$id' is critical and currently disabled. We strongly recommend re-enabling it to avoid potential unexpected behavior. (path: ${directory(category).path}/${id}.yml)")
+        }
     }
 
     fun loadAndRegister() {

@@ -49,7 +49,7 @@ data class FeatureHookPlaceholderAPI(
         super.enable()
     }
 
-    override fun disable() {
+    override fun disable(reload: Boolean) {
         if (hasPlugin()) {
             val hook = this.hook as? HookPlaceholderAPI?
             if (hook?.isRegistered() == true) {
@@ -57,7 +57,7 @@ data class FeatureHookPlaceholderAPI(
             }
             PlaceholderAPIHook.injectComponent(false)
         }
-        super.disable()
+        super.disable(reload)
     }
 }
 

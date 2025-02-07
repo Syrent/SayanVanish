@@ -22,7 +22,7 @@ data class FeaturePreventAdvancementAnnounce(
 ): ListenedFeature("prevent_advancement_announce", category = FeatureCategories.PREVENTION) {
 
     @Transient
-    override var condition: Boolean = StickyNote.isPaper() && ServerVersion.supports(13)
+    override var condition: Boolean = StickyNote.isPaper && ServerVersion.supports(13)
 
     @EventHandler
     private fun onAdvancementDone(event: PlayerAdvancementDoneEvent) {

@@ -15,14 +15,14 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable
 class FeaturePreventServerPing: ListenedFeature("prevent_server_ping", category = FeatureCategories.PREVENTION) {
 
     @Transient
-    override var condition: Boolean = StickyNote.isPaper() && ServerVersion.supports(16)
+    override var condition: Boolean = StickyNote.isPaper && ServerVersion.supports(16)
 
     @EventHandler
     private fun onPing(event: PaperServerListPingEvent) {
         if (!isActive()) return
         val vanishedPlayers = SayanVanishBukkitAPI.getInstance().getVanishedUsers().filter { it.player() != null }
         event.numPlayers -= vanishedPlayers.count()
-        if (StickyNote.isPaper() && ServerVersion.supports(21)) {
+        if (StickyNote.isPaper && ServerVersion.supports(21)) {
             event.listedPlayers.removeIf { profile -> vanishedPlayers.map { vanishedPlayer -> vanishedPlayer.uniqueId }.contains(profile.id) }
         } else {
             event.playerSample.removeIf { profile -> vanishedPlayers.map { vanishedPlayer -> vanishedPlayer.uniqueId }.contains(profile.id) }

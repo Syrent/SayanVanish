@@ -90,13 +90,13 @@ data class FeatureEffect(
 
 @ConfigSerializable
 data class PotionEffectData(
-    val usePacket: Boolean,
+    val usePacket: Boolean = true,
     val keepAfterAppear: Boolean = false,
-    val type: String,
-    val duration: Int,
-    val amplifier: Int,
-    val ambient: Boolean,
-    val particles: Boolean,
+    val type: String = PotionEffectType.NIGHT_VISION.name,
+    val duration: Int = Int.MAX_VALUE,
+    val amplifier: Int = 0,
+    val ambient: Boolean = false,
+    val particles: Boolean = false,
 ) {
     fun toPotionEffect() = PotionEffect(PotionEffectType.getByName(type)!!, if (ServerVersion.supports(19) && duration == Int.MAX_VALUE) -1 else duration, amplifier, ambient, particles)
 }

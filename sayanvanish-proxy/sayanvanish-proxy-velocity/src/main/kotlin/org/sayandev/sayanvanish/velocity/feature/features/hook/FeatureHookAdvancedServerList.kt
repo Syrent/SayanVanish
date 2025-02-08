@@ -7,6 +7,7 @@ import ch.andre601.advancedserverlist.api.objects.GenericPlayer
 import ch.andre601.advancedserverlist.api.objects.GenericServer
 import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
+import org.sayandev.sayanvanish.proxy.config.language
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI.Companion.user
 import org.sayandev.sayanvanish.velocity.feature.HookFeature
@@ -45,6 +46,14 @@ private class AdvancedServerListImpl : PlaceholderProvider("sayanvanish") {
 
         if (placeholder.equals("count", true)) {
             return SayanVanishVelocityAPI.getInstance().database.getUsers().filter { user -> user.isOnline && user.isVanished }.size.toString()
+        }
+
+        if (placeholder.equals("vanish_prefix", true)) {
+            return language.vanish.placeholderPrefix
+        }
+
+        if (placeholder.equals("vanish_suffix", true)) {
+            return language.vanish.placeholderSuffix
         }
 
         if (placeholder.startsWith("online_")) {

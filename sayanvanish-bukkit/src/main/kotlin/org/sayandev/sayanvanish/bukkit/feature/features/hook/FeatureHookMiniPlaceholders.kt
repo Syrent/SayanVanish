@@ -7,6 +7,7 @@ import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
+import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.sayanvanish.bukkit.feature.HookFeature
 import org.sayandev.stickynote.bukkit.onlinePlayers
@@ -50,6 +51,14 @@ private class MiniPlaceholdersHookImpl(val feature: FeatureHookMiniPlaceholders)
 
         builder.globalPlaceholder("count") { queue, context ->
             TagsUtils.staticTag(SayanVanishBukkitAPI.getInstance().database.getUsers().filter { user -> user.isOnline && user.isVanished }.size.toString())
+        }
+
+        builder.globalPlaceholder("vanish_prefix") { queue, context ->
+            TagsUtils.staticTag(language.vanish.placeholderPrefix)
+        }
+
+        builder.globalPlaceholder("vanish_suffix") { queue, context ->
+            TagsUtils.staticTag(language.vanish.placeholderSuffix)
         }
 
         builder.globalPlaceholder("online") { queue, context ->

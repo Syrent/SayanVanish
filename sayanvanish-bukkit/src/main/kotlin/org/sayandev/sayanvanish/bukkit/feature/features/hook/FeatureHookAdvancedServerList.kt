@@ -8,6 +8,7 @@ import ch.andre601.advancedserverlist.api.objects.GenericServer
 import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
+import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.sayanvanish.bukkit.feature.HookFeature
 import org.sayandev.stickynote.bukkit.onlinePlayers
@@ -45,6 +46,14 @@ private class AdvancedServerListImpl : PlaceholderProvider("sayanvanish") {
 
         if (placeholder.equals("count", true)) {
             return SayanVanishBukkitAPI.getInstance().database.getUsers().filter { user -> user.isOnline && user.isVanished }.size.toString()
+        }
+
+        if (placeholder.equals("vanish_prefix", true)) {
+            return language.vanish.placeholderPrefix
+        }
+
+        if (placeholder.equals("vanish_suffix", true)) {
+            return language.vanish.placeholderSuffix
         }
 
         if (placeholder.startsWith("online_")) {

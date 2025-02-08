@@ -5,6 +5,7 @@ import io.github.miniplaceholders.api.Expansion
 import io.github.miniplaceholders.api.utils.TagsUtils
 import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
+import org.sayandev.sayanvanish.proxy.config.language
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI.Companion.user
 import org.sayandev.sayanvanish.velocity.feature.HookFeature
@@ -50,6 +51,14 @@ private class MiniPlaceholdersHookImpl(val feature: FeatureHookMiniPlaceholders)
 
         builder.globalPlaceholder("count") { queue, context ->
             TagsUtils.staticTag(SayanVanishVelocityAPI.getInstance().database.getUsers().filter { user -> user.isOnline && user.isVanished }.size.toString())
+        }
+
+        builder.globalPlaceholder("vanish_prefix") { queue, context ->
+            TagsUtils.staticTag(language.vanish.placeholderPrefix)
+        }
+
+        builder.globalPlaceholder("vanish_suffix") { queue, context ->
+            TagsUtils.staticTag(language.vanish.placeholderSuffix)
         }
 
         for (server in plugin.server.allServers) {

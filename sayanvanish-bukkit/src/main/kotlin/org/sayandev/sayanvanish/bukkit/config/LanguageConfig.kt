@@ -50,6 +50,8 @@ data class LanguageConfig(
 
     @ConfigSerializable
     data class Vanish(
+        val placeholderPrefix: String = "&7[Vanished]&r ",
+        val placeholderSuffix: String = " &r&7[Vanished]",
         val vanishStateUpdate: String = "<gray>Your vanish state has been updated to <state>.",
         val offlineOnVanish: String = "<gray><gold><player></gold> is currently offline. The vanish state has been updated to <state> and will take effect upon their return.",
         val vanishStateOther: String = "<gray>The vanish state of <gold><player></gold> has been updated to <state>.",

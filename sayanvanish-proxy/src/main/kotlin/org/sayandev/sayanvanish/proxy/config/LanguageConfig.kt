@@ -30,6 +30,8 @@ data class LanguageConfig(
 
     @ConfigSerializable
     data class Vanish(
+        val placeholderPrefix: String = "&7[Vanished]&r ",
+        val placeholderSuffix: String = " &r&7[Vanished]",
         val vanishToggle: String = "<gray>Successfully updated <aqua><player></aqua> vanish state to <state>",
     )
 

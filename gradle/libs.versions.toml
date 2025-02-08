@@ -14,6 +14,7 @@ essentialsx = "2.20.1"
 citizens-api = "2.0.28-SNAPSHOT"
 squaremap-api = "1.2.3"
 pl3xmap-api = "1.21.4-512"
+dynmap = "3.7-beta-6"
 
 # proxy
 # proxy - velocity
@@ -39,6 +40,8 @@ essentialsx = { group = "net.essentialsx", name="EssentialsX", version.ref="esse
 citizens-api = { group = "net.citizensnpcs", name="citizensapi", version.ref="citizens-api" }
 squaremap-api = { group = "xyz.jpenilla", name="squaremap-api", version.ref="squaremap-api" }
 pl3xmap-api = { group = "maven.modrinth", name="pl3xmap", version.ref="pl3xmap-api" }
+dynmap-core-api = { group = "us.dynmap", name="DynmapCoreAPI", version.ref="dynmap" }
+dynmap-api = { group = "us.dynmap", name="dynmap-api", version.ref="dynmap" }
 
 # proxy
 # proxy - velocity

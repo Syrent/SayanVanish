@@ -7,6 +7,9 @@ import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
+import org.sayandev.stickynote.bukkit.StickyNote
+import org.sayandev.stickynote.bukkit.hasPlugin
+import org.sayandev.stickynote.bukkit.warn
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @RegisteredFeature
@@ -18,6 +21,13 @@ class FeaturePreventPush: ListenedFeature("prevent_push", enabled = false, categ
         val user = event.user
         if (!isActive(user)) return
         val player = user.player() ?: return
+
+
+        if (hasPlugin("eGlow")) {
+            StickyNote.warn("tried to register vanished team for user ${user.username} but $id feature is not compatible with eGlow. disable $id feature to remove the warning.")
+            return
+        }
+
         var team = player.scoreboard.getTeam("Vanished")
         if (team == null) {
             team = player.scoreboard.registerNewTeam("Vanished")
@@ -35,6 +45,12 @@ class FeaturePreventPush: ListenedFeature("prevent_push", enabled = false, categ
         java.lang.IllegalStateException: Player is either on another team or not on any team. Cannot remove from team 'Vanished'.*/
         val teams = player.scoreboard.teams
         if (teams.find { it.name == "Vanished" } == null) return
+
+        if (hasPlugin("eGlow")) {
+            StickyNote.warn("tried to remove vanished team for user ${user.username} but $id feature is not compatible with eGlow. disable $id feature to remove the warning.")
+            return
+        }
+
         player.scoreboard.getTeam("Vanished")?.removeEntry(player.name)
     }
 

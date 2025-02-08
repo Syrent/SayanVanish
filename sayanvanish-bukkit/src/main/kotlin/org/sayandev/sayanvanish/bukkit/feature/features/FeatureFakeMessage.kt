@@ -104,7 +104,7 @@ data class FeatureFakeMessage(
                 if (useLegacyFormatter) {
                     AdventureUtils.audience.player(player).sendMessage(
                         LegacyComponentSerializer.legacyAmpersand().deserialize(
-                            PlaceholderAPIHook.injectPlaceholders(player, fakeQuitMessage)
+                            PlaceholderAPIHook.injectPlaceholders(user.offlinePlayer(), fakeQuitMessage)
                                 .replace("<player>", user.username)
                         )
                     )
@@ -125,7 +125,7 @@ data class FeatureFakeMessage(
                 if (useLegacyFormatter) {
                     AdventureUtils.audience.player(player).sendMessage(
                         LegacyComponentSerializer.legacyAmpersand().deserialize(
-                            PlaceholderAPIHook.injectPlaceholders(player, fakeJoinMessage)
+                            PlaceholderAPIHook.injectPlaceholders(user.offlinePlayer(), fakeJoinMessage)
                                 .replace("<player>", user.username)
                         )
                     )

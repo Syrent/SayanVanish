@@ -14,7 +14,7 @@ data class RedisConfig(
     @ConfigSerializable
     data class Standalone(
         @Comment("The host address of the Redis database. If it's an IP address (x.x.x.x), ensure it is enclosed in double quotes (`\"`).")
-        val host: String = "localhost",
+        val host: String = "127.0.0.1",
         @Comment("The port number of the Redis server")
         val port: Int = 6379,
         @Comment("The username for accessing the Redis server")

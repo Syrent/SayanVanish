@@ -6,6 +6,7 @@ import ch.andre601.advancedserverlist.api.exceptions.InvalidPlaceholderProviderE
 import ch.andre601.advancedserverlist.api.objects.GenericPlayer
 import ch.andre601.advancedserverlist.api.objects.GenericServer
 import org.sayandev.sayanvanish.api.SayanVanishAPI
+import org.sayandev.sayanvanish.api.SayanVanishAPI.Companion.user
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.sayanvanish.bukkit.config.language
@@ -49,11 +50,11 @@ private class AdvancedServerListImpl : PlaceholderProvider("sayanvanish") {
         }
 
         if (placeholder.equals("vanish_prefix", true)) {
-            return language.vanish.placeholderPrefix
+            return if (player?.uuid?.user()?.isVanished == true) language.vanish.placeholderPrefix else ""
         }
 
         if (placeholder.equals("vanish_suffix", true)) {
-            return language.vanish.placeholderSuffix
+            return if (player?.uuid?.user()?.isVanished == true) language.vanish.placeholderSuffix else ""
         }
 
         if (placeholder.startsWith("online_")) {

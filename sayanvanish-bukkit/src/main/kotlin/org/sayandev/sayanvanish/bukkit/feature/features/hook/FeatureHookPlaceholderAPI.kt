@@ -100,11 +100,13 @@ private class HookPlaceholderAPI : PlaceholderExpansion() {
         }
 
         if (params.equals("vanish_prefix", true)) {
-            return language.vanish.placeholderPrefix
+            if (player == null) return ""
+            return if (player.user()?.isVanished == true) language.vanish.placeholderPrefix else ""
         }
 
         if (params.equals("vanish_suffix", true)) {
-            return language.vanish.placeholderSuffix
+            if (player == null) return ""
+            return if (player.user()?.isVanished == true) language.vanish.placeholderSuffix else ""
         }
 
         if (params.startsWith("online_")) {

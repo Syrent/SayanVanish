@@ -49,11 +49,11 @@ private class AdvancedServerListImpl : PlaceholderProvider("sayanvanish") {
         }
 
         if (placeholder.equals("vanish_prefix", true)) {
-            return language.vanish.placeholderPrefix
+            return if (player?.uuid?.user()?.isVanished == true) language.vanish.placeholderPrefix else ""
         }
 
         if (placeholder.equals("vanish_suffix", true)) {
-            return language.vanish.placeholderSuffix
+            return if (player?.uuid?.user()?.isVanished == true) language.vanish.placeholderSuffix else ""
         }
 
         if (placeholder.startsWith("online_")) {

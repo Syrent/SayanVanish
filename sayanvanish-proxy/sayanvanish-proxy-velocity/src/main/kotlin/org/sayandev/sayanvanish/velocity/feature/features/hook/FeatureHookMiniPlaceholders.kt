@@ -53,12 +53,12 @@ private class MiniPlaceholdersHookImpl(val feature: FeatureHookMiniPlaceholders)
             TagsUtils.staticTag(SayanVanishVelocityAPI.getInstance().database.getUsers().filter { user -> user.isOnline && user.isVanished }.size.toString())
         }
 
-        builder.globalPlaceholder("vanish_prefix") { queue, context ->
-            TagsUtils.staticTag(language.vanish.placeholderPrefix)
+        builder.audiencePlaceholder("vanish_prefix") { audience, queue, context ->
+            TagsUtils.staticTag(if ((audience as? Player)?.user()?.isVanished == true) language.vanish.placeholderPrefix else "")
         }
 
-        builder.globalPlaceholder("vanish_suffix") { queue, context ->
-            TagsUtils.staticTag(language.vanish.placeholderSuffix)
+        builder.audiencePlaceholder("vanish_suffix") { audience, queue, context ->
+            TagsUtils.staticTag(if ((audience as? Player)?.user()?.isVanished == true) language.vanish.placeholderSuffix else "")
         }
 
         for (server in plugin.server.allServers) {

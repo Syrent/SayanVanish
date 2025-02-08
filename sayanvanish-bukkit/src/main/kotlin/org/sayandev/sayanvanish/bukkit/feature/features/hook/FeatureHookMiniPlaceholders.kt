@@ -4,6 +4,7 @@ import io.github.miniplaceholders.api.Expansion
 import io.github.miniplaceholders.api.utils.TagsUtils
 import org.bukkit.entity.Player
 import org.sayandev.sayanvanish.api.SayanVanishAPI
+import org.sayandev.sayanvanish.api.SayanVanishAPI.Companion.user
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
@@ -53,12 +54,12 @@ private class MiniPlaceholdersHookImpl(val feature: FeatureHookMiniPlaceholders)
             TagsUtils.staticTag(SayanVanishBukkitAPI.getInstance().database.getUsers().filter { user -> user.isOnline && user.isVanished }.size.toString())
         }
 
-        builder.globalPlaceholder("vanish_prefix") { queue, context ->
-            TagsUtils.staticTag(language.vanish.placeholderPrefix)
+        builder.audiencePlaceholder("vanish_prefix") { audience, queue, context ->
+            TagsUtils.staticTag(if ((audience as? Player)?.user()?.isVanished == true) language.vanish.placeholderPrefix else "")
         }
 
-        builder.globalPlaceholder("vanish_suffix") { queue, context ->
-            TagsUtils.staticTag(language.vanish.placeholderSuffix)
+        builder.audiencePlaceholder("vanish_suffix") { audience, queue, context ->
+            TagsUtils.staticTag(if ((audience as? Player)?.user()?.isVanished == true) language.vanish.placeholderSuffix else "")
         }
 
         builder.globalPlaceholder("online") { queue, context ->

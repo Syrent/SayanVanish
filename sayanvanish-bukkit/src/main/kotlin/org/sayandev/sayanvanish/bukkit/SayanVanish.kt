@@ -1,5 +1,6 @@
 package org.sayandev.sayanvanish.bukkit
 
+import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.SayanVanishAPI
@@ -29,7 +30,10 @@ open class SayanVanish : JavaPlugin() {
         StickyNoteBukkitLoader(this)
         sayanvanish = this
 
-        Platform.setAndRegister(Platform("bukkit", logger, pluginDirectory, settings.general.serverId))
+        if (!Platform.setAndRegister(Platform("bukkit", logger, pluginDirectory, settings.general.serverId))) {
+            Bukkit.getPluginManager().disablePlugin(this)
+            return
+        }
 
         SayanVanishBukkitAPI()
 

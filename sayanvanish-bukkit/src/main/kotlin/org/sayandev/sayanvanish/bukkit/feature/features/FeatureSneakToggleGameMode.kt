@@ -15,6 +15,7 @@ import org.spongepowered.configurate.objectmapping.meta.Comment
 @RegisteredFeature
 @ConfigSerializable
 data class FeatureSneakToggleGameMode(
+    override var enabled: Boolean = true,
     @Comment("The fallback gamemode when the player is not vanished and doesn't have in-memory gamemode.")
     val fallbackMode: GameMode = GameMode.SURVIVAL
 ): ListenedFeature("sneak_toggle_gamemode") {

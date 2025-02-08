@@ -15,6 +15,7 @@ import org.spongepowered.configurate.objectmapping.meta.Comment
 @RegisteredFeature
 @ConfigSerializable
 data class FeaturePreventAdvancementAnnounce(
+    override var enabled: Boolean = true,
     @Comment("Whether to disable the advancement announce message when the player is vanished.")
     @Configurable val disableMessage: Boolean = true,
     @Comment("Whether to revoke the criteria when the player is vanished.")

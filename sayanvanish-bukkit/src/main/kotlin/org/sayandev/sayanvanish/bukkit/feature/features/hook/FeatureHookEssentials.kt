@@ -14,6 +14,7 @@ import org.spongepowered.configurate.objectmapping.meta.Comment
 @RegisteredFeature
 @ConfigSerializable
 data class FeatureHookEssentials(
+    override var enabled: Boolean = true,
     @Comment("Prevent Essentials from changing the AFK status of vanished players")
     val preventAfkStatusChange: Boolean = true,
     @Comment("Prevent players to send private messages to vanished players using Essentials")

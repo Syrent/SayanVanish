@@ -11,7 +11,7 @@ import java.io.File
 @ConfigSerializable
 abstract class Feature(
     val id: String,
-    var enabled: Boolean = true,
+    open var enabled: Boolean = true,
     @Transient val category: FeatureCategories = FeatureCategories.DEFAULT,
     @Transient val additionalSerializers: TypeSerializerCollection = TypeSerializerCollection.defaults(),
     @Transient val critical: Boolean = false

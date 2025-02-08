@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit
 @RegisteredFeature
 @ConfigSerializable
 data class FeatureSyncEvents(
+    override var enabled: Boolean = true,
     @Comment("The period of time to check for vanished players. low values may cause performance issues.")
     val checkPeriodMillis: Long = 50
 ) : ListenedFeature("sync_events") {

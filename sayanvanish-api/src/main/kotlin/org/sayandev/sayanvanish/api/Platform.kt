@@ -25,9 +25,15 @@ data class Platform(
         }
 
         @JvmStatic
-        fun setAndRegister(platform: Platform) {
+        fun setAndRegister(platform: Platform): Boolean {
             setPlatform(platform)
+
+            if (!SayanVanishAPI.getInstance().databaseConnected) {
+                return false
+            }
+
             register()
+            return true
         }
 
         @JvmStatic

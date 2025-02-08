@@ -9,17 +9,31 @@ import java.util.*
 open class SayanVanishAPI<U: User>(val type: Class<out User>) {
     constructor(): this(User::class.java)
 
+    var databaseConnected: Boolean = true
+
     val database = when (databaseConfig.method) {
         DatabaseMethod.SQL -> {
-            SQLDatabase<U>(databaseConfig.sql, type, databaseConfig.useCacheWhenAvailable).apply {
-                this.connect()
-                this.initialize()
+            try {
+                SQLDatabase<U>(databaseConfig.sql, type, databaseConfig.useCacheWhenAvailable).apply {
+                    this.connect()
+                    this.initialize()
+                }
+            } catch (e: Exception) {
+                databaseConnected = false
+                logDatabaseError()
+                throw e
             }
         }
         DatabaseMethod.REDIS -> {
-            RedisDatabase<U>(databaseConfig.redis, type, databaseConfig.useCacheWhenAvailable).apply {
-                this.initialize()
-                this.connect()
+            try {
+                RedisDatabase<U>(databaseConfig.redis, type, databaseConfig.useCacheWhenAvailable).apply {
+                    this.initialize()
+                    this.connect()
+                }
+            } catch (e: Exception) {
+                databaseConnected = false
+                logDatabaseError()
+                throw e
             }
         }
     }
@@ -64,6 +78,15 @@ open class SayanVanishAPI<U: User>(val type: Class<out User>) {
 
     fun getVanishedUsers(): List<U> {
         return database.getUsers().filter { it.isVanished }
+    }
+
+    private fun logDatabaseError() {
+        Platform.get().logger.severe("Database connection failed. Disabling the plugin.")
+        Platform.get().logger.severe("Please check the following:")
+        Platform.get().logger.severe("- Make sure you have `\"` before and after database ip address.")
+        Platform.get().logger.severe("- Make sure your database server is not misconfigured.")
+        Platform.get().logger.severe("- Make sure your database server is running.")
+        Platform.get().logger.severe("Here's the full error trace:")
     }
 
     companion object {

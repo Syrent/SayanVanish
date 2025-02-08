@@ -18,6 +18,7 @@ import org.spongepowered.configurate.objectmapping.meta.Comment
 @RegisteredFeature
 @ConfigSerializable
 data class FeaturePreventTabComplete(
+    override var enabled: Boolean = true,
     @Comment("Whether to keep vanished player in tab completion if the player that is getting the suggestion has a higher level of vanish.")
     @Configurable val checkVanishLevel: Boolean = false
 ): ListenedFeature("prevent_tab_complete", category = FeatureCategories.PREVENTION) {

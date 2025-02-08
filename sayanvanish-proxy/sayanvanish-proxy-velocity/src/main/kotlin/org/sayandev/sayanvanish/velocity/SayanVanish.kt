@@ -47,19 +47,14 @@ class SayanVanish @Inject constructor(
         StickyNoteVelocityLoader(this, PLUGIN_ID, server, logger, dataDirectory)
         suspendingPluginContainer.initialize(this)
 
-        Platform.setAndRegister(Platform("velocity", java.util.logging.Logger.getLogger("sayanvanish"), dataDirectory.toFile(), ""))
+        if (!Platform.setAndRegister(Platform("velocity", java.util.logging.Logger.getLogger("sayanvanish"), dataDirectory.toFile(), ""))) return
 
         settings
         language
 
         Platform.get().serverId = settings.general.serverId
 
-        try {
-            SayanVanishVelocityAPI
-        } catch (e: ExceptionInInitializerError) {
-            e.printStackTrace()
-            return
-        }
+        SayanVanishVelocityAPI
 
         HealthCheckMessageSubscriber().register()
         ServerInfoPublisher

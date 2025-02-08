@@ -22,7 +22,7 @@ class SayanVanish : Plugin() {
         StickyNoteBungeeLoader(this)
         // Do NOT set server id here, SettingsConfig can't be used because it depends on Platform rootDirectory
         Platform.get().rootDirectory = dataDirectory
-        Platform.setAndRegister(Platform("bungeecord", logger, dataDirectory, ""))
+        if (!Platform.setAndRegister(Platform("bungeecord", logger, dataDirectory, ""))) return
         Platform.get().serverId = settings.general.serverId
 
         SayanVanishBungeeAPI()

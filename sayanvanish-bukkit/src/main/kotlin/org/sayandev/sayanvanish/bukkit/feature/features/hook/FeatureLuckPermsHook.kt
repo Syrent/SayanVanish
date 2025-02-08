@@ -23,6 +23,7 @@ import java.util.*
 @RegisteredFeature
 @ConfigSerializable
 data class FeatureLuckPermsHook(
+    override var enabled: Boolean = true,
     @Comment("""
     Whether to register custom context for vanished players.
     This will allow you to check if a player is vanished using the context "vanished".

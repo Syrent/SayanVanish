@@ -22,6 +22,7 @@ import java.util.*
 @RegisteredFeature
 @ConfigSerializable
 data class FeatureLuckPermsHook(
+    override var enabled: Boolean = true,
     @Comment("Register custom context for vanished players, this will allow you to check if a player is vanished using LuckPerms.")
     @Configurable val registerCustomContext: Boolean = true,
     @Comment("Check permission using LuckPerms, if false, will fallback to velocity permission check.")

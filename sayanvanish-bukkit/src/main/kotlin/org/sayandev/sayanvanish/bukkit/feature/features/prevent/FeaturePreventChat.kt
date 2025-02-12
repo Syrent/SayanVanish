@@ -16,7 +16,6 @@ import org.spongepowered.configurate.objectmapping.meta.Comment
 @RegisteredFeature
 @ConfigSerializable
 data class FeaturePreventChat(
-    override var enabled: Boolean = true,
     @Comment("The character that vanished players can use to bypass the chat prevention.")
     @Configurable val bypassChar: String = "!"
 ): ListenedFeature("prevent_chat", category = FeatureCategories.PREVENTION) {

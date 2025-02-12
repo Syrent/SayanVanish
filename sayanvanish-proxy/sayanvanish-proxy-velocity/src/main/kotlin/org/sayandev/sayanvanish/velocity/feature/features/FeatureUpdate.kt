@@ -26,7 +26,6 @@ import java.util.concurrent.TimeUnit
 @RegisteredFeature
 @ConfigSerializable
 data class FeatureUpdate(
-    override var enabled: Boolean = true,
     @Comment("The period of time to check for updates.")
     @Configurable val checkEveryXMinutes: Int = 60 * 24,
     @Comment("The permission required to bypass update notifications.")

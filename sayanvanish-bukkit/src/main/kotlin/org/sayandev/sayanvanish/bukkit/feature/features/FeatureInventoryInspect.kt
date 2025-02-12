@@ -18,7 +18,6 @@ import java.util.*
 @RegisteredFeature
 @ConfigSerializable
 data class FeatureInventoryInspect(
-    override var enabled: Boolean = true,
     @Configurable val modificationPermission: String = "${plugin.name}.features.inventory_inspect.modify"
 ): ListenedFeature("inventory_inspect") {
 

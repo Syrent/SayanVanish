@@ -25,7 +25,6 @@ import org.spongepowered.configurate.objectmapping.meta.Comment
 @RegisteredFeature
 @ConfigSerializable
 data class FeatureFakeMessage(
-    override var enabled: Boolean = true,
     @Comment("Whether to send a fake join message when a player vanishes")
     @Configurable val sendFakeJoinMessage: Boolean = false,
     @Comment("The message to send when a player vanishes")

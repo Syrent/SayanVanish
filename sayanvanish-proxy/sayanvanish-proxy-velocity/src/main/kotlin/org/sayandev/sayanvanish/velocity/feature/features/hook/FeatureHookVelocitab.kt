@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit
 
 @RegisteredFeature
 @ConfigSerializable
-data class FeatureHookVelocitab(
+class FeatureHookVelocitab(
     @Comment("The delay in milliseconds to check on post server connect event. low values may cause issues.")
     val checkOnPostServerConnectDelay: Long = 150,
     @Comment("The delay in milliseconds to check on server switch. low values may cause issues.")

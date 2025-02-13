@@ -14,7 +14,7 @@ import org.spongepowered.configurate.objectmapping.meta.Comment
 
 @RegisteredFeature
 @ConfigSerializable
-data class FeatureHookDiscordSRV(
+class FeatureHookDiscordSRV(
     @Comment("Send quit message on vanish")
     @Configurable val sendQuitMessageOnVanish: Boolean = true,
     @Comment("Send join message on unvanish")

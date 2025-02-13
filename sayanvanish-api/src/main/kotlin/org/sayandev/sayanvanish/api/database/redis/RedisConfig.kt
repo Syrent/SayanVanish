@@ -4,7 +4,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.objectmapping.meta.Comment
 
 @ConfigSerializable
-data class RedisConfig(
+class RedisConfig(
     @Comment("The type of Redis configuration. Available types: STANDALONE")
     val type: RedisType = RedisType.STANDALONE,
     @Comment("Configuration for standalone Redis setup")

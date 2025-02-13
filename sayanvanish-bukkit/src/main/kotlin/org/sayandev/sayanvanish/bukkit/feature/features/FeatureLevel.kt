@@ -23,7 +23,7 @@ import org.spongepowered.configurate.objectmapping.meta.Comment
 
 @RegisteredFeature
 @ConfigSerializable
-data class FeatureLevel(
+class FeatureLevel(
     @Comment("""
     This feature is a CRITICAL feature! do NOT disable this feature if you don't know what you're doing.
     

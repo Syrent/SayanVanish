@@ -25,7 +25,7 @@ import java.util.concurrent.CompletableFuture
 
 @RegisteredFeature
 @ConfigSerializable
-data class FeatureUpdate(
+class FeatureUpdate(
     @Comment("The interval to check for updates in minutes")
     @Configurable val checkEveryXMinutes: Int = 60 * 24,
     @Comment("The permission required to receive update notifications")

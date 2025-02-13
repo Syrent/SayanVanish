@@ -200,6 +200,7 @@ class SayanVanishCommand : BukkitCommand(settings.command.name, *settings.comman
                 val sender = context.sender().platformSender()
                 language = LanguageConfig.fromConfig() ?: LanguageConfig.defaultConfig()
                 Features.features.forEach { feature ->
+                    feature.save()
                     feature.disable(true)
                     if (feature::class.java.isAssignableFrom(Listener::class.java)) {
                         unregisterListener(feature as Listener)

@@ -17,7 +17,7 @@ import java.util.*
 
 @RegisteredFeature
 @ConfigSerializable
-data class FeatureInventoryInspect(
+class FeatureInventoryInspect(
     @Configurable val modificationPermission: String = "${plugin.name}.features.inventory_inspect.modify"
 ): ListenedFeature("inventory_inspect") {
 

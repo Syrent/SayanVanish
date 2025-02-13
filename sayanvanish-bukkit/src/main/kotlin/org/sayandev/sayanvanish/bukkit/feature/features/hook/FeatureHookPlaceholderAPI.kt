@@ -18,7 +18,7 @@ import org.spongepowered.configurate.objectmapping.meta.Comment
 
 @RegisteredFeature
 @ConfigSerializable
-data class FeatureHookPlaceholderAPI(
+class FeatureHookPlaceholderAPI(
     @Comment("""
     Inject placeholders into PlaceholderAPI
     Available placeholders:

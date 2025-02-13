@@ -16,7 +16,7 @@ import org.spongepowered.configurate.objectmapping.meta.Comment
 
 @RegisteredFeature
 @ConfigSerializable
-data class FeatureHookCitizens(
+class FeatureHookCitizens(
     @Comment("Will cancel npc speech event if context of speech contains a vanished player")
     val checkSpeech: Boolean = true,
 ): HookFeature("hook_citizens", "Citizens") {

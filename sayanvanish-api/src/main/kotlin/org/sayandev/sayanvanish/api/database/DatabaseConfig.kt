@@ -11,7 +11,7 @@ import java.io.File
 public var databaseConfig = DatabaseConfig.fromConfig() ?: DatabaseConfig.defaultConfig()
 
 @ConfigSerializable
-data class DatabaseConfig(
+class DatabaseConfig(
     @Comment("Configuration for the database, including method, SQL, Redis, and caching options.")
     val method: DatabaseMethod = DatabaseMethod.SQL,
     @Comment("Configuration for SQL database")

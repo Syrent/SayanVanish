@@ -15,7 +15,7 @@ import org.spongepowered.configurate.objectmapping.meta.Comment
 
 @RegisteredFeature
 @ConfigSerializable
-data class FeatureActionbar(
+class FeatureActionbar(
     @Comment("The content of the actionbar message.")
     @Configurable val content: String = "<gray>You are currently vanished!",
     @Comment("The delay before the actionbar message is sent. doesn't really matter.")

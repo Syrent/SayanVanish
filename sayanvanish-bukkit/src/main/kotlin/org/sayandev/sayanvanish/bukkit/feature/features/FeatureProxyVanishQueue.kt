@@ -17,7 +17,7 @@ import org.spongepowered.configurate.objectmapping.meta.Comment
 
 @RegisteredFeature
 @ConfigSerializable
-data class FeatureProxyVanishQueue(
+class FeatureProxyVanishQueue(
     @Comment("The time in milliseconds between each check for players in the queue. low values may cause performance issues.")
     @Configurable val checkEvery: Long = 100
 ) : Feature("proxy_vanish_queue", category = FeatureCategories.PROXY) {

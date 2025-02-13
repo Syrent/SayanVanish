@@ -12,7 +12,7 @@ import org.spongepowered.configurate.objectmapping.meta.Comment
 
 @RegisteredFeature
 @ConfigSerializable
-data class FeatureHookTAB(
+class FeatureHookTAB(
     @Comment("Whether to use cache data for vanish status. This will improve performance but may cause a small delay in tablist removal after join.")
     val useCacheData: Boolean = false
 ): HookFeature("hook_tab", "TAB") {

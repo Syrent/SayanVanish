@@ -89,7 +89,7 @@ data class FeatureEffect(
 }
 
 @ConfigSerializable
-data class PotionEffectData(
+class PotionEffectData(
     val usePacket: Boolean = true,
     val keepAfterAppear: Boolean = false,
     val type: String = PotionEffectType.NIGHT_VISION.name,

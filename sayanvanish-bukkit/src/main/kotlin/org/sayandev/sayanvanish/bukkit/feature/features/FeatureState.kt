@@ -19,7 +19,7 @@ import org.spongepowered.configurate.objectmapping.meta.Comment
 
 @RegisteredFeature
 @ConfigSerializable
-data class FeatureState(
+class FeatureState(
     @Comment("""
     This is a CRITICAL feature. It is responsible for handling the state of the player when they join or quit the server.
     do NOT disable this feature if you don't know what you're doing.

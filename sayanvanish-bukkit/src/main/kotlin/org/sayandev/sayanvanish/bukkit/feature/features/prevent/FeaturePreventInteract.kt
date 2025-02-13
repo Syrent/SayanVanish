@@ -15,7 +15,7 @@ import org.spongepowered.configurate.objectmapping.meta.Comment
 
 @RegisteredFeature
 @ConfigSerializable
-data class FeaturePreventInteract(
+class FeaturePreventInteract(
     @Comment("Prevent players from activating pressure plates while vanished")
     @Configurable val pressurePlateTrigger: Boolean = true,
     @Comment("Prevent players from interacting with big dripleaf while vanished")

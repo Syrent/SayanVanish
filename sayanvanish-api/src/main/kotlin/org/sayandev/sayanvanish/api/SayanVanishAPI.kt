@@ -83,7 +83,6 @@ open class SayanVanishAPI<U: User>(val type: Class<out User>) {
     private fun logDatabaseError() {
         Platform.get().logger.severe("Database connection failed. Disabling the plugin.")
         Platform.get().logger.severe("Please check the following:")
-        Platform.get().logger.severe("- Make sure you have `\"` before and after database ip address.")
         Platform.get().logger.severe("- Make sure your database server is not misconfigured.")
         Platform.get().logger.severe("- Make sure your database server is running.")
         Platform.get().logger.severe("Here's the full error trace:")

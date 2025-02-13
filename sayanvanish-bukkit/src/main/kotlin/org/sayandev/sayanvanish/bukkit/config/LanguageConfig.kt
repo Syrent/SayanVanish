@@ -8,7 +8,7 @@ import java.io.File
 public var language: LanguageConfig = LanguageConfig.fromConfig() ?: LanguageConfig.defaultConfig()
 
 @ConfigSerializable
-data class LanguageConfig(
+class LanguageConfig(
     val general: General = General(),
     val vanish: Vanish = Vanish(),
     val feature: Feature = Feature(),

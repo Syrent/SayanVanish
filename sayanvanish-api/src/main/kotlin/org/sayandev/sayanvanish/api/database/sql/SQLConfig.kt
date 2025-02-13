@@ -5,7 +5,7 @@ import org.spongepowered.configurate.objectmapping.meta.Comment
 import org.spongepowered.configurate.objectmapping.meta.Setting
 
 @ConfigSerializable
-data class SQLConfig(
+class SQLConfig(
     @Comment("The method to use for the database. Available methods: MYSQL, SQLITE")
     val method: SQLMethod = SQLMethod.SQLITE,
     @Comment("The host address of the SQL database. If it's an IP address (x.x.x.x), ensure it is enclosed in double quotes (`\"`).")

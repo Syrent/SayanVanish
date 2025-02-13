@@ -10,7 +10,7 @@ import java.util.UUID
 public var settings: SettingsConfig = SettingsConfig.fromConfig() ?: SettingsConfig.defaultConfig()
 
 @ConfigSerializable
-data class SettingsConfig(
+class SettingsConfig(
     @Comment("""
     Do NOT copy and paste the SayanVanish directory across multiple servers.
     The server-id is generated during the plugin's first startup.

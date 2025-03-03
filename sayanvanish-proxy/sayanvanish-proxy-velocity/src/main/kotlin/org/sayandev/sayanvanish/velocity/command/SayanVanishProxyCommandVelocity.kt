@@ -15,10 +15,12 @@ import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.feature.Features
 import org.sayandev.sayanvanish.proxy.command.SayanVanishProxyCommand
 import org.sayandev.sayanvanish.proxy.config.language
+import org.sayandev.sayanvanish.proxy.config.settings
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI.Companion.getOrAddUser
 import org.sayandev.sayanvanish.velocity.feature.features.FeatureUpdate
 import org.sayandev.sayanvanish.velocity.utils.PlayerUtils.sendComponent
 import org.sayandev.stickynote.velocity.StickyNote
+import org.sayandev.stickynote.velocity.command.VelocityCommand
 import org.sayandev.stickynote.velocity.command.VelocitySender
 import org.sayandev.stickynote.velocity.command.commandManager
 import org.sayandev.stickynote.velocity.plugin
@@ -27,10 +29,10 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 import kotlin.jvm.optionals.getOrNull
 
-class SayanVanishProxyCommandVelocity : SayanVanishProxyCommand<VelocitySender, VelocityCommandManager<VelocitySender>>(commandManager()) {
+class SayanVanishProxyCommandVelocity : VelocityCommand(settings.command.name, *settings.command.aliases.toTypedArray()) {
 
     override fun rootBuilder(builder: MutableCommandBuilder<VelocitySender>) {
-        builder.permission("${plugin.container.description.name}.commands.use")
+        builder.permission("${plugin.container.description.name.get().lowercase()}.commands.use")
         builder.optional("player", PlayerParser.playerParser())
         builder.flag(
             "state",
@@ -64,6 +66,7 @@ class SayanVanishProxyCommandVelocity : SayanVanishProxyCommand<VelocitySender, 
 
         if (!user.hasPermission(Permission.VANISH)) {
             user.sendComponent(language.general.dontHavePermission, Placeholder.unparsed("permission", Permission.VANISH.permission()))
+            return
         }
 
         val options = VanishOptions.defaultOptions().apply {

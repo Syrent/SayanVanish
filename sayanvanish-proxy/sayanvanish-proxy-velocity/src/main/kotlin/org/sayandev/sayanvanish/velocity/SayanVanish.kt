@@ -71,6 +71,13 @@ class SayanVanish @Inject constructor(
             SayanVanishVelocityAPI.getInstance().database.purgeBasic(settings.general.serverId)
         }
 
+        if (settings.general.purgeUsersOnStartup) {
+            for (user in SayanVanishVelocityAPI.getInstance().getOnlineUsers()) {
+                user.isOnline = false
+                user.save()
+            }
+        }
+
         StickyNote.run({
             if (databaseConfig.method == DatabaseMethod.SQL) {
                 SayanVanishVelocityAPI.getInstance().database.getBasicUsersAsync { users ->

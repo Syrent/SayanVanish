@@ -83,7 +83,9 @@ class FeatureLevel(
         for (onlinePlayer in onlinePlayers.filter { it.uniqueId != user.uniqueId }) {
             val playerVanishLevel = onlinePlayer.user()?.vanishLevel ?: -1
             if (playerVanishLevel >= user.vanishLevel) {
-                onlinePlayer.sendPacket(PacketUtils.getUpdateGameModePacket(NMSUtils.getServerPlayer(player), GameMode.SPECTATOR))
+                runSync({
+                    onlinePlayer.sendPacket(PacketUtils.getUpdateGameModePacket(NMSUtils.getServerPlayer(player), GameMode.SPECTATOR))
+                }, 5)
             } else {
                 hidePlayer(onlinePlayer, player)
                 onlinePlayer.sendPacket(PacketUtils.getRemoveEntitiesPacket(player.entityId))

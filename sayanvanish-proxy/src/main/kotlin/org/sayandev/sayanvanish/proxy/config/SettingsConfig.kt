@@ -38,6 +38,7 @@ class SettingsConfig(
         val language: String = LanguageConfig.Language.EN_US.id,
         @Comment("Weather to purge online history of users on startup.")
         val purgeOnlineHistoryOnStartup: Boolean = true,
+        val purgeUsersOnStartup: Boolean = true,
         @Comment("Cache update period in milliseconds. low values may cause performance issues.")
         val cacheUpdatePeriodMillis: Long = 300,
         @Comment("Basic cache update period in milliseconds. low values may cause performance issues.")

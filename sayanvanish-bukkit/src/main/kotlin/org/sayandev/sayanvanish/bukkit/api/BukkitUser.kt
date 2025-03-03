@@ -75,9 +75,10 @@ open class BukkitUser(
 
         player()?.setMetadata("vanished", FixedMetadataValue(plugin, true))
 
-        hideUser()
-
         super.vanish(options)
+
+        // order matters - don't move hideUser before vanish (hideUser have a canSee check for vanish state notify)
+        hideUser()
 
         sendComponent(language.vanish.vanishStateUpdate, Placeholder.parsed("state", stateText()))
     }

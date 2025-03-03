@@ -13,7 +13,7 @@ import org.spongepowered.configurate.objectmapping.meta.Comment
 @ConfigSerializable
 class FeatureHookTAB(
     @Comment("Whether to use cache data for vanish status. This will improve performance but may cause a small delay in tablist removal after join.")
-    val useCacheData: Boolean = false
+    val useCacheData: Boolean = true
 ): HookFeature("hook_tab", "TAB") {
     override fun enable() {
         if (hasPlugin()) {

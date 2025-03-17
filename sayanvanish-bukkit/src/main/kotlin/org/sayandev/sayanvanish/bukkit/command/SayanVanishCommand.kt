@@ -25,6 +25,7 @@ import org.sayandev.sayanvanish.api.feature.Features
 import org.sayandev.sayanvanish.api.feature.RegisteredFeatureHandler
 import org.sayandev.sayanvanish.api.utils.Paste
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrAddUser
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrCreateUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.config.LanguageConfig
 import org.sayandev.sayanvanish.bukkit.config.SettingsConfig
@@ -257,7 +258,7 @@ class SayanVanishCommand : BukkitCommand(settings.command.name, *settings.comman
                     return@handler
                 }
 
-                val user = target.user()
+                val user = target.getOrCreateUser()
 
                 sender.sendComponent(language.vanish.levelGet, Placeholder.unparsed("player", target.name ?: "N/A"), Placeholder.unparsed("level", (user?.vanishLevel ?: 0).toString()))
             }

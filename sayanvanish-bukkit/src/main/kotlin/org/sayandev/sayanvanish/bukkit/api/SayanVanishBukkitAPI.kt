@@ -10,7 +10,7 @@ import java.util.*
 class SayanVanishBukkitAPI : SayanVanishAPI<BukkitUser>(BukkitUser::class.java) {
 
     fun canSee(player: Player?, otherPlayer: Player): Boolean {
-        val vanishLevel = player?.user()?.vanishLevel ?: -1
+        val vanishLevel = player?.getOrCreateUser()?.vanishLevel ?: -1
         return vanishLevel >= (otherPlayer.user()?.vanishLevel ?: -1)
     }
 

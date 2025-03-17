@@ -260,7 +260,7 @@ class SayanVanishCommand : BukkitCommand(settings.command.name, *settings.comman
 
                 val user = target.getOrCreateUser()
 
-                sender.sendComponent(language.vanish.levelGet, Placeholder.unparsed("player", target.name ?: "N/A"), Placeholder.unparsed("level", (user?.vanishLevel ?: 0).toString()))
+                sender.sendComponent(language.vanish.levelGet, Placeholder.unparsed("player", target.name ?: "N/A"), Placeholder.unparsed("level", user.vanishLevel.toString()))
             }
         }
 

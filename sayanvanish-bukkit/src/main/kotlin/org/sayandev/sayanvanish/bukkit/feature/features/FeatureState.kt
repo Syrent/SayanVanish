@@ -10,6 +10,7 @@ import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrAddUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrCreateUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.config.language
@@ -49,7 +50,7 @@ class FeatureState(
                 return
             }
 
-            val tempUser = player.getOrCreateUser()
+            val tempUser = player.getOrAddUser()
 
             if (tempUser.hasPermission(Permission.VANISH_ON_JOIN) || vanishOnJoin) {
                 tempUser.isOnline = true

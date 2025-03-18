@@ -9,7 +9,7 @@ pluginManagement {
 
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.9.0"
-    id("org.sayandev.stickynote.settings") version "1.8.9.52"
+    id("org.sayandev.stickynote.settings") version "1.8.9.128"
 }
 
 rootProject.name = "SayanVanish"

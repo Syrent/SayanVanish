@@ -55,7 +55,7 @@ class SettingsConfig(
         val aliases: List<String> = listOf(
             "vp",
             "vanishp",
-            "sv"
+            "svp"
         )
     )
 

@@ -55,13 +55,7 @@ tasks {
             toolchain.languageVersion = JavaLanguageVersion.of(21)
         }
     }
-
-    val deleteSayanDevLib = register<Delete>("deleteSayanDevLib") {
-        delete(file("$projectDir/${project.name.lowercase()}-bukkit/run/plugins/${project.name.lowercase()}/lib/org/sayandev"))
-    }
-
     runServer {
-//        dependsOn(deleteSayanDevLib)
         minecraftVersion("1.20.4")
 
         downloadPlugins {

@@ -95,7 +95,7 @@ open class BukkitUser(
         }
         player()?.isSleepingIgnored = false
 
-        player()?.setMetadata("vanished", FixedMetadataValue(plugin, false))
+        player()?.removeMetadata("vanished", plugin)
         showUser()
 
         super.unVanish(options)

@@ -41,6 +41,7 @@ tasks {
 //            url("https://github.com/SkinsRestorer/SkinsRestorer/releases/download/15.4.3/SkinsRestorer.jar")
 //            url("https://hangarcdn.papermc.io/plugins/Andre_601/AdvancedServerList/versions/4.11.1/VELOCITY/AdvancedServerList-Velocity-4.11.1.jar")
 //            url("https://ci.lucko.me/job/spark/419/artifact/spark-velocity/build/libs/spark-1.10.74-velocity.jar")
+            hangar("Velocitab", "1.7.4")
         }
     }
 }

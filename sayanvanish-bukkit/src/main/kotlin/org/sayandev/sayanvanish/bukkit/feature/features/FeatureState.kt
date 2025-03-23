@@ -51,9 +51,9 @@ class FeatureState(
             }
 
             val tempUser = player.getOrAddUser()
+            tempUser.isOnline = true
 
             if (tempUser.hasPermission(Permission.VANISH_ON_JOIN) || vanishOnJoin) {
-                tempUser.isOnline = true
                 tempUser.isVanished = true
                 tempUser.vanish(vanishJoinOptions)
                 tempUser.save()

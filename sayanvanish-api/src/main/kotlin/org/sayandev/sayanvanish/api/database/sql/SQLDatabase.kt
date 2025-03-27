@@ -46,7 +46,8 @@ class SQLDatabase<U: User>(
             )
         }
         SQLConfig.SQLMethod.SQLITE -> {
-            SQLiteDatabase(File(Platform.get().rootDirectory, "storage.db"), Platform.get().logger)
+            SQLiteDatabase(
+                File(Platform.get().rootDirectory, "storage.db"), Platform.get().logger, config.poolProperties.maximumPoolSize)
         }
         else -> {
             throw NullPointerException("Database method with id `${config.method.name}` doesn't exist, available database types: ${DatabaseMethod.entries.map { it.name.lowercase() }}")
@@ -187,8 +188,14 @@ class SQLDatabase<U: User>(
     override fun addUser(user: U) {
         cache[user.uniqueId] = user
         if (!hasUser(user.uniqueId)) {
+            val insertQuery = if (config.method == SQLConfig.SQLMethod.SQLITE) {
+                "INSERT OR IGNORE INTO ${config.tablePrefix}users (UUID, username, server, is_vanished, is_online, vanish_level) VALUES (?,?,?,?,?,?);"
+            } else {
+                "INSERT IGNORE INTO ${config.tablePrefix}users (UUID, username, server, is_vanished, is_online, vanish_level) VALUES (?,?,?,?,?,?);"
+            }
+
             database.runQuery(
-                Query.query("INSERT ${if (config.method == SQLConfig.SQLMethod.MYSQL) "IGNORE " else ""}INTO ${config.tablePrefix}users (UUID, username, server, is_vanished, is_online, vanish_level) VALUES (?,?,?,?,?,?);")
+                Query.query(insertQuery)
                     .setStatementValue(1, user.uniqueId.toString())
                     .setStatementValue(2, user.username)
                     .setStatementValue(3, user.serverId)
@@ -204,8 +211,15 @@ class SQLDatabase<U: User>(
     override fun addBasicUser(user: BasicUser) {
         basicCache[user.uniqueId] = user
         if (!hasBasicUser(user.uniqueId, false)) {
+            // Create proper query based on database type
+            val insertQuery = if (config.method == SQLConfig.SQLMethod.SQLITE) {
+                "INSERT OR IGNORE INTO ${config.tablePrefix}basic_users (UUID, username, server) VALUES (?,?,?);"
+            } else {
+                "INSERT IGNORE INTO ${config.tablePrefix}basic_users (UUID, username, server) VALUES (?,?,?);"
+            }
+
             database.runQuery(
-                Query.query("INSERT ${if (config.method == SQLConfig.SQLMethod.MYSQL) "IGNORE " else ""}INTO ${config.tablePrefix}basic_users (UUID, username, server) VALUES (?,?,?);")
+                Query.query(insertQuery)
                     .setStatementValue(1, user.uniqueId.toString())
                     .setStatementValue(2, user.username)
                     .setStatementValue(3, user.serverId)
@@ -280,7 +294,12 @@ class SQLDatabase<U: User>(
     override fun addToQueue(uniqueId: UUID, vanished: Boolean) {
         isInQueue(uniqueId) { inQueue ->
             if (!inQueue) {
-                database.queueQuery(Query.query("INSERT INTO ${config.tablePrefix}queue (UUID, vanished) VALUES (?,?);").setStatementValue(1, uniqueId.toString()).setStatementValue(2, vanished.toString()))
+                val insertQuery = if (config.method == SQLConfig.SQLMethod.SQLITE) {
+                    "INSERT OR IGNORE INTO ${config.tablePrefix}queue (UUID, vanished) VALUES (?,?);"
+                } else {
+                    "INSERT IGNORE INTO ${config.tablePrefix}queue (UUID, vanished) VALUES (?,?);"
+                }
+                database.queueQuery(Query.query(insertQuery).setStatementValue(1, uniqueId.toString()).setStatementValue(2, vanished.toString()))
             } else {
                 database.queueQuery(Query.query("UPDATE ${config.tablePrefix}queue SET vanished = ? WHERE UUID = ?;").setStatementValue(1, vanished.toString()).setStatementValue(2, uniqueId.toString()))
             }

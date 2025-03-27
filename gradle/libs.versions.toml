@@ -19,7 +19,7 @@ dynmap = "3.7-beta-6"
 # proxy
 # proxy - velocity
 velocity-api = "3.3.0-SNAPSHOT"
-velocitab = "1.6.5"
+velocitab = "1.7.4"
 enhancedvelocity = "1.3.4"
 # proxy - bungeecord
 bungeecord-api = "1.19-R0.1-SNAPSHOT"

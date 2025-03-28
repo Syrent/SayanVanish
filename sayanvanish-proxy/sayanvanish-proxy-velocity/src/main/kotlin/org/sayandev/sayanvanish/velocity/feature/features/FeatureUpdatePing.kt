@@ -7,10 +7,6 @@ import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
 import org.sayandev.sayanvanish.velocity.feature.ListenedFeature
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
-import kotlin.collections.count
-import kotlin.collections.filter
-import kotlin.collections.map
-import kotlin.collections.toTypedArray
 import kotlin.jvm.optionals.getOrNull
 
 @RegisteredFeature
@@ -21,9 +17,9 @@ class FeatureUpdatePing : ListenedFeature("update_ping") {
     fun onProxyPing(event: ProxyPingEvent) {
         if (!isActive()) return
         val pingPlayers = event.ping.players.getOrNull() ?: return
-        val onlineVanishedPlayers = SayanVanishVelocityAPI.getInstance().getVanishedUsers().filter { it.isOnline }
-        val nonVanishedPlayersCount = pingPlayers.online - onlineVanishedPlayers.count()
-        val nonVanishedPlayersSample = pingPlayers.sample.filter { !onlineVanishedPlayers.map { it.username }.contains(it.name) }
+        val vanishedOnlineUsers = SayanVanishVelocityAPI.getInstance().database.getUsers().filter { user -> user.isVanished && user.isOnline }
+        val nonVanishedPlayersCount = SayanVanishVelocityAPI.getInstance().database.getBasicUsers(true).filter { !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size
+        val nonVanishedPlayersSample = pingPlayers.sample.filter { !vanishedOnlineUsers.map { it.username }.contains(it.name) }
         event.ping = event.ping
             .asBuilder()
             .onlinePlayers(nonVanishedPlayersCount)

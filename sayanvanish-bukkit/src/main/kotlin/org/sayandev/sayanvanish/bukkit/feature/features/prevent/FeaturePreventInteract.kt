@@ -3,6 +3,7 @@ package org.sayandev.sayanvanish.bukkit.feature.features.prevent
 import com.cryptomorin.xseries.XMaterial
 import org.bukkit.block.Container
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 import org.sayandev.sayanvanish.api.feature.Configurable
@@ -23,11 +24,12 @@ class FeaturePreventInteract(
     @Configurable val dripLeaf: Boolean = true,
     @Comment("Prevent players from interacting")
     @Configurable val interact: Boolean = false,
-    @Configurable val preventTripwire: Boolean = false
+    @Configurable val tripwire: Boolean = true,
+    @Configurable val button: Boolean = true,
 ) : ListenedFeature("prevent_interact_event", category = FeatureCategories.PREVENTION) {
 
-    @EventHandler
-    private fun onInteract(event: PlayerInteractEvent) {
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    private fun cancelInteract(event: PlayerInteractEvent) {
         if (ServerVersion.supports(13)) {
             if (event.clickedBlock?.state is Container) return
         }
@@ -42,12 +44,25 @@ class FeaturePreventInteract(
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     private fun cancelTripwireInteract(event: PlayerInteractEvent) {
-        if (!preventTripwire) return
+        if (!tripwire) return
         val block = event.clickedBlock ?: return
         if (event.action != Action.PHYSICAL) return
         if (block.type != XMaterial.TRIPWIRE.get()!! && block.type != XMaterial.STRING.get()!!) return
+        val player = event.player
+        val user = player.user() ?: return
+        if (!isActive(user)) return
+        if (!user.isVanished) return
+        event.isCancelled = true
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    private fun cancelButtonInteract(event: PlayerInteractEvent) {
+        if (!button) return
+        val block = event.clickedBlock ?: return
+        if (event.action != Action.RIGHT_CLICK_BLOCK) return
+        if (!block.type.name.contains("BUTTON")) return
         val player = event.player
         val user = player.user() ?: return
         if (!isActive(user)) return

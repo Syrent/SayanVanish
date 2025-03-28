@@ -4,6 +4,7 @@ import org.bukkit.GameEvent
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.world.GenericGameEvent
+import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
@@ -14,8 +15,8 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable
 @RegisteredFeature
 @ConfigSerializable
 class FeaturePreventSculk(
-    val preventSculkSensor: Boolean,
-    val preventShriek: Boolean
+    @Configurable val preventSculkSensor: Boolean,
+    @Configurable val preventShriek: Boolean
 ): ListenedFeature("prevent_sculk", category = FeatureCategories.PREVENTION) {
 
     @Transient

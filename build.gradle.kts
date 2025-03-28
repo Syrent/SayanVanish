@@ -155,7 +155,7 @@ allprojects {
     }
 
     modrinth {
-        val modrinthApiKey = System.getenv("MODRINTH_API_TOKEN") ?: project.findProperty("modrinth.api.token") as String
+        val modrinthApiKey = System.getenv("MODRINTH_API_TOKEN") ?: (project.findProperty("modrinth.api.token") as String)
         val modrinthChangelog = if (System.getenv("MODRINTH_CHANGELOG").isNullOrEmpty()) changelogContent else System.getenv("MODRINTH_CHANGELOG")
 
         token.set(modrinthApiKey)

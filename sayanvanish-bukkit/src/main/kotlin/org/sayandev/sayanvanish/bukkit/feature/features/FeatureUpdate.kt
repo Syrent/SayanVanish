@@ -3,6 +3,7 @@ package org.sayandev.sayanvanish.bukkit.feature.features
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerJoinEvent
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
@@ -84,7 +85,7 @@ class FeatureUpdate(
         super.enable()
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     private fun onJoin(event: PlayerJoinEvent) {
         val player = event.player
         val user = player.user() ?: return

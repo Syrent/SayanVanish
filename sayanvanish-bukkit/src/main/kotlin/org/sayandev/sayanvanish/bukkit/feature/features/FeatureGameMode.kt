@@ -22,7 +22,8 @@ class FeatureGameMode(
     @Comment("Update gamemode history on gamemode change event.")
     val checkGameModeChange: Boolean = false,
     @Comment("Change gamemode to spectator on double-sneak")
-    val checkToggleSneak: Boolean = true
+    val checkToggleSneak: Boolean = true,
+    val timeWindowTicks: Long = 8
 ): ListenedFeature("gamemode") {
 
     @Transient val sneakMap = mutableMapOf<Player, GameMode>()
@@ -52,7 +53,7 @@ class FeatureGameMode(
             sneakList.add(player)
             runSync({
                 sneakList.remove(player)
-            }, 8)
+            }, timeWindowTicks)
         }
     }
 

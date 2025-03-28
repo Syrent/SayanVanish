@@ -23,7 +23,7 @@ class LanguageConfig(
         val dontHavePermission: String = "<red>You don't have permission to do that.",
         val confirmUpdate: String = "<red>Execute update again to update the plugin.",
         val updating: String = "<gray>Updating the plugin... please wait.",
-        val updated: String = "<green>Plugin has been successfully updated to version <gold><version></gold> and the update will be applied on next server restart.",
+        val updated: String = "<green>Plugin has been successfully updated to version <gold><version></gold>. make sure to restart the server to prevent unexpected behaviour.",
         val proxyUpdateWarning: String = "<red>Please note that this update could impact your proxy server. Be sure to update your proxy server separately to ensure compatibility.",
         val updateFailed: String = "<red>Failed to update the plugin. Please try again later."
     )

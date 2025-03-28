@@ -15,12 +15,14 @@ import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.sayanvanish.bukkit.sayanvanish
 import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendComponent
 import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendRawComponent
+import org.sayandev.stickynote.bukkit.StickyNote
 import org.sayandev.stickynote.bukkit.log
 import org.sayandev.stickynote.bukkit.plugin
 import org.sayandev.stickynote.bukkit.runAsync
 import org.sayandev.stickynote.bukkit.runSync
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.objectmapping.meta.Comment
+import java.io.File
 import java.util.concurrent.CompletableFuture
 
 @RegisteredFeature
@@ -142,9 +144,15 @@ class FeatureUpdate(
         val future = CompletableFuture<Boolean>()
         if (!isNewerVersionAvailable(notifyForSnapshotBuilds)) future.complete(false)
 
+        val updateDirectory = File(sayanvanish.dataFolder.parentFile, "update")
+        val updatedFile = if (StickyNote.isPaper) {
+            if (!updateDirectory.exists()) { updateDirectory.mkdirs() }
+            File(updateDirectory, sayanvanish.pluginFile().name)
+        } else sayanvanish.pluginFile()
+
         if (plugin.description.version.contains("SNAPSHOT")) {
             latestSnapshot?.let { snapshot ->
-                DownloadUtils.download(snapshot.downloads.PAPER!!.downloadUrl!!, sayanvanish.pluginFile()).whenComplete { result, error ->
+                DownloadUtils.download(snapshot.downloads.PAPER!!.downloadUrl!!, updatedFile).whenComplete { result, error ->
                     error?.printStackTrace()
                     future.complete(result)
                 }
@@ -153,7 +161,7 @@ class FeatureUpdate(
             }
         } else {
             latestRelease?.let { release ->
-                DownloadUtils.download(release.downloads.PAPER!!.downloadUrl!!, sayanvanish.pluginFile()).whenComplete { result, error ->
+                DownloadUtils.download(release.downloads.PAPER!!.downloadUrl!!, updatedFile).whenComplete { result, error ->
                     error?.printStackTrace()
                     future.complete(result)
                 }

@@ -1,7 +1,10 @@
 package org.sayandev.sayanvanish.bukkit.feature.features
 
+import com.cryptomorin.xseries.XMaterial
 import org.bukkit.GameMode
+import org.bukkit.Material
 import org.bukkit.block.Container
+import org.bukkit.block.EnderChest
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -25,7 +28,7 @@ import java.util.*
 @ConfigSerializable
 class FeatureSilentContainer: ListenedFeature("silent_container") {
 
-    override var condition: Boolean = ServerVersion.supports(13)
+    @Transient override var condition: Boolean = ServerVersion.supports(13)
     @Transient private val containerPlayersData = mutableMapOf<UUID, ContainerPlayerData>()
 
     /*override fun enable() {
@@ -45,9 +48,16 @@ class FeatureSilentContainer: ListenedFeature("silent_container") {
         if (!isActive(user)) return
         if (event.action != Action.RIGHT_CLICK_BLOCK) return
         val clickedBlock = event.clickedBlock ?: return
-        if (clickedBlock.state !is Container) return
         if (!user.isVanished) return
         if (player.gameMode == GameMode.SPECTATOR) return
+
+        if (clickedBlock.type == XMaterial.ENDER_CHEST.get()!!) {
+            event.isCancelled = true
+            player.openInventory(player.enderChest)
+            return
+        }
+
+        if (clickedBlock.state !is Container) return
 
         containerPlayersData[player.uniqueId] = ContainerPlayerData(player.gameMode, player.allowFlight, player.isFlying)
 

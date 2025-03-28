@@ -1,5 +1,6 @@
 package org.sayandev.sayanvanish.bukkit.feature.features.prevent
 
+import com.cryptomorin.xseries.XMaterial
 import org.bukkit.block.Container
 import org.bukkit.event.EventHandler
 import org.bukkit.event.block.Action
@@ -22,6 +23,7 @@ class FeaturePreventInteract(
     @Configurable val dripLeaf: Boolean = true,
     @Comment("Prevent players from interacting")
     @Configurable val interact: Boolean = false,
+    @Configurable val preventTripwire: Boolean = false
 ) : ListenedFeature("prevent_interact_event", category = FeatureCategories.PREVENTION) {
 
     @EventHandler
@@ -38,6 +40,19 @@ class FeaturePreventInteract(
                 event.isCancelled = true
             }
         }
+    }
+
+    @EventHandler
+    private fun cancelTripwireInteract(event: PlayerInteractEvent) {
+        if (!preventTripwire) return
+        val block = event.clickedBlock ?: return
+        if (event.action != Action.PHYSICAL) return
+        if (block.type != XMaterial.TRIPWIRE.get()!! && block.type != XMaterial.STRING.get()!!) return
+        val player = event.player
+        val user = player.user() ?: return
+        if (!isActive(user)) return
+        if (!user.isVanished) return
+        event.isCancelled = true
     }
 
 }

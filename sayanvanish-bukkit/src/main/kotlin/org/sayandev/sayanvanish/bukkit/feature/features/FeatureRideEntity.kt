@@ -18,7 +18,7 @@ class FeatureRideEntity(
 ): ListenedFeature("ride_entity") {
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    private fun onPlayerInteract(event: PlayerInteractEntityEvent) {
+    private fun removeVanishedPassengerOnEnter(event: PlayerInteractEntityEvent) {
         if (!leaveVehicleWhenOthersEnter) return
         val targetEntity = event.rightClicked
         val vanishedPassengers = targetEntity.passengers

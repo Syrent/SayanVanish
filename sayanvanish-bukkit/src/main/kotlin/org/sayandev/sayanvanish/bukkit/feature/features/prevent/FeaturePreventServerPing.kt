@@ -14,9 +14,6 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable
 @ConfigSerializable
 class FeaturePreventServerPing: ListenedFeature("prevent_server_ping", category = FeatureCategories.PREVENTION) {
 
-    @Transient
-    override var condition: Boolean = StickyNote.isPaper && ServerVersion.supports(16)
-
     @EventHandler
     private fun onPing(event: PaperServerListPingEvent) {
         if (!isActive()) return

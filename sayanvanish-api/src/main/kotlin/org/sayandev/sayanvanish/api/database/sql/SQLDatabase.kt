@@ -189,7 +189,7 @@ class SQLDatabase<U: User>(
         cache[user.uniqueId] = user
         if (!hasUser(user.uniqueId)) {
             val insertQuery = if (config.method == SQLConfig.SQLMethod.SQLITE) {
-                "INSERT OR IGNORE INTO ${config.tablePrefix}users (UUID, username, server, is_vanished, is_online, vanish_level) VALUES (?,?,?,?,?,?);"
+                "INSERT OR REPLACE INTO ${config.tablePrefix}users (UUID, username, server, is_vanished, is_online, vanish_level) VALUES (?,?,?,?,?,?);"
             } else {
                 "INSERT IGNORE INTO ${config.tablePrefix}users (UUID, username, server, is_vanished, is_online, vanish_level) VALUES (?,?,?,?,?,?);"
             }
@@ -213,7 +213,7 @@ class SQLDatabase<U: User>(
         if (!hasBasicUser(user.uniqueId, false)) {
             // Create proper query based on database type
             val insertQuery = if (config.method == SQLConfig.SQLMethod.SQLITE) {
-                "INSERT OR IGNORE INTO ${config.tablePrefix}basic_users (UUID, username, server) VALUES (?,?,?);"
+                "INSERT OR REPLACE INTO ${config.tablePrefix}basic_users (UUID, username, server) VALUES (?,?,?);"
             } else {
                 "INSERT IGNORE INTO ${config.tablePrefix}basic_users (UUID, username, server) VALUES (?,?,?);"
             }
@@ -295,7 +295,7 @@ class SQLDatabase<U: User>(
         isInQueue(uniqueId) { inQueue ->
             if (!inQueue) {
                 val insertQuery = if (config.method == SQLConfig.SQLMethod.SQLITE) {
-                    "INSERT OR IGNORE INTO ${config.tablePrefix}queue (UUID, vanished) VALUES (?,?);"
+                    "INSERT OR REPLACE INTO ${config.tablePrefix}queue (UUID, vanished) VALUES (?,?);"
                 } else {
                     "INSERT IGNORE INTO ${config.tablePrefix}queue (UUID, vanished) VALUES (?,?);"
                 }

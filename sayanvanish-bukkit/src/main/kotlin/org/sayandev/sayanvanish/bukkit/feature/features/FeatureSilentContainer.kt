@@ -2,9 +2,7 @@ package org.sayandev.sayanvanish.bukkit.feature.features
 
 import com.cryptomorin.xseries.XMaterial
 import org.bukkit.GameMode
-import org.bukkit.Material
 import org.bukkit.block.Container
-import org.bukkit.block.EnderChest
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority

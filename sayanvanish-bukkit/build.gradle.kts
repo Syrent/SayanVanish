@@ -55,8 +55,9 @@ tasks {
             toolchain.languageVersion = JavaLanguageVersion.of(21)
         }
     }
+
     runServer {
-        minecraftVersion("1.20.4")
+        minecraftVersion("1.21.4")
 
         downloadPlugins {
             hangar("ViaVersion", "5.0.4-SNAPSHOT+548")

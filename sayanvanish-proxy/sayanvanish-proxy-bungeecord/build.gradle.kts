@@ -28,3 +28,10 @@ bungee {
 
     author = findProperty("author")!! as String
 }
+
+modrinth {
+    loaders.set(listOf(
+        "bungeecord",
+        "waterfall",
+    ))
+}

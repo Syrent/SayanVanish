@@ -119,3 +119,12 @@ bukkit {
         "TAB"
     )
 }
+
+modrinth {
+    loaders.set(listOf(
+        "spigot",
+        "paper",
+        "purpur",
+        "folia"
+    ))
+}

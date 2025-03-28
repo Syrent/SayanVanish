@@ -45,3 +45,9 @@ tasks {
         }
     }
 }
+
+modrinth {
+    loaders.set(listOf(
+        "velocity",
+    ))
+}

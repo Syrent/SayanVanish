@@ -1,6 +1,7 @@
 package org.sayandev.sayanvanish.bukkit.feature.features.prevent
 
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.block.BlockBreakEvent
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
@@ -12,7 +13,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable
 @ConfigSerializable
 class FeaturePreventBlockBreak: ListenedFeature("prevent_block_break", false, category = FeatureCategories.PREVENTION) {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     private fun onBlockBreak(event: BlockBreakEvent) {
         val user = event.player.user() ?: return
         if (!isActive(user)) return

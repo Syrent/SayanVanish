@@ -11,10 +11,13 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @RegisteredFeature
 @ConfigSerializable
-class PreventFoodLevelChange: ListenedFeature("prevent_food_level_change", category = FeatureCategories.PREVENTION) {
+class PreventFoodLevelChange(
+    val ignoreIfIncrease: Boolean = true
+): ListenedFeature("prevent_food_level_change", category = FeatureCategories.PREVENTION) {
 
     @EventHandler
     private fun onBlockBreak(event: FoodLevelChangeEvent) {
+        if (ignoreIfIncrease && event.foodLevel > event.entity.foodLevel) return
         val player = event.entity as? Player ?: return
         val user = player.user() ?: return
         if (!isActive(user)) return

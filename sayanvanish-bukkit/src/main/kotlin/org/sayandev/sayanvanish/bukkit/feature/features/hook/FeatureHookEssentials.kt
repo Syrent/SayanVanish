@@ -5,19 +5,21 @@ import net.ess3.api.events.PrivateMessagePreSendEvent
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.sayandev.sayanvanish.api.SayanVanishAPI.Companion.user
+import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.feature.HookFeature
 import org.sayandev.stickynote.bukkit.registerListener
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.objectmapping.meta.Comment
+import java.util.*
 
 @RegisteredFeature
 @ConfigSerializable
 class FeatureHookEssentials(
     @Comment("Prevent Essentials from changing the AFK status of vanished players")
-    val preventAfkStatusChange: Boolean = true,
+    @Configurable val preventAfkStatusChange: Boolean = true,
     @Comment("Prevent players to send private messages to vanished players using Essentials")
-    val preventPrivateMessage: Boolean = true
+    @Configurable val preventPrivateMessage: Boolean = true,
 ) : HookFeature("hook_essentials", "Essentials") {
 
     override fun enable() {
@@ -31,23 +33,26 @@ class FeatureHookEssentials(
 
 private class EssentialsHookImpl(val feature: FeatureHookEssentials): Listener {
 
+    val lastAfkValue = mutableMapOf<UUID, Boolean>()
+
     init {
         registerListener(this)
     }
 
     @EventHandler
-    private fun onNPCSpeech(event: AfkStatusChangeEvent) {
+    private fun preventAfkStatusChange(event: AfkStatusChangeEvent) {
+        if (!feature.preventAfkStatusChange) return
         val user = event.affected.uuid?.user() ?: return
-        if (!feature.isActive(user) || feature.preventAfkStatusChange) return
-        if (user.isVanished) {
-            event.isCancelled = true
-        }
+        if (!feature.isActive(user)) return
+        if (!user.isVanished) return
+        event.isCancelled = true
     }
 
     @EventHandler
-    private fun onNPCSpeech(event: PrivateMessagePreSendEvent) {
+    private fun preventPrivateMessage(event: PrivateMessagePreSendEvent) {
+        if (!feature.preventPrivateMessage) return
         val user = event.recipient.uuid?.user() ?: return
-        if (!feature.isActive(user) || feature.preventPrivateMessage) return
+        if (!feature.isActive(user)) return
         if (user.isVanished) {
             event.sender.sendMessage(com.earth2me.essentials.I18n.tl("errorWithMessage", com.earth2me.essentials.I18n.tl("playerNotFound")))
             event.isCancelled = true

@@ -190,7 +190,7 @@ subprojects {
 
     val publicationShadowJar by tasks.registering(com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar::class) {
         from(sourceSets.main.get().output)
-        configurations = listOf(*configurations.toTypedArray(), this@subprojects.configurations["compileOnlyApiResolved"])
+        configurations = listOf(*configurations.get().toTypedArray(), this@subprojects.configurations["compileOnlyApiResolved"])
         archiveClassifier.set("")
     }
 

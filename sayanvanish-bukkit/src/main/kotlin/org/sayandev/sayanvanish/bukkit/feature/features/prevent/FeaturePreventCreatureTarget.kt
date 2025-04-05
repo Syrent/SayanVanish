@@ -1,20 +1,14 @@
 package org.sayandev.sayanvanish.bukkit.feature.features.prevent
 
-import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Mob
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityTargetEvent
-import org.bukkit.scheduler.BukkitRunnable
-import org.bukkit.scheduler.BukkitTask
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
-import org.sayandev.stickynote.bukkit.onlinePlayers
-import org.sayandev.stickynote.bukkit.plugin
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @RegisteredFeature

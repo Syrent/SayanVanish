@@ -19,16 +19,20 @@ import org.sayandev.stickynote.velocity.registerListener
 class FeatureHookAdvancedServerList : HookFeature("hook_advanced_server_list", "advancedserverlist") {
     override fun enable() {
         if (hasPlugin()) {
-            try {
-                AdvancedServerListAPI.get()
-                    .addPlaceholderProvider(AdvancedServerListImpl())
-            } catch (_: InvalidPlaceholderProviderException) { }
+            AdvancedServerListImpl()
         }
         super.enable()
     }
 }
 
 private class AdvancedServerListImpl : PlaceholderProvider("sayanvanish") {
+    init {
+        try {
+            AdvancedServerListAPI.get()
+                .addPlaceholderProvider(this)
+        } catch (_: InvalidPlaceholderProviderException) { }
+    }
+
     override fun parsePlaceholder(
         placeholder: String,
         player: GenericPlayer?,

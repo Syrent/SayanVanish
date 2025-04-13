@@ -32,6 +32,7 @@ import org.sayandev.sayanvanish.bukkit.config.SettingsConfig
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.sayanvanish.bukkit.feature.HookFeature
+import org.sayandev.sayanvanish.bukkit.feature.features.FeatureFakeMessage
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureLevel
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureUpdate
 import org.sayandev.sayanvanish.bukkit.health.HealthCache
@@ -201,7 +202,6 @@ class SayanVanishCommand : BukkitCommand(settings.command.name, *settings.comman
                 val sender = context.sender().platformSender()
                 language = LanguageConfig.fromConfig() ?: LanguageConfig.defaultConfig()
                 Features.features.forEach { feature ->
-                    feature.save()
                     feature.disable(true)
                     if (feature::class.java.isAssignableFrom(Listener::class.java)) {
                         unregisterListener(feature as Listener)

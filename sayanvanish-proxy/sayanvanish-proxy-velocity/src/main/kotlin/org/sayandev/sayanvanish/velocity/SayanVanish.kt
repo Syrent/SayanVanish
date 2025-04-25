@@ -42,10 +42,10 @@ class SayanVanish @Inject constructor(
 
     @Subscribe
     fun onProxyInitialize(event: ProxyInitializeEvent) {
-        sayanvanish = this
-        Platform.get().rootDirectory = dataDirectory.toFile()
         StickyNoteVelocityLoader(this, PLUGIN_ID, server, logger, dataDirectory)
         suspendingPluginContainer.initialize(this)
+        sayanvanish = this
+        Platform.get().rootDirectory = dataDirectory.toFile()
 
         if (!Platform.setAndRegister(Platform("velocity", java.util.logging.Logger.getLogger("sayanvanish"), dataDirectory.toFile(), ""))) return
 

@@ -30,6 +30,12 @@ tasks {
     runVelocity {
         velocityVersion("3.4.0-SNAPSHOT")
 
+        javaLauncher =
+            rootProject.javaToolchains.launcherFor {
+                vendor = JvmVendorSpec.JETBRAINS
+                languageVersion = JavaLanguageVersion.of(21)
+            }
+
         downloadPlugins {
 //            url("https://github.com/NEZNAMY/TAB/releases/download/5.0.3/TAB.v5.0.3.jar")
             url("https://download.luckperms.net/1570/velocity/LuckPerms-Velocity-5.4.153.jar")
@@ -41,7 +47,7 @@ tasks {
 //            url("https://github.com/SkinsRestorer/SkinsRestorer/releases/download/15.4.3/SkinsRestorer.jar")
 //            url("https://hangarcdn.papermc.io/plugins/Andre_601/AdvancedServerList/versions/4.11.1/VELOCITY/AdvancedServerList-Velocity-4.11.1.jar")
 //            url("https://ci.lucko.me/job/spark/419/artifact/spark-velocity/build/libs/spark-1.10.74-velocity.jar")
-            hangar("Velocitab", "1.7.5-1133729")
+            hangar("Velocitab", "1.7.5-69cb990")
         }
     }
 }

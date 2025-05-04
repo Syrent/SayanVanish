@@ -34,14 +34,7 @@ object RegisteredFeatureHandler {
             if (Features.features.map { it.javaClass }.contains(clazz)) return
             val instance = Feature.createFromConfig(clazz as Class<out Feature>)
             instance.save()
-            when (instance) {
-                is Feature -> {
-                    Features.addFeature(instance)
-                }
-                else -> {
-                    throw NullPointerException("Tried to add feature to Features but the type ${clazz.name} is not supported")
-                }
-            }
+            Features.addFeature(instance)
         } catch (e: NoClassDefFoundError) {
             Platform.get().logger.warning("Couldn't enable feature ${clazz.simpleName} on your server software/version.")
         } catch (e: Exception) {

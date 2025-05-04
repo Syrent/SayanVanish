@@ -1,53 +1,42 @@
 package org.sayandev.sayanvanish.api.database
 
-import org.sayandev.sayanvanish.api.BasicUser
+import kotlinx.coroutines.Deferred
 import org.sayandev.sayanvanish.api.User
+import org.sayandev.sayanvanish.api.VanishUser
 import java.util.*
 
-interface Database<U: User> {
+interface Database {
 
-    var cache: MutableMap<UUID, U>
-    var useCache: Boolean
+    suspend fun initialize(): Deferred<Boolean>
 
-    fun initialize()
+    suspend fun connect(): Deferred<Boolean>
 
-    fun connect()
+    suspend fun disconnect(): Deferred<Boolean>
 
-    fun disconnect()
+    suspend fun addVanishUser(vanishUser: VanishUser): Deferred<Boolean>
 
-    fun addUser(user: U)
+    suspend fun hasVanishUser(uniqueId: UUID): Deferred<Boolean>
 
-    fun hasUser(uniqueId: UUID): Boolean
+    suspend fun updateVanishUser(vanishUser: VanishUser): Deferred<Boolean>
 
-    fun updateUser(user: U)
+    suspend fun removeVanishUser(uniqueId: UUID): Deferred<Boolean>
 
-    fun removeUser(uniqueId: UUID)
+    suspend fun getVanishUser(uniqueId: UUID): Deferred<VanishUser?>
 
-    fun getUser(uniqueId: UUID, useCache: Boolean = true): U?
+    suspend fun getVanishUsers(): Deferred<List<VanishUser>>
 
-    fun getUser(uniqueId: UUID): U? {
-        return getUser(uniqueId, true)
-    }
+    suspend fun getUsers(): Deferred<List<User>>
 
-    fun getUsers(): List<U>
-    fun getUsersAsync(result: (List<U>) -> Unit)
+    suspend fun addUser(user: User): Deferred<Boolean>
+    suspend fun hasUser(uniqueId: UUID): Deferred<Boolean>
+    suspend fun updateUser(user: User): Deferred<Boolean>
+    suspend fun removeUser(uniqueId: UUID): Deferred<Boolean>
 
-    fun getBasicUsers(useCache: Boolean): List<BasicUser>
-    fun getBasicUsersAsync(result: (List<BasicUser>) -> Unit)
+    suspend fun isInQueue(uniqueId: UUID): Deferred<Boolean>
+    suspend fun addToQueue(uniqueId: UUID, vanished: Boolean): Deferred<Boolean>
+    suspend fun getFromQueue(uniqueId: UUID): Deferred<Boolean>
+    suspend fun removeFromQueue(uniqueId: UUID): Deferred<Boolean>
 
-    fun addBasicUser(user: BasicUser)
-    fun hasBasicUser(uniqueId: UUID, useCache: Boolean): Boolean
-    fun updateBasicUser(user: BasicUser)
-    fun removeBasicUser(uniqueId: UUID)
-
-    fun isInQueue(uniqueId: UUID, result: (Boolean) -> Unit)
-    fun addToQueue(uniqueId: UUID, vanished: Boolean)
-    fun getFromQueue(uniqueId: UUID, result: (Boolean) -> Unit)
-    fun removeFromQueue(uniqueId: UUID)
-
-    fun purge()
-    fun purgeCache()
-    fun purgeBasic()
-    fun purgeBasic(serverId: String)
-
+    suspend fun purgeAllTables(): Deferred<Boolean>
+    suspend fun purgeUsers(): Deferred<Boolean>
 }

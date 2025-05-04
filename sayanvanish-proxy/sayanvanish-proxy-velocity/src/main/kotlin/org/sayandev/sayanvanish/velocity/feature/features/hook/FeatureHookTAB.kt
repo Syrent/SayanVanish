@@ -4,7 +4,7 @@ import me.neznamy.tab.api.TabPlayer
 import me.neznamy.tab.api.integration.VanishIntegration
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
-import org.sayandev.sayanvanish.velocity.api.VelocityUser
+import org.sayandev.sayanvanish.velocity.api.VelocityVanishUser
 import org.sayandev.sayanvanish.velocity.feature.HookFeature
 import org.sayandev.stickynote.velocity.plugin
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
@@ -39,7 +39,7 @@ private class VanishIntegrationTAB(val feature: FeatureHookTAB): VanishIntegrati
 
     override fun canSee(viewer: TabPlayer, target: TabPlayer): Boolean {
         if (viewer.uniqueId == target.uniqueId) return true
-        val viewerUser = SayanVanishVelocityAPI.getInstance().getUser(viewer.uniqueId, feature.useCacheData) ?: VelocityUser(viewer.uniqueId, viewer.name)
+        val viewerUser = SayanVanishVelocityAPI.getInstance().getUser(viewer.uniqueId, feature.useCacheData) ?: VelocityVanishUser(viewer.uniqueId, viewer.name)
         val targetUser = SayanVanishVelocityAPI.getInstance().getUser(target.uniqueId, feature.useCacheData) ?: return true
         return SayanVanishVelocityAPI.getInstance().canSee(viewerUser, targetUser)
     }

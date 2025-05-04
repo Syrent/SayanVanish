@@ -41,10 +41,12 @@ class SQLConfig(
         val verifyServerCertificate: Boolean = false,
         @Comment("Whether to allow public key retrieval")
         val allowPublicKeyRetrieval: Boolean = true,
+        val maxLifetime: Long = 1800000,
     )
 
     enum class SQLMethod {
         MYSQL,
+        MARIADB,
         SQLITE
     }
 }

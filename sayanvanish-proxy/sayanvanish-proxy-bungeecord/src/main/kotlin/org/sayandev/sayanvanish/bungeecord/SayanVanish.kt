@@ -31,9 +31,9 @@ class SayanVanish : Plugin() {
 
         if (settings.general.purgeOnlineHistoryOnStartup) {
             for (onlineServer in server.servers) {
-                SayanVanishBungeeAPI.getInstance().database.purgeBasic(onlineServer.value.name)
+                SayanVanishBungeeAPI.getInstance().database.purgeUsers(onlineServer.value.name)
             }
-            SayanVanishBungeeAPI.getInstance().database.purgeBasic(settings.general.serverId)
+            SayanVanishBungeeAPI.getInstance().database.purgeUsers(settings.general.serverId)
         }
 
         StickyNote.run({

@@ -17,7 +17,7 @@ class FeatureUpdatePing : ListenedFeature("update_ping") {
     fun onProxyPing(event: ProxyPingEvent) {
         if (!isActive()) return
         val pingPlayers = event.ping.players.getOrNull() ?: return
-        val vanishedOnlineUsers = SayanVanishVelocityAPI.getInstance().database.getUsers().filter { user -> user.isVanished && user.isOnline }
+        val vanishedOnlineUsers = SayanVanishVelocityAPI.getInstance().database.getVanishUsers().filter { user -> user.isVanished && user.isOnline }
         val nonVanishedPlayersCount = SayanVanishVelocityAPI.getInstance().database.getBasicUsers(true).filter { !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size
         val nonVanishedPlayersSample = pingPlayers.sample.filter { !vanishedOnlineUsers.map { it.username }.contains(it.name) }
         event.ping = event.ping

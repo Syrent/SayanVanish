@@ -3,79 +3,44 @@ package org.sayandev.sayanvanish.api
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
+import org.jetbrains.exposed.sql.Table
 import org.sayandev.sayanvanish.api.exception.UnsupportedPlatformException
 import java.util.*
 
-interface User : BasicUser {
+interface User {
 
-    var currentOptions: VanishOptions
-    var isVanished: Boolean
+    val uniqueId: UUID
+    var username: String
     var isOnline: Boolean
-    var vanishLevel: Int
+    var serverId: String
 
-    fun vanish(options: VanishOptions) {
-        isVanished = true
-        save()
+    fun hasPermission(permission: String): Boolean {
+        throw UnsupportedPlatformException("hasPermission")
     }
 
-    fun vanish() {
-        vanish(VanishOptions.defaultOptions())
+    fun hasPermission(permission: Permission): Boolean {
+        return hasPermission(permission.permission())
     }
 
-    fun unVanish(options: VanishOptions) {
-        isVanished = false
-        save()
-    }
-
-    fun unVanish() {
-        unVanish(VanishOptions.defaultOptions())
-    }
-
-    fun toggleVanish(options: VanishOptions) {
-        if (isVanished) unVanish(options) else vanish(options)
-    }
-
-    fun toggleVanish() {
-        toggleVanish(VanishOptions.defaultOptions())
-    }
-
-    fun sendComponent(content: String, vararg placeholder: TagResolver) {
-        throw UnsupportedPlatformException("sendMessage")
-    }
-
-    fun sendActionbar(content: String, vararg placeholder: TagResolver) {
-        throw UnsupportedPlatformException("sendActionbar")
-    }
-
-    /**
-    * @param otherUser The user to check if this user can see
-    * */
-    fun canSee(otherUser: User): Boolean {
-        if (!otherUser.isVanished) return true
-        if (this.uniqueId == otherUser.uniqueId) return true
-        val canSee = vanishLevel >= otherUser.vanishLevel
-        return canSee
-    }
-
-    override fun save() {
-        serverId = Platform.get().serverId
+    suspend fun save() {
         SayanVanishAPI.getInstance().database.addUser(this)
     }
 
-    fun delete() {
-        SayanVanishAPI.getInstance().database.removeUser(uniqueId)
-    }
-
-    override fun toJson(): String {
+    fun toJson(): String {
         val json = JsonObject()
         json.addProperty("unique-id", uniqueId.toString())
         json.addProperty("username", username)
-        json.addProperty("is-vanished", isVanished)
-        json.addProperty("is-online", isOnline)
-        json.addProperty("vanish-level", vanishLevel)
-        json.addProperty("current-options", currentOptions.toJson())
+        json.addProperty("server-id", serverId)
         return Gson().toJson(json)
+    }
+
+    object Schema : Table("${Platform.get().pluginName.lowercase()}_users") {
+        val uniqueId = uuid("unique_id").uniqueIndex()
+        val username = varchar("username", 16)
+        val isOnline = bool("is_online").default(false)
+        val serverId = varchar("server_id", 36)
+
+        override val primaryKey = PrimaryKey(uniqueId)
     }
 
     companion object {
@@ -84,24 +49,18 @@ interface User : BasicUser {
             val json = JsonParser.parseString(serialized).asJsonObject
             val uniqueId = json.get("unique-id").asString
             val username = json.get("username").asString
-            val isVanished = json.get("is-vanished").asBoolean
-            val isOnline = json.get("is-online").asBoolean
-            val vanishLevel = json.get("vanish-level").asInt
-            val currentOptions = VanishOptions.fromJson(json.get("current-options").asString)
-            return object : User {
-                override val uniqueId = UUID.fromString(uniqueId)
-                override var username = username
-                override var isVanished = isVanished
-                override var isOnline = isOnline
-                override var vanishLevel = vanishLevel
-                override var currentOptions = currentOptions
-                override var serverId = Platform.get().id
-            }
+            val serverId = json.get("server-id").asString
+            return of(UUID.fromString(uniqueId), username, serverId)
         }
 
-        fun User.convert(to: Class<out User>): Any {
-            val instance = to.getDeclaredMethod("fromUser", User::class.java).invoke(null, this)
-            return instance
+        @JvmStatic
+        fun of(uniqueId: UUID, username: String, isOnline: Boolean, serverId: String?): User {
+            return object : User {
+                override val uniqueId: UUID = uniqueId
+                override var username: String = username
+                override var isOnline: Boolean = isOnline
+                override var serverId: String = serverId ?: Platform.get().serverId
+            }
         }
     }
 

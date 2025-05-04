@@ -4,7 +4,7 @@ import com.velocitypowered.api.proxy.Player
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.api.SayanVanishAPI
-import org.sayandev.sayanvanish.api.User
+import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.feature.Features
 import org.sayandev.sayanvanish.proxy.config.settings
@@ -19,17 +19,17 @@ import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
 
-open class VelocityUser(
+open class VelocityVanishUser(
     override val uniqueId: UUID,
     override var username: String
-) : User {
+) : VanishUser {
 
     override var serverId: String
         get() = StickyNote.getPlayer(uniqueId)?.currentServer?.getOrNull()?.serverInfo?.name ?: settings.general.serverId
         set(_) {}
     override var currentOptions = VanishOptions.defaultOptions()
     override var isVanished = false
-    override var isOnline: Boolean = SayanVanishAPI.getInstance().database.hasBasicUser(uniqueId, true)
+    override var isOnline: Boolean = SayanVanishAPI.getInstance().database.hasUser(uniqueId, true)
     override var vanishLevel: Int = 0
         get() = player()?.let { player ->
                 val luckPermsHook = Features.getFeature<FeatureLuckPermsHook>()
@@ -87,11 +87,11 @@ open class VelocityUser(
 
     companion object {
         @JvmStatic
-        fun fromUser(user: User): VelocityUser {
-            return VelocityUser(user.uniqueId, user.username).apply {
-                this.isOnline = user.isOnline
-                this.isVanished = user.isVanished
-                this.vanishLevel = user.vanishLevel
+        fun fromUser(vanishUser: VanishUser): VelocityVanishUser {
+            return VelocityVanishUser(vanishUser.uniqueId, vanishUser.username).apply {
+                this.isOnline = vanishUser.isOnline
+                this.isVanished = vanishUser.isVanished
+                this.vanishLevel = vanishUser.vanishLevel
             }
         }
     }

@@ -4,10 +4,10 @@ import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 import org.sayandev.sayanvanish.api.VanishOptions
-import org.sayandev.sayanvanish.bukkit.api.BukkitUser
+import org.sayandev.sayanvanish.bukkit.api.BukkitVanishUser
 
 class BukkitUserVanishEvent(
-    val user: BukkitUser,
+    val user: BukkitVanishUser,
     val options: VanishOptions,
 ) : Event(), Cancellable {
 

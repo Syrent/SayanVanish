@@ -66,9 +66,9 @@ class SayanVanish @Inject constructor(
 
         if (settings.general.purgeOnlineHistoryOnStartup) {
             for (onlineServer in server.allServers) {
-                SayanVanishVelocityAPI.getInstance().database.purgeBasic(onlineServer.serverInfo.name)
+                SayanVanishVelocityAPI.getInstance().database.purgeUsers(onlineServer.serverInfo.name)
             }
-            SayanVanishVelocityAPI.getInstance().database.purgeBasic(settings.general.serverId)
+            SayanVanishVelocityAPI.getInstance().database.purgeUsers(settings.general.serverId)
         }
 
         if (settings.general.purgeUsersOnStartup) {

@@ -21,7 +21,7 @@ class FeatureSyncEvents(
 
     override fun enable() {
         StickyNote.run({
-            for (user in SayanVanishBungeeAPI.getInstance().database.getUsers()) {
+            for (user in SayanVanishBungeeAPI.getInstance().database.getVanishUsers()) {
                 if (previousUsers[user.uniqueId] == null) {
                     previousUsers[user.uniqueId] = user.isVanished
                     continue

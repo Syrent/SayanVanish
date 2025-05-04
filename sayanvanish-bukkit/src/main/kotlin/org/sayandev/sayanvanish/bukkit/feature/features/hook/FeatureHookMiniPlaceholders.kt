@@ -4,7 +4,6 @@ import io.github.miniplaceholders.api.Expansion
 import io.github.miniplaceholders.api.utils.TagsUtils
 import org.bukkit.entity.Player
 import org.sayandev.sayanvanish.api.SayanVanishAPI
-import org.sayandev.sayanvanish.api.SayanVanishAPI.Companion.user
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
@@ -51,7 +50,7 @@ private class MiniPlaceholdersHookImpl(val feature: FeatureHookMiniPlaceholders)
         }
 
         builder.globalPlaceholder("count") { queue, context ->
-            TagsUtils.staticTag(SayanVanishBukkitAPI.getInstance().database.getUsers().filter { user -> user.isOnline && user.isVanished }.size.toString())
+            TagsUtils.staticTag(SayanVanishBukkitAPI.getInstance().database.getVanishUsers().filter { user -> user.isOnline && user.isVanished }.size.toString())
         }
 
         builder.audiencePlaceholder("vanish_prefix") { audience, queue, context ->
@@ -67,7 +66,7 @@ private class MiniPlaceholdersHookImpl(val feature: FeatureHookMiniPlaceholders)
                 return@globalPlaceholder TagsUtils.EMPTY_TAG
             }
 
-            val vanishedOnlineUsers = SayanVanishBukkitAPI.getInstance().database.getUsers().filter { user -> user.isVanished && user.isOnline }
+            val vanishedOnlineUsers = SayanVanishBukkitAPI.getInstance().database.getVanishUsers().filter { user -> user.isVanished && user.isOnline }
             val serverName = queue.pop().value()
 
             val result = when (serverName) {

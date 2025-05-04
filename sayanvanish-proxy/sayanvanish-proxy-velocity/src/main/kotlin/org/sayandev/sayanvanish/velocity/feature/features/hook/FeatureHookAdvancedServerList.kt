@@ -49,7 +49,7 @@ private class AdvancedServerListImpl : PlaceholderProvider("sayanvanish") {
         }
 
         if (placeholder.equals("count", true)) {
-            return SayanVanishVelocityAPI.getInstance().database.getUsers().filter { user -> user.isOnline && user.isVanished }.size.toString()
+            return SayanVanishVelocityAPI.getInstance().database.getVanishUsers().filter { user -> user.isOnline && user.isVanished }.size.toString()
         }
 
         if (placeholder.equals("vanish_prefix", true)) {
@@ -62,7 +62,7 @@ private class AdvancedServerListImpl : PlaceholderProvider("sayanvanish") {
 
         if (placeholder.startsWith("online_")) {
             val type = placeholder.substring(7)
-            val vanishedOnlineUsers = SayanVanishVelocityAPI.getInstance().database.getUsers().filter { user -> user.isVanished && user.isOnline }
+            val vanishedOnlineUsers = SayanVanishVelocityAPI.getInstance().database.getVanishUsers().filter { user -> user.isVanished && user.isOnline }
 
             return if (type.equals("total", true)) {
                 SayanVanishAPI.getInstance().database.getBasicUsers(false).filter { !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()

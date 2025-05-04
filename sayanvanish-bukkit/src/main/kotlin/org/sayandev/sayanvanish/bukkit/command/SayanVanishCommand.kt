@@ -31,8 +31,6 @@ import org.sayandev.sayanvanish.bukkit.config.LanguageConfig
 import org.sayandev.sayanvanish.bukkit.config.SettingsConfig
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.config.settings
-import org.sayandev.sayanvanish.bukkit.feature.HookFeature
-import org.sayandev.sayanvanish.bukkit.feature.features.FeatureFakeMessage
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureLevel
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureUpdate
 import org.sayandev.sayanvanish.bukkit.health.HealthCache
@@ -472,7 +470,7 @@ class SayanVanishCommand : BukkitCommand(settings.command.name, *settings.comman
                     database.useCache = false
                 }
 
-                val users = database.getUsers()
+                val users = database.getVanishUsers()
 
                 val limitedUsers = users.take(limit)
 
@@ -516,7 +514,7 @@ class SayanVanishCommand : BukkitCommand(settings.command.name, *settings.comman
                     counter.start()
                     sender.sendComponent("<gold>[${it + 1}] <gray>Trying <green>${amount} Get Users</green> from data storage")
                     repeat(amount) {
-                        database.getUsers()
+                        database.getVanishUsers()
                     }
                     counter.stop()
                     sender.sendComponent("<gold>[${it + 1}] <gray>Took <green>${counter.get()}ms</green>")

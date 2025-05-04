@@ -6,6 +6,7 @@ import java.util.logging.Logger
 
 data class Platform(
     val id: String,
+    val pluginName: String,
     val logger: Logger,
     var rootDirectory: File,
     var serverId: String,

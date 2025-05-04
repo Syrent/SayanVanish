@@ -11,7 +11,6 @@ import org.sayandev.stickynote.bukkit.onlinePlayers
 import ch.andre601.advancedserverlist.api.PlaceholderProvider
 import ch.andre601.advancedserverlist.api.AdvancedServerListAPI
 import ch.andre601.advancedserverlist.api.exceptions.InvalidPlaceholderProviderException
-import kotlin.text.get
 
 class AdvancedServerListImpl : PlaceholderProvider("sayanvanish") {
     fun register() {
@@ -37,7 +36,7 @@ class AdvancedServerListImpl : PlaceholderProvider("sayanvanish") {
         }
 
         if (placeholder.equals("count", true)) {
-            return SayanVanishBukkitAPI.getInstance().database.getUsers().filter { user -> user.isOnline && user.isVanished }.size.toString()
+            return SayanVanishBukkitAPI.getInstance().database.getVanishUsers().filter { user -> user.isOnline && user.isVanished }.size.toString()
         }
 
         if (placeholder.equals("vanish_prefix", true)) {
@@ -50,7 +49,7 @@ class AdvancedServerListImpl : PlaceholderProvider("sayanvanish") {
 
         if (placeholder.startsWith("online_")) {
             val type = placeholder.substring(7)
-            val vanishedOnlineUsers = SayanVanishBukkitAPI.getInstance().database.getUsers().filter { user -> user.isVanished && user.isOnline }
+            val vanishedOnlineUsers = SayanVanishBukkitAPI.getInstance().database.getVanishUsers().filter { user -> user.isVanished && user.isOnline }
 
             return if (type.equals("here", true)) {
                 onlinePlayers.filter { onlinePlayer -> !vanishedOnlineUsers.map { vanishedOnlineUser -> vanishedOnlineUser.username }.contains(onlinePlayer.name) }.size.toString()

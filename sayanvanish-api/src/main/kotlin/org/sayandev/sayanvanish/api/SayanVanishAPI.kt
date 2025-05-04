@@ -6,8 +6,8 @@ import org.sayandev.sayanvanish.api.database.redis.RedisDatabase
 import org.sayandev.sayanvanish.api.database.sql.SQLDatabase
 import java.util.*
 
-open class SayanVanishAPI<U: User>(val type: Class<out User>) {
-    constructor(): this(User::class.java)
+open class SayanVanishAPI<U: VanishUser>(val type: Class<out VanishUser>) {
+    constructor(): this(VanishUser::class.java)
 
     var databaseConnected: Boolean = true
 
@@ -39,11 +39,11 @@ open class SayanVanishAPI<U: User>(val type: Class<out User>) {
     }
 
     init {
-        for (user in database.getUsers().filter { user -> user.serverId == Platform.get().serverId }) {
+        for (user in database.getVanishUsers().filter { user -> user.serverId == Platform.get().serverId }) {
             user.isOnline = false
             user.save()
         }
-        database.purgeBasic(Platform.get().serverId)
+        database.purgeUsers(Platform.get().serverId)
     }
 
     fun getPlatform(): Platform {
@@ -51,11 +51,11 @@ open class SayanVanishAPI<U: User>(val type: Class<out User>) {
     }
 
     fun isVanished(uniqueId: UUID, useCache: Boolean = true): Boolean {
-        return database.getUser(uniqueId, useCache)?.isVanished == true
+        return database.getVanishUser(uniqueId, useCache)?.isVanished == true
     }
 
     fun isVanished(uniqueId: UUID): Boolean {
-        return database.getUser(uniqueId, true)?.isVanished == true
+        return database.getVanishUser(uniqueId, true)?.isVanished == true
     }
 
     fun canSee(user: U?, target: U): Boolean {
@@ -65,7 +65,7 @@ open class SayanVanishAPI<U: User>(val type: Class<out User>) {
     }
 
     fun getUser(uniqueId: UUID, useCache: Boolean = true): U? {
-        return database.getUser(uniqueId, useCache)
+        return database.getVanishUser(uniqueId, useCache)
     }
 
     fun getUser(uniqueId: UUID): U? {
@@ -73,11 +73,11 @@ open class SayanVanishAPI<U: User>(val type: Class<out User>) {
     }
 
     fun getOnlineUsers(): List<U> {
-        return database.getUsers().filter { it.isOnline }
+        return database.getVanishUsers().filter { it.isOnline }
     }
 
     fun getVanishedUsers(): List<U> {
-        return database.getUsers().filter { it.isVanished }
+        return database.getVanishUsers().filter { it.isVanished }
     }
 
     private fun logDatabaseError() {
@@ -89,15 +89,15 @@ open class SayanVanishAPI<U: User>(val type: Class<out User>) {
     }
 
     companion object {
-        private val defaultInstance = SayanVanishAPI<User>()
+        private val defaultInstance = SayanVanishAPI<VanishUser>()
 
         @JvmStatic
-        fun getInstance(): SayanVanishAPI<User> {
+        fun getInstance(): SayanVanishAPI<VanishUser> {
             return defaultInstance
         }
 
         @JvmStatic
-        fun UUID.user(): User? {
+        fun UUID.user(): VanishUser? {
             return getInstance().getUser(this)
         }
 

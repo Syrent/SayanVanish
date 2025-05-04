@@ -1,6 +1,6 @@
 package org.sayandev.sayanvanish.api.feature
 
-import org.sayandev.sayanvanish.api.BasicUser
+import org.sayandev.sayanvanish.api.User
 import java.util.UUID
 
 object Features {
@@ -18,7 +18,7 @@ object Features {
     }
 
     @JvmStatic
-    inline fun <reified T> getUserFeature(user: BasicUser): T {
+    inline fun <reified T> getUserFeature(user: User): T {
         return getUserFeature(user.uniqueId)
     }
 
@@ -32,7 +32,7 @@ object Features {
         return features
     }
 
-    fun userFeatures(user: BasicUser): List<Feature> {
+    fun userFeatures(user: User): List<Feature> {
         return userFeatures.getOrPut(user.uniqueId) { features() }
     }
 

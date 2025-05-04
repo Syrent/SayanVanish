@@ -95,7 +95,7 @@ private class HookPlaceholderAPI : PlaceholderExpansion() {
         }
 
         if (params.equals("count", true)) {
-            return SayanVanishBukkitAPI.getInstance().database.getUsers().filter { user -> user.isOnline && user.isVanished }.size.toString()
+            return SayanVanishBukkitAPI.getInstance().database.getVanishUsers().filter { user -> user.isOnline && user.isVanished }.size.toString()
         }
 
         if (params.equals("vanish_prefix", true)) {
@@ -110,7 +110,7 @@ private class HookPlaceholderAPI : PlaceholderExpansion() {
 
         if (params.startsWith("online_")) {
             val type = params.removePrefix("online_")
-            val vanishedOnlineUsers = SayanVanishBukkitAPI.getInstance().database.getUsers().filter { user -> user.isVanished && user.isOnline }
+            val vanishedOnlineUsers = SayanVanishBukkitAPI.getInstance().database.getVanishUsers().filter { user -> user.isVanished && user.isOnline }
 
             return if (type.equals("here", true)) {
                 onlinePlayers.filter { onlinePlayer -> !vanishedOnlineUsers.map { vanishedOnlineUser -> vanishedOnlineUser.username }.contains(onlinePlayer.name) }.size.toString()

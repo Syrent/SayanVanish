@@ -2,7 +2,6 @@ package org.sayandev.sayanvanish.bukkit.api
 
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
-import org.sayandev.sayanvanish.api.SayanVanishAPI
 import java.util.*
 
 class SayanVanishBukkitAPI : SayanVanishAPI<BukkitVanishUser>(BukkitVanishUser::class.java) {

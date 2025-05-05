@@ -3,7 +3,6 @@ package org.sayandev.sayanvanish.bukkit.feature.features.hook
 import io.github.miniplaceholders.api.Expansion
 import io.github.miniplaceholders.api.utils.TagsUtils
 import org.bukkit.entity.Player
-import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
@@ -77,14 +76,14 @@ private class MiniPlaceholdersHookImpl(val feature: FeatureHookMiniPlaceholders)
                     if (!settings.general.proxyMode) {
                         "PROXY_MODE IS NOT ENABLED!"
                     } else {
-                        SayanVanishAPI.getInstance().database.getBasicUsers(false).filter { !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
+                        SayanVanishAPI.getDatabase().getBasicUsers(false).filter { !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
                     }
                 }
                 else -> {
                     if (!settings.general.proxyMode) {
                         "PROXY_MODE IS NOT ENABLED!"
                     } else {
-                        SayanVanishAPI.getInstance().database.getBasicUsers(false).filter { it.serverId == serverName && !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
+                        SayanVanishAPI.getDatabase().getBasicUsers(false).filter { it.serverId == serverName && !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
                     }
                 }
             }

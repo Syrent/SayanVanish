@@ -11,18 +11,16 @@ import redis.clients.jedis.DefaultJedisClientConfig
 import redis.clients.jedis.HostAndPort
 import redis.clients.jedis.JedisPooled
 import java.util.*
-import java.util.concurrent.Executors
 
 class RedisDatabase(
     val config: DatabaseConfig,
 ) : Database {
 
-    private val redisDispatcher =
+    override val dispatcher =
         AsyncDispatcher(
             "${Platform.get().pluginName.lowercase()}-redis-thread",
             config.redisDispatcherThreadCount,
         )
-    private val thread = Executors.newSingleThreadExecutor()
 
     lateinit var redis: JedisPooled
 
@@ -153,8 +151,8 @@ class RedisDatabase(
 
     override suspend fun purgeAllTables(): Deferred<Boolean> {
         return async {
+            redis.del("vanish_users")
             redis.del("users")
-            redis.del("basic_users")
             redis.del("queue")
             true
         }
@@ -162,8 +160,15 @@ class RedisDatabase(
 
     override suspend fun purgeUsers(): Deferred<Boolean> {
         return async {
-            redis.del("basic_users")
-            redis.del("queue")
+            redis.del("users")
+            true
+        }
+    }
+
+    override suspend fun purgeUsers(serverId: String): Deferred<Boolean> {
+        return async {
+            // TODO: only remove users from this server id
+            redis.del("users")
             true
         }
     }
@@ -171,12 +176,12 @@ class RedisDatabase(
     fun <T> async(
         block: suspend CoroutineScope.() -> T
     ): Deferred<T> {
-        val session = CoroutineScope(redisDispatcher)
+        val session = CoroutineScope(dispatcher)
         if (!session.isActive) {
             return CompletableDeferred<T>().apply { cancel() }
         }
 
-        return session.async(redisDispatcher, CoroutineStart.DEFAULT, block)
+        return session.async(dispatcher, CoroutineStart.DEFAULT, block)
     }
 
 }

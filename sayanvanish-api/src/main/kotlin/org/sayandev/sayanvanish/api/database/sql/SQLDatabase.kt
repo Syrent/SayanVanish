@@ -10,19 +10,22 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.experimental.suspendedTransactionAsync
 import org.sayandev.sayanvanish.api.Platform
+import org.sayandev.sayanvanish.api.PlatformAdapter
 import org.sayandev.sayanvanish.api.Queue
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.database.Database
 import org.sayandev.sayanvanish.api.database.DatabaseConfig
 import org.sayandev.stickynote.core.coroutine.dispatcher.AsyncDispatcher
+import org.sayandev.stickynote.core.utils.CoroutineUtils
+import org.sayandev.stickynote.core.utils.launch
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 class SQLDatabase(
     val config: DatabaseConfig,
 ) : Database {
-    private val databaseDispatcher =
+    override val dispatcher =
         AsyncDispatcher(
             "${Platform.get().pluginName.lowercase()}-${config.sql.method}-thread",
             config.sqlDispatcherThreadCount,
@@ -268,12 +271,21 @@ class SQLDatabase(
         }
     }
 
-    suspend fun <T> async(statement: suspend Transaction.() -> T): Deferred<T> {
-        return suspendedTransactionAsync(
-            databaseDispatcher,
-            database,
-            statement = statement,
-        )
+    override suspend fun purgeUsers(serverId: String): Deferred<Boolean> {
+        return async {
+            User.Schema.deleteWhere { User.Schema.serverId eq serverId }
+            true
+        }
+    }
+
+    fun <T> async(statement: suspend Transaction.() -> T): Deferred<T> {
+        return CoroutineUtils.async(dispatcher) {
+            suspendedTransactionAsync(
+                dispatcher,
+                database,
+                statement = statement,
+            ).await()
+        }
     }
 
 }

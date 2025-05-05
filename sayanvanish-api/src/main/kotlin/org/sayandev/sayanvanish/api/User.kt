@@ -23,13 +23,14 @@ interface User {
     }
 
     suspend fun save() {
-        SayanVanishAPI.getInstance().database.addUser(this)
+        SayanVanishAPI.getDatabase().addUser(this)
     }
 
     fun toJson(): String {
         val json = JsonObject()
         json.addProperty("unique-id", uniqueId.toString())
         json.addProperty("username", username)
+        json.addProperty("is-online", isOnline)
         json.addProperty("server-id", serverId)
         return Gson().toJson(json)
     }
@@ -49,8 +50,9 @@ interface User {
             val json = JsonParser.parseString(serialized).asJsonObject
             val uniqueId = json.get("unique-id").asString
             val username = json.get("username").asString
+            val isOnline = json.get("is-online").asBoolean
             val serverId = json.get("server-id").asString
-            return of(UUID.fromString(uniqueId), username, serverId)
+            return of(UUID.fromString(uniqueId), username, isOnline, serverId)
         }
 
         @JvmStatic

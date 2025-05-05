@@ -8,7 +8,6 @@ import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.permissions.PermissionDefault
 import org.sayandev.sayanvanish.api.Permission
-import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.feature.Features
@@ -40,7 +39,7 @@ open class BukkitVanishUser(
     override var isOnline: Boolean = if (!settings.general.proxyMode) {
         Bukkit.getPlayer(uniqueId) != null
     } else {
-        SayanVanishAPI.getInstance().database.hasUser(uniqueId, true)
+        SayanVanishAPI.getDatabase().hasUser(uniqueId, true)
     }
     override var vanishLevel: Int = 0
         get() = if (Features.getFeature<FeatureLevel>().levelMethod == FeatureLevel.LevelMethod.PERMISSION) {

@@ -9,12 +9,21 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.isActive
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.Platform
+import org.sayandev.sayanvanish.api.PlatformAdapter
 import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.database.redis.RedisDatabase
 import org.sayandev.sayanvanish.api.database.sql.SQLDatabase
+import org.sayandev.stickynote.core.coroutine.dispatcher.AsyncDispatcher
 import java.util.*
 
 class TransactionDatabase: Database {
+
+    override val dispatcher =
+        AsyncDispatcher(
+            "${Platform.get().pluginName.lowercase()}-transaction-thread",
+            // TODO: get thread count from config
+            5,
+        )
 
     val databaseTypes = mutableMapOf<DatabaseMethod, Database>()
     var databaseConnected: Boolean = true
@@ -143,12 +152,35 @@ class TransactionDatabase: Database {
 
     override suspend fun purgeAllTables(): Deferred<Boolean> {
         return CompletableDeferred<Boolean>().apply {
-
+            databaseTypes.values.map { database ->
+                async {
+                    database.purgeAllTables()
+                }
+            }.awaitAll()
+            complete(true)
         }
     }
 
     override suspend fun purgeUsers(): Deferred<Boolean> {
-        TODO("Not yet implemented")
+        return CompletableDeferred<Boolean>().apply {
+            databaseTypes.values.map { database ->
+                async {
+                    database.purgeUsers()
+                }
+            }.awaitAll()
+            complete(true)
+        }
+    }
+
+    override suspend fun purgeUsers(serverId: String): Deferred<Boolean> {
+        return CompletableDeferred<Boolean>().apply {
+            databaseTypes.values.map { database ->
+                async {
+                    database.purgeUsers(serverId)
+                }
+            }.awaitAll()
+            complete(true)
+        }
     }
 
     fun database(method: DatabaseMethod): Database {
@@ -164,23 +196,23 @@ class TransactionDatabase: Database {
     }
 
     private fun logDatabaseError() {
-        Platform.Companion.get().logger.severe("Database connection failed. Disabling the plugin.")
-        Platform.Companion.get().logger.severe("Please check the following:")
-        Platform.Companion.get().logger.severe("- Make sure your database server is not misconfigured.")
-        Platform.Companion.get().logger.severe("- Make sure your database server is running.")
-        Platform.Companion.get().logger.severe("Here's the full error trace:")
+        Platform.get().logger.severe("Database connection failed. Disabling the plugin.")
+        Platform.get().logger.severe("Please check the following:")
+        Platform.get().logger.severe("- Make sure your database server is not misconfigured.")
+        Platform.get().logger.severe("- Make sure your database server is running.")
+        Platform.get().logger.severe("Here's the full error trace:")
     }
 
 
     fun <T> async(
         block: suspend CoroutineScope.() -> T
     ): Deferred<T> {
-        val session = CoroutineScope(redisDispatcher)
+        val session = CoroutineScope(dispatcher)
         if (!session.isActive) {
             return CompletableDeferred<T>().apply { cancel() }
         }
 
-        return session.async(redisDispatcher, CoroutineStart.DEFAULT, block)
+        return session.async(dispatcher, CoroutineStart.DEFAULT, block)
     }
 
 }

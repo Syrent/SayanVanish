@@ -1,109 +1,83 @@
 package org.sayandev.sayanvanish.api
 
-import org.sayandev.sayanvanish.api.database.DatabaseMethod
-import org.sayandev.sayanvanish.api.database.databaseConfig
-import org.sayandev.sayanvanish.api.database.redis.RedisDatabase
-import org.sayandev.sayanvanish.api.database.sql.SQLDatabase
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.runBlocking
+import org.sayandev.sayanvanish.api.database.Database
+import org.sayandev.sayanvanish.api.database.TransactionDatabase
+import org.sayandev.stickynote.core.utils.launch
 import java.util.*
 
-open class SayanVanishAPI<U: VanishUser>(val type: Class<out VanishUser>) {
-    constructor(): this(VanishUser::class.java)
+object SayanVanishAPI : VanishAPI {
 
-    var databaseConnected: Boolean = true
+    private val database = TransactionDatabase()
 
-    val database = when (databaseConfig.method) {
-        DatabaseMethod.SQL -> {
-            try {
-                SQLDatabase<U>(databaseConfig.sql, type, databaseConfig.useCacheWhenAvailable).apply {
-                    this.connect()
-                    this.initialize()
-                }
-            } catch (e: Exception) {
-                databaseConnected = false
-                logDatabaseError()
-                throw e
-            }
-        }
-        DatabaseMethod.REDIS -> {
-            try {
-                RedisDatabase<U>(databaseConfig.redis, type, databaseConfig.useCacheWhenAvailable).apply {
-                    this.initialize()
-                    this.connect()
-                }
-            } catch (e: Exception) {
-                databaseConnected = false
-                logDatabaseError()
-                throw e
-            }
-        }
+    override fun getDatabase(): Database {
+        return database
     }
 
     init {
-        for (user in database.getVanishUsers().filter { user -> user.serverId == Platform.get().serverId }) {
-            user.isOnline = false
-            user.save()
+        launch(database.dispatcher) {
+            for (user in database.getVanishUsers().await().filter { user -> user.serverId == Platform.get().serverId }) {
+                user.isOnline = false
+                user.save()
+            }
+            database.purgeUsers(Platform.get().serverId)
         }
-        database.purgeUsers(Platform.get().serverId)
     }
 
-    fun getPlatform(): Platform {
+    override fun getPlatform(): Platform {
         return Platform.get()
     }
 
-    fun isVanished(uniqueId: UUID, useCache: Boolean = true): Boolean {
-        return database.getVanishUser(uniqueId, useCache)?.isVanished == true
+    override fun isVanished(uniqueId: UUID): Deferred<Boolean> {
+        return CompletableDeferred<Boolean>().apply {
+            launch(database.dispatcher) {
+                complete(database.getVanishUser(uniqueId).await()?.isVanished == true)
+            }
+        }
     }
 
-    fun isVanished(uniqueId: UUID): Boolean {
-        return database.getVanishUser(uniqueId, true)?.isVanished == true
+    override fun isVanishedSync(uniqueId: UUID): Boolean {
+        return runBlocking { isVanished(uniqueId).await() }
     }
 
-    fun canSee(user: U?, target: U): Boolean {
+    override fun canSee(user: VanishUser?, target: VanishUser): Boolean {
         if (!target.isVanished) return true
         val vanishLevel = user?.vanishLevel ?: -1
         return vanishLevel >= target.vanishLevel
     }
 
-    fun getUser(uniqueId: UUID, useCache: Boolean = true): U? {
-        return database.getVanishUser(uniqueId, useCache)
-    }
-
-    fun getUser(uniqueId: UUID): U? {
-        return getUser(uniqueId, true)
-    }
-
-    fun getOnlineUsers(): List<U> {
-        return database.getVanishUsers().filter { it.isOnline }
-    }
-
-    fun getVanishedUsers(): List<U> {
-        return database.getVanishUsers().filter { it.isVanished }
-    }
-
-    private fun logDatabaseError() {
-        Platform.get().logger.severe("Database connection failed. Disabling the plugin.")
-        Platform.get().logger.severe("Please check the following:")
-        Platform.get().logger.severe("- Make sure your database server is not misconfigured.")
-        Platform.get().logger.severe("- Make sure your database server is running.")
-        Platform.get().logger.severe("Here's the full error trace:")
-    }
-
-    companion object {
-        private val defaultInstance = SayanVanishAPI<VanishUser>()
-
-        @JvmStatic
-        fun getInstance(): SayanVanishAPI<VanishUser> {
-            return defaultInstance
+    override fun getOnlineVanishUsers(): Deferred<List<VanishUser>> {
+        return CompletableDeferred<List<VanishUser>>().apply {
+            launch(database.dispatcher) {
+                complete(database.getVanishUsers().await().filter { it.isOnline })
+            }
         }
-
-        @JvmStatic
-        fun UUID.user(): VanishUser? {
-            return getInstance().getUser(this)
-        }
-
-        /*fun UUID.asyncUser(result: (User?) -> Unit) {
-            getInstance().getUserAsync(this, result)
-        }*/
     }
 
+    override fun getOnlineVanishedUsers(): Deferred<List<VanishUser>> {
+        return CompletableDeferred<List<VanishUser>>().apply {
+            launch(database.dispatcher) {
+                complete(database.getVanishUsers().await().filter { it.isOnline && it.isVanished })
+            }
+        }
+    }
+
+    override fun getVanishedUsers(): Deferred<List<VanishUser>> {
+        return CompletableDeferred<List<VanishUser>>().apply {
+            launch(database.dispatcher) {
+                complete(database.getVanishUsers().await().filter { it.isVanished })
+            }
+        }
+    }
+
+    suspend fun UUID.user(): VanishUser? {
+        return getDatabase().getVanishUser(this).await()
+    }
+
+    @JvmStatic
+    fun get(): SayanVanishAPI {
+        return this
+    }
 }

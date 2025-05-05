@@ -33,7 +33,7 @@ class FeatureHookTAB(
 
 private class VanishIntegrationTAB(val feature: FeatureHookTAB): VanishIntegration(plugin.name) {
     override fun isVanished(player: TabPlayer): Boolean {
-        return SayanVanishBukkitAPI.getInstance().isVanished(player.uniqueId, feature.useCacheData)
+        return SayanVanishBukkitAPI.getInstance().isVanishedAsync(player.uniqueId, feature.useCacheData)
     }
 
     override fun canSee(viewer: TabPlayer, target: TabPlayer): Boolean {

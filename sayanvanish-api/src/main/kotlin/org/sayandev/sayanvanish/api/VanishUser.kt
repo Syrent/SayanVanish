@@ -39,9 +39,13 @@ interface VanishUser : User {
         toggleVanish(VanishOptions.defaultOptions())
     }
 
-    fun sendComponent(content: String, vararg placeholder: TagResolver)
+    fun sendComponent(content: String, vararg placeholder: TagResolver) {
+        Platform.get().adapter.adapt(this).sendComponent(content, *placeholder)
+    }
 
-    fun sendActionbar(content: String, vararg placeholder: TagResolver)
+    fun sendActionbar(content: String, vararg placeholder: TagResolver) {
+        Platform.get().adapter.adapt(this).sendActionbar(content, *placeholder)
+    }
 
     /**
     * @param otherVanishUser The user to check if this user can see
@@ -55,11 +59,11 @@ interface VanishUser : User {
 
     override suspend fun save() {
         serverId = Platform.get().serverId
-        SayanVanishAPI.getInstance().database.addVanishUser(this)
+        SayanVanishAPI.getDatabase().addVanishUser(this)
     }
 
     suspend fun delete() {
-        SayanVanishAPI.getInstance().database.removeVanishUser(uniqueId)
+        SayanVanishAPI.getDatabase().removeVanishUser(uniqueId)
     }
 
     override fun toJson(): String {
@@ -67,6 +71,7 @@ interface VanishUser : User {
         json.addProperty("unique-id", uniqueId.toString())
         json.addProperty("username", username)
         json.addProperty("is-online", isOnline)
+        json.addProperty("server-id", serverId)
         json.addProperty("is-vanished", isVanished)
         json.addProperty("vanish-level", vanishLevel)
         json.addProperty("current-options", currentOptions.toJson())
@@ -90,6 +95,7 @@ interface VanishUser : User {
             val uniqueId = json.get("unique-id").asString
             val username = json.get("username").asString
             val isOnline = json.get("is-online").asBoolean
+            val serverId = json.get("server-id").asString
             val isVanished = json.get("is-vanished").asBoolean
             val vanishLevel = json.get("vanish-level").asInt
             val currentOptions = json.get("current-options").asString
@@ -97,6 +103,7 @@ interface VanishUser : User {
             return of(
                 UUID.fromString(uniqueId),
                 username,
+                serverId,
                 isVanished,
                 isOnline,
                 vanishLevel,

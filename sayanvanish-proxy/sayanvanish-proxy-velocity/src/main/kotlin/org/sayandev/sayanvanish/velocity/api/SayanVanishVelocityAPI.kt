@@ -1,7 +1,6 @@
 package org.sayandev.sayanvanish.velocity.api
 
 import com.velocitypowered.api.proxy.Player
-import org.sayandev.sayanvanish.api.SayanVanishAPI
 import java.util.UUID
 
 val database = SayanVanishVelocityAPI.getInstance().database

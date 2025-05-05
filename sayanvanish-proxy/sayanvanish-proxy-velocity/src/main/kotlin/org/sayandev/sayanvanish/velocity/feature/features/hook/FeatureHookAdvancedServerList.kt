@@ -5,7 +5,6 @@ import ch.andre601.advancedserverlist.api.PlaceholderProvider
 import ch.andre601.advancedserverlist.api.exceptions.InvalidPlaceholderProviderException
 import ch.andre601.advancedserverlist.api.objects.GenericPlayer
 import ch.andre601.advancedserverlist.api.objects.GenericServer
-import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.proxy.config.language
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
@@ -65,9 +64,9 @@ private class AdvancedServerListImpl : PlaceholderProvider("sayanvanish") {
             val vanishedOnlineUsers = SayanVanishVelocityAPI.getInstance().database.getVanishUsers().filter { user -> user.isVanished && user.isOnline }
 
             return if (type.equals("total", true)) {
-                SayanVanishAPI.getInstance().database.getBasicUsers(false).filter { !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
+                SayanVanishAPI.getDatabase().getBasicUsers(false).filter { !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
             } else {
-                SayanVanishAPI.getInstance().database.getBasicUsers(false).filter { it.serverId == type && !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
+                SayanVanishAPI.getDatabase().getBasicUsers(false).filter { it.serverId == type && !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
             }
         }
 

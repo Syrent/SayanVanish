@@ -2,7 +2,6 @@ package org.sayandev.sayanvanish.bukkit.feature.features.hook
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import org.bukkit.OfflinePlayer
-import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
@@ -118,12 +117,12 @@ private class HookPlaceholderAPI : PlaceholderExpansion() {
                 if (!settings.general.proxyMode) {
                     return "PROXY_MODE IS NOT ENABLED!"
                 }
-                return SayanVanishAPI.getInstance().database.getBasicUsers(false).filter { !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
+                return SayanVanishAPI.getDatabase().getBasicUsers(false).filter { !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
             } else {
                 if (!settings.general.proxyMode) {
                     return "PROXY_MODE IS NOT ENABLED!"
                 }
-                return SayanVanishAPI.getInstance().database.getBasicUsers(false).filter { it.serverId == type && !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
+                return SayanVanishAPI.getDatabase().getBasicUsers(false).filter { it.serverId == type && !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
             }
         }
 

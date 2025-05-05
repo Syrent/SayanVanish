@@ -12,6 +12,7 @@ import org.sayandev.sayanvanish.proxy.config.settings
 import org.sayandev.stickynote.bungeecord.utils.AdventureUtils.component
 import org.sayandev.stickynote.bungeecord.utils.AdventureUtils.sendActionbar
 import org.sayandev.stickynote.bungeecord.StickyNote
+import org.sayandev.stickynote.bungeecord.launch
 import org.sayandev.stickynote.bungeecord.plugin
 import java.util.UUID
 
@@ -24,32 +25,38 @@ open class BungeeVanishUser(
     override var serverId = settings.general.serverId
     override var currentOptions = VanishOptions.defaultOptions()
     override var isVanished = false
-    override var isOnline: Boolean = SayanVanishAPI.getInstance().database.hasUser(uniqueId, true)
+    override var isOnline: Boolean = false
     override var vanishLevel: Int = 1
+
+    init {
+        launch {
+            isOnline = SayanVanishAPI.getDatabase().hasUser(uniqueId).await()
+        }
+    }
 
     fun stateText(isVanished: Boolean = this.isVanished) = if (isVanished) "<green>ON</green>" else "<red>OFF</red>"
 
     fun player(): ProxiedPlayer? = StickyNote.getPlayer(uniqueId)
 
-    override fun vanish(options: VanishOptions) {
+    override suspend fun vanish(options: VanishOptions) {
         val vanishEvent = plugin.proxy.pluginManager.callEvent(BungeeUserVanishEvent(this, options))
         if (vanishEvent.isCancelled) return
 
         val options = vanishEvent.options
         currentOptions = options
 
-        database.addToQueue(uniqueId, true)
+        SayanVanishAPI.getDatabase().addToQueue(uniqueId, true)
         super.vanish(options)
     }
 
-    override fun unVanish(options: VanishOptions) {
+    override suspend fun unVanish(options: VanishOptions) {
         val vanishEvent = plugin.proxy.pluginManager.callEvent(BungeeUserUnVanishEvent(this, options))
         if (vanishEvent.isCancelled) return
 
         val options = vanishEvent.options
         currentOptions = options
 
-        database.addToQueue(uniqueId, false)
+        SayanVanishAPI.getDatabase().addToQueue(uniqueId, false)
         super.unVanish(options)
     }
 

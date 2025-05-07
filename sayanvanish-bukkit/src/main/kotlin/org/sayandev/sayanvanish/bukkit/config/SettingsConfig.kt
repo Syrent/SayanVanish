@@ -21,7 +21,7 @@ class SettingsConfig(
     """)
     val general: General = General(),
     @Comment("Command settings for the plugin")
-    val command: Command = Command(),
+    val vanishCommand: Command = Command(),
 ) : Config(
     pluginDirectory,
     fileName,
@@ -56,11 +56,11 @@ class SettingsConfig(
     @ConfigSerializable
     data class Command(
         @Comment("Name of the main command")
-        val name: String = "sayanvanish",
+        val name: String = "vanish",
         @Comment("Aliases for the main command")
         val aliases: List<String> = listOf(
             "v",
-            "vanish",
+            "sayanvanish",
             "sv"
         )
     )

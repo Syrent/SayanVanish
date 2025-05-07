@@ -52,7 +52,7 @@ class FeatureUpdate(
     @Comment("The content of the update request message")
     val updateRequestContent: List<String> = listOf(
         "<green>A new version of <white>SayanVanish</white> is available!",
-        "<hover:show_text:'<red>Click to update'><click:run_command:'/${settings.command.name} forceupdate'><aqua>You can install version <version> by clicking on this message</click></hover>",
+        "<hover:show_text:'<red>Click to update'><click:run_command:'/${settings.vanishCommand.name} forceupdate'><aqua>You can install version <version> by clicking on this message</click></hover>",
         "<red>Make sure to read the changelog before doing any update to prevent unexpected behaviors",
     )
 ) : ListenedFeature("update") {

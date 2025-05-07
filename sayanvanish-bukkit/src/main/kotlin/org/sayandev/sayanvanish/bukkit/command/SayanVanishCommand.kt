@@ -31,8 +31,6 @@ import org.sayandev.sayanvanish.bukkit.config.LanguageConfig
 import org.sayandev.sayanvanish.bukkit.config.SettingsConfig
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.config.settings
-import org.sayandev.sayanvanish.bukkit.feature.HookFeature
-import org.sayandev.sayanvanish.bukkit.feature.features.FeatureFakeMessage
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureLevel
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureUpdate
 import org.sayandev.sayanvanish.bukkit.health.HealthCache
@@ -50,7 +48,7 @@ import kotlin.jvm.optionals.getOrNull
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 
-class SayanVanishCommand : BukkitCommand(settings.command.name, *settings.command.aliases.toTypedArray()) {
+class SayanVanishCommand : BukkitCommand(settings.vanishCommand.name, *settings.vanishCommand.aliases.toTypedArray()) {
 
     override fun rootBuilder(builder: MutableCommandBuilder<BukkitSender>) {
         builder.permission("${plugin.name}.commands.use")

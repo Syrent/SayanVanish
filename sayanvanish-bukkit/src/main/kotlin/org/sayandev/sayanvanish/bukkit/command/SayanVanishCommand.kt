@@ -47,7 +47,7 @@ import kotlin.jvm.optionals.getOrNull
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 
-class SayanVanishCommand : BukkitCommand(settings.command.name, *settings.command.aliases.toTypedArray()) {
+class SayanVanishCommand : BukkitCommand(settings.vanishCommand.name, *settings.vanishCommand.aliases.toTypedArray()) {
 
     override fun rootBuilder(builder: MutableCommandBuilder<BukkitSender>) {
         builder.permission("${plugin.name}.commands.use")

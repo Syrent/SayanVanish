@@ -8,8 +8,7 @@ import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.permissions.PermissionDefault
 import org.sayandev.sayanvanish.api.Permission
-import org.sayandev.sayanvanish.api.SayanVanishAPI
-import org.sayandev.sayanvanish.api.User
+import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.feature.Features
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrCreateUser
@@ -29,10 +28,10 @@ import org.sayandev.stickynote.bukkit.server
 import org.sayandev.stickynote.bukkit.utils.ServerVersion
 import java.util.*
 
-open class BukkitUser(
+open class BukkitVanishUser(
     override val uniqueId: UUID,
     override var username: String
-) : User {
+) : VanishUser {
 
     override var serverId = settings.general.serverId
     override var currentOptions = VanishOptions.defaultOptions()
@@ -40,7 +39,7 @@ open class BukkitUser(
     override var isOnline: Boolean = if (!settings.general.proxyMode) {
         Bukkit.getPlayer(uniqueId) != null
     } else {
-        SayanVanishAPI.getInstance().database.hasBasicUser(uniqueId, true)
+        SayanVanishAPI.getDatabase().hasUser(uniqueId, true)
     }
     override var vanishLevel: Int = 0
         get() = if (Features.getFeature<FeatureLevel>().levelMethod == FeatureLevel.LevelMethod.PERMISSION) {
@@ -184,11 +183,11 @@ open class BukkitUser(
 
     companion object {
         @JvmStatic
-        fun fromUser(user: User): BukkitUser {
-            return BukkitUser(user.uniqueId, user.username).apply {
-                this.isOnline = user.isOnline
-                this.isVanished = user.isVanished
-                this.vanishLevel = user.vanishLevel
+        fun fromUser(vanishUser: VanishUser): BukkitVanishUser {
+            return BukkitVanishUser(vanishUser.uniqueId, vanishUser.username).apply {
+                this.isOnline = vanishUser.isOnline
+                this.isVanished = vanishUser.isVanished
+                this.vanishLevel = vanishUser.vanishLevel
             }
         }
     }

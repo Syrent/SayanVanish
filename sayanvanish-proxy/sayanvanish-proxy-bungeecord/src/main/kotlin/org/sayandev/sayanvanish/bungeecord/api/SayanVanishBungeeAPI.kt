@@ -1,43 +1,36 @@
 package org.sayandev.sayanvanish.bungeecord.api
 
+import BungeePlatformAdapter
 import net.md_5.bungee.api.connection.ProxiedPlayer
+import org.sayandev.sayanvanish.api.PlatformAdapter
 import org.sayandev.sayanvanish.api.SayanVanishAPI
-import org.sayandev.sayanvanish.api.database.databaseConfig
+import org.sayandev.sayanvanish.api.SayanVanishAPI.user
+import org.sayandev.sayanvanish.api.VanishAPI
+import org.sayandev.sayanvanish.api.VanishUser
 import java.util.UUID
 
-val database = SayanVanishBungeeAPI.getInstance().database
+object SayanVanishBungeeAPI : VanishAPI by SayanVanishAPI, PlatformAdapter<BungeeVanishUser> by BungeePlatformAdapter {
+    @JvmStatic
+    fun get(): SayanVanishBungeeAPI {
+        return this
+    }
 
-class SayanVanishBungeeAPI : SayanVanishAPI<BungeeUser>(BungeeUser::class.java) {
-    companion object {
-        private val defaultInstance = SayanVanishBungeeAPI()
+    @JvmStatic
+    suspend fun ProxiedPlayer.user(): VanishUser? {
+        return this.uniqueId.user()
+    }
 
-        @JvmStatic
-        fun getInstance(): SayanVanishAPI<BungeeUser> {
-            return defaultInstance
-        }
+    @JvmStatic
+    suspend fun ProxiedPlayer.getOrCreateUser(): VanishUser {
+        return getDatabase().getVanishUser(this.uniqueId).await() ?: VanishUser.of(this.uniqueId, this.name ?: "N/A")
+    }
 
-        @JvmStatic
-        public fun UUID.user(): BungeeUser? {
-            return getInstance().getUser(this)
-        }
-
-        @JvmStatic
-        public fun ProxiedPlayer.user(): BungeeUser? {
-            return getInstance().getUser(this.uniqueId)
-        }
-
-        @JvmStatic
-        fun ProxiedPlayer.getOrCreateUser(): BungeeUser {
-            return getInstance().getUser(this.uniqueId) ?: BungeeUser(this.uniqueId, this.name ?: "N/A")
-        }
-
-        @JvmStatic
-        fun ProxiedPlayer.getOrAddUser(): BungeeUser {
-            return getInstance().getUser(this.uniqueId) ?: let {
-                val newUser = BungeeUser(this.uniqueId, this.name ?: "N/A")
-                getInstance().database.addUser(newUser)
-                newUser
-            }
+    @JvmStatic
+    suspend fun ProxiedPlayer.getOrAddUser(): VanishUser {
+        return getDatabase().getVanishUser(this.uniqueId).await() ?: let {
+            val newUser = BungeeVanishUser(this.uniqueId, this.name ?: "N/A")
+            getDatabase().addVanishUser(newUser).await()
+            newUser
         }
     }
 }

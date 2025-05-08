@@ -11,7 +11,6 @@ import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrAddUser
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrCreateUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
@@ -77,7 +76,7 @@ class FeatureState(
 
         if (user.isVanished) {
             if (user.currentOptions.notifyJoinQuitVanished) {
-                for (vanishedUser in SayanVanishBukkitAPI.getInstance().database.getUsers().filter { it.hasPermission(Permission.VANISH) && it.vanishLevel >= user.vanishLevel }) {
+                for (vanishedUser in SayanVanishBukkitAPI.getInstance().database.getVanishUsers().filter { it.hasPermission(Permission.VANISH) && it.vanishLevel >= user.vanishLevel }) {
                     vanishedUser.sendComponent(language.vanish.joinedTheServerWhileVanished, Placeholder.unparsed("player", user.username))
                 }
             }
@@ -94,7 +93,7 @@ class FeatureState(
 
         if (user.isVanished) {
             if (user.currentOptions.notifyJoinQuitVanished) {
-                for (vanishedUser in SayanVanishBukkitAPI.getInstance().database.getUsers().filter { it.hasPermission(Permission.VANISH) && it.vanishLevel >= user.vanishLevel }) {
+                for (vanishedUser in SayanVanishBukkitAPI.getInstance().database.getVanishUsers().filter { it.hasPermission(Permission.VANISH) && it.vanishLevel >= user.vanishLevel }) {
                     vanishedUser.sendComponent(language.vanish.leftTheServerWhileVanished, Placeholder.unparsed("player", user.username))
                 }
             }

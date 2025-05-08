@@ -2,7 +2,6 @@ package org.sayandev.sayanvanish.bukkit.feature.features.hook
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import org.bukkit.OfflinePlayer
-import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
@@ -95,7 +94,7 @@ private class HookPlaceholderAPI : PlaceholderExpansion() {
         }
 
         if (params.equals("count", true)) {
-            return SayanVanishBukkitAPI.getInstance().database.getUsers().filter { user -> user.isOnline && user.isVanished }.size.toString()
+            return SayanVanishBukkitAPI.getInstance().database.getVanishUsers().filter { user -> user.isOnline && user.isVanished }.size.toString()
         }
 
         if (params.equals("vanish_prefix", true)) {
@@ -110,7 +109,7 @@ private class HookPlaceholderAPI : PlaceholderExpansion() {
 
         if (params.startsWith("online_")) {
             val type = params.removePrefix("online_")
-            val vanishedOnlineUsers = SayanVanishBukkitAPI.getInstance().database.getUsers().filter { user -> user.isVanished && user.isOnline }
+            val vanishedOnlineUsers = SayanVanishBukkitAPI.getInstance().database.getVanishUsers().filter { user -> user.isVanished && user.isOnline }
 
             return if (type.equals("here", true)) {
                 onlinePlayers.filter { onlinePlayer -> !vanishedOnlineUsers.map { vanishedOnlineUser -> vanishedOnlineUser.username }.contains(onlinePlayer.name) }.size.toString()
@@ -118,12 +117,12 @@ private class HookPlaceholderAPI : PlaceholderExpansion() {
                 if (!settings.general.proxyMode) {
                     return "PROXY_MODE IS NOT ENABLED!"
                 }
-                return SayanVanishAPI.getInstance().database.getBasicUsers(false).filter { !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
+                return SayanVanishAPI.getDatabase().getBasicUsers(false).filter { !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
             } else {
                 if (!settings.general.proxyMode) {
                     return "PROXY_MODE IS NOT ENABLED!"
                 }
-                return SayanVanishAPI.getInstance().database.getBasicUsers(false).filter { it.serverId == type && !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
+                return SayanVanishAPI.getDatabase().getBasicUsers(false).filter { it.serverId == type && !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
             }
         }
 

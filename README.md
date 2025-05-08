@@ -159,7 +159,7 @@ compileOnly("org.sayandev:sayanvanish-bukkit:[get version from github]")
 You can access the SayanVanish API like this:
 
 ```java
-SayanVanishAPI.getInstance();
+SayanVanishAPI;
 ```
 
 Or you can use a platform-specific user type like this:
@@ -177,7 +177,7 @@ SayanVanishBukkitAPI.getInstance();
 From this class, you can access and modify everything. For example, to add a new user:
 
 ```java
-SayanVanishAPI.getInstance().getDatabase().addUser(User);
+SayanVanishAPI.getDatabase().addUser(User);
 ```
 
 #### Events

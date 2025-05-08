@@ -1,6 +1,6 @@
 package org.sayandev.sayanvanish.velocity.feature
 
-import org.sayandev.sayanvanish.api.BasicUser
+import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.sayandev.stickynote.velocity.hasPlugin
@@ -21,7 +21,7 @@ abstract class HookFeature(
         return super.isActive() && hasPlugin()
     }
 
-    override fun isActive(user: BasicUser): Boolean {
+    override fun isActive(user: User): Boolean {
         return super.isActive(user) && hasPlugin()
     }
 

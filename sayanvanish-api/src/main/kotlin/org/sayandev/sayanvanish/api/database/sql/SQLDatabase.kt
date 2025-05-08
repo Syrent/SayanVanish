@@ -1,342 +1,291 @@
 package org.sayandev.sayanvanish.api.database.sql
 
-import org.sayandev.sayanvanish.api.BasicUser
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.awaitAll
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.transactions.TransactionManager
+import org.jetbrains.exposed.sql.transactions.experimental.suspendedTransactionAsync
 import org.sayandev.sayanvanish.api.Platform
+import org.sayandev.sayanvanish.api.PlatformAdapter
+import org.sayandev.sayanvanish.api.Queue
 import org.sayandev.sayanvanish.api.User
-import org.sayandev.sayanvanish.api.User.Companion.convert
-import org.sayandev.sayanvanish.api.VanishOptions
+import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.database.Database
-import org.sayandev.sayanvanish.api.database.DatabaseMethod
-import org.sayandev.stickynote.core.database.Query
-import org.sayandev.stickynote.core.database.mysql.MySQLCredentials
-import org.sayandev.stickynote.core.database.mysql.MySQLDatabase
-import org.sayandev.stickynote.core.database.sqlite.SQLiteDatabase
-import java.io.File
+import org.sayandev.sayanvanish.api.database.DatabaseConfig
+import org.sayandev.stickynote.core.coroutine.dispatcher.AsyncDispatcher
+import org.sayandev.stickynote.core.utils.CoroutineUtils
+import org.sayandev.stickynote.core.utils.launch
 import java.util.*
-import kotlin.reflect.safeCast
+import java.util.concurrent.TimeUnit
 
-class SQLDatabase<U: User>(
-    val config: SQLConfig,
-    val type: Class<out User>,
-    override var useCache: Boolean = true
-) : Database<U> {
+class SQLDatabase(
+    val config: DatabaseConfig,
+) : Database {
+    override val dispatcher =
+        AsyncDispatcher(
+            "${Platform.get().pluginName.lowercase()}-${config.sql.method}-thread",
+            config.sqlDispatcherThreadCount,
+        )
 
-    override var cache = mutableMapOf<UUID, U>()
-    var basicCache = mutableMapOf<UUID, BasicUser>()
-    val database: org.sayandev.stickynote.core.database.Database = when (config.method) {
-        SQLConfig.SQLMethod.MYSQL -> {
-            MySQLDatabase(
-                MySQLCredentials.Companion.mySQLCredentials(config.host, config.port, config.database, config.poolProperties.useSSL, config.username, config.password),
-                config.poolProperties.maximumPoolSize,
-                config.poolProperties.verifyServerCertificate,
-                let {
-                    try {
-                        Class.forName("com.mysql.cj.jdbc.Driver")
-                        "com.mysql.cj.jdbc.Driver"
-                    } catch (e: ClassNotFoundException) {
-                        Class.forName("com.mysql.jdbc.Driver")
-                        "com.mysql.jdbc.Driver"
+    val tables = listOf(
+        User.Schema,
+        VanishUser.Schema,
+        Queue.Schema,
+    )
+
+    lateinit var database: org.jetbrains.exposed.sql.Database
+
+    override suspend fun initialize(): Deferred<Boolean> {
+        SchemaUtils.createMissingTablesAndColumns(
+            *tables.toTypedArray(),
+            withLogs = false,
+        )
+        return CompletableDeferred(true)
+    }
+
+    override suspend fun connect(): Deferred<Boolean> {
+        val hikariConfig =
+            HikariConfig().apply {
+                jdbcUrl =
+                    when (config.sql.method) {
+                        SQLConfig.SQLMethod.SQLITE -> "jdbc:sqlite:${Platform.get().rootDirectory.absolutePath}/database"
+                        SQLConfig.SQLMethod.MARIADB -> "jdbc:mariadb://${config.sql.host}:${config.sql.port}/${config.sql.database}?autoReconnect=true"
+                        SQLConfig.SQLMethod.MYSQL -> "jdbc:mysql://${config.sql.host}:${config.sql.port}/${config.sql.database}?autoReconnect=true"
                     }
-                },
-                config.poolProperties.keepaliveTime,
-                config.poolProperties.connectionTimeout,
-                config.poolProperties.minimumIdle,
-                config.poolProperties.maximumLifetime,
-                config.poolProperties.allowPublicKeyRetrieval
-            )
-        }
-        SQLConfig.SQLMethod.SQLITE -> {
-            SQLiteDatabase(
-                File(Platform.get().rootDirectory, "storage.db"), Platform.get().logger, config.poolProperties.maximumPoolSize)
-        }
-        else -> {
-            throw NullPointerException("Database method with id `${config.method.name}` doesn't exist, available database types: ${DatabaseMethod.entries.map { it.name.lowercase() }}")
-        }
-    }
-
-    override fun initialize() {
-        database.runQuery(Query.query("CREATE TABLE IF NOT EXISTS ${config.tablePrefix}users (UUID VARCHAR(64),username VARCHAR(16),server VARCHAR(128),is_vanished INT,is_online INT,vanish_level INT,PRIMARY KEY (UUID));")).result?.close()
-        database.runQuery(Query.query("CREATE TABLE IF NOT EXISTS ${config.tablePrefix}basic_users (UUID VARCHAR(64),username VARCHAR(16),server VARCHAR(128),PRIMARY KEY (UUID));")).result?.close()
-        database.runQuery(Query.query("CREATE TABLE IF NOT EXISTS ${config.tablePrefix}queue (UUID VARCHAR(64), vanished VARCHAR(16),PRIMARY KEY (UUID));")).result?.close()
-    }
-
-    override fun connect() {
-        cache.clear()
-        database.connect()
-    }
-
-    override fun disconnect() {
-        database.shutdown()
-        cache.clear()
-    }
-
-    override fun getUser(uniqueId: UUID, useCache: Boolean): U? {
-        val cacheUser = cache[uniqueId]
-        if (this.useCache && useCache) {
-            if (cacheUser == null) {
-                return null
-            }
-            return (type.kotlin.safeCast(cacheUser) as? U) ?: (cacheUser.convert(type) as U)
-        }
-
-        val result = database.runQuery(Query.query("SELECT * FROM ${config.tablePrefix}users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).result ?: return null
-        if (!result.next()) return null
-        val user = object : User {
-            override val uniqueId: UUID = UUID.fromString(result.getString("UUID"))
-            override var username: String = result.getString("username")
-            override var serverId: String = result.getString("server")
-            override var currentOptions: VanishOptions = VanishOptions.defaultOptions()
-
-            override var isVanished: Boolean = result.getBoolean("is_vanished")
-            override var isOnline: Boolean = result.getBoolean("is_online")
-            override var vanishLevel: Int = result.getInt("vanish_level")
-        }
-        val typedUser = (type.kotlin.safeCast(user) as? U) ?: (user.convert(type) as U)
-        cache[uniqueId] = typedUser
-        result.close()
-        return typedUser
-    }
-
-    override fun getUsersAsync(result: (List<U>) -> Unit) {
-        database.queueQuery(Query.query("SELECT * FROM ${config.tablePrefix}users;")).completableFuture.whenComplete { resultSet, error ->
-            error?.printStackTrace()
-
-            val users = mutableListOf<U>()
-            while (resultSet.next()) {
-                val user = object : User {
-                    override val uniqueId: UUID = UUID.fromString(resultSet.getString("UUID"))
-                    override var username: String = resultSet.getString("username")
-                    override var serverId: String = resultSet.getString("server")
-                    override var currentOptions: VanishOptions = VanishOptions.defaultOptions()
-
-                    override var isVanished: Boolean = resultSet.getBoolean("is_vanished")
-                    override var isOnline: Boolean = resultSet.getBoolean("is_online")
-                    override var vanishLevel: Int = resultSet.getInt("vanish_level")
+                driverClassName =
+                    when (config.sql.method) {
+                        SQLConfig.SQLMethod.SQLITE -> "org.sqlite.JDBC"
+                        SQLConfig.SQLMethod.MARIADB -> "org.mariadb.jdbc.Driver"
+                        SQLConfig.SQLMethod.MYSQL -> "com.mysql.cj.jdbc.Driver"
+                    }
+                username = config.sql.username
+                password = config.sql.password
+                maximumPoolSize = config.sql.poolProperties.maximumPoolSize
+                this.minimumIdle = config.sql.poolProperties.minimumIdle
+                this.keepaliveTime = config.sql.poolProperties.keepaliveTime
+                if (config.sql.method != SQLConfig.SQLMethod.SQLITE) {
+                    this.connectionTimeout = config.sql.poolProperties.connectionTimeout
                 }
-                users.add((type.kotlin.safeCast(user) as? U) ?: (user.convert(type) as U))
+                this.maxLifetime = config.sql.poolProperties.maxLifetime
+
+                this.addDataSourceProperty("socketTimeout", TimeUnit.SECONDS.toMillis(30).toString())
+                this.addDataSourceProperty("cachePrepStmts", "true")
+                this.addDataSourceProperty("prepStmtCacheSize", "250")
+                this.addDataSourceProperty("prepStmtCacheSqlLimit", "2048")
+                this.addDataSourceProperty("useServerPrepStmts", "true")
+                this.addDataSourceProperty("useLocalSessionState", "true")
+                this.addDataSourceProperty("rewriteBatchedStatements", "true")
+                this.addDataSourceProperty("cacheResultSetMetadata", "true")
+                this.addDataSourceProperty("cacheServerConfiguration", "true")
+                this.addDataSourceProperty("elideSetAutoCommits", "true")
+                this.addDataSourceProperty("maintainTimeStats", "false")
+                this.addDataSourceProperty("alwaysSendSetIsolation", "false")
+                this.addDataSourceProperty("cacheCallableStmts", "true")
+                this.addDataSourceProperty("characterEncoding", "utf8")
+                this.addDataSourceProperty("allowPublicKeyRetrieval", "true")
             }
-            resultSet.close()
-
-            result(users)
-        }
+        val dataSource = HikariDataSource(hikariConfig)
+        database = org.jetbrains.exposed.sql.Database.connect(dataSource)
+        TransactionManager.defaultDatabase = database
+        return CompletableDeferred(true)
     }
 
-    override fun getUsers(): List<U> {
-        if (useCache) {
-            return cache.values.toList()
-        }
-
-        val result = database.runQuery(Query.query("SELECT * FROM ${config.tablePrefix}users;")).result ?: return emptyList()
-        val users = mutableListOf<U>()
-        while (result.next()) {
-            val user = object : User {
-                override val uniqueId: UUID = UUID.fromString(result.getString("UUID"))
-                override var username: String = result.getString("username")
-                override var serverId: String = result.getString("server")
-                override var currentOptions: VanishOptions = VanishOptions.defaultOptions()
-
-                override var isVanished: Boolean = result.getBoolean("is_vanished")
-                override var isOnline: Boolean = result.getBoolean("is_online")
-                override var vanishLevel: Int = result.getInt("vanish_level")
-            }
-            users.add((type.kotlin.safeCast(user) as? U) ?: (user.convert(type) as U))
-        }
-        result.close()
-
-        return users
+    override suspend fun disconnect(): Deferred<Boolean> {
+        TransactionManager.closeAndUnregister(database)
+        return CompletableDeferred(true)
     }
 
-    override fun getBasicUsers(useCache: Boolean): List<BasicUser> {
-        if (useCache) {
-            return basicCache.values.toList()
-        }
-
-        val result = database.runQuery(Query.query("SELECT * FROM ${config.tablePrefix}basic_users;")).result ?: return emptyList()
-        val users = mutableListOf<BasicUser>()
-        while (result.next()) {
-            val user = BasicUser.create(
-                UUID.fromString(result.getString("UUID")),
-                result.getString("username"),
-                result.getString("server")
-            )
-            users.add(user)
-        }
-        result.close()
-
-        return users
-    }
-
-    override fun getBasicUsersAsync(result: (List<BasicUser>) -> Unit) {
-        database.queueQuery(Query.query("SELECT * FROM ${config.tablePrefix}basic_users;")).completableFuture.whenComplete { resultSet, error ->
-            error?.printStackTrace()
-
-            val users = mutableListOf<BasicUser>()
-            while (resultSet.next()) {
-                val user = BasicUser.create(
-                    UUID.fromString(resultSet.getString("UUID")),
-                    resultSet.getString("username"),
-                    resultSet.getString("server")
-                )
-                users.add(user)
-            }
-            resultSet.close()
-
-            result(users)
-        }
-    }
-
-    override fun addUser(user: U) {
-        cache[user.uniqueId] = user
-        if (!hasUser(user.uniqueId)) {
-            val insertQuery = if (config.method == SQLConfig.SQLMethod.SQLITE) {
-                "INSERT OR REPLACE INTO ${config.tablePrefix}users (UUID, username, server, is_vanished, is_online, vanish_level) VALUES (?,?,?,?,?,?);"
-            } else {
-                "INSERT IGNORE INTO ${config.tablePrefix}users (UUID, username, server, is_vanished, is_online, vanish_level) VALUES (?,?,?,?,?,?);"
-            }
-
-            database.runQuery(
-                Query.query(insertQuery)
-                    .setStatementValue(1, user.uniqueId.toString())
-                    .setStatementValue(2, user.username)
-                    .setStatementValue(3, user.serverId)
-                    .setStatementValue(4, user.isVanished)
-                    .setStatementValue(5, user.isOnline)
-                    .setStatementValue(6, user.vanishLevel)
-            ).result?.close()
-        } else {
-            updateUser(user)
-        }
-    }
-
-    override fun addBasicUser(user: BasicUser) {
-        basicCache[user.uniqueId] = user
-        if (!hasBasicUser(user.uniqueId, false)) {
-            // Create proper query based on database type
-            val insertQuery = if (config.method == SQLConfig.SQLMethod.SQLITE) {
-                "INSERT OR REPLACE INTO ${config.tablePrefix}basic_users (UUID, username, server) VALUES (?,?,?);"
-            } else {
-                "INSERT IGNORE INTO ${config.tablePrefix}basic_users (UUID, username, server) VALUES (?,?,?);"
-            }
-
-            database.runQuery(
-                Query.query(insertQuery)
-                    .setStatementValue(1, user.uniqueId.toString())
-                    .setStatementValue(2, user.username)
-                    .setStatementValue(3, user.serverId)
-            ).result?.close()
-        } else {
-            if (user.serverId != Platform.get().serverId) {
-                updateBasicUser(user)
-            }
-        }
-    }
-
-    override fun hasUser(uniqueId: UUID): Boolean {
-        val queryResult = database.runQuery(Query.query("SELECT * FROM ${config.tablePrefix}users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString()))
-        val result = queryResult.result ?: return false
-        val hasNext = result.next()
-        result.close()
-        return hasNext
-    }
-
-    override fun hasBasicUser(uniqueId: UUID, useCache: Boolean): Boolean {
-        if (useCache) {
-            return basicCache.contains(uniqueId)
-        }
-        val queryResult = database.runQuery(Query.query("SELECT * FROM ${config.tablePrefix}basic_users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString()))
-        val result = queryResult.result ?: return false
-        val hasNext = result.next()
-        result.close()
-        return hasNext
-    }
-
-    override fun removeUser(uniqueId: UUID) {
-        cache.remove(uniqueId)
-        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).result?.close()
-    }
-
-    override fun removeBasicUser(uniqueId: UUID) {
-        basicCache.remove(uniqueId)
-        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}basic_users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).result?.close()
-    }
-
-    override fun updateUser(user: U) {
-        cache[user.uniqueId] = user
-        database.runQuery(
-            Query.query("UPDATE ${config.tablePrefix}users SET username = ?, is_vanished = ?, is_online = ?, vanish_level = ? WHERE UUID = ?;")
-                .setStatementValue(1, user.username)
-                .setStatementValue(2, user.isVanished)
-                .setStatementValue(3, user.isOnline)
-                .setStatementValue(4, user.vanishLevel)
-                .setStatementValue(5, user.uniqueId.toString())
-        ).result?.close()
-    }
-
-    override fun updateBasicUser(user: BasicUser) {
-        basicCache[user.uniqueId] = user
-        database.runQuery(
-            Query.query("UPDATE ${config.tablePrefix}basic_users SET username = ?, server = ? WHERE UUID = ?;")
-                .setStatementValue(1, user.username)
-                .setStatementValue(2, user.serverId)
-                .setStatementValue(3, user.uniqueId.toString())
-        ).result?.close()
-    }
-
-    override fun isInQueue(uniqueId: UUID, inQueue: (Boolean) -> Unit) {
-        database.queueQuery(Query.query("SELECT * FROM ${config.tablePrefix}queue WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).completableFuture.whenComplete { result, error ->
-            error?.printStackTrace()
-
-            val hasNext = result.next()
-            inQueue(hasNext)
-        }
-    }
-
-    override fun addToQueue(uniqueId: UUID, vanished: Boolean) {
-        isInQueue(uniqueId) { inQueue ->
-            if (!inQueue) {
-                val insertQuery = if (config.method == SQLConfig.SQLMethod.SQLITE) {
-                    "INSERT OR REPLACE INTO ${config.tablePrefix}queue (UUID, vanished) VALUES (?,?);"
-                } else {
-                    "INSERT IGNORE INTO ${config.tablePrefix}queue (UUID, vanished) VALUES (?,?);"
+    override suspend fun getVanishUser(uniqueId: UUID): Deferred<VanishUser?> {
+        return async {
+            (VanishUser.Schema innerJoin User.Schema)
+                .selectAll()
+                .firstOrNull { it[VanishUser.Schema.uniqueId] == uniqueId }
+                ?.let { result ->
+                    VanishUser.of(
+                        result[VanishUser.Schema.uniqueId],
+                        result[User.Schema.username],
+                        result[User.Schema.serverId],
+                        result[VanishUser.Schema.isVanished],
+                        result[User.Schema.isOnline],
+                        result[VanishUser.Schema.vanishLevel]
+                    )
                 }
-                database.queueQuery(Query.query(insertQuery).setStatementValue(1, uniqueId.toString()).setStatementValue(2, vanished.toString()))
-            } else {
-                database.queueQuery(Query.query("UPDATE ${config.tablePrefix}queue SET vanished = ? WHERE UUID = ?;").setStatementValue(1, vanished.toString()).setStatementValue(2, uniqueId.toString()))
-            }
         }
     }
 
-    override fun getFromQueue(uniqueId: UUID, result: (Boolean) -> Unit) {
-        database.queueQuery(Query.query("SELECT * FROM ${config.tablePrefix}queue WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).completableFuture.whenComplete { resultSet, error ->
-            error?.printStackTrace()
-
-            if (!resultSet.next()) result(false)
-            result(resultSet.getString("vanished").toBoolean())
+    override suspend fun getVanishUsers(): Deferred<List<VanishUser>> {
+        return async {
+            (VanishUser.Schema innerJoin User.Schema)
+                .selectAll()
+                .map { result ->
+                    VanishUser.of(
+                        result[VanishUser.Schema.uniqueId],
+                        result[User.Schema.username],
+                        result[User.Schema.serverId],
+                        result[VanishUser.Schema.isVanished],
+                        result[User.Schema.isOnline],
+                        result[VanishUser.Schema.vanishLevel]
+                    )
+                }
         }
     }
 
-    override fun removeFromQueue(uniqueId: UUID) {
-        database.queueQuery(Query.query("DELETE FROM ${config.tablePrefix}queue WHERE UUID = ?;").setStatementValue(1, uniqueId.toString()))
+    override suspend fun getUsers(): Deferred<List<User>> {
+        return async {
+            User.Schema
+                .selectAll()
+                .map { result ->
+                    User.of(
+                        result[User.Schema.uniqueId],
+                        result[User.Schema.username],
+                        result[User.Schema.isOnline],
+                        result[User.Schema.serverId]
+                    )
+                }
+        }
     }
 
-    override fun purgeCache() {
-        cache.clear()
-        basicCache.clear()
+    override suspend fun addVanishUser(vanishUser: VanishUser): Deferred<Boolean> {
+        return async {
+            VanishUser.Schema.upsert { row ->
+                row[uniqueId] = vanishUser.uniqueId
+                row[isVanished] = vanishUser.isVanished
+                row[vanishLevel] = vanishUser.vanishLevel
+            }.isIgnore
+        }
     }
 
-    override fun purge() {
-        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}users;")).result?.close()
-        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}basic_users;")).result?.close()
-        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}queue;")).result?.close()
+    override suspend fun addUser(user: User): Deferred<Boolean> {
+        return async {
+            User.Schema.upsert { row ->
+                row[uniqueId] = user.uniqueId
+                row[username] = user.username
+                row[serverId] = user.serverId
+                row[isOnline] = user.isOnline
+            }.isIgnore
+        }
     }
 
-    override fun purgeBasic() {
-        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}basic_users;")).result?.close()
-        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}queue;")).result?.close()
+    override suspend fun hasVanishUser(uniqueId: UUID): Deferred<Boolean> {
+        return async {
+            VanishUser.Schema
+                .selectAll()
+                .any { it[VanishUser.Schema.uniqueId] == uniqueId }
+        }
     }
 
-    override fun purgeBasic(serverId: String) {
-        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}basic_users WHERE server = ?;").setStatementValue(1, serverId)).result?.close()
+    override suspend fun hasUser(uniqueId: UUID): Deferred<Boolean> {
+        return async {
+            User.Schema
+                .selectAll()
+                .any { it[User.Schema.uniqueId] == uniqueId }
+        }
+    }
+
+    override suspend fun removeVanishUser(uniqueId: UUID): Deferred<Boolean> {
+        return async {
+            VanishUser.Schema
+                .deleteWhere { VanishUser.Schema.uniqueId eq uniqueId }
+            true
+        }
+    }
+
+    override suspend fun removeUser(uniqueId: UUID): Deferred<Boolean> {
+        return async {
+            User.Schema
+                .deleteWhere { User.Schema.uniqueId eq uniqueId }
+            true
+        }
+    }
+
+    override suspend fun updateVanishUser(user: VanishUser): Deferred<Boolean> {
+        return async {
+            VanishUser.Schema.upsert { row ->
+                row[uniqueId] = user.uniqueId
+                row[isVanished] = user.isVanished
+                row[vanishLevel] = user.vanishLevel
+                row[currentOptions] = user.currentOptions.toJson()
+            }.isIgnore
+        }
+    }
+
+    override suspend fun updateUser(user: User): Deferred<Boolean> {
+        return async {
+            User.Schema.upsert { row ->
+                row[uniqueId] = user.uniqueId
+                row[username] = user.username
+                row[serverId] = user.serverId
+                row[isOnline] = user.isOnline
+            }.isIgnore
+        }
+    }
+
+    override suspend fun isInQueue(uniqueId: UUID): Deferred<Boolean> {
+        return async {
+            Queue.Schema
+                .selectAll()
+                .any { it[Queue.Schema.uniqueId] == uniqueId }
+        }
+    }
+
+    override suspend fun addToQueue(uniqueId: UUID, vanished: Boolean): Deferred<Boolean> {
+        return async {
+            Queue.Schema.upsert { row ->
+                row[Queue.Schema.uniqueId] = uniqueId
+                row[Queue.Schema.vanished] = vanished
+            }.isIgnore
+        }
+    }
+
+    override suspend fun getFromQueue(uniqueId: UUID): Deferred<Boolean> {
+        return async {
+            Queue.Schema
+                .selectAll()
+                .where { Queue.Schema.uniqueId eq uniqueId }
+                .firstOrNull()
+                ?.getOrNull(Queue.Schema.vanished) ?: false
+        }
+    }
+
+    override suspend fun removeFromQueue(uniqueId: UUID): Deferred<Boolean> {
+        return async {
+            Queue.Schema
+                .deleteWhere { Queue.Schema.uniqueId eq uniqueId }
+            true
+        }
+    }
+
+    override suspend fun purgeAllTables(): Deferred<Boolean> {
+        tables.map { table -> async { table.deleteAll() } }.awaitAll()
+        return CompletableDeferred(true)
+    }
+
+    override suspend fun purgeUsers(): Deferred<Boolean> {
+        return async {
+            User.Schema.deleteAll()
+            true
+        }
+    }
+
+    override suspend fun purgeUsers(serverId: String): Deferred<Boolean> {
+        return async {
+            User.Schema.deleteWhere { User.Schema.serverId eq serverId }
+            true
+        }
+    }
+
+    fun <T> async(statement: suspend Transaction.() -> T): Deferred<T> {
+        return CoroutineUtils.async(dispatcher) {
+            suspendedTransactionAsync(
+                dispatcher,
+                database,
+                statement = statement,
+            ).await()
+        }
     }
 
 }

@@ -1,41 +1,39 @@
 package org.sayandev.sayanvanish.velocity.api
 
 import com.velocitypowered.api.proxy.Player
-import org.sayandev.sayanvanish.api.SayanVanishAPI
-import org.sayandev.sayanvanish.api.database.databaseConfig
 import java.util.UUID
 
 val database = SayanVanishVelocityAPI.getInstance().database
 
-class SayanVanishVelocityAPI() : SayanVanishAPI<VelocityUser>(VelocityUser::class.java) {
+class SayanVanishVelocityAPI() : SayanVanishAPI<VelocityVanishUser>(VelocityVanishUser::class.java) {
     companion object {
         private val defaultInstance = SayanVanishVelocityAPI()
 
         @JvmStatic
-        fun getInstance(): SayanVanishAPI<VelocityUser> {
+        fun getInstance(): SayanVanishAPI<VelocityVanishUser> {
             return defaultInstance
         }
 
         @JvmStatic
-        public fun UUID.user(): VelocityUser? {
+        public fun UUID.user(): VelocityVanishUser? {
             return getInstance().getUser(this)
         }
 
         @JvmStatic
-        public fun Player.user(): VelocityUser? {
+        public fun Player.user(): VelocityVanishUser? {
             return getInstance().getUser(this.uniqueId)
         }
 
         @JvmStatic
-        fun Player.getOrCreateUser(): VelocityUser {
-            return getInstance().getUser(this.uniqueId) ?: VelocityUser(this.uniqueId, this.username ?: "N/A")
+        fun Player.getOrCreateUser(): VelocityVanishUser {
+            return getInstance().getUser(this.uniqueId) ?: VelocityVanishUser(this.uniqueId, this.username ?: "N/A")
         }
 
         @JvmStatic
-        fun Player.getOrAddUser(): VelocityUser {
+        fun Player.getOrAddUser(): VelocityVanishUser {
             return getInstance().getUser(this.uniqueId) ?: let {
-                val newUser = VelocityUser(this.uniqueId, this.username ?: "N/A")
-                getInstance().database.addUser(newUser)
+                val newUser = VelocityVanishUser(this.uniqueId, this.username ?: "N/A")
+                getInstance().database.addVanishUser(newUser)
                 newUser
             }
         }

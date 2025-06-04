@@ -1,6 +1,6 @@
 package org.sayandev.sayanvanish.api.feature
 
-import org.sayandev.sayanvanish.api.BasicUser
+import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.stickynote.core.configuration.Config
@@ -26,7 +26,7 @@ abstract class Feature(
         return enabled && condition
     }
 
-    open fun isActive(user: BasicUser): Boolean {
+    open fun isActive(user: User): Boolean {
         return !user.hasPermission("sayanvanish.feature.disable.${id}") && Features.userFeatures(user).find { it.id == this.id }?.enabled != false && isActive()
     }
 

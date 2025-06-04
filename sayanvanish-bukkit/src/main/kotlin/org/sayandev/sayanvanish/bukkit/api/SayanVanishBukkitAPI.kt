@@ -2,12 +2,9 @@ package org.sayandev.sayanvanish.bukkit.api
 
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
-import org.sayandev.sayanvanish.api.SayanVanishAPI
-import org.sayandev.sayanvanish.api.database.databaseConfig
-import org.sayandev.sayanvanish.bukkit.config.settings
 import java.util.*
 
-class SayanVanishBukkitAPI : SayanVanishAPI<BukkitUser>(BukkitUser::class.java) {
+class SayanVanishBukkitAPI : SayanVanishAPI<BukkitVanishUser>(BukkitVanishUser::class.java) {
 
     fun canSee(player: Player?, otherPlayer: Player): Boolean {
         val vanishLevel = player?.getOrCreateUser()?.vanishLevel ?: -1
@@ -18,30 +15,30 @@ class SayanVanishBukkitAPI : SayanVanishAPI<BukkitUser>(BukkitUser::class.java) 
         private val defaultInstance = SayanVanishBukkitAPI()
 
         @JvmStatic
-        fun getInstance(): SayanVanishAPI<BukkitUser> {
+        fun getInstance(): SayanVanishAPI<BukkitVanishUser> {
             return defaultInstance
         }
 
         @JvmStatic
-        fun UUID.bukkitUser(): BukkitUser? {
+        fun UUID.bukkitUser(): BukkitVanishUser? {
             return getInstance().getUser(this)
         }
 
         @JvmStatic
-        fun OfflinePlayer.user(): BukkitUser? {
-            return getInstance().database.getUser(this.uniqueId)
+        fun OfflinePlayer.user(): BukkitVanishUser? {
+            return getInstance().database.getVanishUser(this.uniqueId)
         }
 
         @JvmStatic
-        fun OfflinePlayer.getOrCreateUser(): BukkitUser {
-            return getInstance().getUser(this.uniqueId) ?: BukkitUser(this.uniqueId, this.name ?: "N/A")
+        fun OfflinePlayer.getOrCreateUser(): BukkitVanishUser {
+            return getInstance().getUser(this.uniqueId) ?: BukkitVanishUser(this.uniqueId, this.name ?: "N/A")
         }
 
         @JvmStatic
-        fun OfflinePlayer.getOrAddUser(): BukkitUser {
+        fun OfflinePlayer.getOrAddUser(): BukkitVanishUser {
             return getInstance().getUser(this.uniqueId) ?: let {
-                val newUser = BukkitUser(this.uniqueId, this.name ?: "N/A")
-                getInstance().database.addUser(newUser)
+                val newUser = BukkitVanishUser(this.uniqueId, this.name ?: "N/A")
+                getInstance().database.addVanishUser(newUser)
                 newUser
             }
         }

@@ -5,7 +5,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.server.TabCompleteEvent
 import org.sayandev.sayanvanish.api.Permission
-import org.sayandev.sayanvanish.api.User
+import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
@@ -31,14 +31,14 @@ class FeaturePreventTabComplete(
         val completions = event.completions.toMutableSet()
         if (!user.hasPermission(Permission.VANISH) || !checkVanishLevel) {
             event.completions = completions
-                .filter { completion -> !vanishedUsers.map(User::username).contains(completion) }
+                .filter { completion -> !vanishedUsers.map(VanishUser::username).contains(completion) }
             return
         }
 
         event.completions = completions.filter { completion ->
             !vanishedUsers
                 .filter { vanishedUser -> vanishedUser.vanishLevel > user.vanishLevel }
-                .map(User::username).contains(completion)
+                .map(VanishUser::username).contains(completion)
         }
     }
 

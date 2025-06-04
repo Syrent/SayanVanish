@@ -3,7 +3,6 @@ package org.sayandev.sayanvanish.velocity.feature.features.hook
 import com.velocitypowered.api.proxy.Player
 import io.github.miniplaceholders.api.Expansion
 import io.github.miniplaceholders.api.utils.TagsUtils
-import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.proxy.config.language
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
@@ -50,7 +49,7 @@ private class MiniPlaceholdersHookImpl(val feature: FeatureHookMiniPlaceholders)
         }
 
         builder.globalPlaceholder("count") { queue, context ->
-            TagsUtils.staticTag(SayanVanishVelocityAPI.getInstance().database.getUsers().filter { user -> user.isOnline && user.isVanished }.size.toString())
+            TagsUtils.staticTag(SayanVanishVelocityAPI.getInstance().database.getVanishUsers().filter { user -> user.isOnline && user.isVanished }.size.toString())
         }
 
         builder.audiencePlaceholder("vanish_prefix") { audience, queue, context ->
@@ -63,20 +62,20 @@ private class MiniPlaceholdersHookImpl(val feature: FeatureHookMiniPlaceholders)
 
         for (server in plugin.server.allServers) {
             builder.globalPlaceholder("online_${server.serverInfo.name.lowercase()}") { queue, context ->
-                val vanishedOnlineUsers = SayanVanishVelocityAPI.getInstance().database.getUsers().filter { user -> user.isVanished && user.isOnline }
-                TagsUtils.staticTag(SayanVanishAPI.getInstance().database.getBasicUsers(false).filter { it.serverId.lowercase() == server.serverInfo.name.lowercase() && !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString())
+                val vanishedOnlineUsers = SayanVanishVelocityAPI.getInstance().database.getVanishUsers().filter { user -> user.isVanished && user.isOnline }
+                TagsUtils.staticTag(SayanVanishAPI.getDatabase().getBasicUsers(false).filter { it.serverId.lowercase() == server.serverInfo.name.lowercase() && !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString())
             }
         }
 
         builder.audiencePlaceholder("online_here") { audience, queue, context ->
             val player = audience as? Player ?: return@audiencePlaceholder TagsUtils.staticTag("0")
-            val currentServerVanishedOnlineUsers = SayanVanishVelocityAPI.getInstance().database.getUsers().filter { user -> user.isVanished && user.isOnline && user.serverId == player.currentServer.getOrNull()?.serverInfo?.name }
-            TagsUtils.staticTag(SayanVanishAPI.getInstance().database.getBasicUsers(false).filter { !currentServerVanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString())
+            val currentServerVanishedOnlineUsers = SayanVanishVelocityAPI.getInstance().database.getVanishUsers().filter { user -> user.isVanished && user.isOnline && user.serverId == player.currentServer.getOrNull()?.serverInfo?.name }
+            TagsUtils.staticTag(SayanVanishAPI.getDatabase().getBasicUsers(false).filter { !currentServerVanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString())
         }
 
         builder.globalPlaceholder("online_total") { queue, context ->
-            val vanishedOnlineUsers = SayanVanishVelocityAPI.getInstance().database.getUsers().filter { user -> user.isVanished && user.isOnline }
-            TagsUtils.staticTag(SayanVanishAPI.getInstance().database.getBasicUsers(false).filter { !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString())
+            val vanishedOnlineUsers = SayanVanishVelocityAPI.getInstance().database.getVanishUsers().filter { user -> user.isVanished && user.isOnline }
+            TagsUtils.staticTag(SayanVanishAPI.getDatabase().getBasicUsers(false).filter { !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString())
         }
 
         builder.build().register()

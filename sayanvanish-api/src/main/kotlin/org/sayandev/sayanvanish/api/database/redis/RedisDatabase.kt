@@ -1,190 +1,187 @@
 package org.sayandev.sayanvanish.api.database.redis
 
-import org.sayandev.sayanvanish.api.BasicUser
+import kotlinx.coroutines.*
+import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.User
-import org.sayandev.sayanvanish.api.User.Companion.convert
+import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.database.Database
+import org.sayandev.sayanvanish.api.database.DatabaseConfig
+import org.sayandev.stickynote.core.coroutine.dispatcher.AsyncDispatcher
 import redis.clients.jedis.DefaultJedisClientConfig
 import redis.clients.jedis.HostAndPort
 import redis.clients.jedis.JedisPooled
 import java.util.*
-import java.util.concurrent.Executors
-import kotlin.reflect.safeCast
 
+class RedisDatabase(
+    val config: DatabaseConfig,
+) : Database {
 
-class RedisDatabase<U : User>(
-    val config: RedisConfig,
-    val type: Class<out User>,
-    override var useCache: Boolean = true
-) : Database<U> {
-
-    override var cache = mutableMapOf<UUID, U>()
-    var basicCache = mutableMapOf<UUID, BasicUser>()
-    private val thread = Executors.newSingleThreadExecutor()
+    override val dispatcher =
+        AsyncDispatcher(
+            "${Platform.get().pluginName.lowercase()}-redis-thread",
+            config.redisDispatcherThreadCount,
+        )
 
     lateinit var redis: JedisPooled
 
-    override fun initialize() {
-        redis = when (config.type) {
+    override suspend fun initialize(): Deferred<Boolean> {
+        redis = when (config.redis.type) {
             RedisConfig.RedisType.STANDALONE -> {
-                val address = HostAndPort(config.standalone.host, config.standalone.port)
-                val config = DefaultJedisClientConfig.builder().apply {
-                    if (config.standalone.user.isNotEmpty()) {
-                        user(config.standalone.user)
+                val address = HostAndPort(config.redis.standalone.host, config.redis.standalone.port)
+                JedisPooled(address, DefaultJedisClientConfig.builder().apply {
+                    if (config.redis.standalone.user.isNotEmpty()) {
+                        user(config.redis.standalone.user)
                     }
-                    if (config.standalone.password.isNotEmpty()) {
-                        password(config.standalone.password)
+                    if (config.redis.standalone.password.isNotEmpty()) {
+                        password(config.redis.standalone.password)
                     }
-                    if (config.standalone.ssl) {
-                        ssl(config.standalone.ssl)
+                    if (config.redis.standalone.ssl) {
+                        ssl(config.redis.standalone.ssl)
                     }
-                }.build()
-                JedisPooled(address, config)
+                }.build())
             }
         }
+        return CompletableDeferred(true)
     }
 
-    override fun connect() {
+    override suspend fun connect(): Deferred<Boolean> {
+        return CompletableDeferred(true)
     }
 
-    override fun disconnect() {
+    override suspend fun disconnect(): Deferred<Boolean> {
         redis.close()
+        return CompletableDeferred(true)
     }
 
-    override fun getUser(uniqueId: UUID, useCache: Boolean): U? {
-        val cacheUser = cache[uniqueId]
-        if (this.useCache && useCache) {
-            if (cacheUser == null) {
-                return null
-            }
-            return (type.kotlin.safeCast(cacheUser) as? U) ?: (cacheUser.convert(type) as U)
-        }
-
-        val user = redis.hget("users", uniqueId.toString())
-        return if (user != null) {
-            val user = User.fromJson(user)
-            val typedUser = (type.kotlin.safeCast(user) as? U) ?: (user.convert(type) as U)
-            cache[uniqueId] = typedUser
-            typedUser
-        } else {
-            null
+    override suspend fun getVanishUser(uniqueId: UUID): Deferred<VanishUser?> {
+        return async {
+            redis
+                .hget("vanish_users", uniqueId.toString())
+                ?.let {
+                    VanishUser.fromJson(it)
+                }
         }
     }
 
-    override fun getUsersAsync(result: (List<U>) -> Unit) {
-        thread.submit {
-            val users = getUsers()
-            result(users)
+    override suspend fun getVanishUsers(): Deferred<List<VanishUser>> {
+        return async {
+            redis
+                .hgetAll("vanish_users")
+                .map {
+                    VanishUser.fromJson(it.value)
+                }
         }
     }
 
-    override fun getUsers(): List<U> {
-        if (useCache) {
-            return cache.values.toList()
-        }
-
-        val users = redis.hgetAll("users")
-        return users.map {
-            val user = User.fromJson(it.value)
-            (type.kotlin.safeCast(user) as? U) ?: (user.convert(type) as U)
+    override suspend fun getUsers(): Deferred<List<User>> {
+        return async {
+            redis
+                .hgetAll("users")
+                .map { User.fromJson(it.value) }
         }
     }
 
-    override fun getBasicUsers(useCache: Boolean): List<BasicUser> {
-        if (useCache) {
-            return basicCache.values.toList()
-        }
-
-        val users = redis.hgetAll("basic_users")
-        return users.map { BasicUser.fromJson(it.value) }
-    }
-
-    override fun getBasicUsersAsync(result: (List<BasicUser>) -> Unit) {
-        thread.submit {
-            val users = getBasicUsers(true)
-            result(users)
+    override suspend fun addVanishUser(user: VanishUser): Deferred<Boolean> {
+        return async {
+            redis.hset("vanish_users", user.uniqueId.toString(), user.toJson()) != 0L
         }
     }
 
-    override fun addUser(user: U) {
-        cache[user.uniqueId] = user
-        redis.hset("users", user.uniqueId.toString(), user.toJson())
-    }
-
-    override fun addBasicUser(user: BasicUser) {
-        basicCache[user.uniqueId] = user
-        redis.hset("basic_users", user.uniqueId.toString(), user.toJson())
-    }
-
-    override fun hasUser(uniqueId: UUID): Boolean {
-        return redis.hexists("users", uniqueId.toString())
-    }
-
-    override fun hasBasicUser(uniqueId: UUID, useCache: Boolean): Boolean {
-        if (useCache) {
-            return basicCache.contains(uniqueId)
-        }
-        return redis.hexists("basic_users", uniqueId.toString())
-    }
-
-    override fun removeUser(uniqueId: UUID) {
-        cache.remove(uniqueId)
-        redis.hdel("users", uniqueId.toString())
-    }
-
-    override fun removeBasicUser(uniqueId: UUID) {
-        basicCache.remove(uniqueId)
-        redis.hdel("basic_users", uniqueId.toString())
-    }
-
-    override fun updateUser(user: U) {
-        cache[user.uniqueId] = user
-        addUser(user)
-    }
-
-    override fun updateBasicUser(user: BasicUser) {
-        basicCache[user.uniqueId] = user
-        addBasicUser(user)
-    }
-
-    override fun isInQueue(uniqueId: UUID, result: (Boolean) -> Unit) {
-        thread.submit {
-            redis.get("queue:$uniqueId")?.let { result(true) } ?: result(false)
+    override suspend fun hasVanishUser(uniqueId: UUID): Deferred<Boolean> {
+        return async {
+            redis.hexists("vanish_users", uniqueId.toString())
         }
     }
 
-    override fun addToQueue(uniqueId: UUID, vanished: Boolean) {
-        redis.set("queue:$uniqueId", vanished.toString())
-    }
-
-    override fun removeFromQueue(uniqueId: UUID) {
-        redis.del("queue:$uniqueId")
-    }
-
-    override fun getFromQueue(uniqueId: UUID, result: (Boolean) -> Unit) {
-        thread.submit {
-            redis.get("queue:$uniqueId")?.let { result(it.toBoolean()) } ?: result(false)
+    override suspend fun addUser(user: User): Deferred<Boolean> {
+        return async {
+            redis.hset("users", user.uniqueId.toString(), user.toJson()) != 0L
         }
     }
 
-    override fun purgeCache() {
-        cache.clear()
-        basicCache.clear()
+    override suspend fun hasUser(uniqueId: UUID): Deferred<Boolean> {
+        return async {
+            redis.hexists("users", uniqueId.toString())
+        }
     }
 
-    override fun purge() {
-        redis.del("users")
-        redis.del("basic_users")
-        redis.del("queue")
+    override suspend fun removeVanishUser(uniqueId: UUID): Deferred<Boolean> {
+        return async {
+            redis.hdel("vanish_users", uniqueId.toString()) != 0L
+        }
     }
 
-    override fun purgeBasic() {
-        redis.del("basic_users")
-        redis.del("queue")
+    override suspend fun removeUser(uniqueId: UUID): Deferred<Boolean> {
+        return async {
+            redis.hdel("users", uniqueId.toString()) != 0L
+        }
     }
 
-    override fun purgeBasic(serverId: String) {
-        redis.hdel("basic_users", serverId)
+    override suspend fun updateVanishUser(user: VanishUser): Deferred<Boolean> {
+        return addVanishUser(user)
+    }
+
+    override suspend fun updateUser(user: User): Deferred<Boolean> {
+        return addUser(user)
+    }
+
+    override suspend fun isInQueue(uniqueId: UUID): Deferred<Boolean> {
+        return async {
+            redis.get("queue:$uniqueId")?.toBoolean() ?: false
+        }
+    }
+
+    override suspend fun addToQueue(uniqueId: UUID, vanished: Boolean): Deferred<Boolean> {
+        return async {
+            redis.set("queue:$uniqueId", vanished.toString()) != null
+        }
+    }
+
+    override suspend fun removeFromQueue(uniqueId: UUID): Deferred<Boolean> {
+        return async {
+            redis.del("queue:$uniqueId") != 0L
+        }
+    }
+
+    override suspend fun getFromQueue(uniqueId: UUID): Deferred<Boolean> {
+        return async {
+            redis.get("queue:$uniqueId")?.toBoolean() ?: false
+        }
+    }
+
+    override suspend fun purgeAllTables(): Deferred<Boolean> {
+        return async {
+            redis.del("vanish_users")
+            redis.del("users")
+            redis.del("queue")
+            true
+        }
+    }
+
+    override suspend fun purgeUsers(): Deferred<Boolean> {
+        return async {
+            redis.del("users")
+            true
+        }
+    }
+
+    override suspend fun purgeUsers(serverId: String): Deferred<Boolean> {
+        return async {
+            // TODO: only remove users from this server id
+            redis.del("users")
+            true
+        }
+    }
+
+    fun <T> async(
+        block: suspend CoroutineScope.() -> T
+    ): Deferred<T> {
+        val session = CoroutineScope(dispatcher)
+        if (!session.isActive) {
+            return CompletableDeferred<T>().apply { cancel() }
+        }
+
+        return session.async(dispatcher, CoroutineStart.DEFAULT, block)
     }
 
 }

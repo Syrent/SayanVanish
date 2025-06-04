@@ -16,7 +16,6 @@ import org.incendo.cloud.parser.standard.StringParser
 import org.incendo.cloud.setting.ManagerSetting
 import org.incendo.cloud.suggestion.Suggestion
 import org.sayandev.sayanvanish.api.Permission
-import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.database.DatabaseConfig
 import org.sayandev.sayanvanish.api.database.databaseConfig
@@ -450,7 +449,7 @@ class SayanVanishCommand : BukkitCommand(settings.vanishCommand.name, *settings.
             literalWithPermission("users")
             handler { context ->
                 val sender = context.sender().platformSender()
-                sender.sendComponent("<green>Vanished Users: <yellow>${SayanVanishAPI.getInstance().getVanishedUsers().map { it.username }}")
+                sender.sendComponent("<green>Vanished Users: <yellow>${SayanVanishAPI.getVanishedUsers().map { it.username }}")
             }
         }
 
@@ -465,12 +464,12 @@ class SayanVanishCommand : BukkitCommand(settings.vanishCommand.name, *settings.
             handler { context ->
                 val sender = context.sender().platformSender()
                 val limit = context.get<Int>("limit")
-                val database = SayanVanishAPI.getInstance().database
+                val database = SayanVanishAPI.getDatabase()
                 if (context.flags().hasFlag("no-cache")) {
                     database.useCache = false
                 }
 
-                val users = database.getUsers()
+                val users = database.getVanishUsers()
 
                 val limitedUsers = users.take(limit)
 
@@ -504,7 +503,7 @@ class SayanVanishCommand : BukkitCommand(settings.vanishCommand.name, *settings.
             handler { context ->
                 val sender = context.sender().platformSender()
                 val amount = context.get<Int>("amount")
-                val database = SayanVanishAPI.getInstance().database
+                val database = SayanVanishAPI.getDatabase()
                 if (context.flags().hasFlag("no-cache")) {
                     database.useCache = false
                 }
@@ -514,7 +513,7 @@ class SayanVanishCommand : BukkitCommand(settings.vanishCommand.name, *settings.
                     counter.start()
                     sender.sendComponent("<gold>[${it + 1}] <gray>Trying <green>${amount} Get Users</green> from data storage")
                     repeat(amount) {
-                        database.getUsers()
+                        database.getVanishUsers()
                     }
                     counter.stop()
                     sender.sendComponent("<gold>[${it + 1}] <gray>Took <green>${counter.get()}ms</green>")

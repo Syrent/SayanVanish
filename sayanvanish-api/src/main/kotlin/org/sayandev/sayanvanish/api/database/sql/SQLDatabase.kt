@@ -55,9 +55,9 @@ class SQLDatabase<U: User>(
     }
 
     override fun initialize() {
-        database.runQuery(Query.query("CREATE TABLE IF NOT EXISTS ${config.tablePrefix}users (UUID VARCHAR(64),username VARCHAR(16),server VARCHAR(128),is_vanished INT,is_online INT,vanish_level INT,PRIMARY KEY (UUID));")).result?.close()
-        database.runQuery(Query.query("CREATE TABLE IF NOT EXISTS ${config.tablePrefix}basic_users (UUID VARCHAR(64),username VARCHAR(16),server VARCHAR(128),PRIMARY KEY (UUID));")).result?.close()
-        database.runQuery(Query.query("CREATE TABLE IF NOT EXISTS ${config.tablePrefix}queue (UUID VARCHAR(64), vanished VARCHAR(16),PRIMARY KEY (UUID));")).result?.close()
+        database.runQuery(Query.query("CREATE TABLE IF NOT EXISTS ${config.tablePrefix}users (UUID VARCHAR(64),username VARCHAR(16),server VARCHAR(128),is_vanished INT,is_online INT,vanish_level INT,PRIMARY KEY (UUID));")).getResult()?.close()
+        database.runQuery(Query.query("CREATE TABLE IF NOT EXISTS ${config.tablePrefix}basic_users (UUID VARCHAR(64),username VARCHAR(16),server VARCHAR(128),PRIMARY KEY (UUID));")).getResult()?.close()
+        database.runQuery(Query.query("CREATE TABLE IF NOT EXISTS ${config.tablePrefix}queue (UUID VARCHAR(64), vanished VARCHAR(16),PRIMARY KEY (UUID));")).getResult()?.close()
     }
 
     override fun connect() {
@@ -79,7 +79,7 @@ class SQLDatabase<U: User>(
             return (type.kotlin.safeCast(cacheUser) as? U) ?: (cacheUser.convert(type) as U)
         }
 
-        val result = database.runQuery(Query.query("SELECT * FROM ${config.tablePrefix}users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).result ?: return null
+        val result = database.runQuery(Query.query("SELECT * FROM ${config.tablePrefix}users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).getResult() ?: return null
         if (!result.next()) return null
         val user = object : User {
             override val uniqueId: UUID = UUID.fromString(result.getString("UUID"))
@@ -126,7 +126,7 @@ class SQLDatabase<U: User>(
             return cache.values.toList()
         }
 
-        val result = database.runQuery(Query.query("SELECT * FROM ${config.tablePrefix}users;")).result ?: return emptyList()
+        val result = database.runQuery(Query.query("SELECT * FROM ${config.tablePrefix}users;")).getResult() ?: return emptyList()
         val users = mutableListOf<U>()
         while (result.next()) {
             val user = object : User {
@@ -151,7 +151,7 @@ class SQLDatabase<U: User>(
             return basicCache.values.toList()
         }
 
-        val result = database.runQuery(Query.query("SELECT * FROM ${config.tablePrefix}basic_users;")).result ?: return emptyList()
+        val result = database.runQuery(Query.query("SELECT * FROM ${config.tablePrefix}basic_users;")).getResult() ?: return emptyList()
         val users = mutableListOf<BasicUser>()
         while (result.next()) {
             val user = BasicUser.create(
@@ -202,7 +202,7 @@ class SQLDatabase<U: User>(
                     .setStatementValue(4, user.isVanished)
                     .setStatementValue(5, user.isOnline)
                     .setStatementValue(6, user.vanishLevel)
-            ).result?.close()
+            ).getResult()?.close()
         } else {
             updateUser(user)
         }
@@ -223,7 +223,7 @@ class SQLDatabase<U: User>(
                     .setStatementValue(1, user.uniqueId.toString())
                     .setStatementValue(2, user.username)
                     .setStatementValue(3, user.serverId)
-            ).result?.close()
+            ).getResult()?.close()
         } else {
             if (user.serverId != Platform.get().serverId) {
                 updateBasicUser(user)
@@ -233,7 +233,7 @@ class SQLDatabase<U: User>(
 
     override fun hasUser(uniqueId: UUID): Boolean {
         val queryResult = database.runQuery(Query.query("SELECT * FROM ${config.tablePrefix}users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString()))
-        val result = queryResult.result ?: return false
+        val result = queryResult.getResult() ?: return false
         val hasNext = result.next()
         result.close()
         return hasNext
@@ -244,7 +244,7 @@ class SQLDatabase<U: User>(
             return basicCache.contains(uniqueId)
         }
         val queryResult = database.runQuery(Query.query("SELECT * FROM ${config.tablePrefix}basic_users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString()))
-        val result = queryResult.result ?: return false
+        val result = queryResult.getResult() ?: return false
         val hasNext = result.next()
         result.close()
         return hasNext
@@ -252,12 +252,12 @@ class SQLDatabase<U: User>(
 
     override fun removeUser(uniqueId: UUID) {
         cache.remove(uniqueId)
-        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).result?.close()
+        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).getResult()?.close()
     }
 
     override fun removeBasicUser(uniqueId: UUID) {
         basicCache.remove(uniqueId)
-        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}basic_users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).result?.close()
+        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}basic_users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).getResult()?.close()
     }
 
     override fun updateUser(user: U) {
@@ -269,7 +269,7 @@ class SQLDatabase<U: User>(
                 .setStatementValue(3, user.isOnline)
                 .setStatementValue(4, user.vanishLevel)
                 .setStatementValue(5, user.uniqueId.toString())
-        ).result?.close()
+        ).getResult()?.close()
     }
 
     override fun updateBasicUser(user: BasicUser) {
@@ -279,7 +279,7 @@ class SQLDatabase<U: User>(
                 .setStatementValue(1, user.username)
                 .setStatementValue(2, user.serverId)
                 .setStatementValue(3, user.uniqueId.toString())
-        ).result?.close()
+        ).getResult()?.close()
     }
 
     override fun isInQueue(uniqueId: UUID, inQueue: (Boolean) -> Unit) {
@@ -325,18 +325,18 @@ class SQLDatabase<U: User>(
     }
 
     override fun purge() {
-        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}users;")).result?.close()
-        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}basic_users;")).result?.close()
-        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}queue;")).result?.close()
+        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}users;")).getResult()?.close()
+        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}basic_users;")).getResult()?.close()
+        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}queue;")).getResult()?.close()
     }
 
     override fun purgeBasic() {
-        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}basic_users;")).result?.close()
-        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}queue;")).result?.close()
+        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}basic_users;")).getResult()?.close()
+        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}queue;")).getResult()?.close()
     }
 
     override fun purgeBasic(serverId: String) {
-        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}basic_users WHERE server = ?;").setStatementValue(1, serverId)).result?.close()
+        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}basic_users WHERE server = ?;").setStatementValue(1, serverId)).getResult()?.close()
     }
 
 }

@@ -7,10 +7,11 @@ import com.velocitypowered.api.event.player.ServerPostConnectEvent
 import com.velocitypowered.api.proxy.Player
 import net.william278.velocitab.api.VelocitabAPI
 import net.william278.velocitab.vanish.VanishIntegration
+import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
-import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI.Companion.getOrCreateUser
-import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI.Companion.user
+import org.sayandev.sayanvanish.velocity.api.VelocityVanishUser.Companion.generateVanishUser
+import org.sayandev.sayanvanish.velocity.api.VelocityVanishUser.Companion.getVanishUser
 import org.sayandev.sayanvanish.velocity.event.VelocityUserUnVanishEvent
 import org.sayandev.sayanvanish.velocity.event.VelocityUserVanishEvent
 import org.sayandev.sayanvanish.velocity.feature.HookFeature
@@ -47,15 +48,15 @@ private class VelocitabImpl(val feature: FeatureHookVelocitab) : VanishIntegrati
     override fun canSee(name: String, otherName: String): Boolean {
         val player = StickyNote.getPlayer(name) ?: return true
         val otherPlayer = StickyNote.getPlayer(otherName) ?: return true
-        val user = player.getOrCreateUser()
-        val otherUser = otherPlayer.getOrCreateUser()
+        val user = VanishAPI.get().getDatabase().getVanishUserCache(player.uniqueId) ?: player.generateVanishUser()
+        val otherUser = VanishAPI.get().getDatabase().getVanishUserCache(otherPlayer.uniqueId) ?: otherPlayer.generateVanishUser()
         return if (user.isVanished && otherUser.isVanished && user.vanishLevel >= otherUser.vanishLevel) true
         else if (otherUser.isVanished) false
         else true
     }
 
     override fun isVanished(name: String): Boolean {
-        return StickyNote.getPlayer(name)?.getOrCreateUser()?.isVanished == true
+        return StickyNote.getPlayer(name)?.let { VanishAPI.get().getDatabase().getCachedVanishUsers().values.find { it.username == name } }?.isVanished == true
     }
 
     @Subscribe

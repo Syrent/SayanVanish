@@ -1,12 +1,14 @@
 package org.sayandev.sayanvanish.velocity.feature.features.hook
 
 import ir.syrent.enhancedvelocity.api.VanishHook
+import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.velocity.feature.HookFeature
-import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
-import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI.Companion.getOrAddUser
+import org.sayandev.sayanvanish.velocity.api.VelocityVanishUser.Companion.generateVanishUser
+import org.sayandev.sayanvanish.velocity.api.VelocityVanishUser.Companion.getVanishUser
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.sayandev.stickynote.velocity.StickyNote
+import org.sayandev.stickynote.velocity.launch
 import java.util.UUID
 
 @RegisteredFeature
@@ -23,14 +25,20 @@ class FeatureHookEnhancedVelocity : HookFeature("hook_enhancedvelocity", "enhanc
 
 private class EnhancedVelocityImpl : VanishHook {
     override fun setIsVanished(uniqueId: UUID): Boolean {
-        return SayanVanishVelocityAPI.getInstance().isVanishedAsync(uniqueId)
+        return VanishAPI.get().isVanishedSync(uniqueId)
     }
 
     override fun setVanished(uniqueId: UUID) {
-        StickyNote.getPlayer(uniqueId)?.getOrAddUser()?.vanish()
+        val player = StickyNote.getPlayer(uniqueId) ?: return
+        launch {
+            player.getVanishUser()?.disappear() ?: player.generateVanishUser().disappear()
+        }
     }
 
     override fun setUnVanished(uniqueId: UUID) {
-        StickyNote.getPlayer(uniqueId)?.getOrAddUser()?.unVanish()
+        val player = StickyNote.getPlayer(uniqueId) ?: return
+        launch {
+            player.getVanishUser()?.appear() ?: player.generateVanishUser().appear()
+        }
     }
 }

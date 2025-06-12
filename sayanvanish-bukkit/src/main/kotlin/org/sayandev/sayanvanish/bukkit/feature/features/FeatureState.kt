@@ -54,7 +54,7 @@ class FeatureState(
 
             if (tempUser.hasPermission(Permission.VANISH_ON_JOIN) || vanishOnJoin) {
                 tempUser.isVanished = true
-                tempUser.vanish(vanishJoinOptions)
+                tempUser.disappear(vanishJoinOptions)
                 tempUser.save()
             }
             return
@@ -64,14 +64,14 @@ class FeatureState(
 
         if (checkPermissionOnJoin && !user.hasPermission(Permission.VANISH)) {
             user.sendComponent(language.vanish.noPermissionToKeepVanished, Placeholder.unparsed("permission", Permission.VANISH.permission()))
-            user.unVanish(vanishJoinOptions)
+            user.appear(vanishJoinOptions)
             user.delete()
             return
         }
 
         if (user.hasPermission(Permission.VANISH_ON_JOIN) || (user.isVanished && remember) || vanishOnJoin) {
             user.isVanished = true
-            user.vanish(vanishJoinOptions)
+            user.disappear(vanishJoinOptions)
         }
 
         if (user.isVanished) {
@@ -100,7 +100,7 @@ class FeatureState(
         }
 
         if ((reappearOnQuit && user.isVanished) || (checkPermissionOnQuit && !user.hasPermission(Permission.VANISH))) {
-            user.unVanish(VanishOptions.Builder().isOnQuit(true).build())
+            user.appear(VanishOptions.Builder().isOnQuit(true).build())
         }
         user.isOnline = false
 

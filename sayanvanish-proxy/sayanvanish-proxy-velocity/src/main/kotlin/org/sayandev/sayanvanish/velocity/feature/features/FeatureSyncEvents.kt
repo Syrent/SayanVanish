@@ -1,12 +1,19 @@
 package org.sayandev.sayanvanish.velocity.feature.features
 
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
+import org.sayandev.sayanvanish.velocity.VelocityPlatformAdapter
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
+import org.sayandev.sayanvanish.velocity.api.VelocityVanishUser.Companion.adapt
 import org.sayandev.sayanvanish.velocity.event.VelocityUserUnVanishEvent
 import org.sayandev.sayanvanish.velocity.event.VelocityUserVanishEvent
 import org.sayandev.sayanvanish.velocity.feature.ListenedFeature
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.sayandev.stickynote.velocity.StickyNote
+import org.sayandev.stickynote.velocity.launch
+import org.sayandev.stickynote.velocity.plugin
 import org.sayandev.stickynote.velocity.server
 import org.spongepowered.configurate.objectmapping.meta.Comment
 import java.util.UUID
@@ -22,24 +29,28 @@ class FeatureSyncEvents(
     @Transient val previousUsers = mutableMapOf<UUID, Boolean>()
 
     override fun enable() {
-        StickyNote.run({
-            for (user in SayanVanishVelocityAPI.getInstance().database.getVanishUsers()) {
-                if (previousUsers[user.uniqueId] == null) {
-                    previousUsers[user.uniqueId] = user.isVanished
-                    continue
-                }
+        launch {
+            // TODO: rewrite this so it uses messaging to call events
+            while (isActive) {
+                for (vanishUser in VanishAPI.get().getDatabase().getVanishUsers().await()) {
+                    if (previousUsers[vanishUser.uniqueId] == null) {
+                        previousUsers[vanishUser.uniqueId] = vanishUser.isVanished
+                        continue
+                    }
 
-                if (previousUsers[user.uniqueId] == false && user.isVanished) {
-                    previousUsers[user.uniqueId] = true
-                    server.eventManager.fireAndForget(VelocityUserVanishEvent(user, user.currentOptions))
-                }
+                    if (previousUsers[vanishUser.uniqueId] == false && vanishUser.isVanished) {
+                        previousUsers[vanishUser.uniqueId] = true
+                        server.eventManager.fireAndForget(VelocityUserVanishEvent(vanishUser.adapt(), vanishUser.currentOptions))
+                    }
 
-                if (previousUsers[user.uniqueId] == true && !user.isVanished) {
-                    previousUsers[user.uniqueId] = false
-                    server.eventManager.fireAndForget(VelocityUserUnVanishEvent(user, user.currentOptions))
+                    if (previousUsers[vanishUser.uniqueId] == true && !vanishUser.isVanished) {
+                        previousUsers[vanishUser.uniqueId] = false
+                        server.eventManager.fireAndForget(VelocityUserUnVanishEvent(vanishUser.adapt(), vanishUser.currentOptions))
+                    }
                 }
+                delay(checkPeriodMillis)
             }
-        }, checkPeriodMillis, TimeUnit.MILLISECONDS, checkPeriodMillis, TimeUnit.MILLISECONDS)
+        }
         super.enable()
     }
 }

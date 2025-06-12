@@ -7,6 +7,7 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.plugin.annotation.DataDirectory
 import com.velocitypowered.api.proxy.ProxyServer
 import org.sayandev.sayanvanish.api.Platform
+import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.database.DatabaseMethod
 import org.sayandev.sayanvanish.api.database.databaseConfig
 import org.sayandev.sayanvanish.api.database.sql.SQLDatabase
@@ -18,6 +19,7 @@ import org.sayandev.sayanvanish.velocity.health.HealthCheckMessageSubscriber
 import org.sayandev.sayanvanish.velocity.health.ServerInfoPublisher
 import org.sayandev.stickynote.loader.velocity.StickyNoteVelocityLoader
 import org.sayandev.stickynote.velocity.StickyNote
+import org.sayandev.stickynote.velocity.launch
 import org.sayandev.stickynote.velocity.registerListener
 import org.slf4j.Logger
 import java.io.File
@@ -46,7 +48,7 @@ class SayanVanish @Inject constructor(
         sayanvanish = this
         Platform.get().rootDirectory = dataDirectory.toFile()
 
-        if (!Platform.setAndRegister(Platform("velocity", java.util.logging.Logger.getLogger("sayanvanish"), dataDirectory.toFile(), ""))) return
+        if (!Platform.setAndRegister(Platform("velocity", PLUGIN_ID, java.util.logging.Logger.getLogger("sayanvanish"), dataDirectory.toFile(), "", VelocityPlatformAdapter))) return
 
         settings
         language
@@ -63,35 +65,22 @@ class SayanVanish @Inject constructor(
 
         registerListener(VanishManager)
 
-        if (settings.general.purgeOnlineHistoryOnStartup) {
-            for (onlineServer in server.allServers) {
-                SayanVanishVelocityAPI.getInstance().database.purgeUsers(onlineServer.serverInfo.name)
+        // TODO: move this somewhere else. it's not something to be on main class and the main initialization method
+        launch {
+            if (settings.general.purgeOnlineHistoryOnStartup) {
+                for (onlineServer in server.allServers) {
+                    VanishAPI.get().getDatabase().purgeUsers(onlineServer.serverInfo.name)
+                }
+                VanishAPI.get().getDatabase().purgeUsers(settings.general.serverId)
             }
-            SayanVanishVelocityAPI.getInstance().database.purgeUsers(settings.general.serverId)
-        }
 
-        if (settings.general.purgeUsersOnStartup) {
-            for (user in SayanVanishVelocityAPI.getInstance().getOnlineUsers()) {
-                user.isOnline = false
-                user.save()
-            }
-        }
-
-        StickyNote.run({
-            if (databaseConfig.method == DatabaseMethod.SQL) {
-                SayanVanishVelocityAPI.getInstance().database.getBasicUsersAsync { users ->
-                    (SayanVanishVelocityAPI.getInstance().database as SQLDatabase).basicCache = users.associateBy { it.uniqueId }.toMutableMap()
-                    (SayanVanishAPI.getDatabase() as SQLDatabase).basicCache = users.associateBy { it.uniqueId }.toMutableMap()
+            if (settings.general.purgeUsersOnStartup) {
+                for (user in VanishAPI.get().getDatabase().getUsers().await()) {
+                    user.isOnline = false
+                    user.save()
                 }
             }
-        }, settings.general.basicCacheUpdatePeriodMillis, TimeUnit.MILLISECONDS, settings.general.basicCacheUpdatePeriodMillis, TimeUnit.MILLISECONDS)
-
-        StickyNote.run({
-            SayanVanishVelocityAPI.getInstance().database.getUsersAsync { users ->
-                SayanVanishVelocityAPI.getInstance().database.cache = users.associateBy { it.uniqueId }.toMutableMap()
-                SayanVanishAPI.getDatabase().cache = users.associateBy { it.uniqueId }.toMutableMap()
-            }
-        }, settings.general.cacheUpdatePeriodMillis, TimeUnit.MILLISECONDS, settings.general.cacheUpdatePeriodMillis, TimeUnit.MILLISECONDS)
+        }
     }
 
     fun pluginFile(): File? {

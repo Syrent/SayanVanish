@@ -4,7 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.v1.core.Table
 import org.sayandev.sayanvanish.api.exception.UnsupportedPlatformException
 import java.util.*
 
@@ -13,26 +13,26 @@ interface VanishUser : User {
     var isVanished: Boolean
     var vanishLevel: Int
 
-    suspend fun vanish(options: VanishOptions) {
+    suspend fun disappear(options: VanishOptions) {
         isVanished = true
         save()
     }
 
-    suspend fun vanish() {
-        vanish(VanishOptions.defaultOptions())
+    suspend fun disappear() {
+        disappear(VanishOptions.defaultOptions())
     }
 
-    suspend fun unVanish(options: VanishOptions) {
+    suspend fun appear(options: VanishOptions) {
         isVanished = false
         save()
     }
 
-    suspend fun unVanish() {
-        unVanish(VanishOptions.defaultOptions())
+    suspend fun appear() {
+        appear(VanishOptions.defaultOptions())
     }
 
     suspend fun toggleVanish(options: VanishOptions) {
-        if (isVanished) unVanish(options) else vanish(options)
+        if (isVanished) appear(options) else disappear(options)
     }
 
     suspend fun toggleVanish() {

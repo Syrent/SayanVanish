@@ -5,12 +5,14 @@ import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.awaitAll
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.transactions.TransactionManager
-import org.jetbrains.exposed.sql.transactions.experimental.suspendedTransactionAsync
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import org.jetbrains.exposed.v1.core.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.v1.core.Transaction
+import org.jetbrains.exposed.v1.jdbc.*
+import org.jetbrains.exposed.v1.jdbc.transactions.TransactionManager
+import org.jetbrains.exposed.v1.jdbc.transactions.experimental.suspendedTransactionAsync
 import org.sayandev.sayanvanish.api.Platform
-import org.sayandev.sayanvanish.api.PlatformAdapter
 import org.sayandev.sayanvanish.api.Queue
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishUser
@@ -31,13 +33,16 @@ class SQLDatabase(
             config.sqlDispatcherThreadCount,
         )
 
+    // TODO: implement new caching api
+    var users = mutableMapOf<UUID, VanishUser>()
+
     val tables = listOf(
         User.Schema,
         VanishUser.Schema,
         Queue.Schema,
     )
 
-    lateinit var database: org.jetbrains.exposed.sql.Database
+    lateinit var database: org.jetbrains.exposed.v1.jdbc.Database
 
     override suspend fun initialize(): Deferred<Boolean> {
         SchemaUtils.createMissingTablesAndColumns(
@@ -89,8 +94,18 @@ class SQLDatabase(
                 this.addDataSourceProperty("allowPublicKeyRetrieval", "true")
             }
         val dataSource = HikariDataSource(hikariConfig)
-        database = org.jetbrains.exposed.sql.Database.connect(dataSource)
+        database = org.jetbrains.exposed.v1.jdbc.Database.connect(dataSource)
         TransactionManager.defaultDatabase = database
+
+        // TODO: Implement a proper cache system
+        // TODO: probably update the cache on every update using messaging api
+        launch(dispatcher) {
+            while (isActive) {
+                users = getVanishUsers().await().associateBy { it.uniqueId }.toMutableMap()
+                delay(1000)
+            }
+        }
+
         return CompletableDeferred(true)
     }
 
@@ -129,6 +144,22 @@ class SQLDatabase(
                         result[VanishUser.Schema.isVanished],
                         result[User.Schema.isOnline],
                         result[VanishUser.Schema.vanishLevel]
+                    )
+                }
+        }
+    }
+
+    override suspend fun getUser(uniqueId: UUID): Deferred<User?> {
+        return async {
+            User.Schema
+                .selectAll()
+                .firstOrNull { it[User.Schema.uniqueId] == uniqueId }
+                ?.let { result ->
+                    User.of(
+                        result[User.Schema.uniqueId],
+                        result[User.Schema.username],
+                        result[User.Schema.isOnline],
+                        result[User.Schema.serverId]
                     )
                 }
         }

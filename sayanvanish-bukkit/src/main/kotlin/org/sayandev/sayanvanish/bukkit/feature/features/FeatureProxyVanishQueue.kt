@@ -9,7 +9,6 @@ import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrA
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.runSync
-import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
@@ -38,9 +37,9 @@ class FeatureProxyVanishQueue(
                                     this.sendMessage = false
                                 }
                                 if (isVanished) {
-                                    user.vanish(options)
+                                    user.disappear(options)
                                 } else {
-                                    user.unVanish(options)
+                                    user.appear(options)
                                 }
                             }
                         }

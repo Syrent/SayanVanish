@@ -3,6 +3,7 @@ package org.sayandev.sayanvanish.api
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.runBlocking
+import org.sayandev.sayanvanish.api.cache.VanishUserCache
 import org.sayandev.sayanvanish.api.database.Database
 import org.sayandev.sayanvanish.api.database.TransactionDatabase
 import org.sayandev.stickynote.core.utils.launch

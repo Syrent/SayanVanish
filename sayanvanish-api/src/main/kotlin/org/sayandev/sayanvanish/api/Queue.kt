@@ -1,6 +1,6 @@
 package org.sayandev.sayanvanish.api
 
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.v1.core.Table
 import java.util.UUID
 
 class Queue(

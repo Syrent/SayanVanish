@@ -73,6 +73,16 @@ class RedisDatabase(
         }
     }
 
+    override suspend fun getUser(uniqueId: UUID): Deferred<User?> {
+        return async {
+            redis
+                .hget("users", uniqueId.toString())
+                ?.let {
+                    User.fromJson(it)
+                }
+        }
+    }
+
     override suspend fun getUsers(): Deferred<List<User>> {
         return async {
             redis

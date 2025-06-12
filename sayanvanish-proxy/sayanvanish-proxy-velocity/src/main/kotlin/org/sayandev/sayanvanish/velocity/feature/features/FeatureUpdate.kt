@@ -9,12 +9,13 @@ import org.sayandev.sayanvanish.api.utils.DownloadUtils
 import org.sayandev.sayanvanish.api.utils.HangarUtils
 import org.sayandev.sayanvanish.api.utils.VersionInfo
 import org.sayandev.sayanvanish.proxy.config.settings
-import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI.Companion.user
+import org.sayandev.sayanvanish.velocity.api.VelocityVanishUser.Companion.getVanishUser
 import org.sayandev.sayanvanish.velocity.feature.ListenedFeature
 import org.sayandev.sayanvanish.velocity.sayanvanish
 import org.sayandev.sayanvanish.velocity.utils.PlayerUtils.sendComponent
 import org.sayandev.sayanvanish.velocity.utils.PlayerUtils.sendRawComponent
 import org.sayandev.stickynote.velocity.StickyNote
+import org.sayandev.stickynote.velocity.launch
 import org.sayandev.stickynote.velocity.log
 import org.sayandev.stickynote.velocity.plugin
 import org.sayandev.stickynote.velocity.utils.AdventureUtils.component
@@ -85,14 +86,16 @@ class FeatureUpdate(
     @Subscribe
     private fun onLogin(event: PostLoginEvent) {
         val player = event.player
-        val user = player.user() ?: return
-        if (!isActive(user)) return
-        if (player.hasPermission(notifyBypassPermission)) return
-        if (notifyOnJoin && latestRelease != null && latestSnapshot != null) {
-            sendUpdateNotification(player)
+        launch {
+            val user = player.getVanishUser() ?: return@launch
+            if (!isActive(user)) return@launch
+            if (player.hasPermission(notifyBypassPermission)) return@launch
+            if (notifyOnJoin && latestRelease != null && latestSnapshot != null) {
+                sendUpdateNotification(player)
 
-            if (autoUpdateNotification) {
-                sendUpdateRequest(player)
+                if (autoUpdateNotification) {
+                    sendUpdateRequest(player)
+                }
             }
         }
     }

@@ -65,6 +65,11 @@ class SettingsConfig(
         )
     )
 
+    fun serverId(): String {
+        // TODO: use proxy server name on proxy servers
+        return general.serverId
+    }
+
     companion object {
         private val fileName = "settings.yml"
         val settingsFile = File(pluginDirectory, fileName)

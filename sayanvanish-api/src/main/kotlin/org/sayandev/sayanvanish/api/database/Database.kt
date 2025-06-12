@@ -5,6 +5,8 @@ import kotlinx.coroutines.future.asCompletableFuture
 import kotlinx.coroutines.runBlocking
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishUser
+import org.sayandev.sayanvanish.api.cache.UserCountCache
+import org.sayandev.sayanvanish.api.cache.VanishUserCache
 import org.sayandev.stickynote.core.coroutine.dispatcher.AsyncDispatcher
 import org.sayandev.stickynote.core.utils.async
 import java.util.*
@@ -78,6 +80,12 @@ interface Database {
 
     fun getVanishUsersSync(): List<VanishUser> {
         return runBlocking { getVanishUsers().await() }
+    }
+
+    suspend fun getUser(uniqueId: UUID): Deferred<User?>
+
+    fun getUserFuture(uniqueId: UUID): CompletableFuture<User?> {
+        return async(dispatcher) { getUser(uniqueId).await() }.asCompletableFuture()
     }
 
     suspend fun getUsers(): Deferred<List<User>>
@@ -186,5 +194,37 @@ interface Database {
 
     fun purgeUsersFuture(serverId: String): CompletableFuture<Boolean> {
         return async(dispatcher) { purgeUsers(serverId).await() }.asCompletableFuture()
+    }
+
+    fun getCachedVanishUsers(): VanishUserCache {
+        return vanishUserCache
+    }
+
+    fun getCachedVanishUser(uniqueId: UUID): VanishUser? {
+        return vanishUserCache[uniqueId]
+    }
+
+    fun getVanishUserCache(uniqueId: UUID): VanishUser? {
+        return vanishUserCache[uniqueId]
+    }
+
+    fun getCachedUserCount(): UserCountCache {
+        return userCountCache
+    }
+
+    fun getServerUserCountCache(serverId: String): Int {
+        return userCountCache[serverId] ?: 0
+    }
+
+    companion object {
+        @JvmStatic
+        val vanishUserCache: VanishUserCache by lazy {
+            VanishUserCache()
+        }
+
+        @JvmStatic
+        val userCountCache: UserCountCache by lazy {
+            UserCountCache()
+        }
     }
 }

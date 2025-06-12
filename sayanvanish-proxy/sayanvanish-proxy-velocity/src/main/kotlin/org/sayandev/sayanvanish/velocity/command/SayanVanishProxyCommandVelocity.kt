@@ -8,21 +8,20 @@ import org.incendo.cloud.description.Description
 import org.incendo.cloud.kotlin.MutableCommandBuilder
 import org.incendo.cloud.parser.standard.StringParser
 import org.incendo.cloud.suggestion.Suggestion
-import org.incendo.cloud.velocity.VelocityCommandManager
 import org.incendo.cloud.velocity.parser.PlayerParser
 import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.feature.Features
-import org.sayandev.sayanvanish.proxy.command.SayanVanishProxyCommand
 import org.sayandev.sayanvanish.proxy.config.language
 import org.sayandev.sayanvanish.proxy.config.settings
-import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI.Companion.getOrAddUser
+import org.sayandev.sayanvanish.velocity.api.VelocityVanishUser.Companion.generateVanishUser
+import org.sayandev.sayanvanish.velocity.api.VelocityVanishUser.Companion.getVanishUser
 import org.sayandev.sayanvanish.velocity.feature.features.FeatureUpdate
 import org.sayandev.sayanvanish.velocity.utils.PlayerUtils.sendComponent
 import org.sayandev.stickynote.velocity.StickyNote
 import org.sayandev.stickynote.velocity.command.VelocityCommand
 import org.sayandev.stickynote.velocity.command.VelocitySender
-import org.sayandev.stickynote.velocity.command.commandManager
+import org.sayandev.stickynote.velocity.launch
 import org.sayandev.stickynote.velocity.plugin
 import org.sayandev.stickynote.velocity.utils.AdventureUtils.component
 import java.util.concurrent.CompletableFuture
@@ -62,30 +61,33 @@ class SayanVanishProxyCommandVelocity : VelocityCommand(settings.command.name, *
         }
 
         val player = if (target.isPresent) context.optional<Player>("player").get() else context.sender().player() ?: return
-        val user = player.getOrAddUser()
 
-        if (!user.hasPermission(Permission.VANISH)) {
-            user.sendComponent(language.general.dontHavePermission, Placeholder.unparsed("permission", Permission.VANISH.permission()))
-            return
-        }
+        launch {
+            val user = player.getVanishUser() ?: player.generateVanishUser()
 
-        val options = VanishOptions.defaultOptions().apply {
-            if (context.flags().hasFlag("silent")) {
-                this.sendMessage = false
+            if (!user.hasPermission(Permission.VANISH)) {
+                user.sendComponent(language.general.dontHavePermission, Placeholder.unparsed("permission", Permission.VANISH.permission()))
+                return@launch
             }
-        }
 
-        val targetPlayer = target.getOrNull() ?: sender as? Player ?: let {
-            sender.sendMessage(language.general.haveToProvidePlayer.component())
-            return
-        }
+            val options = VanishOptions.defaultOptions().apply {
+                if (context.flags().hasFlag("silent")) {
+                    this.sendMessage = false
+                }
+            }
 
-        when (state) {
-            "on" -> user.vanish(options)
-            "off" -> user.unVanish(options)
-            else -> user.toggleVanish(options)
+            val targetPlayer = target.getOrNull() ?: sender as? Player ?: let {
+                sender.sendMessage(language.general.haveToProvidePlayer.component())
+                return@launch
+            }
+
+            when (state) {
+                "on" -> user.disappear(options)
+                "off" -> user.appear(options)
+                else -> user.toggleVanish(options)
+            }
+            context.sender().platformSender().sendComponent(language.vanish.vanishToggle.component(Placeholder.unparsed("player", targetPlayer.username), Placeholder.parsed("state", user.stateText(!user.isVanished))))
         }
-        context.sender().platformSender().sendComponent(language.vanish.vanishToggle.component(Placeholder.unparsed("player", targetPlayer.username), Placeholder.parsed("state", user.stateText(!user.isVanished))))
     }
 
     init {

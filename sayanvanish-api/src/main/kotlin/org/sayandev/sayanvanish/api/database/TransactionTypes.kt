@@ -10,6 +10,7 @@ enum class TransactionTypes(
     REMOVE_VANISH_USER("remove_vanish_user", DatabaseMethod.SQL),
     GET_VANISH_USER("get_vanish_user", DatabaseMethod.SQL),
     GET_VANISH_USERS("get_vanish_users", DatabaseMethod.SQL),
+    GET_USER("get_user", DatabaseMethod.SQL),
     GET_USERS("get_users", DatabaseMethod.SQL),
     ADD_USER("add_user", DatabaseMethod.SQL),
     HAS_USER("has_user", DatabaseMethod.SQL),

@@ -3,7 +3,7 @@ package org.sayandev.sayanvanish.api
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.v1.core.Table
 import org.sayandev.sayanvanish.api.exception.UnsupportedPlatformException
 import java.util.*
 

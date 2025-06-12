@@ -102,6 +102,11 @@ class TransactionDatabase: Database {
         return database.getVanishUsers()
     }
 
+    override suspend fun getUser(uniqueId: UUID): Deferred<User?> {
+        val database = database(TransactionTypes.GET_USER)
+        return database.getUser(uniqueId)
+    }
+
     override suspend fun getUsers(): Deferred<List<User>> {
         val database = database(TransactionTypes.GET_USERS)
         return database.getUsers()

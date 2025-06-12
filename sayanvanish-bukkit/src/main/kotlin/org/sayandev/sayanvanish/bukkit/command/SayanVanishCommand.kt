@@ -100,8 +100,8 @@ class SayanVanishCommand : BukkitCommand(settings.vanishCommand.name, *settings.
         }
 
         when (state) {
-            "on" -> user.vanish(options)
-            "off" -> user.unVanish(options)
+            "on" -> user.disappear(options)
+            "off" -> user.appear(options)
             else -> user.toggleVanish(options)
         }
     }

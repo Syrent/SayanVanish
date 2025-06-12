@@ -38,7 +38,7 @@ open class BungeeVanishUser(
 
     fun player(): ProxiedPlayer? = StickyNote.getPlayer(uniqueId)
 
-    override suspend fun vanish(options: VanishOptions) {
+    override suspend fun disappear(options: VanishOptions) {
         val vanishEvent = plugin.proxy.pluginManager.callEvent(BungeeUserVanishEvent(this, options))
         if (vanishEvent.isCancelled) return
 
@@ -46,10 +46,10 @@ open class BungeeVanishUser(
         currentOptions = options
 
         SayanVanishAPI.getDatabase().addToQueue(uniqueId, true)
-        super.vanish(options)
+        super.disappear(options)
     }
 
-    override suspend fun unVanish(options: VanishOptions) {
+    override suspend fun appear(options: VanishOptions) {
         val vanishEvent = plugin.proxy.pluginManager.callEvent(BungeeUserUnVanishEvent(this, options))
         if (vanishEvent.isCancelled) return
 
@@ -57,7 +57,7 @@ open class BungeeVanishUser(
         currentOptions = options
 
         SayanVanishAPI.getDatabase().addToQueue(uniqueId, false)
-        super.unVanish(options)
+        super.appear(options)
     }
 
     override fun hasPermission(permission: String): Boolean {

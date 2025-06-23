@@ -33,6 +33,7 @@ class LanguageConfig(
         val placeholderPrefix: String = "&7[Vanished]&r ",
         val placeholderSuffix: String = " &r&7[Vanished]",
         val vanishToggle: String = "<gray>Successfully updated <aqua><player></aqua> vanish state to <state>",
+        val cantChatWhileVanished: String = "<gray>You can't chat while you are vanished, add <gold><bold><char></bold></gold> at the beginning of your message to bypass this."
     )
 
     enum class Language(val id: String) {

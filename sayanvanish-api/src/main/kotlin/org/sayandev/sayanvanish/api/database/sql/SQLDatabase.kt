@@ -80,7 +80,10 @@ class SQLDatabase<U: User>(
         }
 
         val result = database.runQuery(Query.query("SELECT * FROM ${config.tablePrefix}users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).getResult() ?: return null
-        if (!result.next()) return null
+        if (!result.next()) {
+            result.close()
+            return null
+        }
         val user = object : User {
             override val uniqueId: UUID = UUID.fromString(result.getString("UUID"))
             override var username: String = result.getString("username")
@@ -288,6 +291,7 @@ class SQLDatabase<U: User>(
 
             val hasNext = result.next()
             inQueue(hasNext)
+            result.close()
         }
     }
 
@@ -299,9 +303,9 @@ class SQLDatabase<U: User>(
                 } else {
                     "INSERT IGNORE INTO ${config.tablePrefix}queue (UUID, vanished) VALUES (?,?);"
                 }
-                database.queueQuery(Query.query(insertQuery).setStatementValue(1, uniqueId.toString()).setStatementValue(2, vanished.toString()))
+                database.queueQuery(Query.query(insertQuery).setStatementValue(1, uniqueId.toString()).setStatementValue(2, vanished.toString())).completableFuture.whenComplete { result, error -> error?.printStackTrace(); result.close() }
             } else {
-                database.queueQuery(Query.query("UPDATE ${config.tablePrefix}queue SET vanished = ? WHERE UUID = ?;").setStatementValue(1, vanished.toString()).setStatementValue(2, uniqueId.toString()))
+                database.queueQuery(Query.query("UPDATE ${config.tablePrefix}queue SET vanished = ? WHERE UUID = ?;").setStatementValue(1, vanished.toString()).setStatementValue(2, uniqueId.toString())).completableFuture.whenComplete { result, error -> error?.printStackTrace(); result.close() }
             }
         }
     }
@@ -312,11 +316,12 @@ class SQLDatabase<U: User>(
 
             if (!resultSet.next()) result(false)
             result(resultSet.getString("vanished").toBoolean())
+            resultSet.close()
         }
     }
 
     override fun removeFromQueue(uniqueId: UUID) {
-        database.queueQuery(Query.query("DELETE FROM ${config.tablePrefix}queue WHERE UUID = ?;").setStatementValue(1, uniqueId.toString()))
+        database.queueQuery(Query.query("DELETE FROM ${config.tablePrefix}queue WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).completableFuture.whenComplete { result, error -> error?.printStackTrace(); result.close() }
     }
 
     override fun purgeCache() {

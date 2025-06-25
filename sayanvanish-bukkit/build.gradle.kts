@@ -72,7 +72,7 @@ tasks {
 //            url("https://github.com/Insprill/custom-join-messages/releases/download/v17.5.0/custom-join-messages-17.5.0.jar")
 //            url("https://github.com/NEZNAMY/TAB-Bridge/releases/download/6.0.1/TAB-Bridge.v6.0.1.jar")
             url("https://github.com/EssentialsX/Essentials/releases/download/2.20.1/EssentialsX-2.20.1.jar")
-            url("https://download.luckperms.net/1575/bukkit/loader/LuckPerms-Bukkit-5.4.158.jar")
+//            url("https://download.luckperms.net/1593/bukkit/loader/LuckPerms-Bukkit-5.5.8.jar")
         }
         jvmArgs("-Dnet.kyori.adventure.text.warnWhenLegacyFormattingDetected=false")
     }

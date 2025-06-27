@@ -55,9 +55,9 @@ class SQLDatabase<U: User>(
     }
 
     override fun initialize() {
-        database.runQuery(Query.query("CREATE TABLE IF NOT EXISTS ${config.tablePrefix}users (UUID VARCHAR(64),username VARCHAR(16),server VARCHAR(128),is_vanished INT,is_online INT,vanish_level INT,PRIMARY KEY (UUID));")).getResult()?.close()
-        database.runQuery(Query.query("CREATE TABLE IF NOT EXISTS ${config.tablePrefix}basic_users (UUID VARCHAR(64),username VARCHAR(16),server VARCHAR(128),PRIMARY KEY (UUID));")).getResult()?.close()
-        database.runQuery(Query.query("CREATE TABLE IF NOT EXISTS ${config.tablePrefix}queue (UUID VARCHAR(64), vanished VARCHAR(16),PRIMARY KEY (UUID));")).getResult()?.close()
+        database.runQuery(Query.query("CREATE TABLE IF NOT EXISTS ${config.tablePrefix}users (UUID VARCHAR(64),username VARCHAR(16),server VARCHAR(128),is_vanished INT,is_online INT,vanish_level INT,PRIMARY KEY (UUID));")).close()
+        database.runQuery(Query.query("CREATE TABLE IF NOT EXISTS ${config.tablePrefix}basic_users (UUID VARCHAR(64),username VARCHAR(16),server VARCHAR(128),PRIMARY KEY (UUID));")).close()
+        database.runQuery(Query.query("CREATE TABLE IF NOT EXISTS ${config.tablePrefix}queue (UUID VARCHAR(64), vanished VARCHAR(16),PRIMARY KEY (UUID));")).close()
     }
 
     override fun connect() {
@@ -79,9 +79,10 @@ class SQLDatabase<U: User>(
             return (type.kotlin.safeCast(cacheUser) as? U) ?: (cacheUser.convert(type) as U)
         }
 
-        val result = database.runQuery(Query.query("SELECT * FROM ${config.tablePrefix}users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).getResult() ?: return null
+        val queryResult = database.runQuery(Query.query("SELECT * FROM ${config.tablePrefix}users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString()))
+        val result = queryResult.getResult() ?: return null
         if (!result.next()) {
-            result.close()
+            queryResult.close()
             return null
         }
         val user = object : User {
@@ -96,29 +97,34 @@ class SQLDatabase<U: User>(
         }
         val typedUser = (type.kotlin.safeCast(user) as? U) ?: (user.convert(type) as U)
         cache[uniqueId] = typedUser
-        result.close()
+        queryResult.close()
         return typedUser
     }
 
     override fun getUsersAsync(result: (List<U>) -> Unit) {
-        database.queueQuery(Query.query("SELECT * FROM ${config.tablePrefix}users;")).completableFuture.whenComplete { resultSet, error ->
+        database.queueQuery(Query.query("SELECT * FROM ${config.tablePrefix}users;")).completableFuture.whenComplete { queryResult, error ->
             error?.printStackTrace()
 
             val users = mutableListOf<U>()
-            while (resultSet.next()) {
-                val user = object : User {
-                    override val uniqueId: UUID = UUID.fromString(resultSet.getString("UUID"))
-                    override var username: String = resultSet.getString("username")
-                    override var serverId: String = resultSet.getString("server")
-                    override var currentOptions: VanishOptions = VanishOptions.defaultOptions()
+            val resultSet = queryResult.getResult()
+            if (resultSet != null) {
+                while (resultSet.next()) {
+                    val user = object : User {
+                        override val uniqueId: UUID = UUID.fromString(resultSet.getString("UUID"))
+                        override var username: String = resultSet.getString("username")
+                        override var serverId: String = resultSet.getString("server")
+                        override var currentOptions: VanishOptions = VanishOptions.defaultOptions()
 
-                    override var isVanished: Boolean = resultSet.getBoolean("is_vanished")
-                    override var isOnline: Boolean = resultSet.getBoolean("is_online")
-                    override var vanishLevel: Int = resultSet.getInt("vanish_level")
+                        override var isVanished: Boolean = resultSet.getBoolean("is_vanished")
+                        override var isOnline: Boolean = resultSet.getBoolean("is_online")
+                        override var vanishLevel: Int = resultSet.getInt("vanish_level")
+                    }
+                    users.add((type.kotlin.safeCast(user) as? U) ?: (user.convert(type) as U))
                 }
-                users.add((type.kotlin.safeCast(user) as? U) ?: (user.convert(type) as U))
+            } else {
+                Platform.get().logger.severe("Failed to fetch users from database (getUsersAsync)")
             }
-            resultSet.close()
+            queryResult.close()
 
             result(users)
         }
@@ -129,7 +135,8 @@ class SQLDatabase<U: User>(
             return cache.values.toList()
         }
 
-        val result = database.runQuery(Query.query("SELECT * FROM ${config.tablePrefix}users;")).getResult() ?: return emptyList()
+        val queryResult = database.runQuery(Query.query("SELECT * FROM ${config.tablePrefix}users;"))
+        val result = queryResult.getResult() ?: return emptyList()
         val users = mutableListOf<U>()
         while (result.next()) {
             val user = object : User {
@@ -144,7 +151,7 @@ class SQLDatabase<U: User>(
             }
             users.add((type.kotlin.safeCast(user) as? U) ?: (user.convert(type) as U))
         }
-        result.close()
+        queryResult.close()
 
         return users
     }
@@ -154,7 +161,8 @@ class SQLDatabase<U: User>(
             return basicCache.values.toList()
         }
 
-        val result = database.runQuery(Query.query("SELECT * FROM ${config.tablePrefix}basic_users;")).getResult() ?: return emptyList()
+        val queryResult = database.runQuery(Query.query("SELECT * FROM ${config.tablePrefix}basic_users;"))
+        val result = queryResult.getResult() ?: return emptyList()
         val users = mutableListOf<BasicUser>()
         while (result.next()) {
             val user = BasicUser.create(
@@ -164,25 +172,30 @@ class SQLDatabase<U: User>(
             )
             users.add(user)
         }
-        result.close()
+        queryResult.close()
 
         return users
     }
 
     override fun getBasicUsersAsync(result: (List<BasicUser>) -> Unit) {
-        database.queueQuery(Query.query("SELECT * FROM ${config.tablePrefix}basic_users;")).completableFuture.whenComplete { resultSet, error ->
+        database.queueQuery(Query.query("SELECT * FROM ${config.tablePrefix}basic_users;")).completableFuture.whenComplete { queryResult, error ->
             error?.printStackTrace()
 
             val users = mutableListOf<BasicUser>()
-            while (resultSet.next()) {
-                val user = BasicUser.create(
-                    UUID.fromString(resultSet.getString("UUID")),
-                    resultSet.getString("username"),
-                    resultSet.getString("server")
-                )
-                users.add(user)
+            val resultSet = queryResult.getResult()
+            if (resultSet != null) {
+                while (resultSet.next()) {
+                    val user = BasicUser.create(
+                        UUID.fromString(resultSet.getString("UUID")),
+                        resultSet.getString("username"),
+                        resultSet.getString("server")
+                    )
+                    users.add(user)
+                }
+            } else {
+                Platform.get().logger.severe("Failed to fetch users from database (getBasicUsersAsync)")
             }
-            resultSet.close()
+            queryResult.close()
 
             result(users)
         }
@@ -205,7 +218,7 @@ class SQLDatabase<U: User>(
                     .setStatementValue(4, user.isVanished)
                     .setStatementValue(5, user.isOnline)
                     .setStatementValue(6, user.vanishLevel)
-            ).getResult()?.close()
+            ).close()
         } else {
             updateUser(user)
         }
@@ -226,7 +239,7 @@ class SQLDatabase<U: User>(
                     .setStatementValue(1, user.uniqueId.toString())
                     .setStatementValue(2, user.username)
                     .setStatementValue(3, user.serverId)
-            ).getResult()?.close()
+            ).close()
         } else {
             if (user.serverId != Platform.get().serverId) {
                 updateBasicUser(user)
@@ -238,7 +251,7 @@ class SQLDatabase<U: User>(
         val queryResult = database.runQuery(Query.query("SELECT * FROM ${config.tablePrefix}users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString()))
         val result = queryResult.getResult() ?: return false
         val hasNext = result.next()
-        result.close()
+        queryResult.close()
         return hasNext
     }
 
@@ -249,18 +262,18 @@ class SQLDatabase<U: User>(
         val queryResult = database.runQuery(Query.query("SELECT * FROM ${config.tablePrefix}basic_users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString()))
         val result = queryResult.getResult() ?: return false
         val hasNext = result.next()
-        result.close()
+        queryResult.close()
         return hasNext
     }
 
     override fun removeUser(uniqueId: UUID) {
         cache.remove(uniqueId)
-        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).getResult()?.close()
+        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).close()
     }
 
     override fun removeBasicUser(uniqueId: UUID) {
         basicCache.remove(uniqueId)
-        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}basic_users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).getResult()?.close()
+        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}basic_users WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).close()
     }
 
     override fun updateUser(user: U) {
@@ -272,7 +285,7 @@ class SQLDatabase<U: User>(
                 .setStatementValue(3, user.isOnline)
                 .setStatementValue(4, user.vanishLevel)
                 .setStatementValue(5, user.uniqueId.toString())
-        ).getResult()?.close()
+        ).close()
     }
 
     override fun updateBasicUser(user: BasicUser) {
@@ -282,16 +295,22 @@ class SQLDatabase<U: User>(
                 .setStatementValue(1, user.username)
                 .setStatementValue(2, user.serverId)
                 .setStatementValue(3, user.uniqueId.toString())
-        ).getResult()?.close()
+        ).close()
     }
 
     override fun isInQueue(uniqueId: UUID, inQueue: (Boolean) -> Unit) {
-        database.queueQuery(Query.query("SELECT * FROM ${config.tablePrefix}queue WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).completableFuture.whenComplete { result, error ->
+        database.queueQuery(Query.query("SELECT * FROM ${config.tablePrefix}queue WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).completableFuture.whenComplete { queryResult, error ->
             error?.printStackTrace()
 
-            val hasNext = result.next()
-            inQueue(hasNext)
-            result.close()
+            val resultSet = queryResult.getResult()
+            if (resultSet != null) {
+                val hasNext = resultSet.next()
+                inQueue(hasNext)
+            } else {
+                Platform.get().logger.severe("Failed to fetch is in queue from database (isInQueue)")
+                inQueue(false)
+            }
+            queryResult.close()
         }
     }
 
@@ -311,12 +330,18 @@ class SQLDatabase<U: User>(
     }
 
     override fun getFromQueue(uniqueId: UUID, result: (Boolean) -> Unit) {
-        database.queueQuery(Query.query("SELECT * FROM ${config.tablePrefix}queue WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).completableFuture.whenComplete { resultSet, error ->
+        database.queueQuery(Query.query("SELECT * FROM ${config.tablePrefix}queue WHERE UUID = ?;").setStatementValue(1, uniqueId.toString())).completableFuture.whenComplete { queryResult, error ->
             error?.printStackTrace()
 
-            if (!resultSet.next()) result(false)
-            result(resultSet.getString("vanished").toBoolean())
-            resultSet.close()
+            val resultSet = queryResult.getResult()
+            if (resultSet != null) {
+                if (!resultSet.next()) result(false)
+                result(resultSet.getString("vanished").toBoolean())
+            } else {
+                Platform.get().logger.severe("Failed to fetch queue from database (getFromQueue)")
+                result(false)
+            }
+            queryResult.close()
         }
     }
 
@@ -330,18 +355,18 @@ class SQLDatabase<U: User>(
     }
 
     override fun purge() {
-        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}users;")).getResult()?.close()
-        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}basic_users;")).getResult()?.close()
-        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}queue;")).getResult()?.close()
+        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}users;")).close()
+        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}basic_users;")).close()
+        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}queue;")).close()
     }
 
     override fun purgeBasic() {
-        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}basic_users;")).getResult()?.close()
-        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}queue;")).getResult()?.close()
+        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}basic_users;")).close()
+        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}queue;")).close()
     }
 
     override fun purgeBasic(serverId: String) {
-        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}basic_users WHERE server = ?;").setStatementValue(1, serverId)).getResult()?.close()
+        database.runQuery(Query.query("DELETE FROM ${config.tablePrefix}basic_users WHERE server = ?;").setStatementValue(1, serverId)).close()
     }
 
 }

@@ -9,7 +9,6 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.isActive
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.Platform
-import org.sayandev.sayanvanish.api.PlatformAdapter
 import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.database.redis.RedisDatabase
 import org.sayandev.sayanvanish.api.database.sql.SQLDatabase
@@ -18,6 +17,8 @@ import java.util.*
 
 class TransactionDatabase: Database {
 
+    override var connected = false
+
     override val dispatcher =
         AsyncDispatcher(
             "${Platform.get().pluginName.lowercase()}-transaction-thread",
@@ -25,18 +26,18 @@ class TransactionDatabase: Database {
             5,
         )
 
-    val databaseTypes = mutableMapOf<DatabaseMethod, Database>()
+    val databaseTypes = mutableMapOf<DatabaseType, Database>()
     var databaseConnected: Boolean = true
 
     override suspend fun initialize(): Deferred<Boolean> {
-        val transactionMethods = databaseConfig.transactionTypes.map { it.method }.distinct()
+        val transactionMethods = databaseConfig.transactionTypes.map { it.type }.distinct()
         for (method in transactionMethods) {
             when (method) {
-                DatabaseMethod.SQL -> {
-                    databaseTypes[DatabaseMethod.SQL] = try {
-                        SQLDatabase(databaseConfig).apply {
-                            this.connect()
-                            this.initialize()
+                DatabaseType.SQL -> {
+                    databaseTypes[DatabaseType.SQL] = try {
+                        SQLDatabase(databaseConfig).also { sqlDatabase ->
+                            sqlDatabase.connect()
+                            sqlDatabase.initialize()
                         }
                     } catch (e: Exception) {
                         databaseConnected = false
@@ -44,11 +45,11 @@ class TransactionDatabase: Database {
                         throw e
                     }
                 }
-                DatabaseMethod.REDIS -> {
-                    databaseTypes[DatabaseMethod.REDIS] = try {
-                        RedisDatabase(databaseConfig).apply {
-                            this.initialize()
-                            this.connect()
+                DatabaseType.REDIS -> {
+                    databaseTypes[DatabaseType.REDIS] = try {
+                        RedisDatabase(databaseConfig).also { redisDatabase ->
+                            redisDatabase.initialize()
+                            redisDatabase.connect()
                         }
                     } catch (e: Exception) {
                         databaseConnected = false
@@ -58,82 +59,89 @@ class TransactionDatabase: Database {
                 }
             }
         }
-        return CompletableDeferred(true)
+        connected = databaseTypes.values.all { it.connected }
+        return CompletableDeferred(connected)
+    }
+
+    inline fun <reified D: Database> getByType(): D {
+        return databaseTypes.values.filterIsInstance<D>().firstOrNull()
+            ?: throw IllegalArgumentException("Received database with type `${D::class.simpleName}` but it isn't registered in the TransactionDatabase database types.")
     }
 
     override suspend fun connect(): Deferred<Boolean> {
-        return CompletableDeferred(databaseConnected)
+        return CompletableDeferred(connected)
     }
 
     override suspend fun disconnect(): Deferred<Boolean> {
         databaseTypes.forEach { (_, database) ->
             database.disconnect()
         }
-        return CompletableDeferred(true)
+        connected = false
+        return CompletableDeferred(connected)
     }
 
     override suspend fun addVanishUser(vanishUser: VanishUser): Deferred<Boolean> {
-        val database = database(TransactionTypes.ADD_VANISH_USER)
+        val database = database(TransactionTypes.VANISH_USER)
         return database.addVanishUser(vanishUser)
     }
 
     override suspend fun hasVanishUser(uniqueId: UUID): Deferred<Boolean> {
-        val database = database(TransactionTypes.HAS_VANISH_USER)
+        val database = database(TransactionTypes.VANISH_USER)
         return database.hasVanishUser(uniqueId)
     }
 
     override suspend fun updateVanishUser(vanishUser: VanishUser): Deferred<Boolean> {
-        val database = database(TransactionTypes.UPDATE_VANISH_USER)
+        val database = database(TransactionTypes.VANISH_USER)
         return database.updateVanishUser(vanishUser)
     }
 
     override suspend fun removeVanishUser(uniqueId: UUID): Deferred<Boolean> {
-        val database = database(TransactionTypes.REMOVE_VANISH_USER)
+        val database = database(TransactionTypes.VANISH_USER)
         return database.removeVanishUser(uniqueId)
     }
 
     override suspend fun getVanishUser(uniqueId: UUID): Deferred<VanishUser?> {
-        val database = database(TransactionTypes.GET_VANISH_USER)
+        val database = database(TransactionTypes.VANISH_USER)
         return database.getVanishUser(uniqueId)
     }
 
     override suspend fun getVanishUsers(): Deferred<List<VanishUser>> {
-        val database = database(TransactionTypes.GET_VANISH_USERS)
+        val database = database(TransactionTypes.VANISH_USER)
         return database.getVanishUsers()
     }
 
     override suspend fun getUser(uniqueId: UUID): Deferred<User?> {
-        val database = database(TransactionTypes.GET_USER)
+        val database = database(TransactionTypes.USER)
         return database.getUser(uniqueId)
     }
 
     override suspend fun getUsers(): Deferred<List<User>> {
-        val database = database(TransactionTypes.GET_USERS)
+        val database = database(TransactionTypes.USER)
         return database.getUsers()
     }
 
     override suspend fun addUser(user: User): Deferred<Boolean> {
-        val database = database(TransactionTypes.ADD_USER)
+        val database = database(TransactionTypes.USER)
         return database.addUser(user)
     }
 
     override suspend fun hasUser(uniqueId: UUID): Deferred<Boolean> {
-        val database = database(TransactionTypes.HAS_USER)
+        val database = database(TransactionTypes.USER)
         return database.hasUser(uniqueId)
     }
 
     override suspend fun updateUser(user: User): Deferred<Boolean> {
-        val database = database(TransactionTypes.UPDATE_USER)
+        val database = database(TransactionTypes.USER)
         return database.updateUser(user)
     }
 
     override suspend fun removeUser(uniqueId: UUID): Deferred<Boolean> {
-        val database = database(TransactionTypes.REMOVE_USER)
+        val database = database(TransactionTypes.USER)
         return database.removeUser(uniqueId)
     }
 
     override suspend fun isInQueue(uniqueId: UUID): Deferred<Boolean> {
-        val database = database(TransactionTypes.IS_IN_QUEUE)
+        val database = database(TransactionTypes.QUEUE)
         return database.isInQueue(uniqueId)
     }
 
@@ -141,17 +149,17 @@ class TransactionDatabase: Database {
         uniqueId: UUID,
         vanished: Boolean
     ): Deferred<Boolean> {
-        val database = database(TransactionTypes.ADD_TO_QUEUE)
+        val database = database(TransactionTypes.QUEUE)
         return database.addToQueue(uniqueId, vanished)
     }
 
     override suspend fun getFromQueue(uniqueId: UUID): Deferred<Boolean> {
-        val database = database(TransactionTypes.GET_FROM_QUEUE)
+        val database = database(TransactionTypes.QUEUE)
         return database.getFromQueue(uniqueId)
     }
 
     override suspend fun removeFromQueue(uniqueId: UUID): Deferred<Boolean> {
-        val database = database(TransactionTypes.REMOVE_FROM_QUEUE)
+        val database = database(TransactionTypes.QUEUE)
         return database.removeFromQueue(uniqueId)
     }
 
@@ -188,7 +196,7 @@ class TransactionDatabase: Database {
         }
     }
 
-    fun database(method: DatabaseMethod): Database {
+    fun database(method: DatabaseType): Database {
         return databaseTypes[method] ?: let {
             val (fallbackMethod, fallbackDatabase) = databaseTypes.entries.first()
             Platform.Companion.get().logger.warning("Tried to get a database of type $method, but it was not initialized. falling back to ${fallbackMethod} database method.")
@@ -197,17 +205,20 @@ class TransactionDatabase: Database {
     }
 
     fun database(transactionType: TransactionType): Database {
-        return database(transactionType.method)
+        return database(transactionType.type)
     }
 
     private fun logDatabaseError() {
-        Platform.get().logger.severe("Database connection failed. Disabling the plugin.")
+        Platform.get().logger.severe("Database connection failed. Disabling the plugin...")
         Platform.get().logger.severe("Please check the following:")
         Platform.get().logger.severe("- Make sure your database server is not misconfigured.")
         Platform.get().logger.severe("- Make sure your database server is running.")
+        Platform.get().logger.severe("Your active database types:")
+        for (type in databaseTypes) {
+            Platform.get().logger.severe("- ${type.key.name} (${type.value::class.simpleName})")
+        }
         Platform.get().logger.severe("Here's the full error trace:")
     }
-
 
     fun <T> async(
         block: suspend CoroutineScope.() -> T

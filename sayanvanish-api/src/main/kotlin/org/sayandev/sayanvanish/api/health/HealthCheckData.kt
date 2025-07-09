@@ -1,6 +1,6 @@
 package org.sayandev.sayanvanish.api.health
 
-import org.sayandev.sayanvanish.api.database.DatabaseMethod
+import org.sayandev.sayanvanish.api.database.DatabaseType
 import org.sayandev.sayanvanish.api.database.sql.SQLConfig
 
 data class HealthCheckData(
@@ -9,7 +9,7 @@ data class HealthCheckData(
 ) {
 
     data class ProxyInfo(
-        val databaseMethod: DatabaseMethod,
+        val databaseType: DatabaseType,
         val sqlMethod: SQLConfig.SQLMethod,
     )
 
@@ -17,7 +17,7 @@ data class HealthCheckData(
         val id: String?,
         var name: String?,
         val enabledProxyMode: Boolean,
-        val databaseMethod: DatabaseMethod,
+        val databaseType: DatabaseType,
         val sqlMethod: SQLConfig.SQLMethod,
         val timestamp: Long
     )

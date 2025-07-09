@@ -23,14 +23,18 @@ import org.sayandev.stickynote.core.utils.CoroutineUtils
 import org.sayandev.stickynote.core.utils.launch
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.text.get
 
 class SQLDatabase(
     val config: DatabaseConfig,
 ) : Database {
+
+    override var connected = false
+
     override val dispatcher =
         AsyncDispatcher(
             "${Platform.get().pluginName.lowercase()}-${config.sql.method}-thread",
-            config.sqlDispatcherThreadCount,
+            config.sql.threadCount,
         )
 
     // TODO: implement new caching api
@@ -53,48 +57,23 @@ class SQLDatabase(
     }
 
     override suspend fun connect(): Deferred<Boolean> {
-        val hikariConfig =
-            HikariConfig().apply {
-                jdbcUrl =
+        database =
+            org.jetbrains.exposed.v1.jdbc.Database.connect(
+                url =
                     when (config.sql.method) {
                         SQLConfig.SQLMethod.SQLITE -> "jdbc:sqlite:${Platform.get().rootDirectory.absolutePath}/database"
                         SQLConfig.SQLMethod.MARIADB -> "jdbc:mariadb://${config.sql.host}:${config.sql.port}/${config.sql.database}?autoReconnect=true"
                         SQLConfig.SQLMethod.MYSQL -> "jdbc:mysql://${config.sql.host}:${config.sql.port}/${config.sql.database}?autoReconnect=true"
-                    }
-                driverClassName =
+                    },
+                driver =
                     when (config.sql.method) {
                         SQLConfig.SQLMethod.SQLITE -> "org.sqlite.JDBC"
                         SQLConfig.SQLMethod.MARIADB -> "org.mariadb.jdbc.Driver"
                         SQLConfig.SQLMethod.MYSQL -> "com.mysql.cj.jdbc.Driver"
-                    }
-                username = config.sql.username
-                password = config.sql.password
-                maximumPoolSize = config.sql.poolProperties.maximumPoolSize
-                this.minimumIdle = config.sql.poolProperties.minimumIdle
-                this.keepaliveTime = config.sql.poolProperties.keepaliveTime
-                if (config.sql.method != SQLConfig.SQLMethod.SQLITE) {
-                    this.connectionTimeout = config.sql.poolProperties.connectionTimeout
-                }
-                this.maxLifetime = config.sql.poolProperties.maxLifetime
-
-                this.addDataSourceProperty("socketTimeout", TimeUnit.SECONDS.toMillis(30).toString())
-                this.addDataSourceProperty("cachePrepStmts", "true")
-                this.addDataSourceProperty("prepStmtCacheSize", "250")
-                this.addDataSourceProperty("prepStmtCacheSqlLimit", "2048")
-                this.addDataSourceProperty("useServerPrepStmts", "true")
-                this.addDataSourceProperty("useLocalSessionState", "true")
-                this.addDataSourceProperty("rewriteBatchedStatements", "true")
-                this.addDataSourceProperty("cacheResultSetMetadata", "true")
-                this.addDataSourceProperty("cacheServerConfiguration", "true")
-                this.addDataSourceProperty("elideSetAutoCommits", "true")
-                this.addDataSourceProperty("maintainTimeStats", "false")
-                this.addDataSourceProperty("alwaysSendSetIsolation", "false")
-                this.addDataSourceProperty("cacheCallableStmts", "true")
-                this.addDataSourceProperty("characterEncoding", "utf8")
-                this.addDataSourceProperty("allowPublicKeyRetrieval", "true")
-            }
-        val dataSource = HikariDataSource(hikariConfig)
-        database = org.jetbrains.exposed.v1.jdbc.Database.connect(dataSource)
+                    },
+                user = config.sql.username,
+                password = config.sql.password,
+            )
         TransactionManager.defaultDatabase = database
 
         // TODO: Implement a proper cache system

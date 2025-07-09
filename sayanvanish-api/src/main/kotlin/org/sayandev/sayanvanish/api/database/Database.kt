@@ -16,6 +16,8 @@ interface Database {
 
     val dispatcher: AsyncDispatcher
 
+    var connected: Boolean
+
     suspend fun initialize(): Deferred<Boolean>
 
     suspend fun connect(): Deferred<Boolean>

@@ -6,7 +6,6 @@ import org.sayandev.sayanvanish.api.database.sql.SQLConfig
 import org.sayandev.stickynote.core.configuration.Config
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.objectmapping.meta.Comment
-import org.spongepowered.configurate.serialize.TypeSerializer
 import org.spongepowered.configurate.serialize.TypeSerializerCollection
 import java.io.File
 
@@ -14,10 +13,8 @@ public var databaseConfig = DatabaseConfig.fromConfig() ?: DatabaseConfig.defaul
 
 @ConfigSerializable
 class DatabaseConfig(
-    val sqlDispatcherThreadCount: Int = 5,
-    val redisDispatcherThreadCount: Int = 5,
     @Comment("Configuration for the database, including method, SQL, Redis, and caching options.")
-    val method: DatabaseMethod = DatabaseMethod.SQL,
+    val method: DatabaseType = DatabaseType.SQL,
     @Comment("Configuration for SQL database")
     val sql: SQLConfig = SQLConfig(),
     @Comment("Configuration for Redis database")

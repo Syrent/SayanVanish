@@ -1,7 +1,7 @@
 package org.sayandev.sayanvanish.velocity.health
 
 import kotlinx.coroutines.CompletableDeferred
-import org.sayandev.sayanvanish.api.database.DatabaseMethod
+import org.sayandev.sayanvanish.api.database.DatabaseType
 import org.sayandev.sayanvanish.api.database.databaseConfig
 import org.sayandev.sayanvanish.api.database.sql.SQLConfig
 import org.sayandev.sayanvanish.api.health.HealthCheckData
@@ -30,7 +30,7 @@ class HealthCheckMessageSubscriber: ProxySubscriber<Unit, HealthCheckData>(
                     null,
                     server.serverInfo.name,
                     false,
-                    DatabaseMethod.SQL,
+                    DatabaseType.SQL,
                     SQLConfig.SQLMethod.SQLITE,
                     System.currentTimeMillis()
                 )

@@ -2,7 +2,7 @@ package org.sayandev.sayanvanish.bukkit.health
 
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.sayandev.sayanvanish.api.database.DatabaseMethod
+import org.sayandev.sayanvanish.api.database.DatabaseType
 import org.sayandev.sayanvanish.api.database.sql.SQLConfig
 import org.sayandev.sayanvanish.api.feature.Features
 import org.sayandev.sayanvanish.api.health.HealthCheckData
@@ -67,8 +67,8 @@ object HealthCache {
 
         val proxy = healthData.proxy
         sender.sendComponent("<green>Proxy:")
-        sender.sendComponent("<gray> - <yellow>Database Method: ${proxy.databaseMethod}")
-        if (proxy.databaseMethod == DatabaseMethod.SQL) {
+        sender.sendComponent("<gray> - <yellow>Database Method: ${proxy.databaseType}")
+        if (proxy.databaseType == DatabaseType.SQL) {
             sender.sendComponent("<gray> - <yellow>SQL Method: ${proxy.sqlMethod}")
         }
 
@@ -82,8 +82,8 @@ object HealthCache {
                 }
                 sender.sendComponent("<gray> - <yellow>${server.name} <gray>(${timeAgo(server.timestamp)} since last update)")
                 sender.sendComponent("<gray>   - <yellow>Proxy Mode: ${server.enabledProxyMode}")
-                sender.sendComponent("<gray>   - <yellow>Database Method: ${server.databaseMethod}")
-                if (server.databaseMethod == DatabaseMethod.SQL) {
+                sender.sendComponent("<gray>   - <yellow>Database Method: ${server.databaseType}")
+                if (server.databaseType == DatabaseType.SQL) {
                     sender.sendComponent("<gray>   - <yellow>SQL Method: ${server.sqlMethod}")
                 }
             }
@@ -107,7 +107,7 @@ object HealthCache {
                 sender.sendComponent("<red>Make sure to change the server id in your `settings.yml` file.")
             }
 
-            val sqliteServers = reachableServers.filter { it.databaseMethod == DatabaseMethod.SQL && it.sqlMethod == SQLConfig.SQLMethod.SQLITE }
+            val sqliteServers = reachableServers.filter { it.databaseType == DatabaseType.SQL && it.sqlMethod == SQLConfig.SQLMethod.SQLITE }
             if (sqliteServers.isNotEmpty()) {
                 sender.sendComponent("<red>Found servers using SQLite as their database method.")
                 for (server in sqliteServers) {

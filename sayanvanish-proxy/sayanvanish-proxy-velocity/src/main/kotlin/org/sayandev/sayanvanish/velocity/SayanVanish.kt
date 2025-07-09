@@ -8,9 +8,6 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory
 import com.velocitypowered.api.proxy.ProxyServer
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.VanishAPI
-import org.sayandev.sayanvanish.api.database.DatabaseMethod
-import org.sayandev.sayanvanish.api.database.databaseConfig
-import org.sayandev.sayanvanish.api.database.sql.SQLDatabase
 import org.sayandev.sayanvanish.proxy.config.language
 import org.sayandev.sayanvanish.proxy.config.settings
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
@@ -18,13 +15,11 @@ import org.sayandev.sayanvanish.velocity.command.SayanVanishProxyCommandVelocity
 import org.sayandev.sayanvanish.velocity.health.HealthCheckMessageSubscriber
 import org.sayandev.sayanvanish.velocity.health.ServerInfoPublisher
 import org.sayandev.stickynote.loader.velocity.StickyNoteVelocityLoader
-import org.sayandev.stickynote.velocity.StickyNote
 import org.sayandev.stickynote.velocity.launch
 import org.sayandev.stickynote.velocity.registerListener
 import org.slf4j.Logger
 import java.io.File
 import java.nio.file.Path
-import java.util.concurrent.TimeUnit
 
 lateinit var sayanvanish: SayanVanish
 

@@ -1,6 +1,6 @@
 package org.sayandev.sayanvanish.api.database
 
-enum class DatabaseMethod {
+enum class DatabaseType {
     SQL,
     REDIS,
 }

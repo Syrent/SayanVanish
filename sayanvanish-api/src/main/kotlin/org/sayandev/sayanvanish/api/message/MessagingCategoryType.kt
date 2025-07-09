@@ -1,27 +1,27 @@
-package org.sayandev.sayanvanish.api.database
+package org.sayandev.sayanvanish.api.message
 
 import org.spongepowered.configurate.ConfigurationNode
 import org.spongepowered.configurate.serialize.TypeSerializer
 import java.lang.reflect.Type
 
-interface TransactionType {
+interface MessagingCategoryType {
     val id: String
-    val type: DatabaseType
+    val type: MessagingTypes
 
-    object Serializer : TypeSerializer<TransactionType> {
+    object Serializer : TypeSerializer<MessagingCategoryType> {
         override fun deserialize(
             type: Type,
             node: ConfigurationNode
-        ): TransactionType {
-            return object : TransactionType {
+        ): MessagingCategoryType {
+            return object : MessagingCategoryType {
                 override val id: String = node.node("id").string!!
-                override val type: DatabaseType = node.node("type").get(DatabaseType::class.java)!!
+                override val type: MessagingTypes = node.node("type").get(MessagingTypes::class.java)!!
             }
         }
 
         override fun serialize(
             type: Type,
-            obj: TransactionType?,
+            obj: MessagingCategoryType?,
             node: ConfigurationNode
         ) {
             if (obj == null) {

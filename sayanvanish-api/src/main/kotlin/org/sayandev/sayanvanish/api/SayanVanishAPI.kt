@@ -12,8 +12,9 @@ import java.util.*
 object SayanVanishAPI : VanishAPI {
 
     private val database = TransactionDatabase()
+    private val
 
-    override fun getDatabase(): Database {
+    override fun getDatabase(): TransactionDatabase {
         return database
     }
 
@@ -77,6 +78,9 @@ object SayanVanishAPI : VanishAPI {
         return getDatabase().getVanishUser(this).await()
     }
 
+    /**
+     * Only for java usage
+     */
     @JvmStatic
     fun get(): SayanVanishAPI {
         return this

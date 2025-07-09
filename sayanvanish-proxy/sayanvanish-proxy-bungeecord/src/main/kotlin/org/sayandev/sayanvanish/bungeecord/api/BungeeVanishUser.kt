@@ -45,7 +45,7 @@ open class BungeeVanishUser(
         val options = vanishEvent.options
         currentOptions = options
 
-        SayanVanishAPI.getDatabase().addToQueue(uniqueId, true)
+        SayanVanishAPI.getDatabase().saveToQueue(uniqueId, true)
         super.disappear(options)
     }
 
@@ -56,7 +56,7 @@ open class BungeeVanishUser(
         val options = vanishEvent.options
         currentOptions = options
 
-        SayanVanishAPI.getDatabase().addToQueue(uniqueId, false)
+        SayanVanishAPI.getDatabase().saveToQueue(uniqueId, false)
         super.appear(options)
     }
 

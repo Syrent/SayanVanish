@@ -25,7 +25,7 @@ class FeatureHookEnhancedVelocity : HookFeature("hook_enhancedvelocity", "enhanc
 
 private class EnhancedVelocityImpl : VanishHook {
     override fun setIsVanished(uniqueId: UUID): Boolean {
-        return VanishAPI.get().isVanishedSync(uniqueId)
+        return VanishAPI.get().isVanishedBlocking(uniqueId)
     }
 
     override fun setVanished(uniqueId: UUID) {

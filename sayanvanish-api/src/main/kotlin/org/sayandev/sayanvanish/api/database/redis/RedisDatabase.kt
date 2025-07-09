@@ -7,10 +7,7 @@ import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.database.Database
 import org.sayandev.sayanvanish.api.database.DatabaseConfig
 import org.sayandev.stickynote.core.coroutine.dispatcher.AsyncDispatcher
-import redis.clients.jedis.DefaultJedisClientConfig
-import redis.clients.jedis.HostAndPort
 import redis.clients.jedis.JedisPool
-import redis.clients.jedis.JedisPooled
 import java.util.*
 
 class RedisDatabase(
@@ -105,7 +102,7 @@ class RedisDatabase(
         }
     }
 
-    override suspend fun addUser(user: User): Deferred<Boolean> {
+    override suspend fun saveUser(user: User): Deferred<Boolean> {
         return async {
             redis.resource.use {
                 it.hset("users", user.uniqueId.toString(), user.toJson()) != 0L
@@ -142,7 +139,7 @@ class RedisDatabase(
     }
 
     override suspend fun updateUser(user: User): Deferred<Boolean> {
-        return addUser(user)
+        return saveUser(user)
     }
 
     override suspend fun isInQueue(uniqueId: UUID): Deferred<Boolean> {
@@ -153,7 +150,7 @@ class RedisDatabase(
         }
     }
 
-    override suspend fun addToQueue(uniqueId: UUID, vanished: Boolean): Deferred<Boolean> {
+    override suspend fun saveToQueue(uniqueId: UUID, vanished: Boolean): Deferred<Boolean> {
         return async {
             redis.resource.use {
                 it.set("queue:$uniqueId", vanished.toString()) != null

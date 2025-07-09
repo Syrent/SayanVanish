@@ -20,7 +20,7 @@ object VanishManager {
     private fun onPostLogin(event: ServerPostConnectEvent) {
         val player = event.player ?: return
         launch {
-            VanishAPI.get().getDatabase().addUser(User.of(player.uniqueId, player.username, true, player.currentServer.getOrNull()?.serverInfo?.name ?: Platform.get().id))
+            VanishAPI.get().getDatabase().saveUser(User.of(player.uniqueId, player.username, true, player.currentServer.getOrNull()?.serverInfo?.name ?: Platform.get().id))
 
             val user = player.getVanishUser() ?: player.generateVanishUser()
             if (user.isVanished) {

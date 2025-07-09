@@ -7,8 +7,6 @@ import kotlinx.coroutines.future.asCompletableFuture
 import kotlinx.coroutines.runBlocking
 import org.sayandev.sayanvanish.api.database.PlatformTable
 import org.sayandev.sayanvanish.api.exception.UnsupportedPlatformException
-import org.sayandev.sayanvanish.api.utils.Gson.fromJson
-import org.sayandev.sayanvanish.api.utils.Gson.jsonObject
 import org.sayandev.stickynote.core.utils.async
 import java.lang.reflect.Type
 import java.util.*
@@ -32,7 +30,7 @@ interface User {
 
     @JvmSynthetic
     suspend fun save(): Deferred<Boolean> {
-        return SayanVanishAPI.getDatabase().addUser(this)
+        return SayanVanishAPI.getDatabase().saveUser(this)
     }
 
     fun saveBlocking(): Boolean {

@@ -44,7 +44,7 @@ object SayanVanishAPI : VanishAPI {
         }
     }
 
-    override fun isVanishedSync(uniqueId: UUID): Boolean {
+    override fun isVanishedBlocking(uniqueId: UUID): Boolean {
         return runBlocking { isVanished(uniqueId).await() }
     }
 

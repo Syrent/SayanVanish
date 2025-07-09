@@ -120,9 +120,9 @@ class TransactionDatabase: Database {
         return database.getUsers()
     }
 
-    override suspend fun addUser(user: User): Deferred<Boolean> {
+    override suspend fun saveUser(user: User): Deferred<Boolean> {
         val database = database(TransactionTypes.USER)
-        return database.addUser(user)
+        return database.saveUser(user)
     }
 
     override suspend fun hasUser(uniqueId: UUID): Deferred<Boolean> {
@@ -145,12 +145,12 @@ class TransactionDatabase: Database {
         return database.isInQueue(uniqueId)
     }
 
-    override suspend fun addToQueue(
+    override suspend fun saveToQueue(
         uniqueId: UUID,
         vanished: Boolean
     ): Deferred<Boolean> {
         val database = database(TransactionTypes.QUEUE)
-        return database.addToQueue(uniqueId, vanished)
+        return database.saveToQueue(uniqueId, vanished)
     }
 
     override suspend fun getFromQueue(uniqueId: UUID): Deferred<Boolean> {

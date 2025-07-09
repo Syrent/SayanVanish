@@ -19,7 +19,7 @@ class BungeeUser {
         fun ProxiedPlayer.generateAndSaveUser(): User {
             val user = this.generateUser()
             launch {
-                SayanVanishAPI.get().getDatabase().addUser(user)
+                SayanVanishAPI.get().getDatabase().saveUser(user)
             }
             return user
         }

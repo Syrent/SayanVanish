@@ -16,7 +16,7 @@ object VanishManager : Listener {
     fun onPostLogin(event: ServerConnectedEvent) {
         val player = event.player ?: return
         launch {
-            SayanVanishBungeeAPI.getDatabase().addUser(User.of(player.uniqueId, player.name, true, player.server.info.name ?: Platform.get().id))
+            SayanVanishBungeeAPI.getDatabase().saveUser(User.of(player.uniqueId, player.name, true, player.server.info.name ?: Platform.get().id))
             player.getOrCreateUser()
         }
     }

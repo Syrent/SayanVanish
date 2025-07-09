@@ -169,7 +169,7 @@ class SQLDatabase(
         }
     }
 
-    override suspend fun addUser(user: User): Deferred<Boolean> {
+    override suspend fun saveUser(user: User): Deferred<Boolean> {
         return async {
             User.Schema.upsert { row ->
                 row[uniqueId] = user.uniqueId
@@ -242,7 +242,7 @@ class SQLDatabase(
         }
     }
 
-    override suspend fun addToQueue(uniqueId: UUID, vanished: Boolean): Deferred<Boolean> {
+    override suspend fun saveToQueue(uniqueId: UUID, vanished: Boolean): Deferred<Boolean> {
         return async {
             Queue.Schema.upsert { row ->
                 row[Queue.Schema.uniqueId] = uniqueId

@@ -30,7 +30,7 @@ interface Database {
         return async(dispatcher) { addVanishUser(vanishUser).await() }.asCompletableFuture()
     }
 
-    fun addVanishUserSync(vanishUser: VanishUser): Boolean {
+    fun addVanishUserBlocking(vanishUser: VanishUser): Boolean {
         return runBlocking { addVanishUser(vanishUser).await() }
     }
 
@@ -40,7 +40,7 @@ interface Database {
         return async(dispatcher) { hasVanishUser(uniqueId).await() }.asCompletableFuture()
     }
 
-    fun hasVanishUserSync(uniqueId: UUID): Boolean {
+    fun hasVanishUserBlocking(uniqueId: UUID): Boolean {
         return runBlocking { hasVanishUser(uniqueId).await() }
     }
 
@@ -50,7 +50,7 @@ interface Database {
         return async(dispatcher) { updateVanishUser(vanishUser).await() }.asCompletableFuture()
     }
 
-    fun updateVanishUserSync(vanishUser: VanishUser): Boolean {
+    fun updateVanishUserBlocking(vanishUser: VanishUser): Boolean {
         return runBlocking { updateVanishUser(vanishUser).await() }
     }
 
@@ -60,7 +60,7 @@ interface Database {
         return async(dispatcher) { removeVanishUser(uniqueId).await() }.asCompletableFuture()
     }
 
-    fun removeVanishUserSync(uniqueId: UUID): Boolean {
+    fun removeVanishUserBlocking(uniqueId: UUID): Boolean {
         return runBlocking { removeVanishUser(uniqueId).await() }
     }
 
@@ -70,7 +70,7 @@ interface Database {
         return async(dispatcher) { getVanishUser(uniqueId).await() }.asCompletableFuture()
     }
 
-    fun getVanishUserSync(uniqueId: UUID): VanishUser? {
+    fun getVanishUserBlocking(uniqueId: UUID): VanishUser? {
         return runBlocking { getVanishUser(uniqueId).await() }
     }
 
@@ -80,7 +80,7 @@ interface Database {
         return async(dispatcher) { getVanishUsers().await() }.asCompletableFuture()
     }
 
-    fun getVanishUsersSync(): List<VanishUser> {
+    fun getVanishUsersBlocking(): List<VanishUser> {
         return runBlocking { getVanishUsers().await() }
     }
 
@@ -96,18 +96,18 @@ interface Database {
         return async(dispatcher) { getUsers().await() }.asCompletableFuture()
     }
 
-    fun getUsersSync(): List<User> {
+    fun getUsersBlocking(): List<User> {
         return runBlocking { getUsers().await() }
     }
 
-    suspend fun addUser(user: User): Deferred<Boolean>
+    suspend fun saveUser(user: User): Deferred<Boolean>
 
-    fun addUserFuture(user: User): CompletableFuture<Boolean> {
-        return async(dispatcher) { addUser(user).await() }.asCompletableFuture()
+    fun saveUserFuture(user: User): CompletableFuture<Boolean> {
+        return async(dispatcher) { saveUser(user).await() }.asCompletableFuture()
     }
 
-    fun addUserSync(user: User): Boolean {
-        return runBlocking { addUser(user).await() }
+    fun saveUserBlocking(user: User): Boolean {
+        return runBlocking { saveUser(user).await() }
     }
 
     suspend fun hasUser(uniqueId: UUID): Deferred<Boolean>
@@ -116,7 +116,7 @@ interface Database {
         return async(dispatcher) { hasUser(uniqueId).await() }.asCompletableFuture()
     }
 
-    fun hasUserSync(uniqueId: UUID): Boolean {
+    fun hasUserBlocking(uniqueId: UUID): Boolean {
         return runBlocking { hasUser(uniqueId).await() }
     }
 
@@ -126,7 +126,7 @@ interface Database {
         return async(dispatcher) { updateUser(user).await() }.asCompletableFuture()
     }
 
-    fun updateUserSync(user: User): Boolean {
+    fun updateUserBlocking(user: User): Boolean {
         return runBlocking { updateUser(user).await() }
     }
 
@@ -136,7 +136,7 @@ interface Database {
         return async(dispatcher) { removeUser(uniqueId).await() }.asCompletableFuture()
     }
 
-    fun removeUserSync(uniqueId: UUID): Boolean {
+    fun removeUserBlocking(uniqueId: UUID): Boolean {
         return runBlocking { removeUser(uniqueId).await() }
     }
 
@@ -146,18 +146,18 @@ interface Database {
         return async(dispatcher) { isInQueue(uniqueId).await() }.asCompletableFuture()
     }
 
-    fun isInQueueSync(uniqueId: UUID): Boolean {
+    fun isInQueueBlocking(uniqueId: UUID): Boolean {
         return runBlocking { isInQueue(uniqueId).await() }
     }
 
-    suspend fun addToQueue(uniqueId: UUID, vanished: Boolean): Deferred<Boolean>
+    suspend fun saveToQueue(uniqueId: UUID, vanished: Boolean): Deferred<Boolean>
 
-    fun addToQueueFuture(uniqueId: UUID, vanished: Boolean): CompletableFuture<Boolean> {
-        return async(dispatcher) { addToQueue(uniqueId, vanished).await() }.asCompletableFuture()
+    fun saveToQueueFuture(uniqueId: UUID, vanished: Boolean): CompletableFuture<Boolean> {
+        return async(dispatcher) { saveToQueue(uniqueId, vanished).await() }.asCompletableFuture()
     }
 
-    fun addToQueueSync(uniqueId: UUID, vanished: Boolean): Boolean {
-        return runBlocking { addToQueue(uniqueId, vanished).await() }
+    fun saveToQueueBlocking(uniqueId: UUID, vanished: Boolean): Boolean {
+        return runBlocking { saveToQueue(uniqueId, vanished).await() }
     }
 
     suspend fun getFromQueue(uniqueId: UUID): Deferred<Boolean>
@@ -166,7 +166,7 @@ interface Database {
         return async(dispatcher) { getFromQueue(uniqueId).await() }.asCompletableFuture()
     }
 
-    fun getFromQueueSync(uniqueId: UUID): Boolean {
+    fun getFromQueueBlocking(uniqueId: UUID): Boolean {
         return runBlocking { getFromQueue(uniqueId).await() }
     }
 
@@ -176,7 +176,7 @@ interface Database {
         return async(dispatcher) { removeFromQueue(uniqueId).await() }.asCompletableFuture()
     }
 
-    fun removeFromQueueSync(uniqueId: UUID): Boolean {
+    fun removeFromQueueBlocking(uniqueId: UUID): Boolean {
         return runBlocking { removeFromQueue(uniqueId).await() }
     }
 

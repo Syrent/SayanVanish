@@ -21,7 +21,7 @@ interface VanishAPI {
         return isVanished(uniqueId).asCompletableFuture()
     }
 
-    fun isVanishedSync(uniqueId: UUID): Boolean {
+    fun isVanishedBlocking(uniqueId: UUID): Boolean {
         return runBlocking { isVanished(uniqueId).await() }
     }
 

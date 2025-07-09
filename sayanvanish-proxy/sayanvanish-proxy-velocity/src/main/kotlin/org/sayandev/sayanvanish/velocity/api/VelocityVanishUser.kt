@@ -54,7 +54,7 @@ open class VelocityVanishUser(
         val event = server.eventManager.fire(VelocityUserVanishEvent(this, options)).await()
         val newOptions = event.options
         currentOptions = newOptions
-        VanishAPI.get().getDatabase().addToQueue(uniqueId, true)
+        VanishAPI.get().getDatabase().saveToQueue(uniqueId, true)
         super.disappear(newOptions)
     }
 
@@ -62,7 +62,7 @@ open class VelocityVanishUser(
         val event = server.eventManager.fire(VelocityUserUnVanishEvent(this, options)).await()
         val newOptions = event.options
         currentOptions = newOptions
-        VanishAPI.get().getDatabase().addToQueue(uniqueId, false)
+        VanishAPI.get().getDatabase().saveToQueue(uniqueId, false)
         super.appear(newOptions)
     }
 

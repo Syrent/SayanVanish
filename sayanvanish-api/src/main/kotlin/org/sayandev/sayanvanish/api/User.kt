@@ -12,52 +12,138 @@ import java.lang.reflect.Type
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
+/**
+ * Represents a basic user with essential data such as unique ID and username.
+ * This interface is the building block for more specific user types like [VanishUser].
+ *
+ * The [User] interface is commonly used for features such as online counter placeholders
+ * and provides basic user information and permission checks.
+ *
+ * @property uniqueId The unique identifier for the user.
+ * @property username The username of the user.
+ * @property isOnline Whether the user is currently online.
+ * @property serverId The ID of the server the user is connected to.
+ *
+ * @since 1.0.0
+ */
 @Suppress("unused")
 interface User {
-
+    /**
+     * The unique identifier for the user.
+     */
     val uniqueId: UUID
+
+    /**
+     * The username of the user.
+     */
     var username: String
+
+    /**
+     * Whether the user is currently online.
+     */
     var isOnline: Boolean
+
+    /**
+     * The ID of the server the user is connected to.
+     */
     var serverId: String
 
+    /**
+     * Checks if the user has the specified permission string.
+     *
+     * @param permission The permission string to check.
+     * @return True if the user has the permission, false otherwise.
+     * @throws UnsupportedPlatformException If the platform does not support permission checks.
+     * @since 1.0.0
+     */
     fun hasPermission(permission: String): Boolean {
         throw UnsupportedPlatformException("hasPermission")
     }
 
+    /**
+     * Checks if the user has the specified [Permission] object.
+     *
+     * @param permission The [Permission] to check.
+     * @return True if the user has the permission, false otherwise.
+     * @since 1.0.0
+     */
     fun hasPermission(permission: Permission): Boolean {
         return hasPermission(permission.permission())
     }
 
+    /**
+     * Saves the user asynchronously to the database.
+     *
+     * @see org.sayandev.sayanvanish.api.database.Database.saveUser
+     * @return A [Deferred] indicating the result of the save operation.
+     * @since 2.0.0
+     */
     @JvmSynthetic
     suspend fun save(): Deferred<Boolean> {
         return SayanVanishAPI.getDatabase().saveUser(this)
     }
 
+    /**
+     * Saves the user to the database in a blocking manner.
+     *
+     * @return True if the save was successful, false otherwise.
+     * @since 2.0.0
+     */
     fun saveBlocking(): Boolean {
         return runBlocking { save().await() }
     }
 
+    /**
+     * Saves the user to the database and returns a [CompletableFuture] for the result.
+     *
+     * @return A [CompletableFuture] indicating the result of the save operation.
+     * @since 2.0.0
+     */
     fun saveFuture(): CompletableFuture<Boolean> {
         return async(SayanVanishAPI.get().getDatabase().dispatcher) {
             save().await()
         }.asCompletableFuture()
     }
 
+    /**
+     * Synchronizes the user data with the messaging service asynchronously.
+     *
+     * @return A [Deferred] indicating the result of the sync operation.
+     * @since 2.0.0
+     */
     @JvmSynthetic
     suspend fun sync(): Deferred<Boolean> {
         return SayanVanishAPI.getMessagingService().syncUser(this)
     }
 
+    /**
+     * Synchronizes the user data with the messaging service in a blocking manner.
+     *
+     * @return True if the sync was successful, false otherwise.
+     * @since 2.0.0
+     */
     fun syncBlocking(): Boolean {
         return runBlocking { sync().await() }
     }
 
+    /**
+     * Synchronizes the user data with the messaging service and returns a [CompletableFuture] for the result.
+     *
+     * @return A [CompletableFuture] indicating the result of the sync operation.
+     * @since 2.0.0
+     */
     fun syncFuture(): CompletableFuture<Boolean> {
         return async(SayanVanishAPI.get().getMessagingService().dispatcher) {
             sync().await()
         }.asCompletableFuture()
     }
 
+    /**
+     * Saves and synchronizes the user data.
+     *
+     * @return A list of [Deferred] objects indicating the results of the save and sync operations.
+     * @since 2.0.0
+     */
     @JvmSynthetic
     suspend fun saveAndSync(): List<Deferred<Boolean>> {
         return listOf(
@@ -66,10 +152,22 @@ interface User {
         )
     }
 
+    /**
+     * Saves and synchronizes the user data in a blocking manner.
+     *
+     * @return A list of Boolean values indicating the results of the save and sync operations.
+     * @since 2.0.0
+     */
     fun saveAndSyncBlocking(): List<Boolean> {
         return runBlocking { saveAndSync().map { it.await() } }
     }
 
+    /**
+     * Asynchronously retrieves the [VanishUser] representation of this user.
+     *
+     * @return A [Deferred] containing the [VanishUser] instance.
+     * @since 2.0.0
+     */
     @JvmSynthetic
     suspend fun asVanishUser(): Deferred<VanishUser> {
         return CompletableDeferred<VanishUser>().apply {
@@ -79,16 +177,32 @@ interface User {
         }
     }
 
+    /**
+     * Retrieves the [VanishUser] representation of this user in a blocking manner.
+     *
+     * @return The [VanishUser] instance.
+     * @since 2.0.0
+     */
     fun asVanishUserBlocking(): VanishUser {
         return runBlocking { asVanishUser().await() }
     }
 
+    /**
+     * Asynchronously retrieves the [VanishUser] representation of this user and returns a [CompletableFuture].
+     *
+     * @return A [CompletableFuture] containing the [VanishUser] instance.
+     * @since 2.0.0
+     */
     fun asVanishUserFuture(): CompletableFuture<VanishUser> {
         return async(SayanVanishAPI.get().getDatabase().dispatcher) {
             asVanishUser().await()
         }.asCompletableFuture()
     }
 
+    /**
+     * @since 2.0.0
+     */
+    // TODO: use kotlinx-serialization-gson?
     class JsonAdapter : JsonSerializer<User>, JsonDeserializer<User> {
         override fun serialize(src: User, typeOfSrc: Type, context: JsonSerializationContext): JsonObject {
             return JsonParser.parseString(Gson().toJson(src)).asJsonObject
@@ -99,6 +213,13 @@ interface User {
         }
     }
 
+    /**
+     * Represents the database schema for the [User] entity.
+     *
+     * Defines the columns and primary key for the users table.
+     *
+     * @since 2.0.0
+     */
     object Schema : PlatformTable("users") {
         val uniqueId = uuid("unique_id").uniqueIndex()
         val username = varchar("username", 16)
@@ -108,6 +229,15 @@ interface User {
         override val primaryKey = PrimaryKey(uniqueId)
     }
 
+    /**
+     * Generic implementation of the [User] interface.
+     *
+     * @property uniqueId The unique identifier for the user.
+     * @property username The username of the user.
+     * @property isOnline Whether the user is currently online.
+     * @property serverId The ID of the server the user is connected to.
+     * @since 2.0.0
+     */
     data class Generic(
         override val uniqueId: UUID,
         override var username: String,
@@ -115,6 +245,12 @@ interface User {
         override var serverId: String
     ) : User
 
+    /**
+     * Converts this [User] to a [Generic] implementation.
+     *
+     * @return A [Generic] user instance with the same properties as this user.
+     * @since 2.0.0
+     */
     fun asGeneric(): Generic {
         return Generic(
             uniqueId,
@@ -125,6 +261,16 @@ interface User {
     }
 
     companion object {
+        /**
+         * Creates a new [User] instance with the given properties.
+         *
+         * @param uniqueId The unique identifier for the user.
+         * @param username The username of the user.
+         * @param isOnline Whether the user is currently online.
+         * @param serverId The ID of the server the user is connected to. If null, uses the platform's default server ID.
+         * @return A new [User] instance.
+         * @since 1.6.0
+         */
         @JvmStatic
         fun of(uniqueId: UUID, username: String, isOnline: Boolean, serverId: String?): User {
             return Generic(
@@ -135,26 +281,61 @@ interface User {
             )
         }
 
+        /**
+         * Retrieves a [User] from the cache by [UUID].
+         *
+         * @receiver The [UUID] of the user to retrieve.
+         * @return The [User] if found in cache, or null if not found.
+         * @since 2.0.0
+         */
         @JvmStatic
         fun UUID.userFromCache(): User? {
             TODO("Cache is not implemented yet")
         }
 
+        /**
+         * Asynchronously retrieves a [User] by [UUID] from the database.
+         *
+         * @receiver The [UUID] of the user to retrieve.
+         * @return A [Deferred] containing the [User] if found, or null if not found.
+         * @since 2.0.0
+         */
         @JvmSynthetic
         suspend fun UUID.user(): Deferred<User?> {
             return SayanVanishAPI.getDatabase().getUser(this)
         }
 
+        /**
+         * Retrieves a [User] by [UUID] from the database in a blocking manner.
+         *
+         * @receiver The [UUID] of the user to retrieve.
+         * @return The [User] if found, or null if not found.
+         * @since 2.0.0
+         */
         @JvmSynthetic
         fun UUID.userBlocking(): User? {
             return runBlocking { user().await() }
         }
 
+        /**
+         * Retrieves a [User] by [UUID] from the database in a blocking manner.
+         *
+         * @param uniqueId The [UUID] of the user to retrieve.
+         * @return The [User] if found, or null if not found.
+         * @since 2.0.0
+         */
         @JvmStatic
         fun getUserBlocking(uniqueId: UUID): User? {
             return uniqueId.userBlocking()
         }
 
+        /**
+         * Asynchronously retrieves a [User] by [UUID] from the database and returns a [CompletableFuture].
+         *
+         * @receiver The [UUID] of the user to retrieve.
+         * @return A [CompletableFuture] containing the [User] if found, or null if not found.
+         * @since 2.0.0
+         */
         @JvmSynthetic
         fun UUID.userFuture(): CompletableFuture<User?> {
             return async(SayanVanishAPI.get().getDatabase().dispatcher) {
@@ -162,6 +343,13 @@ interface User {
             }.asCompletableFuture()
         }
 
+        /**
+         * Retrieves a [User] by [UUID] from the database and returns a [CompletableFuture].
+         *
+         * @param uniqueId The [UUID] of the user to retrieve.
+         * @return A [CompletableFuture] containing the [User] if found, or null if not found.
+         * @since 2.0.0
+         */
         @JvmStatic
         fun getUserFuture(uniqueId: UUID): CompletableFuture<User?> {
             return uniqueId.userFuture()

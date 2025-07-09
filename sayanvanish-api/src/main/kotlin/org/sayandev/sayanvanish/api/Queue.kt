@@ -1,8 +1,7 @@
 package org.sayandev.sayanvanish.api
 
-import org.jetbrains.exposed.v1.core.Table
 import org.sayandev.sayanvanish.api.database.PlatformTable
-import java.util.UUID
+import java.util.*
 
 class Queue(
     val uniqueId: UUID,

@@ -5,6 +5,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.jetbrains.exposed.v1.core.Table
+import org.sayandev.sayanvanish.api.database.PlatformTable
 import org.sayandev.sayanvanish.api.exception.UnsupportedPlatformException
 import java.util.*
 
@@ -78,7 +79,7 @@ interface VanishUser : User {
         return Gson().toJson(json)
     }
 
-    object Schema : Table("${Platform.get().pluginName.lowercase()}_vanish_users") {
+    object Schema : PlatformTable("vanish_users") {
         val uniqueId = reference("unique_id", User.Schema.uniqueId).uniqueIndex()
         val isVanished = bool("is_vanished")
         val vanishLevel = integer("vanish_level")

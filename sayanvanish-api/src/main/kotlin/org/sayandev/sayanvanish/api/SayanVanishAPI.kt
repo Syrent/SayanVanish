@@ -3,19 +3,23 @@ package org.sayandev.sayanvanish.api
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.runBlocking
-import org.sayandev.sayanvanish.api.cache.VanishUserCache
-import org.sayandev.sayanvanish.api.database.Database
 import org.sayandev.sayanvanish.api.database.TransactionDatabase
+import org.sayandev.sayanvanish.api.message.MessagingService
+import org.sayandev.sayanvanish.api.message.TypedMessagingService
 import org.sayandev.stickynote.core.utils.launch
 import java.util.*
 
 object SayanVanishAPI : VanishAPI {
 
     private val database = TransactionDatabase()
-    private val
+    private val messagingService = TypedMessagingService()
 
     override fun getDatabase(): TransactionDatabase {
         return database
+    }
+
+    override fun getMessagingService(): MessagingService {
+        return messagingService
     }
 
     init {

@@ -1,4 +1,4 @@
-package org.sayandev.sayanvanish.velocity
+package org.sayandev.sayanvanish.bungeecord
 
 import net.md_5.bungee.api.event.PlayerDisconnectEvent
 import net.md_5.bungee.api.event.ServerConnectedEvent
@@ -14,7 +14,7 @@ object VanishManager : Listener {
     @EventHandler
     fun onPostLogin(event: ServerConnectedEvent) {
         val player = event.player ?: return
-        SayanVanishBungeeAPI.getInstance().database.addBasicUser(BasicUser.create(player.uniqueId, player.name, player.server.info.name ?: Platform.get().id))
+        SayanVanishBungeeAPI.getInstance().database.addBasicUser(BasicUser.create(player.uniqueId, player.name, event.server?.info?.name ?: Platform.get().id))
         val user = player.getOrCreateUser()
     }
 

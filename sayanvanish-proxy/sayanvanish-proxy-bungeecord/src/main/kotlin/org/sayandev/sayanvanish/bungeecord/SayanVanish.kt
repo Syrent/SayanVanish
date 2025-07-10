@@ -8,7 +8,6 @@ import org.sayandev.sayanvanish.api.database.databaseConfig
 import org.sayandev.sayanvanish.api.database.sql.SQLDatabase
 import org.sayandev.sayanvanish.bungeecord.api.SayanVanishBungeeAPI
 import org.sayandev.sayanvanish.proxy.config.settings
-import org.sayandev.sayanvanish.velocity.VanishManager
 import org.sayandev.stickynote.bungeecord.StickyNote
 import org.sayandev.stickynote.bungeecord.dataDirectory
 import org.sayandev.stickynote.bungeecord.registerListener

@@ -9,6 +9,7 @@ import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
+import org.sayandev.stickynote.bukkit.utils.ServerVersion
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @RegisteredFeature
@@ -17,6 +18,7 @@ class FeaturePreventCreatureTarget: ListenedFeature("prevent_creature_target", c
 
     @EventHandler
     private fun preventEntityTargetOnVanish(event: BukkitUserVanishEvent) {
+        if (!ServerVersion.supports(13)) return
         val user = event.user
         val player = user.player() ?: return
         for (entity in player.world.entities.filterIsInstance<Mob>()) {

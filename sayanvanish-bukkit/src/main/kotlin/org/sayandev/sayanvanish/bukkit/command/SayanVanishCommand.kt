@@ -11,6 +11,7 @@ import org.incendo.cloud.component.CommandComponent
 import org.incendo.cloud.context.CommandContext
 import org.incendo.cloud.description.Description
 import org.incendo.cloud.kotlin.MutableCommandBuilder
+import org.incendo.cloud.parser.flag.CommandFlag
 import org.incendo.cloud.parser.standard.IntegerParser
 import org.incendo.cloud.parser.standard.StringParser
 import org.incendo.cloud.setting.ManagerSetting
@@ -51,7 +52,7 @@ import kotlin.reflect.full.memberProperties
 class SayanVanishCommand : BukkitCommand(settings.vanishCommand.name, *settings.vanishCommand.aliases.toTypedArray()) {
 
     override fun rootBuilder(builder: MutableCommandBuilder<BukkitSender>) {
-        builder.permission("${plugin.name}.commands.use")
+        builder.permission("${plugin.name.lowercase()}.commands.use")
         builder.optional("player", OfflinePlayerParser.offlinePlayerParser())
         builder.flag(
             "state",
@@ -62,25 +63,27 @@ class SayanVanishCommand : BukkitCommand(settings.vanishCommand.name, *settings.
                     CompletableFuture.completedFuture(listOf("on", "off").map { Suggestion.suggestion(it) })
                 }
         )
-        builder.flag("silent", arrayOf("s"))
+        builder.flag("silent", arrayOf("s"), Description.empty(), {
+            this.withPermission("${plugin.name.lowercase()}.commands.vanish.flags.silent")
+        })
     }
 
     override fun rootHandler(context: CommandContext<BukkitSender>) {
         val sender = context.sender().platformSender()
-        val target = context.optional<OfflinePlayer>("player")
+        val target = context.optional<OfflinePlayer>("player").getOrNull()
         val state = context.flags().get<String>("state")
 
-        if (!target.isPresent && sender !is Player) {
+        if (target == null && sender !is Player) {
             sender.sendComponent(language.general.haveToProvidePlayer)
             return
         }
 
-        if (target.isPresent && !sender.hasPermission(Permission.VANISH_OTHERS.permission())) {
+        if (target != null && target != sender && !sender.hasPermission(Permission.VANISH_OTHERS.permission())) {
             sender.sendComponent(language.general.dontHavePermission)
             return
         }
 
-        val player = if (target.isPresent) context.optional<OfflinePlayer>("player").get() else context.sender().player() ?: return
+        val player = if (target != null) context.optional<OfflinePlayer>("player").get() else context.sender().player() ?: return
         val user = player.getOrAddUser()
 
         if (!user.hasPermission(Permission.VANISH)) {
@@ -93,7 +96,7 @@ class SayanVanishCommand : BukkitCommand(settings.vanishCommand.name, *settings.
             }
         }
 
-        if (target.isPresent) {
+        if (target != null) {
             if (!player.isOnline) {
                 sender.sendComponent(language.vanish.offlineOnVanish, Placeholder.unparsed("player", player.name ?: "N/A"), Placeholder.parsed("state", user.stateText()))
                 options.sendMessage = false

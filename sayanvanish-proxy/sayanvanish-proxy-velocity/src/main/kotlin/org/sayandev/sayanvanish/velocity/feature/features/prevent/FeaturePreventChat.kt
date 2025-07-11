@@ -3,6 +3,7 @@ package org.sayandev.sayanvanish.velocity.feature.features.prevent
 import com.velocitypowered.api.event.PostOrder
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.player.PlayerChatEvent
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
@@ -30,7 +31,7 @@ class FeaturePreventChat(
         if (message.startsWith(bypassChar)) {
             event.result = PlayerChatEvent.ChatResult.message(message.removePrefix(bypassChar))
         } else {
-            user.sendComponent(language.vanish.cantChatWhileVanished)
+            user.sendComponent(language.vanish.cantChatWhileVanished, Placeholder.unparsed("char", bypassChar))
             event.result = PlayerChatEvent.ChatResult.denied()
         }
     }

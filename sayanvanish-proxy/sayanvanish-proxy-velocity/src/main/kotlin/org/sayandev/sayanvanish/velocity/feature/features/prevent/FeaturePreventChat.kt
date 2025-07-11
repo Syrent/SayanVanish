@@ -18,7 +18,7 @@ import org.spongepowered.configurate.objectmapping.meta.Comment
 class FeaturePreventChat(
     @Comment("The character that vanished players can use to bypass the chat prevention.")
     @Configurable val bypassChar: String = "!"
-) : ListenedFeature("prevent_chat", category = FeatureCategories.PREVENTION) {
+) : ListenedFeature("prevent_chat", category = FeatureCategories.PREVENTION, enabled = false) {
 
     @Subscribe(order = PostOrder.LAST)
     fun onPlayerChat(event: PlayerChatEvent) {

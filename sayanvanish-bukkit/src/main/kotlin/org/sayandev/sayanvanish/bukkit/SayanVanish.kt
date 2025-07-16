@@ -3,10 +3,10 @@ package org.sayandev.sayanvanish.bukkit
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import org.sayandev.sayanvanish.api.Platform
-import org.sayandev.sayanvanish.api.database.DatabaseType
-import org.sayandev.sayanvanish.api.database.databaseConfig
-import org.sayandev.sayanvanish.api.database.sql.SQLConfig
-import org.sayandev.sayanvanish.api.database.sql.SQLDatabase
+import org.sayandev.sayanvanish.api.storage.DatabaseType
+import org.sayandev.sayanvanish.api.storage.storageConfig
+import org.sayandev.sayanvanish.api.storage.sql.SQLConfig
+import org.sayandev.sayanvanish.api.storage.sql.SQLDatabase
 import org.sayandev.sayanvanish.bukkit.api.Metrics
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.sayanvanish.bukkit.command.SayanVanishCommand
@@ -40,7 +40,7 @@ open class SayanVanish : JavaPlugin() {
         ServerInfoPublisher
 
         settings
-        if (settings.general.proxyMode && databaseConfig.method == DatabaseType.SQL && databaseConfig.sql.method == SQLConfig.SQLMethod.SQLITE) {
+        if (settings.general.proxyMode && storageConfig.method == DatabaseType.SQL && storageConfig.sql.method == SQLConfig.SQLMethod.SQLITE) {
             error("The `proxy-mode` is enabled, but the database method is set to SQLite, which might lead to unexpected results. If you're using proxies such as Velocity or BungeeCord, make sure to use a different database method, such as MySQL or Redis.")
         }
 
@@ -58,7 +58,7 @@ open class SayanVanish : JavaPlugin() {
         }, 0, settings.general.cacheUpdatePeriodTicks)
 
         runAsync({
-            if (databaseConfig.method == DatabaseType.SQL) {
+            if (storageConfig.method == DatabaseType.SQL) {
                 SayanVanishBukkitAPI.getInstance().database.getBasicUsersAsync { users ->
                     (SayanVanishBukkitAPI.getInstance().database as SQLDatabase).basicCache = users.associateBy { it.uniqueId }.toMutableMap()
                     (SayanVanishAPI.getDatabase() as SQLDatabase).basicCache = users.associateBy { it.uniqueId }.toMutableMap()
@@ -75,7 +75,7 @@ open class SayanVanish : JavaPlugin() {
                     if (settings.general.proxyMode) "On Proxy" else "No Proxy"
                 })
                 this.addCustomChart(Metrics.SimplePie("database_method") {
-                    databaseConfig.method.name
+                    storageConfig.method.name
                 })
             }
         }

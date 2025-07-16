@@ -6,6 +6,7 @@ import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.message.types.RedisMessagingService
+import org.sayandev.sayanvanish.api.message.types.WebSocketMessagingService
 import org.sayandev.stickynote.core.coroutine.dispatcher.AsyncDispatcher
 
 class TypedMessagingService: MessagingService {
@@ -28,6 +29,15 @@ class TypedMessagingService: MessagingService {
                             redisMessaging.connection.connect()
                             redisMessaging.connection.initialize()
                         }
+                    } catch (e: Exception) {
+                        messagingConnected = false
+                        logMessagingConnectionError()
+                        throw e
+                    }
+                }
+                method == MessagingTypes.WEBSOCKET -> {
+                    messageTypes[MessagingTypes.WEBSOCKET] = try {
+                        WebSocketMessagingService(messageConfig.webSocketConfig, dispatcher)
                     } catch (e: Exception) {
                         messagingConnected = false
                         logMessagingConnectionError()

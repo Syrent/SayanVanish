@@ -1,4 +1,4 @@
-package org.sayandev.sayanvanish.api.database
+package org.sayandev.sayanvanish.api.storage
 
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -10,8 +10,8 @@ import kotlinx.coroutines.isActive
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.VanishUser
-import org.sayandev.sayanvanish.api.database.redis.RedisDatabase
-import org.sayandev.sayanvanish.api.database.sql.SQLDatabase
+import org.sayandev.sayanvanish.api.storage.redis.RedisDatabase
+import org.sayandev.sayanvanish.api.storage.sql.SQLDatabase
 import org.sayandev.stickynote.core.coroutine.dispatcher.AsyncDispatcher
 import java.util.*
 
@@ -30,12 +30,12 @@ class TransactionDatabase: Database {
     var databaseConnected: Boolean = true
 
     override suspend fun initialize(): Deferred<Boolean> {
-        val transactionMethods = databaseConfig.transactionTypes.map { it.type }.distinct()
+        val transactionMethods = storageConfig.transactionTypes.map { it.type }.distinct()
         for (method in transactionMethods) {
             when (method) {
                 DatabaseType.SQL -> {
                     databaseTypes[DatabaseType.SQL] = try {
-                        SQLDatabase(databaseConfig).also { sqlDatabase ->
+                        SQLDatabase(storageConfig).also { sqlDatabase ->
                             sqlDatabase.connect()
                             sqlDatabase.initialize()
                         }
@@ -47,7 +47,7 @@ class TransactionDatabase: Database {
                 }
                 DatabaseType.REDIS -> {
                     databaseTypes[DatabaseType.REDIS] = try {
-                        RedisDatabase(databaseConfig).also { redisDatabase ->
+                        RedisDatabase(storageConfig).also { redisDatabase ->
                             redisDatabase.initialize()
                             redisDatabase.connect()
                         }

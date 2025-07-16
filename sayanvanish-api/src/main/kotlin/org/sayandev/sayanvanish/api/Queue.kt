@@ -1,6 +1,6 @@
 package org.sayandev.sayanvanish.api
 
-import org.sayandev.sayanvanish.api.database.PlatformTable
+import org.sayandev.sayanvanish.api.storage.PlatformTable
 import java.util.*
 
 class Queue(

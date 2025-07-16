@@ -1,7 +1,7 @@
 package org.sayandev.sayanvanish.api
 
 import com.mysql.cj.jdbc.exceptions.OperationNotSupportedException
-import org.sayandev.sayanvanish.api.database.TransactionDatabase
+import org.sayandev.sayanvanish.api.storage.TransactionDatabase
 import org.sayandev.sayanvanish.api.feature.RegisteredFeatureHandler
 import java.io.File
 import java.util.logging.Logger

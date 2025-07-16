@@ -1,7 +1,7 @@
 package org.sayandev.sayanvanish.api.health
 
-import org.sayandev.sayanvanish.api.database.DatabaseType
-import org.sayandev.sayanvanish.api.database.sql.SQLConfig
+import org.sayandev.sayanvanish.api.storage.DatabaseType
+import org.sayandev.sayanvanish.api.storage.sql.SQLConfig
 
 data class HealthCheckData(
     val proxy: ProxyInfo,

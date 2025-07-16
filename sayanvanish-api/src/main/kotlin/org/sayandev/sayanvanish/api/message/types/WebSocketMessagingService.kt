@@ -6,23 +6,21 @@ import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishUser
-import org.sayandev.sayanvanish.api.storage.redis.RedisConfig
-import org.sayandev.sayanvanish.api.storage.redis.RedisConnection
 import org.sayandev.sayanvanish.api.message.MessagingCategoryTypes
 import org.sayandev.sayanvanish.api.message.MessagingService
+import org.sayandev.sayanvanish.api.storage.websocket.WebSocketConfig
 import org.sayandev.stickynote.core.coroutine.dispatcher.AsyncDispatcher
 import org.sayandev.stickynote.core.messaging.MessageMeta
 import org.sayandev.stickynote.core.messaging.PayloadBehaviour
 import org.sayandev.stickynote.core.messaging.PayloadWrapper
-import org.sayandev.stickynote.core.messaging.redis.RedisConnectionMeta
-import org.sayandev.stickynote.core.messaging.redis.RedisPublisher
+import org.sayandev.stickynote.core.messaging.websocket.WebSocketConnectionMeta
+import org.sayandev.stickynote.core.messaging.websocket.WebSocketPublisher
+import java.net.URI
 
-class RedisMessagingService(
-    val config: RedisConfig,
+class WebSocketMessagingService(
+    val config: WebSocketConfig,
     override val dispatcher: AsyncDispatcher
 ) : MessagingService {
-    val connection = RedisConnection(config, dispatcher)
-
     val syncUserPublisher = SyncUserPublisher().apply { this.register() }
     val syncVanishUserPublisher = SyncVanishUserPublisher().apply { this.register() }
 
@@ -34,9 +32,9 @@ class RedisMessagingService(
         return syncVanishUserPublisher.sync(vanishUser)
     }
 
-    inner class SyncUserPublisher : RedisPublisher<User, Boolean>(
+    inner class SyncUserPublisher : WebSocketPublisher<User, Boolean>(
         MessageMeta.create(Platform.get().id.lowercase(), MessagingCategoryTypes.SYNC_USER.id),
-        RedisConnectionMeta(connection.redis, dispatcher),
+        WebSocketConnectionMeta(URI.create(config.uri), dispatcher),
         Platform.get().logger
     ) {
         override fun handle(payload: User): Boolean? {
@@ -54,9 +52,9 @@ class RedisMessagingService(
         }
     }
 
-    inner class SyncVanishUserPublisher : RedisPublisher<VanishUser, Boolean>(
+    inner class SyncVanishUserPublisher : WebSocketPublisher<VanishUser, Boolean>(
         MessageMeta.create(Platform.get().id.lowercase(), MessagingCategoryTypes.SYNC_VANISH_USER.id),
-        RedisConnectionMeta(connection.redis, dispatcher),
+        WebSocketConnectionMeta(URI.create(config.uri), dispatcher),
         Platform.get().logger
     ) {
         override fun handle(payload: VanishUser): Boolean? {

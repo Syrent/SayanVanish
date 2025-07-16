@@ -4,8 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
-import org.jetbrains.exposed.v1.core.Table
-import org.sayandev.sayanvanish.api.database.PlatformTable
+import org.sayandev.sayanvanish.api.storage.PlatformTable
 import org.sayandev.sayanvanish.api.exception.UnsupportedPlatformException
 import java.util.*
 

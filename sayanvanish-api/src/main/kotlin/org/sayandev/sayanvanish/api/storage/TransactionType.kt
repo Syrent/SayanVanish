@@ -1,4 +1,4 @@
-package org.sayandev.sayanvanish.api.database
+package org.sayandev.sayanvanish.api.storage
 
 import org.spongepowered.configurate.ConfigurationNode
 import org.spongepowered.configurate.serialize.TypeSerializer

@@ -3,7 +3,8 @@ package org.sayandev.sayanvanish.api
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.future.asCompletableFuture
 import kotlinx.coroutines.runBlocking
-import org.sayandev.sayanvanish.api.database.Database
+import org.sayandev.sayanvanish.api.cache.CacheService
+import org.sayandev.sayanvanish.api.storage.Database
 import org.sayandev.sayanvanish.api.message.MessagingService
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -12,6 +13,8 @@ interface VanishAPI {
     fun getDatabase(): Database
 
     fun getMessagingService(): MessagingService
+
+    fun getCacheService(): CacheService
 
     fun getPlatform(): Platform
 

@@ -1,12 +1,10 @@
-package org.sayandev.sayanvanish.api.database
+package org.sayandev.sayanvanish.api.storage
 
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.future.asCompletableFuture
 import kotlinx.coroutines.runBlocking
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishUser
-import org.sayandev.sayanvanish.api.cache.UserCountCache
-import org.sayandev.sayanvanish.api.cache.VanishUserCache
 import org.sayandev.stickynote.core.coroutine.dispatcher.AsyncDispatcher
 import org.sayandev.stickynote.core.utils.async
 import java.util.*

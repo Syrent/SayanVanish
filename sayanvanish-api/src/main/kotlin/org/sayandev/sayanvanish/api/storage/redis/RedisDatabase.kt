@@ -1,17 +1,17 @@
-package org.sayandev.sayanvanish.api.database.redis
+package org.sayandev.sayanvanish.api.storage.redis
 
 import kotlinx.coroutines.*
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishUser
-import org.sayandev.sayanvanish.api.database.Database
-import org.sayandev.sayanvanish.api.database.DatabaseConfig
+import org.sayandev.sayanvanish.api.storage.Database
+import org.sayandev.sayanvanish.api.storage.StorageConfig
 import org.sayandev.stickynote.core.coroutine.dispatcher.AsyncDispatcher
 import redis.clients.jedis.JedisPool
 import java.util.*
 
 class RedisDatabase(
-    val config: DatabaseConfig,
+    val config: StorageConfig,
 ) : Database {
 
     val connection = RedisConnection(config.redis, AsyncDispatcher(

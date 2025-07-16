@@ -3,7 +3,9 @@ package org.sayandev.sayanvanish.api
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.runBlocking
-import org.sayandev.sayanvanish.api.database.TransactionDatabase
+import org.sayandev.sayanvanish.api.cache.CacheService
+import org.sayandev.sayanvanish.api.cache.MemoryCacheService
+import org.sayandev.sayanvanish.api.storage.TransactionDatabase
 import org.sayandev.sayanvanish.api.message.MessagingService
 import org.sayandev.sayanvanish.api.message.TypedMessagingService
 import org.sayandev.stickynote.core.utils.launch
@@ -13,6 +15,7 @@ object SayanVanishAPI : VanishAPI {
 
     private val database = TransactionDatabase()
     private val messagingService = TypedMessagingService()
+    private val cacheService = MemoryCacheService()
 
     override fun getDatabase(): TransactionDatabase {
         return database
@@ -20,6 +23,10 @@ object SayanVanishAPI : VanishAPI {
 
     override fun getMessagingService(): MessagingService {
         return messagingService
+    }
+
+    override fun getCacheService(): CacheService {
+        return cacheService
     }
 
     init {

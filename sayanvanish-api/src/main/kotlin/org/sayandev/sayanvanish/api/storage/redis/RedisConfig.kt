@@ -1,10 +1,10 @@
-package org.sayandev.sayanvanish.api.database.redis
+package org.sayandev.sayanvanish.api.storage.redis
 
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.objectmapping.meta.Comment
 
 @ConfigSerializable
-class RedisConfig(
+data class RedisConfig(
     val threadCount: Int = 5,
     @Comment("The type of Redis configuration. Available types: STANDALONE")
     val type: RedisType = RedisType.STANDALONE,

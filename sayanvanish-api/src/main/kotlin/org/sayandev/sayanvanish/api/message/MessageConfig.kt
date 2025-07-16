@@ -1,7 +1,8 @@
 package org.sayandev.sayanvanish.api.message
 
 import org.sayandev.sayanvanish.api.Platform
-import org.sayandev.sayanvanish.api.database.redis.RedisConfig
+import org.sayandev.sayanvanish.api.storage.redis.RedisConfig
+import org.sayandev.sayanvanish.api.storage.websocket.WebSocketConfig
 import org.sayandev.stickynote.core.configuration.Config
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.objectmapping.meta.Comment
@@ -15,6 +16,7 @@ class MessageConfig(
     @Comment("Configuration for Redis database")
     val threadCount: Int = 5,
     val redis: RedisConfig = RedisConfig(),
+    val webSocketConfig: WebSocketConfig = WebSocketConfig(),
     val categoryTypes: List<MessagingCategoryType> = MessagingCategoryTypes.entries,
 ) : Config(Platform.get().rootDirectory, fileName, serializers()) {
     companion object {

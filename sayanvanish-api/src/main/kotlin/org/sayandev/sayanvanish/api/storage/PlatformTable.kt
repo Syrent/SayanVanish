@@ -1,4 +1,4 @@
-package org.sayandev.sayanvanish.api.database
+package org.sayandev.sayanvanish.api.storage
 
 import org.jetbrains.exposed.v1.core.Table
 import org.sayandev.sayanvanish.api.Platform

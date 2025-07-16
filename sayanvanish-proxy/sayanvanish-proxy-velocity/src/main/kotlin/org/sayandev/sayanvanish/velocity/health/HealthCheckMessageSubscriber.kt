@@ -1,9 +1,9 @@
 package org.sayandev.sayanvanish.velocity.health
 
 import kotlinx.coroutines.CompletableDeferred
-import org.sayandev.sayanvanish.api.database.DatabaseType
-import org.sayandev.sayanvanish.api.database.databaseConfig
-import org.sayandev.sayanvanish.api.database.sql.SQLConfig
+import org.sayandev.sayanvanish.api.storage.DatabaseType
+import org.sayandev.sayanvanish.api.storage.storageConfig
+import org.sayandev.sayanvanish.api.storage.sql.SQLConfig
 import org.sayandev.sayanvanish.api.health.HealthCheckData
 import org.sayandev.stickynote.core.messaging.publisher.PayloadWrapper
 import org.sayandev.stickynote.core.utils.CoroutineUtils.awaitWithTimeout
@@ -18,8 +18,8 @@ class HealthCheckMessageSubscriber: ProxySubscriber<Unit, HealthCheckData>(
 
     override suspend fun onSubscribe(payload: Unit): CompletableDeferred<HealthCheckData> {
         val proxyInfo = HealthCheckData.ProxyInfo(
-            databaseConfig.method,
-            databaseConfig.sql.method
+            storageConfig.method,
+            storageConfig.sql.method
         )
 
         val servers = HealthCheckData.Servers(mutableListOf())

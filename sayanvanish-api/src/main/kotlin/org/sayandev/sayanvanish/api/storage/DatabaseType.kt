@@ -1,4 +1,4 @@
-package org.sayandev.sayanvanish.api.database
+package org.sayandev.sayanvanish.api.storage
 
 enum class DatabaseType {
     SQL,

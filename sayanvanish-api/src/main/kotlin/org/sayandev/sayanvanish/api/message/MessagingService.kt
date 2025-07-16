@@ -18,7 +18,7 @@ interface MessagingService {
         return async(dispatcher) { syncUser(user).await() }.asCompletableFuture()
     }
 
-    fun syncUserSync(user: User): Boolean {
+    fun syncUserBlocking(user: User): Boolean {
         return runBlocking { syncUser(user).await() }
     }
 
@@ -28,7 +28,7 @@ interface MessagingService {
         return async(dispatcher) { syncVanishUser(vanishUser).await() }.asCompletableFuture()
     }
 
-    fun syncVanishUserSync(vanishUser: VanishUser): Boolean {
+    fun syncVanishUserBlocking(vanishUser: VanishUser): Boolean {
         return runBlocking { syncVanishUser(vanishUser).await() }
     }
 }

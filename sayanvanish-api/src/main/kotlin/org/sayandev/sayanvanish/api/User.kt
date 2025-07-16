@@ -5,7 +5,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.future.asCompletableFuture
 import kotlinx.coroutines.runBlocking
-import org.sayandev.sayanvanish.api.database.PlatformTable
+import org.sayandev.sayanvanish.api.storage.PlatformTable
 import org.sayandev.sayanvanish.api.exception.UnsupportedPlatformException
 import org.sayandev.stickynote.core.utils.async
 import java.lang.reflect.Type
@@ -74,7 +74,7 @@ interface User {
     /**
      * Saves the user asynchronously to the database.
      *
-     * @see org.sayandev.sayanvanish.api.database.Database.saveUser
+     * @see org.sayandev.sayanvanish.api.storage.Database.saveUser
      * @return A [Deferred] indicating the result of the save operation.
      * @since 2.0.0
      */

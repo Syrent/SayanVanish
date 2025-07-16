@@ -1,4 +1,4 @@
-package org.sayandev.sayanvanish.api.database.redis
+package org.sayandev.sayanvanish.api.storage.redis
 
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred

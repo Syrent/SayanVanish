@@ -1,7 +1,5 @@
-package org.sayandev.sayanvanish.api.database.sql
+package org.sayandev.sayanvanish.api.storage.sql
 
-import com.zaxxer.hikari.HikariConfig
-import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.awaitAll
@@ -16,17 +14,15 @@ import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.Queue
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishUser
-import org.sayandev.sayanvanish.api.database.Database
-import org.sayandev.sayanvanish.api.database.DatabaseConfig
+import org.sayandev.sayanvanish.api.storage.Database
+import org.sayandev.sayanvanish.api.storage.StorageConfig
 import org.sayandev.stickynote.core.coroutine.dispatcher.AsyncDispatcher
 import org.sayandev.stickynote.core.utils.CoroutineUtils
 import org.sayandev.stickynote.core.utils.launch
 import java.util.*
-import java.util.concurrent.TimeUnit
-import kotlin.text.get
 
 class SQLDatabase(
-    val config: DatabaseConfig,
+    val config: StorageConfig,
 ) : Database {
 
     override var connected = false

@@ -17,8 +17,8 @@ import org.incendo.cloud.setting.ManagerSetting
 import org.incendo.cloud.suggestion.Suggestion
 import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.api.VanishOptions
-import org.sayandev.sayanvanish.api.database.DatabaseConfig
-import org.sayandev.sayanvanish.api.database.databaseConfig
+import org.sayandev.sayanvanish.api.storage.StorageConfig
+import org.sayandev.sayanvanish.api.storage.storageConfig
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.Features
 import org.sayandev.sayanvanish.api.feature.RegisteredFeatureHandler
@@ -159,7 +159,7 @@ class SayanVanishCommand : BukkitCommand(settings.vanishCommand.name, *settings.
                         "username",
                         "password",
                     )
-                    Paste("yaml", databaseConfig.file.readLines().filter { !blockedWords.any { blockedWord -> it.contains(blockedWord) } }).post().whenComplete { databaseKey, databaseError ->
+                    Paste("yaml", storageConfig.file.readLines().filter { !blockedWords.any { blockedWord -> it.contains(blockedWord) } }).post().whenComplete { databaseKey, databaseError ->
                         sendPasteError(sender, databaseError)
 
                         Paste("yaml", SettingsConfig.settingsFile.readLines()).post().whenComplete { settingsKey, settingsError ->
@@ -208,7 +208,7 @@ class SayanVanishCommand : BukkitCommand(settings.vanishCommand.name, *settings.
                 Features.userFeatures.clear()
                 RegisteredFeatureHandler.process()
                 settings = SettingsConfig.fromConfig() ?: SettingsConfig.defaultConfig()
-                databaseConfig = DatabaseConfig.fromConfig() ?: DatabaseConfig.defaultConfig()
+                storageConfig = StorageConfig.fromConfig() ?: StorageConfig.defaultConfig()
                 sender.sendComponent(language.general.reloaded)
             }
         }
@@ -537,7 +537,7 @@ class SayanVanishCommand : BukkitCommand(settings.vanishCommand.name, *settings.
     private fun generateMainPaste(sender: CommandSender, otherKeys: Map<String, String>) {
         Paste("json", listOf(ServerUtils.getServerData(
             mutableMapOf(
-                "database-type" to databaseConfig.method.toString(),
+                "database-type" to storageConfig.method.toString(),
             ).apply {
                 this.putAll(otherKeys)
             }

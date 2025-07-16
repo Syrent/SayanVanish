@@ -45,11 +45,24 @@ interface VanishAPI {
     fun getVanishedUsers(): Deferred<List<VanishUser>>
 
     companion object {
-        private val defaultInstance = SayanVanishAPI
+        private var defaultInstance: VanishAPI = SayanVanishAPI
 
         @JvmStatic
-        fun get(): SayanVanishAPI {
+        fun getDefault(): SayanVanishAPI {
+            return SayanVanishAPI
+        }
+
+        @JvmStatic
+        fun get(): VanishAPI {
             return defaultInstance
+        }
+
+        @JvmStatic
+        fun set(instance: VanishAPI, platform: Platform) {
+            Platform.get().logger.info("New API instance has been initialized from ${platform.id}")
+            Platform.setAndRegister(platform)
+            defaultInstance = instance
+            Platform.get().logger.info("Platform has been set to ${platform.id} with plugin name ${platform.pluginName}")
         }
 
         @JvmStatic

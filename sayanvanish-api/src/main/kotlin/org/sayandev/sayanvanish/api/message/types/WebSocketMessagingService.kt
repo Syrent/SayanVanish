@@ -5,6 +5,7 @@ import kotlinx.coroutines.Deferred
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.User
+import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.message.MessagingCategoryTypes
 import org.sayandev.sayanvanish.api.message.MessagingService
@@ -38,7 +39,7 @@ class WebSocketMessagingService(
         Platform.get().logger
     ) {
         override fun handle(payload: User): Boolean? {
-            SayanVanishAPI.get().getCacheService().getUsers().put(payload.uniqueId, payload)
+            VanishAPI.get().getCacheService().getUsers().put(payload.uniqueId, payload)
             return true
         }
 
@@ -58,7 +59,7 @@ class WebSocketMessagingService(
         Platform.get().logger
     ) {
         override fun handle(payload: VanishUser): Boolean? {
-            SayanVanishAPI.get().getCacheService().getVanishUsers().put(payload.uniqueId, payload)
+            VanishAPI.get().getCacheService().getVanishUsers().put(payload.uniqueId, payload)
             return true
         }
 

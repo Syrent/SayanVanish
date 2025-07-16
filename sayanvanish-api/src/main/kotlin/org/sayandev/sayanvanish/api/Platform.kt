@@ -36,7 +36,7 @@ data class Platform(
         fun setAndRegister(platform: Platform): Boolean {
             setPlatform(platform)
 
-            (SayanVanishAPI.getDatabase() as? TransactionDatabase)?.let {
+            (VanishAPI.get().getDatabase() as? TransactionDatabase)?.let {
                 if (!it.databaseConnected) {
                     return false
                 }

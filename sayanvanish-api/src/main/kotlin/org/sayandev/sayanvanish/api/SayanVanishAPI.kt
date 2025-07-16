@@ -90,7 +90,11 @@ object SayanVanishAPI : VanishAPI {
     }
 
     /**
-     * Only for java usage
+     * Don't use this method directly, use [VanishAPI.get] instead.
+     *
+     * This method is only meant to be used by the API itself as a fallback api.
+     *
+     * @see VanishAPI.get
      */
     @JvmStatic
     fun get(): SayanVanishAPI {

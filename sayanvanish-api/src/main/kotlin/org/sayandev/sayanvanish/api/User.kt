@@ -80,7 +80,7 @@ interface User {
      */
     @JvmSynthetic
     suspend fun save(): Deferred<Boolean> {
-        return SayanVanishAPI.getDatabase().saveUser(this)
+        return VanishAPI.get().getDatabase().saveUser(this)
     }
 
     /**
@@ -100,7 +100,7 @@ interface User {
      * @since 2.0.0
      */
     fun saveFuture(): CompletableFuture<Boolean> {
-        return async(SayanVanishAPI.get().getDatabase().dispatcher) {
+        return async(VanishAPI.get().getDatabase().dispatcher) {
             save().await()
         }.asCompletableFuture()
     }
@@ -113,7 +113,7 @@ interface User {
      */
     @JvmSynthetic
     suspend fun sync(): Deferred<Boolean> {
-        return SayanVanishAPI.getMessagingService().syncUser(this)
+        return VanishAPI.get().getMessagingService().syncUser(this)
     }
 
     /**
@@ -133,7 +133,7 @@ interface User {
      * @since 2.0.0
      */
     fun syncFuture(): CompletableFuture<Boolean> {
-        return async(SayanVanishAPI.get().getMessagingService().dispatcher) {
+        return async(VanishAPI.get().getMessagingService().dispatcher) {
             sync().await()
         }.asCompletableFuture()
     }
@@ -171,8 +171,8 @@ interface User {
     @JvmSynthetic
     suspend fun asVanishUser(): Deferred<VanishUser> {
         return CompletableDeferred<VanishUser>().apply {
-            async(SayanVanishAPI.get().getDatabase().dispatcher) {
-                SayanVanishAPI.getDatabase().getVanishUser(uniqueId).await() ?: VanishUser.of(uniqueId, username, serverId)
+            async(VanishAPI.get().getDatabase().dispatcher) {
+                VanishAPI.get().getDatabase().getVanishUser(uniqueId).await() ?: VanishUser.of(uniqueId, username, serverId)
             }.let { complete(it.await()) }
         }
     }
@@ -194,7 +194,7 @@ interface User {
      * @since 2.0.0
      */
     fun asVanishUserFuture(): CompletableFuture<VanishUser> {
-        return async(SayanVanishAPI.get().getDatabase().dispatcher) {
+        return async(VanishAPI.get().getDatabase().dispatcher) {
             asVanishUser().await()
         }.asCompletableFuture()
     }
@@ -290,7 +290,7 @@ interface User {
          */
         @JvmStatic
         fun UUID.userFromCache(): User? {
-            return SayanVanishAPI.get().getCacheService().getUsers()[this]
+            return VanishAPI.get().getCacheService().getUsers()[this]
         }
 
         /**
@@ -302,7 +302,7 @@ interface User {
          */
         @JvmSynthetic
         suspend fun UUID.user(): Deferred<User?> {
-            return SayanVanishAPI.getDatabase().getUser(this)
+            return VanishAPI.get().getDatabase().getUser(this)
         }
 
         /**
@@ -338,7 +338,7 @@ interface User {
          */
         @JvmSynthetic
         fun UUID.userFuture(): CompletableFuture<User?> {
-            return async(SayanVanishAPI.get().getDatabase().dispatcher) {
+            return async(VanishAPI.get().getDatabase().dispatcher) {
                 user().await()
             }.asCompletableFuture()
         }

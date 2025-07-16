@@ -3,6 +3,7 @@ package org.sayandev.sayanvanish.api
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import kotlinx.coroutines.Deferred
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.sayandev.sayanvanish.api.storage.PlatformTable
 import org.sayandev.sayanvanish.api.exception.UnsupportedPlatformException
@@ -57,26 +58,16 @@ interface VanishUser : User {
         return canSee
     }
 
-    override suspend fun save() {
+    override suspend fun save(): Deferred<Boolean> {
         serverId = Platform.get().serverId
-        SayanVanishAPI.getDatabase().addVanishUser(this)
+        return VanishAPI.get().getDatabase().addVanishUser(this)
     }
 
     suspend fun delete() {
-        SayanVanishAPI.getDatabase().removeVanishUser(uniqueId)
+        VanishAPI.get().getDatabase().removeVanishUser(uniqueId)
     }
 
-    override fun toJson(): String {
-        val json = JsonObject()
-        json.addProperty("unique-id", uniqueId.toString())
-        json.addProperty("username", username)
-        json.addProperty("is-online", isOnline)
-        json.addProperty("server-id", serverId)
-        json.addProperty("is-vanished", isVanished)
-        json.addProperty("vanish-level", vanishLevel)
-        json.addProperty("current-options", currentOptions.toJson())
-        return Gson().toJson(json)
-    }
+    // TODO: implement a json type adapter for this class
 
     object Schema : PlatformTable("vanish_users") {
         val uniqueId = reference("unique_id", User.Schema.uniqueId).uniqueIndex()
@@ -88,29 +79,7 @@ interface VanishUser : User {
     }
 
     companion object {
-        @JvmStatic
-        fun fromJson(serialized: String): VanishUser {
-            val json = JsonParser.parseString(serialized).asJsonObject
-
-            val uniqueId = json.get("unique-id").asString
-            val username = json.get("username").asString
-            val isOnline = json.get("is-online").asBoolean
-            val serverId = json.get("server-id").asString
-            val isVanished = json.get("is-vanished").asBoolean
-            val vanishLevel = json.get("vanish-level").asInt
-            val currentOptions = json.get("current-options").asString
-
-            return of(
-                UUID.fromString(uniqueId),
-                username,
-                serverId,
-                isVanished,
-                isOnline,
-                vanishLevel,
-                VanishOptions.fromJson(currentOptions)
-            )
-        }
-
+        // TODO: implement a generic type like User.Generic() to replace VanishUser.of() and use it for json type adapter
         fun of(
             uniqueId: UUID,
             username: String,

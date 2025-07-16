@@ -2,7 +2,7 @@ package org.sayandev.sayanvanish.bukkit.api
 
 import org.bukkit.entity.Player
 import org.sayandev.sayanvanish.api.User
-import org.sayandev.sayanvanish.bukkit.config.settings
+import org.sayandev.sayanvanish.bukkit.config.SettingsConfig
 
 class BukkitUser {
     companion object {
@@ -11,7 +11,7 @@ class BukkitUser {
                 this.uniqueId,
                 this.name,
                 this.isOnline,
-                settings.serverId()
+                SettingsConfig.get().serverId()
             )
         }
     }

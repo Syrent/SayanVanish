@@ -5,6 +5,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.future.asCompletableFuture
 import kotlinx.coroutines.runBlocking
+import net.kyori.adventure.text.Component
 import org.sayandev.sayanvanish.api.storage.PlatformTable
 import org.sayandev.sayanvanish.api.exception.UnsupportedPlatformException
 import org.sayandev.stickynote.core.utils.async
@@ -69,6 +70,10 @@ interface User {
      */
     fun hasPermission(permission: Permission): Boolean {
         return hasPermission(permission.permission())
+    }
+
+    fun sendMessage(component: Component) {
+        Platform.get().adapter.sendMessage(this, component)
     }
 
     /**
@@ -197,6 +202,10 @@ interface User {
         return async(VanishAPI.get().getDatabase().dispatcher) {
             asVanishUser().await()
         }.asCompletableFuture()
+    }
+
+    fun asEmptyVanishUser(): VanishUser {
+        return VanishUser.of(uniqueId, username, serverId)
     }
 
     /**

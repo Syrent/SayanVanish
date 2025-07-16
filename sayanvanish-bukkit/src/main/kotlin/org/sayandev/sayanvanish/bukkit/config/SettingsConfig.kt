@@ -8,8 +8,6 @@ import org.spongepowered.configurate.objectmapping.meta.Comment
 import java.io.File
 import java.util.*
 
-public var settings: SettingsConfig = SettingsConfig.fromConfig() ?: SettingsConfig.defaultConfig()
-
 @ConfigSerializable
 class SettingsConfig(
     @Comment("""
@@ -24,7 +22,7 @@ class SettingsConfig(
     val vanishCommand: Command = Command(),
 ) : Config(
     pluginDirectory,
-    fileName,
+    FILE_NAME,
 ) {
 
     @ConfigSerializable
@@ -46,6 +44,7 @@ class SettingsConfig(
         You will also need to install the SayanVanish proxy plugin on your proxy server.
         WARNING: You need to use MySQL or Redis as the database for this feature to work properly.
         """)
+        // TODO: add auto detect for proxy mode initial value (do NOT remove the option just set the initial value)
         val proxyMode: Boolean = false,
         @Comment("Cache update period in ticks. low values may cause performance issues.")
         val cacheUpdatePeriodTicks: Long = 20,
@@ -71,8 +70,10 @@ class SettingsConfig(
     }
 
     companion object {
-        private val fileName = "settings.yml"
-        val settingsFile = File(pluginDirectory, fileName)
+        private const val FILE_NAME = "settings.yml"
+
+        val settingsFile = File(pluginDirectory, FILE_NAME)
+        var config = fromConfig() ?: defaultConfig()
 
         @JvmStatic
         fun defaultConfig(): SettingsConfig {
@@ -82,6 +83,16 @@ class SettingsConfig(
         @JvmStatic
         fun fromConfig(): SettingsConfig? {
             return fromConfig<SettingsConfig>(settingsFile)
+        }
+
+        @JvmStatic
+        fun reload() {
+            config = fromConfig() ?: defaultConfig()
+        }
+
+        @JvmStatic
+        fun get(): SettingsConfig {
+            return config
         }
     }
 }

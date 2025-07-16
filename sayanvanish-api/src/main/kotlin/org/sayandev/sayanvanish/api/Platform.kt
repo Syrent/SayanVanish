@@ -1,6 +1,7 @@
 package org.sayandev.sayanvanish.api
 
 import com.mysql.cj.jdbc.exceptions.OperationNotSupportedException
+import net.kyori.adventure.text.Component
 import org.sayandev.sayanvanish.api.storage.TransactionDatabase
 import org.sayandev.sayanvanish.api.feature.RegisteredFeatureHandler
 import java.io.File
@@ -12,13 +13,17 @@ data class Platform(
     val logger: Logger,
     var rootDirectory: File,
     var serverId: String,
-    val adapter: PlatformAdapter<*>,
+    val adapter: PlatformAdapter<in User, out VanishUser>,
 ) {
 
     companion object {
-        private var currentPlatform = Platform("default", "SayanVanish", Logger.getGlobal(), File("."), "unknown", object : PlatformAdapter<VanishUser> {
+        private var currentPlatform = Platform("default", "SayanVanish", Logger.getGlobal(), File("."), "unknown", object : PlatformAdapter<User, VanishUser> {
             override fun adapt(user: VanishUser): VanishUser {
                 throw OperationNotSupportedException("Default platform doesn't support vanish user adapt")
+            }
+
+            override fun sendMessage(user: User, message: Component) {
+                throw OperationNotSupportedException("Default platform doesn't support sending message to user")
             }
         })
 

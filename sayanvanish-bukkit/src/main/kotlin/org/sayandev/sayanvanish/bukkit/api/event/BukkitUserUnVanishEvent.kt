@@ -6,6 +6,7 @@ import org.bukkit.event.HandlerList
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.bukkit.api.BukkitVanishUser
 
+// TODO: Implement a universal event api
 class BukkitUserUnVanishEvent(
     val user: BukkitVanishUser,
     val options: VanishOptions,

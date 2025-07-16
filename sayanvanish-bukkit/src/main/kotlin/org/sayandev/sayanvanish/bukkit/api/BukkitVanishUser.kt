@@ -8,15 +8,16 @@ import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.permissions.PermissionDefault
 import org.sayandev.sayanvanish.api.Permission
-import org.sayandev.sayanvanish.api.VanishUser
+import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.VanishOptions
+import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.feature.Features
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrCreateUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
+import org.sayandev.sayanvanish.bukkit.config.SettingsConfig
 import org.sayandev.sayanvanish.bukkit.config.language
-import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureLevel
 import org.sayandev.sayanvanish.bukkit.feature.features.hook.FeatureLuckPermsHook
 import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendComponent
@@ -25,6 +26,7 @@ import org.sayandev.stickynote.bukkit.hasPlugin
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.plugin
 import org.sayandev.stickynote.bukkit.server
+import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import org.sayandev.stickynote.bukkit.utils.ServerVersion
 import java.util.*
 
@@ -33,13 +35,13 @@ open class BukkitVanishUser(
     override var username: String
 ) : VanishUser {
 
-    override var serverId = settings.general.serverId
+    override var serverId = SettingsConfig.get().general.serverId
     override var currentOptions = VanishOptions.defaultOptions()
     override var isVanished = false
-    override var isOnline: Boolean = if (!settings.general.proxyMode) {
+    override var isOnline: Boolean = if (!SettingsConfig.get().general.proxyMode) {
         Bukkit.getPlayer(uniqueId) != null
     } else {
-        SayanVanishAPI.getDatabase().hasUser(uniqueId, true)
+        VanishAPI.get().getCacheService().getUsers()[uniqueId]?.isOnline ?: false
     }
     override var vanishLevel: Int = 0
         get() = if (Features.getFeature<FeatureLevel>().levelMethod == FeatureLevel.LevelMethod.PERMISSION) {
@@ -61,7 +63,7 @@ open class BukkitVanishUser(
     fun player(): Player? = Bukkit.getPlayer(uniqueId)
     fun offlinePlayer(): OfflinePlayer = Bukkit.getOfflinePlayer(uniqueId)
 
-    override fun vanish(options: VanishOptions) {
+    override suspend fun disappear(options: VanishOptions) {
         val vanishEvent = BukkitUserVanishEvent(this, options)
         server.pluginManager.callEvent(vanishEvent)
         if (vanishEvent.isCancelled) return
@@ -83,7 +85,7 @@ open class BukkitVanishUser(
         sendComponent(language.vanish.vanishStateUpdate, Placeholder.parsed("state", stateText()))
     }
 
-    override fun unVanish(options: VanishOptions) {
+    override suspend fun appear(options: VanishOptions) {
         val unVanishEvent = BukkitUserUnVanishEvent(this, options)
         server.pluginManager.callEvent(unVanishEvent)
         if (unVanishEvent.isCancelled) return
@@ -144,8 +146,8 @@ open class BukkitVanishUser(
             hideUser(onlinePlayer)
         }
         if (currentOptions.notifyStatusChangeToOthers) {
-            for (otherUsers in SayanVanishBukkitAPI.getInstance().getOnlineUsers().filter { it.username != username && it.canSee(this) }) {
-                otherUsers.sendComponent(language.vanish.vanishStateOther, Placeholder.parsed("player", username), Placeholder.parsed("state", stateText(true)))
+            for (otherUser in VanishAPI.get().getCacheService().getUsers().values.filter { it.isOnline }.filter { it.username != username && it.asEmptyVanishUser().canSee(this) }) {
+                otherUser.sendMessage(language.vanish.vanishStateOther.component(Placeholder.parsed("player", username), Placeholder.parsed("state", stateText(true))))
             }
         }
     }
@@ -161,8 +163,8 @@ open class BukkitVanishUser(
             showUser(onlinePlayer)
         }
         if (currentOptions.notifyStatusChangeToOthers) {
-            for (otherUsers in SayanVanishBukkitAPI.getInstance().getOnlineUsers().filter { it.username != this.username && it.canSee(this) }) {
-                otherUsers.sendComponent(language.vanish.vanishStateOther, Placeholder.parsed("player", username), Placeholder.parsed("state", stateText(false)))
+            for (otherUser in VanishAPI.get().getCacheService().getUsers().values.filter { it.isOnline }.filter { it.username != this.username && it.asEmptyVanishUser().canSee(this) }) {
+                otherUser.sendMessage(language.vanish.vanishStateOther.component(Placeholder.parsed("player", username), Placeholder.parsed("state", stateText(false))))
             }
         }
     }

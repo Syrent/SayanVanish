@@ -9,6 +9,7 @@ import org.spongepowered.configurate.objectmapping.meta.Comment
 import org.spongepowered.configurate.serialize.TypeSerializerCollection
 import java.io.File
 
+// TODO: use a singleton or something, i don't want global scope variables like this anymore
 public var messageConfig = MessageConfig.fromConfig() ?: MessageConfig.defaultConfig()
 
 @ConfigSerializable

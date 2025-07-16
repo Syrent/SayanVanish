@@ -22,8 +22,7 @@ class TransactionDatabase: Database {
     override val dispatcher =
         AsyncDispatcher(
             "${Platform.get().pluginName.lowercase()}-transaction-thread",
-            // TODO: get thread count from config
-            5,
+            storageConfig.transactionThreadCount,
         )
 
     val databaseTypes = mutableMapOf<DatabaseType, Database>()
@@ -138,29 +137,6 @@ class TransactionDatabase: Database {
     override suspend fun removeUser(uniqueId: UUID): Deferred<Boolean> {
         val database = database(TransactionTypes.USER)
         return database.removeUser(uniqueId)
-    }
-
-    override suspend fun isInQueue(uniqueId: UUID): Deferred<Boolean> {
-        val database = database(TransactionTypes.QUEUE)
-        return database.isInQueue(uniqueId)
-    }
-
-    override suspend fun saveToQueue(
-        uniqueId: UUID,
-        vanished: Boolean
-    ): Deferred<Boolean> {
-        val database = database(TransactionTypes.QUEUE)
-        return database.saveToQueue(uniqueId, vanished)
-    }
-
-    override suspend fun getFromQueue(uniqueId: UUID): Deferred<Boolean> {
-        val database = database(TransactionTypes.QUEUE)
-        return database.getFromQueue(uniqueId)
-    }
-
-    override suspend fun removeFromQueue(uniqueId: UUID): Deferred<Boolean> {
-        val database = database(TransactionTypes.QUEUE)
-        return database.removeFromQueue(uniqueId)
     }
 
     override suspend fun purgeAllTables(): Deferred<Boolean> {

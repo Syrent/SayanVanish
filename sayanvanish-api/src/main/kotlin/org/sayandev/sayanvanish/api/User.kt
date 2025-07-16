@@ -290,7 +290,7 @@ interface User {
          */
         @JvmStatic
         fun UUID.userFromCache(): User? {
-            TODO("Cache is not implemented yet")
+            return SayanVanishAPI.get().getCacheService().getUsers()[this]
         }
 
         /**

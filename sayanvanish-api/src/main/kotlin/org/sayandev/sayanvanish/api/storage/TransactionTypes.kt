@@ -6,6 +6,4 @@ enum class TransactionTypes(
 ) : TransactionType {
     USER("user", DatabaseType.SQL),
     VANISH_USER("vanish_user", DatabaseType.SQL),
-    // TODO: Change default to plugin message or implement WebSocket
-    QUEUE("queue", DatabaseType.REDIS),
 }

@@ -1,9 +1,20 @@
 package org.sayandev.sayanvanish.api.utils
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 
 object Gson {
+    private val gson = GsonBuilder()
+        .setPrettyPrinting()
+        .create()
+
+    @JvmStatic
+    fun get(): Gson {
+        return gson
+    }
+
     fun Any.jsonObject(): JsonObject {
         if (this::class.isData) {
             return com.google.gson.Gson().toJsonTree(this).asJsonObject

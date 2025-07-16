@@ -14,6 +14,7 @@ public var storageConfig = StorageConfig.fromConfig() ?: StorageConfig.defaultCo
 
 @ConfigSerializable
 class StorageConfig(
+    val transactionThreadCount: Int = 5,
     @Comment("Configuration for the database, including method, SQL, Redis, and caching options.")
     val method: DatabaseType = DatabaseType.SQL,
     @Comment("Configuration for SQL database")

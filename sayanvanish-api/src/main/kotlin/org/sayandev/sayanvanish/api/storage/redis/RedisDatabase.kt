@@ -1,11 +1,13 @@
 package org.sayandev.sayanvanish.api.storage.redis
 
+import com.google.gson.JsonParser
 import kotlinx.coroutines.*
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.storage.Database
 import org.sayandev.sayanvanish.api.storage.StorageConfig
+import org.sayandev.sayanvanish.api.utils.Gson
 import org.sayandev.stickynote.core.coroutine.dispatcher.AsyncDispatcher
 import redis.clients.jedis.JedisPool
 import java.util.*
@@ -70,7 +72,7 @@ class RedisDatabase(
                 it
                     .hget("users", uniqueId.toString())
                     ?.let {
-                        User.fromJson(it)
+                        Gson.get().fromJson(JsonParser.parseString(it), User::class.java)
                     }
             }
         }
@@ -81,7 +83,7 @@ class RedisDatabase(
             redis.resource.use {
                 it
                     .hgetAll("users")
-                    .map { User.fromJson(it.value) }
+                    .map { Gson.get().fromJson(JsonParser.parseString(it.value), User::class.java) }
             }
         }
     }
@@ -105,7 +107,7 @@ class RedisDatabase(
     override suspend fun saveUser(user: User): Deferred<Boolean> {
         return async {
             redis.resource.use {
-                it.hset("users", user.uniqueId.toString(), user.toJson()) != 0L
+                it.hset("users", user.uniqueId.toString(), Gson.get().toJson(user)) != 0L
             }
         }
     }
@@ -142,43 +144,10 @@ class RedisDatabase(
         return saveUser(user)
     }
 
-    override suspend fun isInQueue(uniqueId: UUID): Deferred<Boolean> {
-        return async {
-            redis.resource.use {
-                it.get("queue:$uniqueId")?.toBoolean() ?: false
-            }
-        }
-    }
-
-    override suspend fun saveToQueue(uniqueId: UUID, vanished: Boolean): Deferred<Boolean> {
-        return async {
-            redis.resource.use {
-                it.set("queue:$uniqueId", vanished.toString()) != null
-            }
-        }
-    }
-
-    override suspend fun removeFromQueue(uniqueId: UUID): Deferred<Boolean> {
-        return async {
-            redis.resource.use {
-                it.del("queue:$uniqueId") != 0L
-            }
-        }
-    }
-
-    override suspend fun getFromQueue(uniqueId: UUID): Deferred<Boolean> {
-        return async {
-            redis.resource.use {
-                it.get("queue:$uniqueId")?.toBoolean() ?: false
-            }
-        }
-    }
-
     override suspend fun purgeAllTables(): Deferred<Boolean> {
         return async {
             redis.resource.use { it.del("vanish_users") }
             redis.resource.use { it.del("users") }
-            redis.resource.use { it.del("queue") }
             true
         }
     }

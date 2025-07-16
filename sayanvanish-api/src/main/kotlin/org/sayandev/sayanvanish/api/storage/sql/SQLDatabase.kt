@@ -11,7 +11,6 @@ import org.jetbrains.exposed.v1.jdbc.*
 import org.jetbrains.exposed.v1.jdbc.transactions.TransactionManager
 import org.jetbrains.exposed.v1.jdbc.transactions.experimental.suspendedTransactionAsync
 import org.sayandev.sayanvanish.api.Platform
-import org.sayandev.sayanvanish.api.Queue
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.storage.Database
@@ -32,9 +31,6 @@ class SQLDatabase(
             "${Platform.get().pluginName.lowercase()}-${config.sql.method}-thread",
             config.sql.threadCount,
         )
-
-    // TODO: implement new caching api
-    var users = mutableMapOf<UUID, VanishUser>()
 
     val tables = listOf(
         User.Schema,
@@ -71,15 +67,6 @@ class SQLDatabase(
                 password = config.sql.password,
             )
         TransactionManager.defaultDatabase = database
-
-        // TODO: Implement a proper cache system
-        // TODO: probably update the cache on every update using messaging api
-        launch(dispatcher) {
-            while (isActive) {
-                users = getVanishUsers().await().associateBy { it.uniqueId }.toMutableMap()
-                delay(1000)
-            }
-        }
 
         return CompletableDeferred(true)
     }
@@ -227,41 +214,6 @@ class SQLDatabase(
                 row[serverId] = user.serverId
                 row[isOnline] = user.isOnline
             }.isIgnore
-        }
-    }
-
-    override suspend fun isInQueue(uniqueId: UUID): Deferred<Boolean> {
-        return async {
-            Queue.Schema
-                .selectAll()
-                .any { it[Queue.Schema.uniqueId] == uniqueId }
-        }
-    }
-
-    override suspend fun saveToQueue(uniqueId: UUID, vanished: Boolean): Deferred<Boolean> {
-        return async {
-            Queue.Schema.upsert { row ->
-                row[Queue.Schema.uniqueId] = uniqueId
-                row[Queue.Schema.vanished] = vanished
-            }.isIgnore
-        }
-    }
-
-    override suspend fun getFromQueue(uniqueId: UUID): Deferred<Boolean> {
-        return async {
-            Queue.Schema
-                .selectAll()
-                .where { Queue.Schema.uniqueId eq uniqueId }
-                .firstOrNull()
-                ?.getOrNull(Queue.Schema.vanished) ?: false
-        }
-    }
-
-    override suspend fun removeFromQueue(uniqueId: UUID): Deferred<Boolean> {
-        return async {
-            Queue.Schema
-                .deleteWhere { Queue.Schema.uniqueId eq uniqueId }
-            true
         }
     }
 

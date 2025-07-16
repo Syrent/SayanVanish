@@ -138,46 +138,6 @@ interface Database {
         return runBlocking { removeUser(uniqueId).await() }
     }
 
-    suspend fun isInQueue(uniqueId: UUID): Deferred<Boolean>
-
-    fun isInQueueFuture(uniqueId: UUID): CompletableFuture<Boolean> {
-        return async(dispatcher) { isInQueue(uniqueId).await() }.asCompletableFuture()
-    }
-
-    fun isInQueueBlocking(uniqueId: UUID): Boolean {
-        return runBlocking { isInQueue(uniqueId).await() }
-    }
-
-    suspend fun saveToQueue(uniqueId: UUID, vanished: Boolean): Deferred<Boolean>
-
-    fun saveToQueueFuture(uniqueId: UUID, vanished: Boolean): CompletableFuture<Boolean> {
-        return async(dispatcher) { saveToQueue(uniqueId, vanished).await() }.asCompletableFuture()
-    }
-
-    fun saveToQueueBlocking(uniqueId: UUID, vanished: Boolean): Boolean {
-        return runBlocking { saveToQueue(uniqueId, vanished).await() }
-    }
-
-    suspend fun getFromQueue(uniqueId: UUID): Deferred<Boolean>
-
-    fun getFromQueueFuture(uniqueId: UUID): CompletableFuture<Boolean> {
-        return async(dispatcher) { getFromQueue(uniqueId).await() }.asCompletableFuture()
-    }
-
-    fun getFromQueueBlocking(uniqueId: UUID): Boolean {
-        return runBlocking { getFromQueue(uniqueId).await() }
-    }
-
-    suspend fun removeFromQueue(uniqueId: UUID): Deferred<Boolean>
-
-    fun removeFromQueueFuture(uniqueId: UUID): CompletableFuture<Boolean> {
-        return async(dispatcher) { removeFromQueue(uniqueId).await() }.asCompletableFuture()
-    }
-
-    fun removeFromQueueBlocking(uniqueId: UUID): Boolean {
-        return runBlocking { removeFromQueue(uniqueId).await() }
-    }
-
     suspend fun purgeAllTables(): Deferred<Boolean>
 
     fun purgeAllTablesFuture(): CompletableFuture<Boolean> {
@@ -194,37 +154,5 @@ interface Database {
 
     fun purgeUsersFuture(serverId: String): CompletableFuture<Boolean> {
         return async(dispatcher) { purgeUsers(serverId).await() }.asCompletableFuture()
-    }
-
-    fun getCachedVanishUsers(): VanishUserCache {
-        return vanishUserCache
-    }
-
-    fun getCachedVanishUser(uniqueId: UUID): VanishUser? {
-        return vanishUserCache[uniqueId]
-    }
-
-    fun getVanishUserCache(uniqueId: UUID): VanishUser? {
-        return vanishUserCache[uniqueId]
-    }
-
-    fun getCachedUserCount(): UserCountCache {
-        return userCountCache
-    }
-
-    fun getServerUserCountCache(serverId: String): Int {
-        return userCountCache[serverId] ?: 0
-    }
-
-    companion object {
-        @JvmStatic
-        val vanishUserCache: VanishUserCache by lazy {
-            VanishUserCache()
-        }
-
-        @JvmStatic
-        val userCountCache: UserCountCache by lazy {
-            UserCountCache()
-        }
     }
 }

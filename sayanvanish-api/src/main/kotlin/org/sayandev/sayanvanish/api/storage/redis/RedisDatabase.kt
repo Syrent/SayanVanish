@@ -88,7 +88,7 @@ class RedisDatabase(
         }
     }
 
-    override suspend fun addVanishUser(user: VanishUser): Deferred<Boolean> {
+    override suspend fun saveVanishUser(user: VanishUser): Deferred<Boolean> {
         return async {
             redis.resource.use {
                 it.hset("vanish_users", user.uniqueId.toString(), user.toJson()) != 0L
@@ -137,7 +137,7 @@ class RedisDatabase(
     }
 
     override suspend fun updateVanishUser(user: VanishUser): Deferred<Boolean> {
-        return addVanishUser(user)
+        return saveVanishUser(user)
     }
 
     override suspend fun updateUser(user: User): Deferred<Boolean> {

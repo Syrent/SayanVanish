@@ -7,7 +7,6 @@ import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.SayanVanishAPI.user
 import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.VanishUser
-import java.util.UUID
 
 object SayanVanishBungeeAPI : VanishAPI by SayanVanishAPI, PlatformAdapter<BungeeVanishUser> by BungeePlatformAdapter {
     @JvmStatic
@@ -29,7 +28,7 @@ object SayanVanishBungeeAPI : VanishAPI by SayanVanishAPI, PlatformAdapter<Bunge
     suspend fun ProxiedPlayer.getOrAddUser(): VanishUser {
         return getDatabase().getVanishUser(this.uniqueId).await() ?: let {
             val newUser = BungeeVanishUser(this.uniqueId, this.name ?: "N/A")
-            getDatabase().addVanishUser(newUser).await()
+            getDatabase().saveVanishUser(newUser).await()
             newUser
         }
     }

@@ -204,7 +204,7 @@ interface User {
         }.asCompletableFuture()
     }
 
-    fun asEmptyVanishUser(): VanishUser {
+    fun generatedVanishUser(): VanishUser {
         return VanishUser.of(uniqueId, username, serverId)
     }
 

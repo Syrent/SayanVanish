@@ -141,7 +141,7 @@ class SQLDatabase(
         }
     }
 
-    override suspend fun addVanishUser(vanishUser: VanishUser): Deferred<Boolean> {
+    override suspend fun saveVanishUser(vanishUser: VanishUser): Deferred<Boolean> {
         return async {
             VanishUser.Schema.upsert { row ->
                 row[uniqueId] = vanishUser.uniqueId

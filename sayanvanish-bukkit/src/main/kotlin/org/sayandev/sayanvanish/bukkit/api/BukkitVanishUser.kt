@@ -146,7 +146,7 @@ open class BukkitVanishUser(
             hideUser(onlinePlayer)
         }
         if (currentOptions.notifyStatusChangeToOthers) {
-            for (otherUser in VanishAPI.get().getCacheService().getUsers().values.filter { it.isOnline }.filter { it.username != username && it.asEmptyVanishUser().canSee(this) }) {
+            for (otherUser in VanishAPI.get().getCacheService().getUsers().getOnline().filter { it.username != username && it.generatedVanishUser().canSee(this) }) {
                 otherUser.sendMessage(language.vanish.vanishStateOther.component(Placeholder.parsed("player", username), Placeholder.parsed("state", stateText(true))))
             }
         }
@@ -163,7 +163,7 @@ open class BukkitVanishUser(
             showUser(onlinePlayer)
         }
         if (currentOptions.notifyStatusChangeToOthers) {
-            for (otherUser in VanishAPI.get().getCacheService().getUsers().values.filter { it.isOnline }.filter { it.username != this.username && it.asEmptyVanishUser().canSee(this) }) {
+            for (otherUser in VanishAPI.get().getCacheService().getUsers().getOnline().filter { it.username != this.username && it.generatedVanishUser().canSee(this) }) {
                 otherUser.sendMessage(language.vanish.vanishStateOther.component(Placeholder.parsed("player", username), Placeholder.parsed("state", stateText(false))))
             }
         }

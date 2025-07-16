@@ -17,29 +17,28 @@ import org.incendo.cloud.setting.ManagerSetting
 import org.incendo.cloud.suggestion.Suggestion
 import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.api.VanishOptions
-import org.sayandev.sayanvanish.api.storage.StorageConfig
-import org.sayandev.sayanvanish.api.storage.storageConfig
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.Features
 import org.sayandev.sayanvanish.api.feature.RegisteredFeatureHandler
+import org.sayandev.sayanvanish.api.storage.StorageConfig
+import org.sayandev.sayanvanish.api.storage.storageConfig
 import org.sayandev.sayanvanish.api.utils.Paste
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrAddUser
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrAddVanishUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrCreateUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.config.LanguageConfig
 import org.sayandev.sayanvanish.bukkit.config.SettingsConfig
 import org.sayandev.sayanvanish.bukkit.config.language
-import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureLevel
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureUpdate
-import org.sayandev.sayanvanish.bukkit.health.HealthCache
+import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendComponent
 import org.sayandev.sayanvanish.bukkit.utils.ServerUtils
 import org.sayandev.stickynote.bukkit.*
 import org.sayandev.stickynote.bukkit.command.BukkitCommand
 import org.sayandev.stickynote.bukkit.command.BukkitSender
 import org.sayandev.stickynote.bukkit.command.required
-import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendComponent
-import org.sayandev.stickynote.bukkit.utils.ServerVersion
+import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import org.sayandev.stickynote.core.utils.MilliCounter
 import java.io.File
 import java.util.concurrent.CompletableFuture
@@ -47,7 +46,7 @@ import kotlin.jvm.optionals.getOrNull
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 
-class SayanVanishCommand : BukkitCommand(settings.vanishCommand.name, *settings.vanishCommand.aliases.toTypedArray()) {
+class SayanVanishCommand : BukkitCommand(SettingsConfig.get().vanishCommand.name, *SettingsConfig.get().vanishCommand.aliases.toTypedArray()) {
 
     override fun rootBuilder(builder: MutableCommandBuilder<BukkitSender>) {
         builder.permission("${plugin.name}.commands.use")
@@ -80,29 +79,33 @@ class SayanVanishCommand : BukkitCommand(settings.vanishCommand.name, *settings.
         }
 
         val player = if (target.isPresent) context.optional<OfflinePlayer>("player").get() else context.sender().player() ?: return
-        val user = player.getOrAddUser()
+        launch {
+            val user = player.getOrAddUser()
 
-        if (!user.hasPermission(Permission.VANISH)) {
-            user.sendComponent(language.vanish.dontHaveUsePermission, Placeholder.unparsed("permission", Permission.VANISH.permission()))
-        }
-
-        val options = VanishOptions.defaultOptions().apply {
-            if (context.flags().hasFlag("silent")) {
-                this.sendMessage = false
+            if (!user.hasPermission(Permission.VANISH)) {
+                user.sendMessage(language.vanish.dontHaveUsePermission.component(Placeholder.unparsed("permission", Permission.VANISH.permission())))
             }
-        }
 
-        if (target.isPresent) {
-            if (!player.isOnline) {
-                sender.sendComponent(language.vanish.offlineOnVanish, Placeholder.unparsed("player", player.name ?: "N/A"), Placeholder.parsed("state", user.stateText()))
-                options.sendMessage = false
+            val vanishUser = player.getOrAddVanishUser()
+
+            val options = VanishOptions.defaultOptions().apply {
+                if (context.flags().hasFlag("silent")) {
+                    this.sendMessage = false
+                }
             }
-        }
 
-        when (state) {
-            "on" -> user.disappear(options)
-            "off" -> user.appear(options)
-            else -> user.toggleVanish(options)
+            if (target.isPresent) {
+                if (!player.isOnline) {
+                    sender.sendMessage(language.vanish.offlineOnVanish.component(Placeholder.unparsed("player", player.name ?: "N/A"), Placeholder.parsed("state", user.stateText())))
+                    options.sendMessage = false
+                }
+            }
+
+            when (state) {
+                "on" -> user.disappear(options)
+                "off" -> user.appear(options)
+                else -> user.toggleVanish(options)
+            }
         }
     }
 

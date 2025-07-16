@@ -57,7 +57,7 @@ interface VanishUser : User {
 
     override suspend fun save(): Deferred<Boolean> {
         serverId = Platform.get().serverId
-        return VanishAPI.get().getDatabase().addVanishUser(this)
+        return VanishAPI.get().getDatabase().saveVanishUser(this)
     }
 
     suspend fun delete() {

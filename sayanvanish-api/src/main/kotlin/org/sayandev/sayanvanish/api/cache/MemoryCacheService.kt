@@ -1,14 +1,14 @@
 package org.sayandev.sayanvanish.api.cache
 
-import org.sayandev.sayanvanish.api.User
-import java.util.UUID
+import org.sayandev.sayanvanish.api.cache.caches.IUserCache
+import org.sayandev.sayanvanish.api.cache.caches.IVanishUserCache
+import org.sayandev.sayanvanish.api.cache.caches.UserCache
+import org.sayandev.sayanvanish.api.cache.caches.VanishUserCache
 
 class MemoryCacheService : CacheService {
-    object Users : ICache<UUID, User> by Cache("users")
-    object VanishUsers : ICache<UUID, User> by Cache("vanish_users")
-    object UsersCount : ICache<String, Int> by Cache("users_count")
+    object Users : IUserCache by UserCache()
+    object VanishUsers : IVanishUserCache by VanishUserCache()
 
     override fun getUsers() = Users
     override fun getVanishUsers() = VanishUsers
-    override fun getUsersCount() = UsersCount
 }

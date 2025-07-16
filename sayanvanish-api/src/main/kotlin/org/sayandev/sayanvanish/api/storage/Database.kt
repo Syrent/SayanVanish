@@ -22,14 +22,14 @@ interface Database {
 
     suspend fun disconnect(): Deferred<Boolean>
 
-    suspend fun addVanishUser(vanishUser: VanishUser): Deferred<Boolean>
+    suspend fun saveVanishUser(vanishUser: VanishUser): Deferred<Boolean>
 
-    fun addVanishUserFuture(vanishUser: VanishUser): CompletableFuture<Boolean> {
-        return async(dispatcher) { addVanishUser(vanishUser).await() }.asCompletableFuture()
+    fun saveVanishUserFuture(vanishUser: VanishUser): CompletableFuture<Boolean> {
+        return async(dispatcher) { saveVanishUser(vanishUser).await() }.asCompletableFuture()
     }
 
-    fun addVanishUserBlocking(vanishUser: VanishUser): Boolean {
-        return runBlocking { addVanishUser(vanishUser).await() }
+    fun saveVanishUserBlocking(vanishUser: VanishUser): Boolean {
+        return runBlocking { saveVanishUser(vanishUser).await() }
     }
 
     suspend fun hasVanishUser(uniqueId: UUID): Deferred<Boolean>
@@ -86,6 +86,10 @@ interface Database {
 
     fun getUserFuture(uniqueId: UUID): CompletableFuture<User?> {
         return async(dispatcher) { getUser(uniqueId).await() }.asCompletableFuture()
+    }
+
+    fun getUserBlocking(uniqueId: UUID): User? {
+        return runBlocking { getUser(uniqueId).await() }
     }
 
     suspend fun getUsers(): Deferred<List<User>>

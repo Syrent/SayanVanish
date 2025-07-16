@@ -79,9 +79,9 @@ class TransactionDatabase: Database {
         return CompletableDeferred(connected)
     }
 
-    override suspend fun addVanishUser(vanishUser: VanishUser): Deferred<Boolean> {
+    override suspend fun saveVanishUser(vanishUser: VanishUser): Deferred<Boolean> {
         val database = database(TransactionTypes.VANISH_USER)
-        return database.addVanishUser(vanishUser)
+        return database.saveVanishUser(vanishUser)
     }
 
     override suspend fun hasVanishUser(uniqueId: UUID): Deferred<Boolean> {

@@ -1,7 +1,7 @@
 package org.sayandev.sayanvanish.api.feature
 
-import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.Platform
+import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.stickynote.core.configuration.Config
 import org.spongepowered.configurate.objectmapping.ConfigSerializable

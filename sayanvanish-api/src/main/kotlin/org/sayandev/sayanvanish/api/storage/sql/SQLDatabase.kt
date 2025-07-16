@@ -35,7 +35,6 @@ class SQLDatabase(
     val tables = listOf(
         User.Schema,
         VanishUser.Schema,
-        Queue.Schema,
     )
 
     lateinit var database: org.jetbrains.exposed.v1.jdbc.Database

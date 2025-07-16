@@ -433,19 +433,6 @@ class SayanVanishCommand : BukkitCommand(settings.vanishCommand.name, *settings.
         }
 
         testLiteral.registerCopy {
-            literalWithPermission("health")
-            handler { context ->
-                val sender = context.sender().platformSender()
-                launch {
-                    if (!ServerVersion.supports(9)) {
-                        sender.sendComponent("<red>This feature might not work as expected in your server version!")
-                    }
-                    HealthCache.sendHealthReport(sender)
-                }
-            }
-        }
-
-        testLiteral.registerCopy {
             literalWithPermission("users")
             handler { context ->
                 val sender = context.sender().platformSender()

@@ -8,6 +8,8 @@ import org.spongepowered.configurate.objectmapping.meta.Comment
 import java.io.File
 import java.util.*
 
+// TODO: Rename SettingsConfig to just `Settings` maybe?
+// TODO: switch to kotlinx-serialization for yaml too?
 @ConfigSerializable
 class SettingsConfig(
     @Comment("""

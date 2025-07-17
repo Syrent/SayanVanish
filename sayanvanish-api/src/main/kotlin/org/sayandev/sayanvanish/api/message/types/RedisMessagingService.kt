@@ -18,6 +18,7 @@ import org.sayandev.stickynote.core.messaging.PayloadWrapper
 import org.sayandev.stickynote.core.messaging.redis.RedisConnectionMeta
 import org.sayandev.stickynote.core.messaging.redis.RedisPublisher
 
+// TODO: can't you merge some parts of publisher in another class since both redis and websocket has the same publisher interface?
 class RedisMessagingService(
     val config: RedisConfig,
     override val dispatcher: AsyncDispatcher

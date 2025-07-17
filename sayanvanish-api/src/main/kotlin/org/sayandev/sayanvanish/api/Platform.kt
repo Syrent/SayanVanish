@@ -1,5 +1,6 @@
 package org.sayandev.sayanvanish.api
 
+import kotlinx.coroutines.runBlocking
 import org.sayandev.sayanvanish.api.storage.TransactionDatabase
 import org.sayandev.sayanvanish.api.feature.RegisteredFeatureHandler
 import java.io.File
@@ -16,8 +17,16 @@ open class Platform(
 
     open suspend fun register() { }
 
+    fun registerBlocking() {
+        runBlocking { register() }
+    }
+
     open suspend fun unregister() {
         VanishAPI.get().getDatabase().disconnect().await()
+    }
+
+    fun unregisterBlocking() {
+        runBlocking { unregister() }
     }
 
     companion object {
@@ -47,7 +56,7 @@ open class Platform(
         @JvmStatic
         fun setAndRegister(platform: Platform): Boolean {
             setPlatform(platform)
-            platform.register()
+            platform.registerBlocking()
 
             (VanishAPI.get().getDatabase() as? TransactionDatabase)?.let {
                 if (!it.databaseConnected) {

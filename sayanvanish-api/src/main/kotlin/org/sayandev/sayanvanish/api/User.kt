@@ -3,9 +3,11 @@ package org.sayandev.sayanvanish.api
 import com.google.gson.*
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.future.asCompletableFuture
 import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.sayandev.sayanvanish.api.storage.PlatformTable
 import org.sayandev.sayanvanish.api.exception.UnsupportedPlatformException
 import org.sayandev.stickynote.core.utils.async
@@ -72,8 +74,12 @@ interface User {
         return hasPermission(permission.permission())
     }
 
-    fun sendMessage(component: Component) {
-        Platform.get().adapter.sendMessage(this, component)
+    fun sendMessage(content: Component) {
+        Platform.get().adapter.adapt(this).sendMessage(content)
+    }
+
+    fun sendActionbar(content: Component) {
+        Platform.get().adapter.adapt(this).sendActionbar(content)
     }
 
     /**
@@ -164,7 +170,7 @@ interface User {
      * @since 2.0.0
      */
     fun saveAndSyncBlocking(): List<Boolean> {
-        return runBlocking { saveAndSync().map { it.await() } }
+        return runBlocking { saveAndSync().awaitAll() }
     }
 
     /**
@@ -177,7 +183,7 @@ interface User {
     suspend fun asVanishUser(): Deferred<VanishUser> {
         return CompletableDeferred<VanishUser>().apply {
             async(VanishAPI.get().getDatabase().dispatcher) {
-                VanishAPI.get().getDatabase().getVanishUser(uniqueId).await() ?: VanishUser.of(uniqueId, username, serverId)
+                VanishAPI.get().getDatabase().getVanishUser(uniqueId).await() ?: VanishUser.Generic(uniqueId, username, serverId)
             }.let { complete(it.await()) }
         }
     }
@@ -205,7 +211,7 @@ interface User {
     }
 
     fun generatedVanishUser(): VanishUser {
-        return VanishUser.of(uniqueId, username, serverId)
+        return VanishUser.Generic(uniqueId, username, serverId)
     }
 
     /**
@@ -254,42 +260,7 @@ interface User {
         override var serverId: String
     ) : User
 
-    /**
-     * Converts this [User] to a [Generic] implementation.
-     *
-     * @return A [Generic] user instance with the same properties as this user.
-     * @since 2.0.0
-     */
-    fun asGeneric(): Generic {
-        return Generic(
-            uniqueId,
-            username,
-            isOnline,
-            serverId
-        )
-    }
-
     companion object {
-        /**
-         * Creates a new [User] instance with the given properties.
-         *
-         * @param uniqueId The unique identifier for the user.
-         * @param username The username of the user.
-         * @param isOnline Whether the user is currently online.
-         * @param serverId The ID of the server the user is connected to. If null, uses the platform's default server ID.
-         * @return A new [User] instance.
-         * @since 1.6.0
-         */
-        @JvmStatic
-        fun of(uniqueId: UUID, username: String, isOnline: Boolean, serverId: String?): User {
-            return Generic(
-                uniqueId,
-                username,
-                isOnline,
-                serverId ?: Platform.get().serverId
-            )
-        }
-
         /**
          * Retrieves a [User] from the cache by [UUID].
          *
@@ -297,7 +268,7 @@ interface User {
          * @return The [User] if found in cache, or null if not found.
          * @since 2.0.0
          */
-        @JvmStatic
+        @JvmSynthetic
         fun UUID.userFromCache(): User? {
             return VanishAPI.get().getCacheService().getUsers()[this]
         }

@@ -70,7 +70,7 @@ open class VelocityVanishUser(
         return player()?.hasPermission(permission) == true
     }
 
-    override fun sendComponent(content: String, vararg placeholder: TagResolver) {
+    override fun sendMessage(content: String, vararg placeholder: TagResolver) {
         player()?.sendComponent(content, *placeholder)
     }
 

@@ -17,13 +17,14 @@ data class Platform(
 ) {
 
     companion object {
+        // TODO: make a generic platform class
         private var currentPlatform = Platform("default", "SayanVanish", Logger.getGlobal(), File("."), "unknown", object : PlatformAdapter<User, VanishUser> {
-            override fun adapt(user: VanishUser): VanishUser {
-                throw OperationNotSupportedException("Default platform doesn't support vanish user adapt")
+            override fun adapt(user: User): User {
+                return user
             }
 
-            override fun sendMessage(user: User, message: Component) {
-                throw OperationNotSupportedException("Default platform doesn't support sending message to user")
+            override fun adapt(vanishUser: VanishUser): VanishUser {
+                return vanishUser
             }
         })
 

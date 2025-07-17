@@ -1,14 +1,24 @@
 package org.sayandev.sayanvanish.api
 
+import com.google.gson.*
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
-import org.sayandev.sayanvanish.api.exception.UnsupportedPlatformException
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.future.asCompletableFuture
+import kotlinx.coroutines.runBlocking
+import org.sayandev.sayanvanish.api.User.Companion.user
 import org.sayandev.sayanvanish.api.storage.PlatformTable
+import org.sayandev.stickynote.core.utils.async
+import java.lang.reflect.Type
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
 interface VanishUser : User {
+
     var currentOptions: VanishOptions
+
     var isVanished: Boolean
+
     var vanishLevel: Int
 
     suspend fun disappear(options: VanishOptions) {
@@ -37,14 +47,6 @@ interface VanishUser : User {
         toggleVanish(VanishOptions.defaultOptions())
     }
 
-    fun sendComponent(content: String, vararg placeholder: TagResolver) {
-        Platform.get().adapter.adapt(this).sendComponent(content, *placeholder)
-    }
-
-    fun sendActionbar(content: String, vararg placeholder: TagResolver) {
-        Platform.get().adapter.adapt(this).sendActionbar(content, *placeholder)
-    }
-
     /**
     * @param otherVanishUser The user to check if this user can see
     * */
@@ -55,16 +57,78 @@ interface VanishUser : User {
         return canSee
     }
 
+    @JvmSynthetic
     override suspend fun save(): Deferred<Boolean> {
         serverId = Platform.get().serverId
-        return VanishAPI.get().getDatabase().saveVanishUser(this)
+        val deferred = CompletableDeferred<Boolean>()
+        async(VanishAPI.get().getDatabase().dispatcher) {
+            listOf(
+                super.save(),
+                VanishAPI.get().getDatabase().saveVanishUser(this@VanishUser)
+            ).awaitAll()
+            deferred.complete(true)
+        }
+        return deferred
+    }
+
+    override fun saveBlocking(): Boolean {
+        return runBlocking { save().await() }
+    }
+
+    override fun saveFuture(): CompletableFuture<Boolean> {
+        return async(VanishAPI.get().getDatabase().dispatcher) {
+            save().await()
+        }.asCompletableFuture()
     }
 
     suspend fun delete() {
         VanishAPI.get().getDatabase().removeVanishUser(uniqueId)
     }
 
-    // TODO: implement a json type adapter for this class
+    @JvmSynthetic
+    override suspend fun sync(): Deferred<Boolean> {
+        val deferred = CompletableDeferred<Boolean>()
+        async(VanishAPI.get().getDatabase().dispatcher) {
+            listOf(
+                super.sync(),
+                VanishAPI.get().getMessagingService().syncVanishUser(this@VanishUser)
+            ).awaitAll()
+            deferred.complete(true)
+        }
+        return deferred
+    }
+
+    override fun syncBlocking(): Boolean {
+        return runBlocking { sync().await() }
+    }
+
+    override fun syncFuture(): CompletableFuture<Boolean> {
+        return async(VanishAPI.get().getDatabase().dispatcher) {
+            sync().await()
+        }.asCompletableFuture()
+    }
+
+    @JvmSynthetic
+    override suspend fun saveAndSync(): List<Deferred<Boolean>> {
+        return listOf(
+            save(),
+            sync()
+        )
+    }
+
+    override fun saveAndSyncBlocking(): List<Boolean> {
+        return runBlocking { saveAndSync().awaitAll() }
+    }
+
+    class JsonAdapter : JsonSerializer<VanishUser>, JsonDeserializer<VanishUser> {
+        override fun serialize(src: VanishUser, typeOfSrc: Type, context: JsonSerializationContext): JsonObject {
+            return JsonParser.parseString(Gson().toJson(src)).asJsonObject
+        }
+
+        override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): VanishUser {
+            return Gson().fromJson(json, Generic::class.java)
+        }
+    }
 
     object Schema : PlatformTable("vanish_users") {
         val uniqueId = reference("unique_id", User.Schema.uniqueId).uniqueIndex()
@@ -75,39 +139,47 @@ interface VanishUser : User {
         override val primaryKey = PrimaryKey(uniqueId)
     }
 
-    companion object {
-        // TODO: implement a generic type like User.Generic() to replace VanishUser.of() and use it for json type adapter
-        fun of(
-            uniqueId: UUID,
-            username: String,
-            serverId: String = Platform.get().serverId,
-            isVanished: Boolean = false,
-            isOnline: Boolean = false,
-            vanishLevel: Int = 1,
-            currentOptions: VanishOptions = VanishOptions.defaultOptions()
-        ): VanishUser {
-            return object : VanishUser {
-                override val uniqueId: UUID = uniqueId
-                override var username: String = username
-                override var serverId: String = serverId
-                override var currentOptions: VanishOptions = currentOptions
-                override var isVanished: Boolean = isVanished
-                override var isOnline: Boolean = isOnline
-                override var vanishLevel: Int = vanishLevel
-                override fun sendComponent(
-                    content: String,
-                    vararg placeholder: TagResolver
-                ) {
-                    throw UnsupportedPlatformException("sendComponent")
-                }
+    data class Generic(
+        override val uniqueId: UUID,
+        override var username: String,
+        override var serverId: String = Platform.get().serverId,
+        override var isVanished: Boolean = false,
+        override var isOnline: Boolean = false,
+        override var vanishLevel: Int = 1,
+        override var currentOptions: VanishOptions = VanishOptions.defaultOptions()
+    ): VanishUser
 
-                override fun sendActionbar(
-                    content: String,
-                    vararg placeholder: TagResolver
-                ) {
-                    throw UnsupportedPlatformException("sendActionbar")
-                }
-            }
+    companion object {
+        @JvmSynthetic
+        fun UUID.vanishUserFromCache(): VanishUser? {
+            return VanishAPI.get().getCacheService().getVanishUsers().getVanishUser(this)
+        }
+
+        @JvmSynthetic
+        suspend fun UUID.vanishUser(): Deferred<VanishUser?> {
+            return VanishAPI.get().getDatabase().getVanishUser(this)
+        }
+
+        @JvmSynthetic
+        fun UUID.vanishUserBlocking(): VanishUser? {
+            return runBlocking { vanishUser().await() }
+        }
+
+        @JvmStatic
+        fun getUserBlocking(uniqueId: UUID): VanishUser? {
+            return uniqueId.vanishUserBlocking()
+        }
+
+        @JvmSynthetic
+        fun UUID.vanishUserFuture(): CompletableFuture<VanishUser?> {
+            return async(VanishAPI.get().getDatabase().dispatcher) {
+                vanishUser().await()
+            }.asCompletableFuture()
+        }
+
+        @JvmStatic
+        fun getVanishUserFuture(uniqueId: UUID): CompletableFuture<VanishUser?> {
+            return uniqueId.vanishUserFuture()
         }
     }
 

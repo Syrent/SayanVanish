@@ -66,7 +66,7 @@ class SayanVanishProxyCommandVelocity : VelocityCommand(settings.command.name, *
             val user = player.getVanishUser() ?: player.generateVanishUser()
 
             if (!user.hasPermission(Permission.VANISH)) {
-                user.sendComponent(language.general.dontHavePermission, Placeholder.unparsed("permission", Permission.VANISH.permission()))
+                user.sendMessage(language.general.dontHavePermission, Placeholder.unparsed("permission", Permission.VANISH.permission()))
                 return@launch
             }
 

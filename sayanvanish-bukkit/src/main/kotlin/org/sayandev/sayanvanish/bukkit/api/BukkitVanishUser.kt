@@ -82,7 +82,7 @@ open class BukkitVanishUser(
         // order matters - don't move hideUser before vanish (hideUser have a canSee check for vanish state notify)
         hideUser()
 
-        sendComponent(language.vanish.vanishStateUpdate, Placeholder.parsed("state", stateText()))
+        sendMessage(language.vanish.vanishStateUpdate, Placeholder.parsed("state", stateText()))
     }
 
     override suspend fun appear(options: VanishOptions) {
@@ -102,7 +102,7 @@ open class BukkitVanishUser(
 
         super.appear(options)
 
-        sendComponent(language.vanish.vanishStateUpdate, Placeholder.parsed("state", stateText()))
+        sendMessage(language.vanish.vanishStateUpdate, Placeholder.parsed("state", stateText()))
     }
 
     override fun hasPermission(permission: String): Boolean {
@@ -133,7 +133,7 @@ open class BukkitVanishUser(
         }
     }
 
-    override fun sendComponent(content: String, vararg placeholder: TagResolver) {
+    override fun sendMessage(content: String, vararg placeholder: TagResolver) {
         player()?.sendComponent(content, *placeholder)
     }
 

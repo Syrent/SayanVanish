@@ -33,7 +33,7 @@ class FeatureFly(
         val user = event.user
         if (!isActive(user)) return
         if (!user.hasPermission(Permission.FLY_KEEP_AFTER_REAPPEAR) && disableOnReappear) {
-            user.sendComponent(language.feature.flyDisabled)
+            user.sendMessage(language.feature.flyDisabled)
             user.player()?.allowFlight = false
             user.player()?.isFlying = false
         }

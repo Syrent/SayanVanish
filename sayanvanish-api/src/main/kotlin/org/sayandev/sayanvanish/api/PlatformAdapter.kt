@@ -1,9 +1,7 @@
 package org.sayandev.sayanvanish.api
 
-import net.kyori.adventure.text.Component
-
 interface PlatformAdapter<U: User, V: VanishUser> {
-    fun adapt(user: VanishUser): V
+    fun adapt(user: User): U
 
-    fun sendMessage(user: U, message: Component)
+    fun adapt(vanishUser: VanishUser): V
 }

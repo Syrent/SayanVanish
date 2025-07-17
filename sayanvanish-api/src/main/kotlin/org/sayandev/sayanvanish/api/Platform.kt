@@ -15,12 +15,14 @@ open class Platform(
     val adapter: PlatformAdapter<out User, out VanishUser>,
 ) {
 
+    @JvmSynthetic
     open suspend fun register() { }
 
     fun registerBlocking() {
         runBlocking { register() }
     }
 
+    @JvmSynthetic
     open suspend fun unregister() {
         VanishAPI.get().getDatabase().disconnect().await()
     }

@@ -12,6 +12,8 @@ import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.feature.Features
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedUser
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getCachedOrCreateUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrCreateUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
@@ -57,9 +59,6 @@ open class BukkitVanishUser(
             field
         }
 
-
-    fun stateText(isVanished: Boolean = this.isVanished) = if (isVanished) "<green>ON</green>" else "<red>OFF</red>"
-
     fun player(): Player? = Bukkit.getPlayer(uniqueId)
     fun offlinePlayer(): OfflinePlayer = Bukkit.getOfflinePlayer(uniqueId)
 
@@ -82,7 +81,7 @@ open class BukkitVanishUser(
         // order matters - don't move hideUser before vanish (hideUser have a canSee check for vanish state notify)
         hideUser()
 
-        sendMessage(language.vanish.vanishStateUpdate, Placeholder.parsed("state", stateText()))
+        sendMessage(language.vanish.vanishStateUpdate.component(Placeholder.parsed("state", stateText())))
     }
 
     override suspend fun appear(options: VanishOptions) {
@@ -102,7 +101,7 @@ open class BukkitVanishUser(
 
         super.appear(options)
 
-        sendMessage(language.vanish.vanishStateUpdate, Placeholder.parsed("state", stateText()))
+        sendMessage(language.vanish.vanishStateUpdate.component(Placeholder.parsed("state", stateText())))
     }
 
     override fun hasPermission(permission: String): Boolean {
@@ -133,14 +132,6 @@ open class BukkitVanishUser(
         }
     }
 
-    override fun sendMessage(content: String, vararg placeholder: TagResolver) {
-        player()?.sendComponent(content, *placeholder)
-    }
-
-    override fun sendActionbar(content: String, vararg placeholder: TagResolver) {
-        player()?.sendComponentActionbar(content, *placeholder)
-    }
-
     fun hideUser() {
         for (onlinePlayer in onlinePlayers) {
             hideUser(onlinePlayer)
@@ -153,8 +144,8 @@ open class BukkitVanishUser(
     }
 
     fun hideUser(target: Player) {
-        if (target.user() == null && (target.isOp || target.hasPermission(Permission.VANISH.permission()))) {
-            target.getOrCreateUser()
+        if (target.cachedUser() == null && (target.isOp || target.hasPermission(Permission.VANISH.permission()))) {
+            target.getCachedOrCreateUser()
         }
     }
 

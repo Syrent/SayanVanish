@@ -10,17 +10,13 @@ import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.utils.DownloadUtils
 import org.sayandev.sayanvanish.api.utils.HangarUtils
 import org.sayandev.sayanvanish.api.utils.VersionInfo
+import org.sayandev.sayanvanish.bukkit.SayanVanishPlugin
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
-import org.sayandev.sayanvanish.bukkit.config.settings
+import org.sayandev.sayanvanish.bukkit.config.SettingsConfig
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
-import org.sayandev.sayanvanish.bukkit.sayanvanish
 import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendComponent
 import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendRawComponent
-import org.sayandev.stickynote.bukkit.StickyNote
-import org.sayandev.stickynote.bukkit.log
-import org.sayandev.stickynote.bukkit.plugin
-import org.sayandev.stickynote.bukkit.runAsync
-import org.sayandev.stickynote.bukkit.runSync
+import org.sayandev.stickynote.bukkit.*
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.objectmapping.meta.Comment
 import java.io.File
@@ -52,7 +48,7 @@ class FeatureUpdate(
     @Comment("The content of the update request message")
     val updateRequestContent: List<String> = listOf(
         "<green>A new version of <white>SayanVanish</white> is available!",
-        "<hover:show_text:'<red>Click to update'><click:run_command:'/${settings.vanishCommand.name} forceupdate'><aqua>You can install version <version> by clicking on this message</click></hover>",
+        "<hover:show_text:'<red>Click to update'><click:run_command:'/${SettingsConfig.get().vanishCommand.name} forceupdate'><aqua>You can install version <version> by clicking on this message</click></hover>",
         "<red>Make sure to read the changelog before doing any update to prevent unexpected behaviors",
     )
 ) : ListenedFeature("update") {
@@ -91,7 +87,7 @@ class FeatureUpdate(
         val user = player.user() ?: return
         if (!isActive(user)) return
         if (notifyOnJoin && player.hasPermission(notifyPermission) && latestRelease != null && latestSnapshot != null) {
-            if (!settings.general.proxyMode) {
+            if (!SettingsConfig.get().general.proxyMode) {
                 sendUpdateNotification(player)
             }
 
@@ -102,7 +98,7 @@ class FeatureUpdate(
     }
 
     private fun sendUpdateNotification(sender: CommandSender) {
-        if (!isNewerVersionAvailable(notifyForSnapshotBuilds) || settings.general.proxyMode) return
+        if (!isNewerVersionAvailable(notifyForSnapshotBuilds) || SettingsConfig.get().general.proxyMode) return
 
         for (line in updateNotificationContent) {
             sender.sendRawComponent(line
@@ -145,11 +141,11 @@ class FeatureUpdate(
         val future = CompletableFuture<Boolean>()
         if (!isNewerVersionAvailable(notifyForSnapshotBuilds)) future.complete(false)
 
-        val updateDirectory = File(sayanvanish.dataFolder.parentFile, "update")
+        val updateDirectory = File(plugin.dataFolder.parentFile, "update")
         val updatedFile = if (StickyNote.isPaper) {
             if (!updateDirectory.exists()) { updateDirectory.mkdirs() }
-            File(updateDirectory, sayanvanish.pluginFile().name)
-        } else sayanvanish.pluginFile()
+            File(updateDirectory, SayanVanishPlugin.getInstance().pluginFile().name)
+        } else SayanVanishPlugin.getInstance().pluginFile()
 
         if (plugin.description.version.contains("SNAPSHOT")) {
             latestSnapshot?.let { snapshot ->

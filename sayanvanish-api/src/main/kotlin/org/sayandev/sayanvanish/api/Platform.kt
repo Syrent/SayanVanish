@@ -1,20 +1,24 @@
 package org.sayandev.sayanvanish.api
 
-import com.mysql.cj.jdbc.exceptions.OperationNotSupportedException
-import net.kyori.adventure.text.Component
 import org.sayandev.sayanvanish.api.storage.TransactionDatabase
 import org.sayandev.sayanvanish.api.feature.RegisteredFeatureHandler
 import java.io.File
 import java.util.logging.Logger
 
-data class Platform(
+open class Platform(
     val id: String,
     val pluginName: String,
     val logger: Logger,
     var rootDirectory: File,
     var serverId: String,
-    val adapter: PlatformAdapter<in User, out VanishUser>,
+    val adapter: PlatformAdapter<out User, out VanishUser>,
 ) {
+
+    open suspend fun register() { }
+
+    open suspend fun unregister() {
+        VanishAPI.get().getDatabase().disconnect().await()
+    }
 
     companion object {
         private var currentPlatform = Platform(
@@ -43,6 +47,7 @@ data class Platform(
         @JvmStatic
         fun setAndRegister(platform: Platform): Boolean {
             setPlatform(platform)
+            platform.register()
 
             (VanishAPI.get().getDatabase() as? TransactionDatabase)?.let {
                 if (!it.databaseConnected) {

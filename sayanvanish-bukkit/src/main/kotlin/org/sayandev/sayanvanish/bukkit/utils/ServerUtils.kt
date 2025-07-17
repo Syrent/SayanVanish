@@ -4,6 +4,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import org.bukkit.plugin.Plugin
+import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.plugin
@@ -15,7 +16,7 @@ object ServerUtils {
 
     val gson = GsonBuilder().setPrettyPrinting().create()
 
-    fun getServerData(additionalData: Map<String, String> = emptyMap()): String {
+    suspend fun getServerData(additionalData: Map<String, String> = emptyMap()): String {
         val jsonObject = JsonObject()
         jsonObject.add("paste-info", JsonObject().apply {
             this.addProperty("instant", Instant.now().toString())
@@ -45,7 +46,7 @@ object ServerUtils {
         })
 
         jsonObject.add("vanished-users", JsonArray().apply {
-            SayanVanishBukkitAPI.getInstance().getVanishedUsers().map { it.username }.forEach(this::add)
+            VanishAPI.get().getDatabase().getVanishUsers().await().map { it.username }.forEach(this::add)
         })
 
         jsonObject.add("plugin", serializePlugin(plugin))

@@ -1,6 +1,8 @@
 package org.sayandev.sayanvanish.api.utils
 
 import com.google.gson.JsonParser
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -15,8 +17,8 @@ class Paste(
     val content: List<String>,
 ) {
 
-    fun post(): CompletableFuture<String> {
-        val future = CompletableFuture<String>()
+    suspend fun post(): Deferred<String> {
+        val deferred = CompletableDeferred<String>()
 
         val url = URL(POST_URL)
         val connection = url.openConnection() as HttpURLConnection
@@ -43,8 +45,8 @@ class Paste(
 
                 val key = JsonParser.parseString(response.toString()).asJsonObject.get("key").asString
 
-                future.complete(key)
-                return future
+                deferred.complete(key)
+                return deferred
             }
         } else {
             throw IOException("Failed to upload content, HTTP response code: $responseCode")

@@ -56,14 +56,14 @@ class TypedMessagingService: MessagingService {
     }
 
     override suspend fun syncUser(user: User): Deferred<Boolean> {
-        return service(MessagingCategoryTypes.SYNC_USER).syncUser(user)
+        return messagingService(MessagingCategoryTypes.SYNC_USER).syncUser(user)
     }
 
     override suspend fun syncVanishUser(vanishUser: VanishUser): Deferred<Boolean> {
-        return service(MessagingCategoryTypes.SYNC_USER).syncUser(vanishUser)
+        return messagingService(MessagingCategoryTypes.SYNC_USER).syncUser(vanishUser)
     }
 
-    fun service(type: MessagingType): MessagingService {
+    fun messagingService(type: MessagingType): MessagingService {
         return messageTypes[type] ?: let {
             val (fallbackMethod, fallbackService) = messageTypes.entries.first()
             Platform.get().logger.warning("Tried to get a messaging service of type $type, but it was not initialized. falling back to ${fallbackMethod} database method.")
@@ -71,8 +71,8 @@ class TypedMessagingService: MessagingService {
         }
     }
 
-    fun service(categoryType: MessagingCategoryType): MessagingService {
-        return service(categoryType.type)
+    fun messagingService(categoryType: MessagingCategoryType): MessagingService {
+        return messagingService(categoryType.type)
     }
 
     private fun logMessagingConnectionError() {

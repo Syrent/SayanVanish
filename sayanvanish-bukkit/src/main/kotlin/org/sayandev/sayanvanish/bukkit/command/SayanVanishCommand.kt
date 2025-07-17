@@ -16,6 +16,7 @@ import org.incendo.cloud.parser.standard.StringParser
 import org.incendo.cloud.setting.ManagerSetting
 import org.incendo.cloud.suggestion.Suggestion
 import org.sayandev.sayanvanish.api.Permission
+import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.Features
@@ -23,9 +24,8 @@ import org.sayandev.sayanvanish.api.feature.RegisteredFeatureHandler
 import org.sayandev.sayanvanish.api.storage.StorageConfig
 import org.sayandev.sayanvanish.api.storage.storageConfig
 import org.sayandev.sayanvanish.api.utils.Paste
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrAddUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrAddVanishUser
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrCreateUser
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrCreateVanishUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.config.LanguageConfig
 import org.sayandev.sayanvanish.bukkit.config.SettingsConfig
@@ -80,13 +80,13 @@ class SayanVanishCommand : BukkitCommand(SettingsConfig.get().vanishCommand.name
 
         val player = if (target.isPresent) context.optional<OfflinePlayer>("player").get() else context.sender().player() ?: return
         launch {
-            val user = player.getOrAddUser()
+            val user = player.getOrAddVanishUser()
 
             if (!user.hasPermission(Permission.VANISH)) {
                 user.sendMessage(language.vanish.dontHaveUsePermission.component(Placeholder.unparsed("permission", Permission.VANISH.permission())))
             }
 
-            val vanishUser = player.getOrAddVanishUser()
+            player.getOrAddVanishUser()
 
             val options = VanishOptions.defaultOptions().apply {
                 if (context.flags().hasFlag("silent")) {
@@ -137,7 +137,7 @@ class SayanVanishCommand : BukkitCommand(SettingsConfig.get().vanishCommand.name
                         runSync {
                             if (isSuccessful) {
                                 sender.sendComponent(language.general.updated, Placeholder.unparsed("version", updateFeature.latestVersion()))
-                                if (settings.general.proxyMode && updateFeature.willAffectProxy()) {
+                                if (SettingsConfig.get().general.proxyMode && updateFeature.willAffectProxy()) {
                                     sender.sendComponent(language.general.proxyUpdateWarning)
                                 }
                             } else {
@@ -151,10 +151,10 @@ class SayanVanishCommand : BukkitCommand(SettingsConfig.get().vanishCommand.name
 
         rawCommandBuilder().registerCopy {
             literalWithPermission("paste")
-            handler { context ->
+            suspendingHandler { context ->
                 val sender = context.sender().platformSender()
                 sender.sendComponent(language.paste.generating)
-                runAsync {
+                async {
                     val blockedWords = listOf(
                         "host",
                         "port",
@@ -162,35 +162,25 @@ class SayanVanishCommand : BukkitCommand(SettingsConfig.get().vanishCommand.name
                         "username",
                         "password",
                     )
-                    Paste("yaml", storageConfig.file.readLines().filter { !blockedWords.any { blockedWord -> it.contains(blockedWord) } }).post().whenComplete { databaseKey, databaseError ->
-                        sendPasteError(sender, databaseError)
+                    val databaseKey = Paste("yaml", storageConfig.file.readLines().filter { !blockedWords.any { blockedWord -> it.contains(blockedWord) } }).post().await()
+                    val settingsKey = Paste("yaml", SettingsConfig.settingsFile.readLines()).post().await()
+                    val latestLogFile = File(File(pluginDirectory.parentFile.parentFile, "logs"), "latest.log")
+                    if (latestLogFile.exists()) {
+                        val logKey = Paste("log", latestLogFile.readLines()).post().await()
 
-                        Paste("yaml", SettingsConfig.settingsFile.readLines()).post().whenComplete { settingsKey, settingsError ->
-                            sendPasteError(sender, settingsError)
-
-                            val latestLogFile = File(File(pluginDirectory.parentFile.parentFile, "logs"), "latest.log")
-                            if (latestLogFile.exists()) {
-                                Paste("log", latestLogFile.readLines()).post().whenComplete { logKey, logError ->
-
-                                    val featurePastes = mutableMapOf<String, List<String>>()
-                                    for (feature in Features.features()) {
-                                        featurePastes[feature.id] = feature.file.readLines()
-                                    }
-                                    Paste("yaml", featurePastes.map { "${it.key}:\n     ${it.value.joinToString("\n     ")}" }).post().whenComplete { featureKey, featureError ->
-                                        sendPasteError(sender, featureError)
-                                        generateMainPaste(sender, mapOf(
-                                            "database.yml" to "${Paste.PASTE_URL}/$databaseKey",
-                                            "settings.yml" to "${Paste.PASTE_URL}/$settingsKey",
-                                            "latest.log" to "${Paste.PASTE_URL}/$logKey",
-                                            "features" to "${Paste.PASTE_URL}/$featureKey"
-                                        ))
-                                    }
-                                    sendPasteError(sender, logError)
-                                }
-                            } else {
-                                generateMainPaste(sender, mapOf("settings.yml" to "${Paste.PASTE_URL}/$settingsKey"))
-                            }
+                        val featurePastes = mutableMapOf<String, List<String>>()
+                        for (feature in Features.features()) {
+                            featurePastes[feature.id] = feature.file.readLines()
                         }
+                        val featureKey = Paste("yaml", featurePastes.map { "${it.key}:\n     ${it.value.joinToString("\n     ")}" }).post().await()
+                        generateMainPaste(sender, mapOf(
+                            "database.yml" to "${Paste.PASTE_URL}/$databaseKey",
+                            "settings.yml" to "${Paste.PASTE_URL}/$settingsKey",
+                            "latest.log" to "${Paste.PASTE_URL}/$logKey",
+                            "features" to "${Paste.PASTE_URL}/$featureKey"
+                        ))
+                    } else {
+                        generateMainPaste(sender, mapOf("settings.yml" to "${Paste.PASTE_URL}/$settingsKey"))
                     }
                 }
             }
@@ -210,7 +200,7 @@ class SayanVanishCommand : BukkitCommand(SettingsConfig.get().vanishCommand.name
                 Features.features.clear()
                 Features.userFeatures.clear()
                 RegisteredFeatureHandler.process()
-                settings = SettingsConfig.fromConfig() ?: SettingsConfig.defaultConfig()
+                SettingsConfig.reload()
                 storageConfig = StorageConfig.fromConfig() ?: StorageConfig.defaultConfig()
                 sender.sendComponent(language.general.reloaded)
             }
@@ -224,22 +214,22 @@ class SayanVanishCommand : BukkitCommand(SettingsConfig.get().vanishCommand.name
             literalWithPermission("set")
             required("player", OfflinePlayerParser.offlinePlayerParser())
             required("level", IntegerParser.integerParser(0))
-            handler { context ->
+            suspendingHandler { context ->
                 val sender = context.sender().platformSender()
                 val target = context.get<OfflinePlayer>("player")
 
                 if (!target.hasPlayedBefore()) {
                     sender.sendComponent(language.general.playerNotFound)
-                    return@handler
+                    return@suspendingHandler
                 }
 
-                val user = target.getOrAddUser()
+                val user = target.getOrAddVanishUser()
                 user.vanishLevel = context.get("level")
                 user.save()
 
                 if (Features.getFeature<FeatureLevel>().levelMethod == FeatureLevel.LevelMethod.PERMISSION) {
                     sender.sendComponent(language.feature.permissionLevelMethodWarning, Placeholder.unparsed("method", FeatureLevel.LevelMethod.PERMISSION.name), Placeholder.unparsed("methods", FeatureLevel.LevelMethod.entries.joinToString(", ") { it.name }))
-                    return@handler
+                    return@suspendingHandler
                 }
 
                 sender.sendComponent(language.vanish.levelSet, Placeholder.unparsed("level", user.vanishLevel.toString()), Placeholder.unparsed("player", user.username))
@@ -249,16 +239,16 @@ class SayanVanishCommand : BukkitCommand(SettingsConfig.get().vanishCommand.name
         levelLiteral.registerCopy {
             literalWithPermission("get")
             required("player", OfflinePlayerParser.offlinePlayerParser())
-            handler { context ->
+            suspendingHandler { context ->
                 val sender = context.sender().platformSender()
                 val target = context.get<OfflinePlayer>("player")
 
                 if (!target.hasPlayedBefore()) {
                     sender.sendComponent(language.general.playerNotFound)
-                    return@handler
+                    return@suspendingHandler
                 }
 
-                val user = target.getOrCreateUser()
+                val user = target.getOrCreateVanishUser()
 
                 sender.sendComponent(language.vanish.levelGet, Placeholder.unparsed("player", target.name ?: "N/A"), Placeholder.unparsed("level", user.vanishLevel.toString()))
             }
@@ -272,37 +262,37 @@ class SayanVanishCommand : BukkitCommand(SettingsConfig.get().vanishCommand.name
         val togglePlayerLiteral = featureLiteral.registerCopy {
             literalWithPermission("toggleplayer")
             optional("player", PlayerParser.playerParser())
-            handler { context ->
+            suspendingHandler { context ->
                 val targetArg = context.optional<Player>("player").getOrNull()
 
                 val sender = context.sender().platformSender()
                 if (targetArg != null && !sender.hasPermission(Permission.FEATURE_PLAYER_TOGGLE.permission())) {
                     sender.sendComponent(language.feature.togglePlayerOther)
-                    return@handler
+                    return@suspendingHandler
                 }
 
                 if (targetArg == null && sender !is Player) {
                     sender.sendComponent(language.general.haveToProvidePlayer)
-                    return@handler
+                    return@suspendingHandler
                 }
 
                 val target = targetArg ?: sender as Player
 
                 val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
                     sender.sendComponent(language.feature.notFound)
-                    return@handler
+                    return@suspendingHandler
                 }
 
-                val user = target.user() ?: let {
+                val user = target.user().await() ?: let {
                     sender.sendComponent(language.general.userNotFound, Placeholder.unparsed("player", target.name))
-                    return@handler
+                    return@suspendingHandler
                 }
 
                 val userFeature = Features.userFeatures(user).find { it.id == feature.id }!!
 
                 userFeature.toggle()
                 sender.sendComponent(language.feature.togglePlayer, Placeholder.unparsed("player", target.name), Placeholder.unparsed("feature", feature.id), Placeholder.unparsed("state", if (userFeature.enabled) "enabled" else "disabled"))
-                return@handler
+                return@suspendingHandler
             }
         }
         manager.command(manager.commandBuilder("togglefeature").proxies(togglePlayerLiteral.build()))
@@ -437,9 +427,12 @@ class SayanVanishCommand : BukkitCommand(SettingsConfig.get().vanishCommand.name
 
         testLiteral.registerCopy {
             literalWithPermission("users")
-            handler { context ->
+            suspendingHandler { context ->
+                // TODO: better implementation?
                 val sender = context.sender().platformSender()
-                sender.sendComponent("<green>Vanished Users: <yellow>${SayanVanishAPI.getVanishedUsers().map { it.username }}")
+                sender.sendComponent("<gray>Fetching vanish users from database...")
+                sender.sendComponent("<green>Database Vanished Users: <yellow>${VanishAPI.get().getVanishedUsers().await().map { it.username }}")
+                sender.sendComponent("<green>Cache Vanished Users: <yellow>${VanishAPI.get().getCacheService().getVanishUsers().values.map { it.username }}")
             }
         }
 
@@ -450,21 +443,19 @@ class SayanVanishCommand : BukkitCommand(SettingsConfig.get().vanishCommand.name
         testDatabaseLiteral.registerCopy {
             literalWithPermission("data")
             optional("limit", IntegerParser.integerParser(1, 10000))
-            flag("no-cache")
-            handler { context ->
+            suspendingHandler { context ->
+                // TODO: better implementation?
                 val sender = context.sender().platformSender()
                 val limit = context.get<Int>("limit")
-                val database = SayanVanishAPI.getDatabase()
-                if (context.flags().hasFlag("no-cache")) {
-                    database.useCache = false
-                }
-
-                val users = database.getVanishUsers()
-
-                val limitedUsers = users.take(limit)
+                val database = VanishAPI.get().getDatabase()
 
                 val counter = MilliCounter()
                 counter.start()
+
+                val users = database.getVanishUsers().await()
+
+                val limitedUsers = users.take(limit)
+
                 for ((index, user) in limitedUsers.withIndex()) {
                     val userProperties = user::class.memberProperties
                         .filterIsInstance<KProperty1<Any, *>>()
@@ -480,8 +471,6 @@ class SayanVanishCommand : BukkitCommand(SettingsConfig.get().vanishCommand.name
                 }
                 counter.stop()
                 sender.sendComponent("<gray>Took <green>${counter.get()}ms</green>")
-
-                database.useCache = true
             }
         }
 
@@ -489,55 +478,35 @@ class SayanVanishCommand : BukkitCommand(SettingsConfig.get().vanishCommand.name
             literalWithPermission("performance")
             optional("amount", IntegerParser.integerParser(1, 10000))
             optional("tries", IntegerParser.integerParser(1, 10))
-            flag("no-cache")
-            handler { context ->
+            suspendingHandler { context ->
+                // TODO: better implementation?
                 val sender = context.sender().platformSender()
                 val amount = context.get<Int>("amount")
-                val database = SayanVanishAPI.getDatabase()
-                if (context.flags().hasFlag("no-cache")) {
-                    database.useCache = false
-                }
+                val database = VanishAPI.get().getDatabase()
 
                 repeat(context.get("tries")) {
                     val counter = MilliCounter()
                     counter.start()
                     sender.sendComponent("<gold>[${it + 1}] <gray>Trying <green>${amount} Get Users</green> from data storage")
                     repeat(amount) {
-                        database.getVanishUsers()
+                        database.getVanishUsers().await()
                     }
                     counter.stop()
                     sender.sendComponent("<gold>[${it + 1}] <gray>Took <green>${counter.get()}ms</green>")
                 }
-
-                database.useCache = true
             }
         }
 
     }
 
-    private fun sendPasteError(sender: CommandSender, error: Throwable?) {
-        if (error != null) {
-            runSync {
-                sender.sendComponent(language.paste.failedToGenerate)
-            }
-            error.printStackTrace()
-        }
-    }
-
-    private fun generateMainPaste(sender: CommandSender, otherKeys: Map<String, String>) {
-        Paste("json", listOf(ServerUtils.getServerData(
+    private suspend fun generateMainPaste(sender: CommandSender, otherKeys: Map<String, String>) {
+        val key = Paste("json", listOf(ServerUtils.getServerData(
             mutableMapOf(
                 "database-type" to storageConfig.method.toString(),
             ).apply {
                 this.putAll(otherKeys)
             }
-        ))
-        ).post().whenComplete { key, generalError ->
-            sendPasteError(sender, generalError)
-
-            runSync {
-                sender.sendComponent(language.paste.use.replace("<key>", key ?: "N/A"))
-            }
-        }
+        ))).post().await()
+        sender.sendComponent(language.paste.use.replace("<key>", key ?: "N/A"))
     }
 }

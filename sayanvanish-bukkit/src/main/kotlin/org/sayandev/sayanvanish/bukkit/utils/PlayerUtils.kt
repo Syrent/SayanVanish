@@ -1,12 +1,10 @@
 package org.sayandev.sayanvanish.bukkit.utils
 
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
-import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
+import org.sayandev.sayanvanish.bukkit.config.SettingsConfig
 import org.sayandev.sayanvanish.bukkit.config.language
-import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils
-import org.sayandev.stickynote.bukkit.warn
 
 object PlayerUtils {
 
@@ -14,7 +12,7 @@ object PlayerUtils {
         if (content.isBlank()) return
 
         val prefix = language.general.prefix
-        AdventureUtils.sendComponent(this, if (settings.general.includePrefixInMessages) {
+        AdventureUtils.sendComponent(this, if (SettingsConfig.get().general.includePrefixInMessages) {
             prefix + content
         } else {
             content

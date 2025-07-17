@@ -21,6 +21,9 @@ interface VanishUser : User {
 
     var vanishLevel: Int
 
+    // TODO: better implementation for this
+    fun stateText(isVanished: Boolean = this.isVanished) = if (isVanished) "<green>ON</green>" else "<red>OFF</red>"
+
     suspend fun disappear(options: VanishOptions) {
         isVanished = true
         save()

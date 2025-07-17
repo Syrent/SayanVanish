@@ -17,16 +17,18 @@ data class Platform(
 ) {
 
     companion object {
-        // TODO: make a generic platform class
-        private var currentPlatform = Platform("default", "SayanVanish", Logger.getGlobal(), File("."), "unknown", object : PlatformAdapter<User, VanishUser> {
-            override fun adapt(user: User): User {
-                return user
-            }
-
-            override fun adapt(vanishUser: VanishUser): VanishUser {
-                return vanishUser
-            }
-        })
+        private var currentPlatform = Platform(
+            "sayanvanish",
+            "SayanVanish",
+            Logger.getGlobal(),
+            File(".", "sayanvanish").apply {
+                if (!this.exists()) {
+                    this.mkdirs()
+                }
+            },
+            "sayanvanish-virtual-server",
+            APIPlatformAdapter()
+        )
 
         @JvmStatic
         fun setPlatform(platform: Platform) {

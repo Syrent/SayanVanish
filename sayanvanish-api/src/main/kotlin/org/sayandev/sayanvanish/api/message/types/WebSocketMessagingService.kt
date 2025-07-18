@@ -35,7 +35,7 @@ class WebSocketMessagingService(
     }
 
     inner class SyncUserPublisher : WebSocketPublisher<User, Boolean>(
-        MessageMeta.create(Platform.get().id.lowercase(), MessagingCategoryTypes.SYNC_USER.id),
+        MessageMeta.create(Platform.get().pluginName.lowercase(), MessagingCategoryTypes.SYNC_USER.id),
         WebSocketConnectionMeta(URI.create(config.uri), dispatcher),
         Platform.get().logger
     ) {
@@ -64,7 +64,7 @@ class WebSocketMessagingService(
     }
 
     inner class SyncVanishUserPublisher : WebSocketPublisher<VanishUser, Boolean>(
-        MessageMeta.create(Platform.get().id.lowercase(), MessagingCategoryTypes.SYNC_VANISH_USER.id),
+        MessageMeta.create(Platform.get().pluginName.lowercase(), MessagingCategoryTypes.SYNC_VANISH_USER.id),
         WebSocketConnectionMeta(URI.create(config.uri), dispatcher),
         Platform.get().logger
     ) {

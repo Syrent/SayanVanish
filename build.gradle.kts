@@ -79,6 +79,10 @@ allprojects {
     plugins.apply("org.sayandev.stickynote.project")
     plugins.apply("com.modrinth.minotaur")
 
+    stickynote {
+        relocate(!gradle.startParameter.taskNames.any { it.startsWith("runServer") || it.startsWith("runVelocity") })
+    }
+
     repositories {
         mavenLocal()
         mavenCentral()

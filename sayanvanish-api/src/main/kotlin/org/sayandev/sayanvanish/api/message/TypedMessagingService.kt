@@ -7,7 +7,9 @@ import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.message.types.RedisMessagingService
 import org.sayandev.sayanvanish.api.message.types.WebSocketMessagingService
+import org.sayandev.sayanvanish.api.utils.Gson
 import org.sayandev.stickynote.core.coroutine.dispatcher.AsyncDispatcher
+import org.sayandev.stickynote.core.messaging.PayloadWrapper
 
 class TypedMessagingService: MessagingService {
     override val dispatcher =
@@ -20,6 +22,11 @@ class TypedMessagingService: MessagingService {
     var messagingConnected: Boolean = true
 
     suspend fun initialize(): Deferred<Boolean> {
+        PayloadWrapper.registerSerializer(User::class.java, User.JsonAdapter())
+        PayloadWrapper.registerDeserializer(User::class.java, User.JsonAdapter())
+        PayloadWrapper.registerDeserializer(VanishUser::class.java, VanishUser.JsonAdapter())
+        PayloadWrapper.registerDeserializer(VanishUser::class.java, VanishUser.JsonAdapter())
+
         val messagingTypes = messageConfig.categoryTypes.map { it.type }.distinct()
         for (method in messagingTypes) {
             when {
@@ -60,7 +67,7 @@ class TypedMessagingService: MessagingService {
     }
 
     override suspend fun syncVanishUser(vanishUser: VanishUser): Deferred<Boolean> {
-        return messagingService(MessagingCategoryTypes.SYNC_USER).syncUser(vanishUser)
+        return messagingService(MessagingCategoryTypes.SYNC_VANISH_USER).syncVanishUser(vanishUser)
     }
 
     fun messagingService(type: MessagingType): MessagingService {

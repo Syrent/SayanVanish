@@ -49,7 +49,6 @@ class FeatureActionbar(
         launch {
             delay(delayMillis)
             while (StickyNote.plugin().isEnabled && enabled && isActive) {
-                warn("vanished users: ${VanishAPI.get().getCacheService().getVanishUsers().values.joinToString(" ,") { "${it.username}:${it.isVanished}" }}")
                 for (user in onlinePlayers.mapNotNull { it.cachedVanishUser() }.filter { it.isVanished }) {
                     if (!isActive(user)) continue
                     user.sendActionbar(content.component())

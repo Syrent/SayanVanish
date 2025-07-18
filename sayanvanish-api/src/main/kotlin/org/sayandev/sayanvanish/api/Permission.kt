@@ -10,6 +10,6 @@ enum class Permission(val value: String) {
     FLY("action.vanish.fly");
 
     fun permission(): String {
-        return "${Platform.get().id.lowercase()}.${value}"
+        return "${Platform.get().pluginName.lowercase()}.${value}"
     }
 }

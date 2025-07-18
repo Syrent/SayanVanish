@@ -39,7 +39,7 @@ class RedisMessagingService(
     }
 
     inner class SyncUserPublisher : RedisPublisher<User, Boolean>(
-        MessageMeta.create(Platform.get().id.lowercase(), MessagingCategoryTypes.SYNC_USER.id),
+        MessageMeta.create(Platform.get().pluginName.lowercase(), MessagingCategoryTypes.SYNC_USER.id),
         RedisConnectionMeta(connection.redis, dispatcher),
         Platform.get().logger
     ) {
@@ -68,7 +68,7 @@ class RedisMessagingService(
     }
 
     inner class SyncVanishUserPublisher : RedisPublisher<VanishUser, Boolean>(
-        MessageMeta.create(Platform.get().id.lowercase(), MessagingCategoryTypes.SYNC_VANISH_USER.id),
+        MessageMeta.create(Platform.get().pluginName.lowercase(), MessagingCategoryTypes.SYNC_VANISH_USER.id),
         RedisConnectionMeta(connection.redis, dispatcher),
         Platform.get().logger
     ) {

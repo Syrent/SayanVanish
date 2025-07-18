@@ -4,6 +4,7 @@ import kotlinx.coroutines.runBlocking
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import org.sayandev.sayanvanish.api.Platform
+import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.storage.DatabaseType
 import org.sayandev.sayanvanish.api.storage.sql.SQLConfig
@@ -29,7 +30,7 @@ class SayanVanishPlugin : JavaPlugin() {
             return
         }
 
-        SayanVanishBukkitAPI()
+        SayanVanishAPI.initialize()
 
         Settings.reload()
 

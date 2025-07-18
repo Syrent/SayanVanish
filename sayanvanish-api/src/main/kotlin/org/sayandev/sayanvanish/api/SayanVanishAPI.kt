@@ -29,10 +29,11 @@ object SayanVanishAPI : VanishAPI {
         return cacheService
     }
 
-    init {
+    fun initialize() {
         runBlocking {
             database.initialize().await()
             messagingService.initialize().await()
+            cacheService.fetchData()
         }
 
         launch(database.dispatcher) {

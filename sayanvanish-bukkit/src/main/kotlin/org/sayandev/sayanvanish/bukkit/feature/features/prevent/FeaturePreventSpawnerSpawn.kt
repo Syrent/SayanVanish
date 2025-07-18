@@ -6,6 +6,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.StickyNote
@@ -28,7 +29,7 @@ class FeaturePreventSpawnerSpawn: ListenedFeature("prevent_spawner_spawn", categ
         if (!isActive()) return
         val nearPlayers = onlinePlayers
             .filter { player -> player.gameMode != GameMode.SPECTATOR && player.world == event.spawnerLocation.world && player.location.distance(event.spawnerLocation) <= 256 }
-        val allIsVanished = nearPlayers.all { it.user()?.isVanished == true }
+        val allIsVanished = nearPlayers.all { it.cachedVanishUser()?.isVanished == true }
         if (allIsVanished) {
             event.isCancelled = true
         }

@@ -3,11 +3,10 @@ package org.sayandev.sayanvanish.bukkit.feature.features.hook
 import io.github.miniplaceholders.api.Expansion
 import io.github.miniplaceholders.api.utils.TagsUtils
 import org.bukkit.entity.Player
+import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.bukkit.config.language
-import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.sayanvanish.bukkit.feature.HookFeature
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
@@ -40,24 +39,24 @@ private class MiniPlaceholdersHookImpl(val feature: FeatureHookMiniPlaceholders)
 
         builder.audiencePlaceholder("vanished") { audience, queue, context ->
             val player = audience as? Player ?: return@audiencePlaceholder TagsUtils.EMPTY_TAG
-            return@audiencePlaceholder TagsUtils.staticTag(if (player.user()?.isVanished == true) "true" else "false")
+            return@audiencePlaceholder TagsUtils.staticTag(if (player.cachedVanishUser()?.isVanished == true) "true" else "false")
         }
 
         builder.audiencePlaceholder("level") { audience, queue, context ->
             val player = audience as? Player ?: return@audiencePlaceholder TagsUtils.staticTag("0")
-            return@audiencePlaceholder TagsUtils.staticTag(player.user()?.vanishLevel?.toString() ?: "0")
+            return@audiencePlaceholder TagsUtils.staticTag(player.cachedVanishUser()?.vanishLevel?.toString() ?: "0")
         }
 
         builder.globalPlaceholder("count") { queue, context ->
-            TagsUtils.staticTag(SayanVanishBukkitAPI.getInstance().database.getVanishUsers().filter { user -> user.isOnline && user.isVanished }.size.toString())
+            TagsUtils.staticTag(VanishAPI.get().getCacheService().getVanishUsers().getVanished().filter { user -> user.isOnline }.size.toString())
         }
 
         builder.audiencePlaceholder("vanish_prefix") { audience, queue, context ->
-            TagsUtils.staticTag(if ((audience as? Player)?.user()?.isVanished == true) language.vanish.placeholderPrefix else "")
+            TagsUtils.staticTag(if ((audience as? Player)?.cachedVanishUser()?.isVanished == true) language.vanish.placeholderPrefix else "")
         }
 
         builder.audiencePlaceholder("vanish_suffix") { audience, queue, context ->
-            TagsUtils.staticTag(if ((audience as? Player)?.user()?.isVanished == true) language.vanish.placeholderSuffix else "")
+            TagsUtils.staticTag(if ((audience as? Player)?.cachedVanishUser()?.isVanished == true) language.vanish.placeholderSuffix else "")
         }
 
         builder.globalPlaceholder("online") { queue, context ->
@@ -65,7 +64,7 @@ private class MiniPlaceholdersHookImpl(val feature: FeatureHookMiniPlaceholders)
                 return@globalPlaceholder TagsUtils.EMPTY_TAG
             }
 
-            val vanishedOnlineUsers = SayanVanishBukkitAPI.getInstance().database.getVanishUsers().filter { user -> user.isVanished && user.isOnline }
+            val vanishedOnlineUsers = VanishAPI.get().getCacheService().getVanishUsers().getVanished().filter { user -> user.isOnline }
             val serverName = queue.pop().value()
 
             val result = when (serverName) {
@@ -73,18 +72,10 @@ private class MiniPlaceholdersHookImpl(val feature: FeatureHookMiniPlaceholders)
                     onlinePlayers.filter { onlinePlayer -> !vanishedOnlineUsers.map { vanishedOnlineUser -> vanishedOnlineUser.username }.contains(onlinePlayer.name) }.size.toString()
                 }
                 "total" -> {
-                    if (!settings.general.proxyMode) {
-                        "PROXY_MODE IS NOT ENABLED!"
-                    } else {
-                        SayanVanishAPI.getDatabase().getBasicUsers(false).filter { !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
-                    }
+                    VanishAPI.get().getCacheService().getUsers().values.filter { !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
                 }
                 else -> {
-                    if (!settings.general.proxyMode) {
-                        "PROXY_MODE IS NOT ENABLED!"
-                    } else {
-                        SayanVanishAPI.getDatabase().getBasicUsers(false).filter { it.serverId == serverName && !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
-                    }
+                    VanishAPI.get().getCacheService().getUsers().getByServer(serverName).filter { !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
                 }
             }
 

@@ -9,6 +9,7 @@ import org.bukkit.event.player.PlayerQuitEvent
 import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
@@ -55,7 +56,7 @@ class FeatureFakeMessage(
 
     @EventHandler(priority = EventPriority.LOWEST)
     private fun onJoin(event: PlayerJoinEvent) {
-        val user = event.player.user() ?: return
+        val user = event.player.cachedVanishUser() ?: return
         if (!isActive(user)) return
         if (!user.isVanished && !user.hasPermission(Permission.VANISH_ON_JOIN)) return
         if (disableJoinMessageIfVanished) {
@@ -65,7 +66,7 @@ class FeatureFakeMessage(
 
     @EventHandler(priority = EventPriority.LOWEST)
     private fun onQuit(event: PlayerQuitEvent) {
-        val user = event.player.user() ?: return
+        val user = event.player.cachedVanishUser() ?: return
         if (!isActive(user)) return
         if (!user.isVanished) return
         if (disableQuitMessageIfVanished) {
@@ -75,7 +76,7 @@ class FeatureFakeMessage(
 
     @EventHandler(priority = EventPriority.HIGHEST)
     private fun onJoinLast(event: PlayerJoinEvent) {
-        val user = event.player.user() ?: return
+        val user = event.player.cachedVanishUser() ?: return
         if (!isActive(user)) return
         if (!user.isVanished && !user.hasPermission(Permission.VANISH_ON_JOIN)) return
         if (disableJoinMessageIfVanished) {
@@ -85,7 +86,7 @@ class FeatureFakeMessage(
 
     @EventHandler(priority = EventPriority.HIGHEST)
     private fun onQuitLast(event: PlayerQuitEvent) {
-        val user = event.player.user() ?: return
+        val user = event.player.cachedVanishUser() ?: return
         if (!isActive(user)) return
         if (!user.isVanished) return
         if (disableQuitMessageIfVanished) {

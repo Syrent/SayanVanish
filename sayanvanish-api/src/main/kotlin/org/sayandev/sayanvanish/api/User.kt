@@ -7,7 +7,6 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.future.asCompletableFuture
 import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.sayandev.sayanvanish.api.storage.PlatformTable
 import org.sayandev.sayanvanish.api.exception.UnsupportedPlatformException
 import org.sayandev.stickynote.core.utils.async
@@ -114,6 +113,26 @@ interface User {
         return async(VanishAPI.get().getDatabase().dispatcher) {
             save().await()
         }.asCompletableFuture()
+    }
+
+    suspend fun delete(): Deferred<Boolean> {
+        val deferred = CompletableDeferred<Boolean>()
+        async(VanishAPI.get().getDatabase().dispatcher) {
+            VanishAPI.get().getDatabase().removeUser(uniqueId).await()
+            VanishAPI.get().getMessagingService().syncUser(this@User).await()
+            VanishAPI.get().getCacheService().getUsers().remove(uniqueId)
+
+            val vanishedUser = VanishAPI.get().getDatabase().getVanishUser(uniqueId).await()
+            if (vanishedUser != null) {
+                VanishAPI.get().getDatabase().removeVanishUser(uniqueId).await()
+                VanishAPI.get().getMessagingService().syncVanishUser(vanishedUser).await()
+                VanishAPI.get().getCacheService().getVanishUsers().remove(uniqueId)
+            }
+
+            deferred.complete(true)
+        }
+
+        return deferred
     }
 
     /**

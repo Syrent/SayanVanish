@@ -9,11 +9,13 @@ import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.StickyNote
 import org.sayandev.stickynote.bukkit.plugin
+import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.objectmapping.meta.Comment
 
@@ -34,14 +36,14 @@ class FeaturePreventChat(
             { listener: Listener, event: Event ->
                 if (event !is AsyncPlayerChatEvent) return@registerEvent
                 if (event.isCancelled) return@registerEvent
-                val user = event.player.user() ?: return@registerEvent
+                val user = event.player.cachedVanishUser() ?: return@registerEvent
                 if (!isActive(user)) return@registerEvent
                 if (!user.isVanished) return@registerEvent
                 val message = event.message
                 if (message.startsWith(bypassChar)) {
                     event.message = message.removePrefix(bypassChar)
                 } else {
-                    user.sendComponent(language.vanish.cantChatWhileVanished, Placeholder.unparsed("char", bypassChar))
+                    user.sendMessage(language.vanish.cantChatWhileVanished.component(Placeholder.unparsed("char", bypassChar)))
                     event.isCancelled = true
                 }
             },

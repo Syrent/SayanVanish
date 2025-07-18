@@ -1,15 +1,17 @@
 package org.sayandev.sayanvanish.bukkit.feature.features.hook
 
+import ch.andre601.advancedserverlist.api.AdvancedServerListAPI
+import ch.andre601.advancedserverlist.api.PlaceholderProvider
+import ch.andre601.advancedserverlist.api.exceptions.InvalidPlaceholderProviderException
 import ch.andre601.advancedserverlist.api.objects.GenericPlayer
 import ch.andre601.advancedserverlist.api.objects.GenericServer
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
+import org.sayandev.sayanvanish.api.SayanVanishAPI
+import org.sayandev.sayanvanish.api.VanishAPI
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getCachedOrCreateVanishUser
 import org.sayandev.sayanvanish.bukkit.config.language
-import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.stickynote.bukkit.onlinePlayers
-import ch.andre601.advancedserverlist.api.PlaceholderProvider
-import ch.andre601.advancedserverlist.api.AdvancedServerListAPI
-import ch.andre601.advancedserverlist.api.exceptions.InvalidPlaceholderProviderException
 
+// TODO: we have so many placeholder providers, maybe we should create a common base class for them?
 class AdvancedServerListImpl : PlaceholderProvider("sayanvanish") {
     fun register() {
         try {
@@ -25,42 +27,37 @@ class AdvancedServerListImpl : PlaceholderProvider("sayanvanish") {
     ): String? {
         if (placeholder.equals("vanished", true)) {
             if (player == null) return "false"
-            return if (SayanVanishBukkitAPI.getInstance().getVanishedUsers().map { it.username }.contains(player.name)) "true" else "false"
+            return if (player.uuid.getCachedOrCreateVanishUser().isVanished) "true" else "false"
         }
 
         if (placeholder.equals("level", true)) {
             if (player == null) return "0"
-            return SayanVanishBukkitAPI.getInstance().getUser(player.uuid)?.vanishLevel?.toString() ?: "0"
+            return player.uuid.getCachedOrCreateVanishUser().vanishLevel.toString()
         }
 
         if (placeholder.equals("count", true)) {
-            return SayanVanishBukkitAPI.getInstance().database.getVanishUsers().filter { user -> user.isOnline && user.isVanished }.size.toString()
+            return VanishAPI.get().getCacheService().getVanishUsers().getVanishedCount().toString()
         }
 
         if (placeholder.equals("vanish_prefix", true)) {
-            return if (player?.uuid?.vanishUser()?.isVanished == true) language.vanish.placeholderPrefix else ""
+            return if (player?.uuid?.getCachedOrCreateVanishUser()?.isVanished == true) language.vanish.placeholderPrefix else ""
         }
 
         if (placeholder.equals("vanish_suffix", true)) {
-            return if (player?.uuid?.vanishUser()?.isVanished == true) language.vanish.placeholderSuffix else ""
+            return if (player?.uuid?.getCachedOrCreateVanishUser()?.isVanished == true) language.vanish.placeholderSuffix else ""
         }
 
         if (placeholder.startsWith("online_")) {
             val type = placeholder.substring(7)
-            val vanishedOnlineUsers = SayanVanishBukkitAPI.getInstance().database.getVanishUsers().filter { user -> user.isVanished && user.isOnline }
+            val vanishedOnlineUsers = VanishAPI.get().getCacheService().getVanishUsers().getOnlineVanished()
+            val vanishedOnlineUserNames = vanishedOnlineUsers.map { vanishedOnlineUser -> vanishedOnlineUser.username }
 
             return if (type.equals("here", true)) {
-                onlinePlayers.filter { onlinePlayer -> !vanishedOnlineUsers.map { vanishedOnlineUser -> vanishedOnlineUser.username }.contains(onlinePlayer.name) }.size.toString()
+                onlinePlayers.filter { onlinePlayer -> !vanishedOnlineUserNames.contains(onlinePlayer.name) }.size.toString()
             } else if (type.equals("total", true)) {
-                if (!settings.general.proxyMode) {
-                    return "PROXY_MODE IS NOT ENABLED!"
-                }
-                SayanVanishAPI.getDatabase().getBasicUsers(false).filter { !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
+                SayanVanishAPI.get().getCacheService().getUsers().values.filter { user -> !vanishedOnlineUserNames.contains(user.username) }.size.toString()
             } else {
-                if (!settings.general.proxyMode) {
-                    return "PROXY_MODE IS NOT ENABLED!"
-                }
-                SayanVanishAPI.getDatabase().getBasicUsers(false).filter { it.serverId == type && !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
+                VanishAPI.get().getCacheService().getUsers().getByServer(type).filter { it.isOnline && !vanishedOnlineUserNames.contains(it.username) }.size.toString()
             }
         }
 

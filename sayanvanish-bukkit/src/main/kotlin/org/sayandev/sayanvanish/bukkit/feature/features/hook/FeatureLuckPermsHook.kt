@@ -12,6 +12,7 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getCachedOrCreateVanishUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrCreateUser
 import org.sayandev.sayanvanish.bukkit.feature.HookFeature
 import org.sayandev.stickynote.bukkit.warn
@@ -73,7 +74,7 @@ class FeatureLuckPermsHook(
 class VanishedContext: ContextCalculator<Player> {
 
     override fun calculate(target: Player, contextConsumer: ContextConsumer) {
-        contextConsumer.accept("vanished", target.getOrCreateUser().isVanished.toString())
+        contextConsumer.accept("vanished", target.getCachedOrCreateVanishUser().isVanished.toString())
     }
 
     override fun estimatePotentialContexts(): ContextSet {

@@ -17,6 +17,7 @@ import org.sayandev.stickynote.core.messaging.PayloadBehaviour
 import org.sayandev.stickynote.core.messaging.PayloadWrapper
 import org.sayandev.stickynote.core.messaging.redis.RedisConnectionMeta
 import org.sayandev.stickynote.core.messaging.redis.RedisPublisher
+import org.sayandev.stickynote.core.utils.async
 
 // TODO: can't you merge some parts of publisher in another class since both redis and websocket has the same publisher interface?
 class RedisMessagingService(
@@ -42,7 +43,13 @@ class RedisMessagingService(
         Platform.get().logger
     ) {
         override fun handle(payload: User): Boolean? {
-            VanishAPI.get().getCacheService().getUsers().put(payload.uniqueId, payload)
+            async(VanishAPI.get().getDatabase().dispatcher) {
+                if (VanishAPI.get().getDatabase().hasUser(payload.uniqueId).await()) {
+                    VanishAPI.get().getCacheService().getUsers().put(payload.uniqueId, payload)
+                } else {
+                    VanishAPI.get().getCacheService().getUsers().remove(payload.uniqueId)
+                }
+            }
             return true
         }
 
@@ -62,7 +69,13 @@ class RedisMessagingService(
         Platform.get().logger
     ) {
         override fun handle(payload: VanishUser): Boolean? {
-            VanishAPI.get().getCacheService().getVanishUsers().put(payload.uniqueId, payload)
+            async(VanishAPI.get().getDatabase().dispatcher) {
+                if (VanishAPI.get().getDatabase().hasVanishUser(payload.uniqueId).await()) {
+                    VanishAPI.get().getCacheService().getVanishUsers().put(payload.uniqueId, payload)
+                } else {
+                    VanishAPI.get().getCacheService().getVanishUsers().remove(payload.uniqueId)
+                }
+            }
             return true
         }
 

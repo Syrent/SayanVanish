@@ -4,7 +4,7 @@ import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.sayandev.sayanvanish.api.User
-import org.sayandev.sayanvanish.bukkit.config.SettingsConfig
+import org.sayandev.sayanvanish.bukkit.config.Settings
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils
 import java.util.UUID
 
@@ -33,7 +33,7 @@ class BukkitUser(
                 this.uniqueId,
                 this.name,
                 this.isOnline,
-                SettingsConfig.get().serverId()
+                Settings.get().serverId()
             )
         }
     }

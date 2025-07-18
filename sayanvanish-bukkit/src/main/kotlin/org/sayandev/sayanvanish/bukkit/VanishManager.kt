@@ -5,9 +5,13 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
-import org.sayandev.sayanvanish.api.User
+import org.sayandev.sayanvanish.api.VanishAPI
+import org.sayandev.sayanvanish.bukkit.api.BukkitPlatformAdapter
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
-import org.sayandev.sayanvanish.bukkit.config.settings
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getCachedOrCreateUser
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrAddUser
+import org.sayandev.sayanvanish.bukkit.config.Settings
+import org.sayandev.stickynote.bukkit.launch
 import org.sayandev.stickynote.bukkit.registerListener
 
 object VanishManager : Listener {
@@ -17,25 +21,31 @@ object VanishManager : Listener {
     }
 
     @EventHandler
-    private fun addBasicUserOnJoin(event: PlayerJoinEvent) {
-        if (settings.general.proxyMode) return
+    private fun addUserOnJoin(event: PlayerJoinEvent) {
+        if (Settings.get().general.proxyMode) return
 
         val player = event.player
-        SayanVanishAPI.getDatabase().addUser(User.of(player.uniqueId, player.name, null))
+        launch {
+            player.getOrAddUser()
+        }
     }
 
     @EventHandler
-    private fun removeBasicUserOnQuit(event: PlayerQuitEvent) {
-        if (settings.general.proxyMode) return
+    private fun makeUserOfflineOnQuit(event: PlayerQuitEvent) {
+        if (Settings.get().general.proxyMode) return
 
         val player = event.player
-        SayanVanishAPI.getDatabase().cache.remove(player.uniqueId)
-        SayanVanishAPI.getDatabase().removeUser(player.uniqueId)
+
+        launch {
+            val user = player.getCachedOrCreateUser()
+            user.isOnline = false
+            user.save()
+        }
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     private fun hideVanishedPlayersOnJoin(event: PlayerJoinEvent) {
-        for (user in SayanVanishBukkitAPI.getInstance().database.getVanishUsers().filter { it.isVanished && it.player() != null }) {
+        for (user in VanishAPI.get().getCacheService().getVanishUsers().getVanished().map { BukkitPlatformAdapter.adapt(it) }.filter { it.player() != null }) {
             user.hideUser(event.player)
         }
     }

@@ -6,9 +6,12 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerGameModeChangeEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.sayandev.sayanvanish.api.Permission
+import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
+import org.sayandev.sayanvanish.bukkit.api.BukkitPlatformAdapter
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
@@ -45,7 +48,7 @@ class FeatureLevel(
         if (!isActive(user)) return
         runSync({
             for (onlinePlayer in onlinePlayers.filter { it.uniqueId != user.uniqueId }) {
-                val playerVanishLevel = onlinePlayer.user()?.vanishLevel ?: -1
+                val playerVanishLevel = onlinePlayer.cachedVanishUser()?.vanishLevel ?: -1
                 if (playerVanishLevel < user.vanishLevel || !onlinePlayer.hasPermission(Permission.VANISH.permission())) {
                     user.player()?.let { player ->
                         hidePlayer(onlinePlayer, player)
@@ -66,7 +69,7 @@ class FeatureLevel(
         if (!isActive(user) || !seeAsSpectator) return
         runSync({
             for (onlinePlayer in onlinePlayers.filter { it.uniqueId != user.uniqueId }) {
-                val playerVanishLevel = onlinePlayer.user()?.vanishLevel ?: -1
+                val playerVanishLevel = onlinePlayer.cachedVanishUser()?.vanishLevel ?: -1
                 if (playerVanishLevel >= user.vanishLevel) {
                     user.player()?.let { player -> onlinePlayer.sendPacket(PacketUtils.getUpdateGameModePacket(NMSUtils.getServerPlayer(player), player.gameMode)) }
                 }
@@ -77,11 +80,11 @@ class FeatureLevel(
     @EventHandler
     private fun onGameModeChange(event: PlayerGameModeChangeEvent) {
         val player = event.player
-        val user = event.player.user() ?: return
+        val user = event.player.cachedVanishUser() ?: return
         if (!isActive(user) || !seeAsSpectator) return
         if (!user.isVanished) return
         for (onlinePlayer in onlinePlayers.filter { it.uniqueId != user.uniqueId }) {
-            val playerVanishLevel = onlinePlayer.user()?.vanishLevel ?: -1
+            val playerVanishLevel = onlinePlayer.cachedVanishUser()?.vanishLevel ?: -1
             if (playerVanishLevel >= user.vanishLevel) {
                 runSync({
                     onlinePlayer.sendPacket(PacketUtils.getUpdateGameModePacket(NMSUtils.getServerPlayer(player), GameMode.SPECTATOR))
@@ -96,12 +99,12 @@ class FeatureLevel(
     @EventHandler
     private fun onPlayerJoin(event: PlayerJoinEvent) {
         val player = event.player
-        val user = player.user()
-        if (((user != null && !isActive(user) || !isActive())) || !seeAsSpectator) return
+        val vanishUser = player.cachedVanishUser()
+        if (((vanishUser != null && !isActive(vanishUser) || !isActive())) || !seeAsSpectator) return
         runSync({
-            val playerVanishLevel = player.user()?.vanishLevel ?: -1
-            for (user in SayanVanishBukkitAPI.getInstance().getVanishedUsers().filter { it.player() != null && it.uniqueId != player.uniqueId }) {
-                val vanishedPlayer = user.player() ?: continue
+            val playerVanishLevel = player.cachedVanishUser()?.vanishLevel ?: -1
+            for (user in VanishAPI.get().getCacheService().getVanishUsers().getVanished().filter { BukkitPlatformAdapter.adapt(it).player() != null && it.uniqueId != player.uniqueId }) {
+                val vanishedPlayer = BukkitPlatformAdapter.adapt(user).player() ?: continue
                 if (playerVanishLevel >= user.vanishLevel && user.hasPermission(Permission.VANISH.permission())) {
                     player.sendPacket(PacketUtils.getUpdateGameModePacket(NMSUtils.getServerPlayer(vanishedPlayer), GameMode.SPECTATOR))
                 }
@@ -112,12 +115,12 @@ class FeatureLevel(
     @EventHandler
     private fun hideOthersOnJoin(event: PlayerJoinEvent) {
         val player = event.player
-        val user = player.user()
+        val user = player.cachedVanishUser()
         if ((user != null && !isActive(user)) || !isActive()) return
         runSync({
-            val playerVanishLevel = player.user()?.vanishLevel ?: -1
-            for (user in SayanVanishBukkitAPI.getInstance().getVanishedUsers().filter { it.player() != null && it.uniqueId != player.uniqueId }) {
-                val vanishedPlayer = user.player() ?: continue
+            val playerVanishLevel = player.cachedVanishUser()?.vanishLevel ?: -1
+            for (user in VanishAPI.get().getCacheService().getVanishUsers().getVanished().filter { BukkitPlatformAdapter.adapt(it).player() != null && it.uniqueId != player.uniqueId }) {
+                val vanishedPlayer = BukkitPlatformAdapter.adapt(user).player() ?: continue
                 if (playerVanishLevel < user.vanishLevel || !player.hasPermission(Permission.VANISH.permission())) {
                     hidePlayer(player, vanishedPlayer)
                     player.sendPacket(PacketUtils.getRemoveEntitiesPacket(vanishedPlayer.entityId))

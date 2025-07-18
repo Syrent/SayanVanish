@@ -9,6 +9,7 @@ import kotlinx.coroutines.runBlocking
 import org.sayandev.sayanvanish.api.User.Companion.user
 import org.sayandev.sayanvanish.api.storage.PlatformTable
 import org.sayandev.stickynote.core.utils.async
+import org.sayandev.stickynote.core.utils.launch
 import java.lang.reflect.Type
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -24,21 +25,25 @@ interface VanishUser : User {
     // TODO: better implementation for this
     fun stateText(isVanished: Boolean = this.isVanished) = if (isVanished) "<green>ON</green>" else "<red>OFF</red>"
 
-    suspend fun disappear(options: VanishOptions) {
+    fun disappear(options: VanishOptions) {
         isVanished = true
-        save()
+        launch(VanishAPI.get().getDatabase().dispatcher) {
+            save()
+        }
     }
 
-    suspend fun disappear() {
+    fun disappear() {
         disappear(VanishOptions.defaultOptions())
     }
 
-    suspend fun appear(options: VanishOptions) {
+    fun appear(options: VanishOptions) {
         isVanished = false
-        save()
+        launch(VanishAPI.get().getDatabase().dispatcher) {
+            save()
+        }
     }
 
-    suspend fun appear() {
+    fun appear() {
         appear(VanishOptions.defaultOptions())
     }
 
@@ -84,8 +89,17 @@ interface VanishUser : User {
         }.asCompletableFuture()
     }
 
-    suspend fun delete() {
-        VanishAPI.get().getDatabase().removeVanishUser(uniqueId)
+    override suspend fun delete(): Deferred<Boolean> {
+        val deferred = CompletableDeferred<Boolean>()
+        async(VanishAPI.get().getDatabase().dispatcher) {
+            VanishAPI.get().getDatabase().removeVanishUser(uniqueId).await()
+            VanishAPI.get().getMessagingService().syncVanishUser(this@VanishUser).await()
+            VanishAPI.get().getCacheService().getVanishUsers().remove(uniqueId)
+
+            deferred.complete(true)
+        }
+
+        return deferred
     }
 
     @JvmSynthetic

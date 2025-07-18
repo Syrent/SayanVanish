@@ -13,7 +13,7 @@ class LanguageConfig(
     val vanish: Vanish = Vanish(),
     val feature: Feature = Feature(),
     val paste: Paste = Paste()
-) : Config(languageDirectory, "${SettingsConfig.get().general.language}.yml") {
+) : Config(languageDirectory, "${Settings.get().general.language}.yml") {
 
     @ConfigSerializable
     data class General(
@@ -86,7 +86,7 @@ class LanguageConfig(
 
         @JvmStatic
         fun fromConfig(): LanguageConfig? {
-            return fromConfig<LanguageConfig>(File(languageDirectory, "${SettingsConfig.get().general.language}.yml"))
+            return fromConfig<LanguageConfig>(File(languageDirectory, "${Settings.get().general.language}.yml"))
         }
     }
 }

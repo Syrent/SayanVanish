@@ -5,6 +5,8 @@ import org.bukkit.event.player.PlayerAdvancementDoneEvent
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getCachedOrCreateVanishUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.StickyNote
@@ -26,7 +28,7 @@ class FeaturePreventAdvancementAnnounce(
 
     @EventHandler
     private fun onAdvancementDone(event: PlayerAdvancementDoneEvent) {
-        val user = event.player.user() ?: return
+        val user = event.player.cachedVanishUser() ?: return
         if (!isActive(user)) return
         if (user.isVanished) {
             if (disableMessage) {

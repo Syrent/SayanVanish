@@ -5,6 +5,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.FoodLevelChangeEvent
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
@@ -19,7 +20,7 @@ class PreventFoodLevelChange(
     private fun onBlockBreak(event: FoodLevelChangeEvent) {
         if (ignoreIfIncrease && event.foodLevel > event.entity.foodLevel) return
         val player = event.entity as? Player ?: return
-        val user = player.user() ?: return
+        val user = player.cachedVanishUser() ?: return
         if (!isActive(user)) return
         if (user.isVanished) {
             event.isCancelled = true

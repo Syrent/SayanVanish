@@ -6,7 +6,7 @@ import org.bukkit.OfflinePlayer
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.VanishUser
-import org.sayandev.sayanvanish.bukkit.config.SettingsConfig
+import org.sayandev.sayanvanish.bukkit.config.Settings
 import java.util.*
 
 class SayanVanishBukkitAPI {
@@ -24,7 +24,7 @@ class SayanVanishBukkitAPI {
                 this,
                 offlinePlayer.name ?: this.toString(),
                 player != null,
-                SettingsConfig.get().serverId()
+                Settings.get().serverId()
             )
         }
 
@@ -46,7 +46,7 @@ class SayanVanishBukkitAPI {
                 this,
                 Bukkit.getOfflinePlayer(this).name ?: "N/A",
                 false,
-                SettingsConfig.get().serverId()
+                Settings.get().serverId()
             )
         }
 

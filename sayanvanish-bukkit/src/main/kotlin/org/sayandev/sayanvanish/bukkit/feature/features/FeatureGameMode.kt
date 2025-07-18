@@ -6,6 +6,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerGameModeChangeEvent
 import org.bukkit.event.player.PlayerToggleSneakEvent
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.StickyNote.runSync
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
@@ -33,7 +34,7 @@ class FeatureGameMode(
     private fun onToggleSneak(event: PlayerToggleSneakEvent) {
         if (!checkToggleSneak) return
         val player = event.player
-        val user = player.user() ?: return
+        val user = player.cachedVanishUser() ?: return
         if (!player.isSneaking || !user.isVanished || !isActive(user)) return
         if (sneakList.contains(player)) {
             if (player.gameMode == GameMode.SPECTATOR) {
@@ -61,7 +62,7 @@ class FeatureGameMode(
     private fun onGameModeChange(event: PlayerGameModeChangeEvent) {
         if (!checkGameModeChange) return
         val player = event.player
-        if (player.user()?.isVanished != false) return
+        if (player.cachedVanishUser()?.isVanished != false) return
         sneakMap[player] = event.newGameMode
     }
 

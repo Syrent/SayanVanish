@@ -49,7 +49,7 @@ class RedisDatabase(
             redis.resource.use {
                 it.hget("vanish_users", uniqueId.toString())
                     ?.let {
-                        VanishUser.fromJson(it)
+                        Gson.get().fromJson(JsonParser.parseString(it), VanishUser::class.java)
                     }
             }
         }
@@ -60,7 +60,7 @@ class RedisDatabase(
             redis.resource.use {
                 it.hgetAll("vanish_users")
                     .map {
-                        VanishUser.fromJson(it.value)
+                        Gson.get().fromJson(JsonParser.parseString(it.value), VanishUser::class.java)
                     }
             }
         }
@@ -91,7 +91,7 @@ class RedisDatabase(
     override suspend fun saveVanishUser(user: VanishUser): Deferred<Boolean> {
         return async {
             redis.resource.use {
-                it.hset("vanish_users", user.uniqueId.toString(), user.toJson()) != 0L
+                it.hset("vanish_users", user.uniqueId.toString(), Gson.get().toJson(user)) != 0L
             }
         }
     }

@@ -11,8 +11,9 @@ import org.sayandev.sayanvanish.api.utils.DownloadUtils
 import org.sayandev.sayanvanish.api.utils.HangarUtils
 import org.sayandev.sayanvanish.api.utils.VersionInfo
 import org.sayandev.sayanvanish.bukkit.SayanVanishPlugin
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
-import org.sayandev.sayanvanish.bukkit.config.SettingsConfig
+import org.sayandev.sayanvanish.bukkit.config.Settings
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendComponent
 import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendRawComponent
@@ -48,7 +49,7 @@ class FeatureUpdate(
     @Comment("The content of the update request message")
     val updateRequestContent: List<String> = listOf(
         "<green>A new version of <white>SayanVanish</white> is available!",
-        "<hover:show_text:'<red>Click to update'><click:run_command:'/${SettingsConfig.get().vanishCommand.name} forceupdate'><aqua>You can install version <version> by clicking on this message</click></hover>",
+        "<hover:show_text:'<red>Click to update'><click:run_command:'/${Settings.get().vanishCommand.name} forceupdate'><aqua>You can install version <version> by clicking on this message</click></hover>",
         "<red>Make sure to read the changelog before doing any update to prevent unexpected behaviors",
     )
 ) : ListenedFeature("update") {
@@ -84,10 +85,10 @@ class FeatureUpdate(
     @EventHandler(priority = EventPriority.HIGH)
     private fun onJoin(event: PlayerJoinEvent) {
         val player = event.player
-        val user = player.user() ?: return
+        val user = player.cachedUser() ?: return
         if (!isActive(user)) return
         if (notifyOnJoin && player.hasPermission(notifyPermission) && latestRelease != null && latestSnapshot != null) {
-            if (!SettingsConfig.get().general.proxyMode) {
+            if (!Settings.get().general.proxyMode) {
                 sendUpdateNotification(player)
             }
 
@@ -98,7 +99,7 @@ class FeatureUpdate(
     }
 
     private fun sendUpdateNotification(sender: CommandSender) {
-        if (!isNewerVersionAvailable(notifyForSnapshotBuilds) || SettingsConfig.get().general.proxyMode) return
+        if (!isNewerVersionAvailable(notifyForSnapshotBuilds) || Settings.get().general.proxyMode) return
 
         for (line in updateNotificationContent) {
             sender.sendRawComponent(line

@@ -5,6 +5,8 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
+import org.sayandev.sayanvanish.bukkit.api.BukkitPlatformAdapter
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendComponent
@@ -23,9 +25,9 @@ class FeatureRideEntity(
         val targetEntity = event.rightClicked
         val vanishedPassengers = targetEntity.passengers
             .filterIsInstance<Player>()
-            .mapNotNull { player -> player.user() }
+            .mapNotNull { player -> player.cachedVanishUser() }
             .filter { it.isVanished }
-            .mapNotNull { it.player() }
+            .mapNotNull { BukkitPlatformAdapter.adapt(it).player() }
         for (vanishedPassenger in vanishedPassengers) {
             vanishedPassenger.leaveVehicle()
             vanishedPassenger.sendComponent(exitMessage)

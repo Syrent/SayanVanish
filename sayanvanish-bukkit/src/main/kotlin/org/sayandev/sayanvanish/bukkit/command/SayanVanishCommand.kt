@@ -28,7 +28,7 @@ import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrA
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrCreateVanishUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.config.LanguageConfig
-import org.sayandev.sayanvanish.bukkit.config.SettingsConfig
+import org.sayandev.sayanvanish.bukkit.config.Settings
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureLevel
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureUpdate
@@ -46,7 +46,7 @@ import kotlin.jvm.optionals.getOrNull
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 
-class SayanVanishCommand : BukkitCommand(SettingsConfig.get().vanishCommand.name, *SettingsConfig.get().vanishCommand.aliases.toTypedArray()) {
+class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Settings.get().vanishCommand.aliases.toTypedArray()) {
 
     override fun rootBuilder(builder: MutableCommandBuilder<BukkitSender>) {
         builder.permission("${plugin.name}.commands.use")
@@ -137,7 +137,7 @@ class SayanVanishCommand : BukkitCommand(SettingsConfig.get().vanishCommand.name
                         runSync {
                             if (isSuccessful) {
                                 sender.sendComponent(language.general.updated, Placeholder.unparsed("version", updateFeature.latestVersion()))
-                                if (SettingsConfig.get().general.proxyMode && updateFeature.willAffectProxy()) {
+                                if (Settings.get().general.proxyMode && updateFeature.willAffectProxy()) {
                                     sender.sendComponent(language.general.proxyUpdateWarning)
                                 }
                             } else {
@@ -163,7 +163,7 @@ class SayanVanishCommand : BukkitCommand(SettingsConfig.get().vanishCommand.name
                         "password",
                     )
                     val databaseKey = Paste("yaml", storageConfig.file.readLines().filter { !blockedWords.any { blockedWord -> it.contains(blockedWord) } }).post().await()
-                    val settingsKey = Paste("yaml", SettingsConfig.settingsFile.readLines()).post().await()
+                    val settingsKey = Paste("yaml", Settings.settingsFile.readLines()).post().await()
                     val latestLogFile = File(File(pluginDirectory.parentFile.parentFile, "logs"), "latest.log")
                     if (latestLogFile.exists()) {
                         val logKey = Paste("log", latestLogFile.readLines()).post().await()
@@ -200,7 +200,7 @@ class SayanVanishCommand : BukkitCommand(SettingsConfig.get().vanishCommand.name
                 Features.features.clear()
                 Features.userFeatures.clear()
                 RegisteredFeatureHandler.process()
-                SettingsConfig.reload()
+                Settings.reload()
                 storageConfig = StorageConfig.fromConfig() ?: StorageConfig.defaultConfig()
                 sender.sendComponent(language.general.reloaded)
             }

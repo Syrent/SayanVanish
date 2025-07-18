@@ -1,15 +1,18 @@
 package org.sayandev.sayanvanish.bukkit.feature.features
 
+import net.kyori.adventure.text.Component
 import org.bukkit.event.EventHandler
 import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.StickyNote.runSync
 import org.sayandev.stickynote.bukkit.onlinePlayers
+import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.objectmapping.meta.Comment
 
@@ -28,21 +31,21 @@ class FeatureActionbar(
     private fun onVanish(event: BukkitUserVanishEvent) {
         val user = event.user
         if (!isActive(user)) return
-        user.sendActionbar(content)
+        user.sendActionbar(content.component())
     }
 
     @EventHandler
     private fun onUnVanish(event: BukkitUserUnVanishEvent) {
         val user = event.user
         if (!isActive(user)) return
-        user.sendActionbar("")
+        user.sendActionbar(Component.empty())
     }
 
     override fun enable() {
         runSync({
-            for (user in onlinePlayers.filter { it.hasPermission(Permission.VANISH.permission()) }.mapNotNull { it.user() }.filter { it.isVanished }) {
+            for (user in onlinePlayers.filter { it.hasPermission(Permission.VANISH.permission()) }.mapNotNull { it.cachedVanishUser() }.filter { it.isVanished }) {
                 if (!isActive(user)) continue
-                user.sendActionbar(content)
+                user.sendActionbar(content.component())
             }
         }, delay, period)
         super.enable()

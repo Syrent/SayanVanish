@@ -6,6 +6,7 @@ import org.bukkit.event.entity.EntityPickupItemEvent
 import org.bukkit.event.player.PlayerPickupItemEvent
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.utils.ServerVersion
@@ -19,7 +20,7 @@ class FeaturePreventPickup: ListenedFeature("prevent_pickup", category = Feature
 
     @EventHandler
     private fun onPickupItem(event: EntityPickupItemEvent) {
-        val user = (event.entity as? Player)?.user() ?: return
+        val user = (event.entity as? Player)?.cachedVanishUser() ?: return
         if (!isActive(user)) return
         if (user.isVanished) {
             event.isCancelled = true
@@ -36,7 +37,7 @@ class FeatureLegacyPreventPickup: ListenedFeature("legacy_prevent_pickup", categ
     @EventHandler
     @Suppress("DEPRECATION")
     private fun onPickupItem(event: PlayerPickupItemEvent) {
-        val user = event.player.user() ?: return
+        val user = event.player.cachedVanishUser() ?: return
         if (!isActive(user)) return
         if (user.isVanished) {
             event.isCancelled = true

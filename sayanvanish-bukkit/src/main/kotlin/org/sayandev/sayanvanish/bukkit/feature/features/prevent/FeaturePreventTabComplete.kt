@@ -5,11 +5,13 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.server.TabCompleteEvent
 import org.sayandev.sayanvanish.api.Permission
+import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getCachedOrCreateVanishUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrCreateUser
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
@@ -25,9 +27,9 @@ class FeaturePreventTabComplete(
     @EventHandler(priority = EventPriority.HIGHEST)
     private fun onTabComplete(event: TabCompleteEvent) {
         val player = event.sender as? Player ?: return
-        val user = player.getOrCreateUser()
+        val user = player.getCachedOrCreateVanishUser()
         if (!isActive(user)) return
-        val vanishedUsers = SayanVanishBukkitAPI.getInstance().getVanishedUsers()
+        val vanishedUsers = VanishAPI.get().getCacheService().getVanishUsers().getVanished()
         val completions = event.completions.toMutableSet()
         if (!user.hasPermission(Permission.VANISH) || !checkVanishLevel) {
             event.completions = completions

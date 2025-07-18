@@ -8,6 +8,7 @@ import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
+import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.objectmapping.meta.Comment
 
@@ -33,7 +34,7 @@ class FeatureFly(
         val user = event.user
         if (!isActive(user)) return
         if (!user.hasPermission(Permission.FLY_KEEP_AFTER_REAPPEAR) && disableOnReappear) {
-            user.sendMessage(language.feature.flyDisabled)
+            user.sendMessage(language.feature.flyDisabled.component())
             user.player()?.allowFlight = false
             user.player()?.isFlying = false
         }

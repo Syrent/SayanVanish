@@ -9,6 +9,7 @@ import org.bukkit.event.inventory.InventoryType
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.plugin
@@ -26,7 +27,7 @@ class FeatureInventoryInspect(
     @EventHandler(priority = EventPriority.HIGHEST)
     private fun onInteractPlayer(event: PlayerInteractAtEntityEvent) {
         val player = event.player
-        val user = player.user() ?: return
+        val user = player.cachedVanishUser() ?: return
         if (!isActive(user)) return
         if (player.openInventory.type != InventoryType.CRAFTING) return
         if (!user.isVanished) return
@@ -39,7 +40,7 @@ class FeatureInventoryInspect(
     @EventHandler
     private fun onClickPlayerInventory(event: InventoryClickEvent) {
         val player = event.whoClicked as? Player ?: return
-        val user = player.user() ?: return
+        val user = player.cachedVanishUser() ?: return
         if (!isActive(user)) return
         if (!playerInventoryMap.contains(player.uniqueId)) return
         if (player.hasPermission(modificationPermission)) return

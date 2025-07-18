@@ -2,12 +2,11 @@ package org.sayandev.sayanvanish.bukkit.feature.features.hook
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import org.bukkit.OfflinePlayer
+import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.bukkit.config.language
-import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.sayanvanish.bukkit.feature.HookFeature
 import org.sayandev.stickynote.bukkit.StickyNote
 import org.sayandev.stickynote.bukkit.hook.PlaceholderAPIHook
@@ -85,44 +84,38 @@ private class HookPlaceholderAPI : PlaceholderExpansion() {
     override fun onRequest(player: OfflinePlayer?, params: String): String? {
         if (params.equals("vanished", true)) {
             if (player == null) return "false"
-            return if (SayanVanishBukkitAPI.getInstance().getVanishedUsers().map { it.username }.contains(player.name)) "true" else "false"
+            return if (VanishAPI.get().getCacheService().getVanishUsers().getVanished().map { it.username }.contains(player.name)) "true" else "false"
         }
 
         if (params.equals("level", true)) {
             if (player == null) return "0"
-            return player.user()?.vanishLevel?.toString() ?: "0"
+            return player.cachedVanishUser()?.vanishLevel?.toString() ?: "0"
         }
 
         if (params.equals("count", true)) {
-            return SayanVanishBukkitAPI.getInstance().database.getVanishUsers().filter { user -> user.isOnline && user.isVanished }.size.toString()
+            return VanishAPI.get().getCacheService().getVanishUsers().getVanished().filter { user -> user.isOnline }.size.toString()
         }
 
         if (params.equals("vanish_prefix", true)) {
             if (player == null) return ""
-            return if (player.user()?.isVanished == true) language.vanish.placeholderPrefix else ""
+            return if (player.cachedVanishUser()?.isVanished == true) language.vanish.placeholderPrefix else ""
         }
 
         if (params.equals("vanish_suffix", true)) {
             if (player == null) return ""
-            return if (player.user()?.isVanished == true) language.vanish.placeholderSuffix else ""
+            return if (player.cachedVanishUser()?.isVanished == true) language.vanish.placeholderSuffix else ""
         }
 
         if (params.startsWith("online_")) {
             val type = params.removePrefix("online_")
-            val vanishedOnlineUsers = SayanVanishBukkitAPI.getInstance().database.getVanishUsers().filter { user -> user.isVanished && user.isOnline }
+            val vanishedOnlineUsers = VanishAPI.get().getCacheService().getVanishUsers().getVanished().filter { user -> user.isOnline }
 
             return if (type.equals("here", true)) {
                 onlinePlayers.filter { onlinePlayer -> !vanishedOnlineUsers.map { vanishedOnlineUser -> vanishedOnlineUser.username }.contains(onlinePlayer.name) }.size.toString()
             } else if (type.equals("total", true)) {
-                if (!settings.general.proxyMode) {
-                    return "PROXY_MODE IS NOT ENABLED!"
-                }
-                return SayanVanishAPI.getDatabase().getBasicUsers(false).filter { !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
+                return VanishAPI.get().getCacheService().getUsers().values.filter { !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
             } else {
-                if (!settings.general.proxyMode) {
-                    return "PROXY_MODE IS NOT ENABLED!"
-                }
-                return SayanVanishAPI.getDatabase().getBasicUsers(false).filter { it.serverId == type && !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
+                return VanishAPI.get().getCacheService().getUsers().getByServer(type).filter { !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
             }
         }
 

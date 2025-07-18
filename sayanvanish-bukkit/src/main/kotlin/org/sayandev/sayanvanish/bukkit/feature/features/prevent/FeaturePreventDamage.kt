@@ -5,6 +5,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
@@ -15,7 +16,7 @@ class FeaturePreventDamage: ListenedFeature("prevent_damage", category = Feature
 
     @EventHandler
     private fun onEntityDamage(event: EntityDamageByEntityEvent) {
-        val user = (event.entity as? Player)?.user() ?: return
+        val user = (event.entity as? Player)?.cachedVanishUser() ?: return
         if (!isActive(user)) return
         if (user.isVanished) {
             event.isCancelled = true

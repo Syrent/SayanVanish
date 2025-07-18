@@ -81,7 +81,7 @@ class SQLDatabase(
                 .selectAll()
                 .firstOrNull { it[VanishUser.Schema.uniqueId] == uniqueId }
                 ?.let { result ->
-                    VanishUser.of(
+                    VanishUser.Generic(
                         result[VanishUser.Schema.uniqueId],
                         result[User.Schema.username],
                         result[User.Schema.serverId],
@@ -98,7 +98,8 @@ class SQLDatabase(
             (VanishUser.Schema innerJoin User.Schema)
                 .selectAll()
                 .map { result ->
-                    VanishUser.of(
+                    // TODO: maybe add a fromResult method to VanishUser and User?
+                    VanishUser.Generic(
                         result[VanishUser.Schema.uniqueId],
                         result[User.Schema.username],
                         result[User.Schema.serverId],
@@ -116,7 +117,7 @@ class SQLDatabase(
                 .selectAll()
                 .firstOrNull { it[User.Schema.uniqueId] == uniqueId }
                 ?.let { result ->
-                    User.of(
+                    User.Generic(
                         result[User.Schema.uniqueId],
                         result[User.Schema.username],
                         result[User.Schema.isOnline],
@@ -131,7 +132,7 @@ class SQLDatabase(
             User.Schema
                 .selectAll()
                 .map { result ->
-                    User.of(
+                    User.Generic(
                         result[User.Schema.uniqueId],
                         result[User.Schema.username],
                         result[User.Schema.isOnline],

@@ -11,7 +11,7 @@ import java.util.*
 // TODO: Rename SettingsConfig to just `Settings` maybe?
 // TODO: switch to kotlinx-serialization for yaml too?
 @ConfigSerializable
-class SettingsConfig(
+class Settings(
     @Comment("""
     Do NOT copy and paste the SayanVanish directory across multiple servers.
     The server-id is generated during the plugin's first startup.
@@ -78,13 +78,13 @@ class SettingsConfig(
         var config = fromConfig() ?: defaultConfig()
 
         @JvmStatic
-        fun defaultConfig(): SettingsConfig {
-            return SettingsConfig().also { it.save() }
+        fun defaultConfig(): Settings {
+            return Settings().also { it.save() }
         }
 
         @JvmStatic
-        fun fromConfig(): SettingsConfig? {
-            return fromConfig<SettingsConfig>(settingsFile)
+        fun fromConfig(): Settings? {
+            return fromConfig<Settings>(settingsFile)
         }
 
         @JvmStatic
@@ -93,7 +93,7 @@ class SettingsConfig(
         }
 
         @JvmStatic
-        fun get(): SettingsConfig {
+        fun get(): Settings {
             return config
         }
     }

@@ -28,7 +28,7 @@ interface VanishUser : User {
     fun disappear(options: VanishOptions) {
         isVanished = true
         launch(VanishAPI.get().getDatabase().dispatcher) {
-            save()
+            saveAndSync()
         }
     }
 
@@ -39,7 +39,7 @@ interface VanishUser : User {
     fun appear(options: VanishOptions) {
         isVanished = false
         launch(VanishAPI.get().getDatabase().dispatcher) {
-            save()
+            saveAndSync()
         }
     }
 
@@ -67,7 +67,6 @@ interface VanishUser : User {
 
     @JvmSynthetic
     override suspend fun save(): Deferred<Boolean> {
-        serverId = Platform.get().serverId
         val deferred = CompletableDeferred<Boolean>()
         async(VanishAPI.get().getDatabase().dispatcher) {
             listOf(
@@ -135,6 +134,10 @@ interface VanishUser : User {
 
     override fun saveAndSyncBlocking(): List<Boolean> {
         return runBlocking { saveAndSync().awaitAll() }
+    }
+
+    override fun adapt(): VanishUser {
+        return Platform.get().adapter.adapt(this)
     }
 
     class JsonAdapter : JsonSerializer<VanishUser>, JsonDeserializer<VanishUser> {

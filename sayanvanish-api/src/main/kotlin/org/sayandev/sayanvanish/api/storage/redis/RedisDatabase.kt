@@ -51,6 +51,7 @@ class RedisDatabase(
                     ?.let {
                         Gson.get().fromJson(JsonParser.parseString(it), VanishUser::class.java)
                     }
+                    ?.adapt()
             }
         }
     }
@@ -60,7 +61,7 @@ class RedisDatabase(
             redis.resource.use {
                 it.hgetAll("vanish_users")
                     .map {
-                        Gson.get().fromJson(JsonParser.parseString(it.value), VanishUser::class.java)
+                        Gson.get().fromJson(JsonParser.parseString(it.value), VanishUser::class.java).adapt()
                     }
             }
         }

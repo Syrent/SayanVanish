@@ -6,8 +6,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.sayandev.sayanvanish.api.VanishAPI
-import org.sayandev.sayanvanish.bukkit.api.BukkitPlatformAdapter
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
+import org.sayandev.sayanvanish.bukkit.api.BukkitVanishUser.Companion.bukkitAdapt
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getCachedOrCreateUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrAddUser
 import org.sayandev.sayanvanish.bukkit.config.Settings
@@ -39,13 +38,13 @@ object VanishManager : Listener {
         launch {
             val user = player.getCachedOrCreateUser()
             user.isOnline = false
-            user.save()
+            user.saveAndSync()
         }
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     private fun hideVanishedPlayersOnJoin(event: PlayerJoinEvent) {
-        for (user in VanishAPI.get().getCacheService().getVanishUsers().getVanished().map { BukkitPlatformAdapter.adapt(it) }.filter { it.player() != null }) {
+        for (user in VanishAPI.get().getCacheService().getVanishUsers().getVanished().map { it.bukkitAdapt() }.filter { it.player() != null }) {
             user.hideUser(event.player)
         }
     }

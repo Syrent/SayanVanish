@@ -57,10 +57,10 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.21.5")
+        minecraftVersion("1.21.7")
 
         downloadPlugins {
-            hangar("ViaVersion", "5.0.4-SNAPSHOT+548")
+//            hangar("ViaVersion", "5.0.4-SNAPSHOT+548")
             hangar("PlaceholderAPI", "2.11.6")
 //            hangar("AdvancedServerList", "5.4.1")
 //            url("https://cdn.modrinth.com/data/qvdtDX3s/versions/TD9kTO2n/multiverse-inventories-4.2.7-pre.jar")
@@ -72,7 +72,7 @@ tasks {
 //            url("https://github.com/Insprill/custom-join-messages/releases/download/v17.5.0/custom-join-messages-17.5.0.jar")
 //            url("https://github.com/NEZNAMY/TAB-Bridge/releases/download/6.0.1/TAB-Bridge.v6.0.1.jar")
             url("https://github.com/EssentialsX/Essentials/releases/download/2.20.1/EssentialsX-2.20.1.jar")
-            url("https://download.luckperms.net/1575/bukkit/loader/LuckPerms-Bukkit-5.4.158.jar")
+            url("https://download.luckperms.net/1594/bukkit/loader/LuckPerms-Bukkit-5.5.9.jar")
         }
         jvmArgs("-Dnet.kyori.adventure.text.warnWhenLegacyFormattingDetected=false")
     }
@@ -92,7 +92,7 @@ bukkit {
     author = findProperty("author")!! as String
     defaultPermission = BukkitPluginDescription.Permission.Default.FALSE
 
-    main = "${rootProject.group}.${findProperty("slug")!! as String}.bukkit.${rootProject.name}"
+    main = "${rootProject.group}.${findProperty("slug")!! as String}.bukkit.${rootProject.name}Plugin"
 
     foliaSupported = true
 

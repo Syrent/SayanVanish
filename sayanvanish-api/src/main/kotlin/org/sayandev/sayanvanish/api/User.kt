@@ -8,7 +8,6 @@ import kotlinx.coroutines.future.asCompletableFuture
 import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
 import org.sayandev.sayanvanish.api.storage.PlatformTable
-import org.sayandev.sayanvanish.api.exception.UnsupportedPlatformException
 import org.sayandev.stickynote.core.utils.async
 import java.lang.reflect.Type
 import java.util.*
@@ -55,11 +54,11 @@ interface User {
      *
      * @param permission The permission string to check.
      * @return True if the user has the permission, false otherwise.
-     * @throws UnsupportedPlatformException If the platform does not support permission checks.
+     * @throws StackOverflowError If the platform does not support permission checks.
      * @since 1.0.0
      */
     fun hasPermission(permission: String): Boolean {
-        throw UnsupportedPlatformException("hasPermission")
+        return Platform.get().adapter.adapt(this).hasPermission(permission)
     }
 
     /**
@@ -233,6 +232,10 @@ interface User {
         return VanishUser.Generic(uniqueId, username, serverId)
     }
 
+    fun adapt(): User {
+        return Platform.get().adapter.adapt(this)
+    }
+
     /**
      * @since 2.0.0
      */
@@ -258,7 +261,7 @@ interface User {
         val uniqueId = uuid("unique_id").uniqueIndex()
         val username = varchar("username", 16)
         val isOnline = bool("is_online").default(false)
-        val serverId = varchar("server_id", 36)
+        val serverId = varchar("server_id", 256)
 
         override val primaryKey = PrimaryKey(uniqueId)
     }

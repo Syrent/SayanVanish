@@ -7,6 +7,7 @@ import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.permissions.PermissionDefault
 import org.sayandev.sayanvanish.api.Permission
+import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.VanishUser
@@ -177,6 +178,11 @@ open class BukkitVanishUser(
                 this.isVanished = vanishUser.isVanished
                 this.vanishLevel = vanishUser.vanishLevel
             }
+        }
+
+        @JvmSynthetic
+        fun VanishUser.bukkitAdapt(): BukkitVanishUser {
+            return BukkitPlatformAdapter.adapt(this)
         }
     }
 

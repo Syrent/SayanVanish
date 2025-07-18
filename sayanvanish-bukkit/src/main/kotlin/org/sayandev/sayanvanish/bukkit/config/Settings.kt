@@ -46,7 +46,7 @@ class Settings(
         You will also need to install the SayanVanish proxy plugin on your proxy server.
         WARNING: You need to use MySQL or Redis as the database for this feature to work properly.
         """)
-        // TODO: add auto detect for proxy mode initial value (do NOT remove the option just set the initial value)
+        // TODO: Make a pinger or something to detect if the proxy mode is enabled or not
         val proxyMode: Boolean = false,
         @Comment("Cache update period in ticks. low values may cause performance issues.")
         val cacheUpdatePeriodTicks: Long = 20,

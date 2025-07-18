@@ -47,8 +47,8 @@ class TransactionDatabase: Database {
                 DatabaseType.REDIS -> {
                     databaseTypes[DatabaseType.REDIS] = try {
                         RedisDatabase(storageConfig).also { redisDatabase ->
-                            redisDatabase.initialize()
                             redisDatabase.connect()
+                            redisDatabase.initialize()
                         }
                     } catch (e: Exception) {
                         databaseConnected = false

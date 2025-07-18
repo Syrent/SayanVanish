@@ -24,6 +24,8 @@ import org.sayandev.sayanvanish.api.feature.RegisteredFeatureHandler
 import org.sayandev.sayanvanish.api.storage.StorageConfig
 import org.sayandev.sayanvanish.api.storage.storageConfig
 import org.sayandev.sayanvanish.api.utils.Paste
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getCachedOrCreateUser
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getCachedOrCreateVanishUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrAddVanishUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrCreateVanishUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
@@ -80,13 +82,11 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
 
         val player = if (target.isPresent) context.optional<OfflinePlayer>("player").get() else context.sender().player() ?: return
         launch {
-            val user = player.getOrAddVanishUser()
+            val user = player.getOrCreateVanishUser()
 
             if (!user.hasPermission(Permission.VANISH)) {
                 user.sendMessage(language.vanish.dontHaveUsePermission.component(Placeholder.unparsed("permission", Permission.VANISH.permission())))
             }
-
-            player.getOrAddVanishUser()
 
             val options = VanishOptions.defaultOptions().apply {
                 if (context.flags().hasFlag("silent")) {
@@ -174,7 +174,7 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
                         }
                         val featureKey = Paste("yaml", featurePastes.map { "${it.key}:\n     ${it.value.joinToString("\n     ")}" }).post().await()
                         generateMainPaste(sender, mapOf(
-                            "database.yml" to "${Paste.PASTE_URL}/$databaseKey",
+                            "storage.yml" to "${Paste.PASTE_URL}/$databaseKey",
                             "settings.yml" to "${Paste.PASTE_URL}/$settingsKey",
                             "latest.log" to "${Paste.PASTE_URL}/$logKey",
                             "features" to "${Paste.PASTE_URL}/$featureKey"
@@ -225,7 +225,7 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
 
                 val user = target.getOrAddVanishUser()
                 user.vanishLevel = context.get("level")
-                user.save()
+                user.saveAndSync()
 
                 if (Features.getFeature<FeatureLevel>().levelMethod == FeatureLevel.LevelMethod.PERMISSION) {
                     sender.sendComponent(language.feature.permissionLevelMethodWarning, Placeholder.unparsed("method", FeatureLevel.LevelMethod.PERMISSION.name), Placeholder.unparsed("methods", FeatureLevel.LevelMethod.entries.joinToString(", ") { it.name }))

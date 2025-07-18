@@ -3,7 +3,6 @@ package org.sayandev.sayanvanish.api.message.types
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import org.sayandev.sayanvanish.api.Platform
-import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.VanishUser
@@ -16,7 +15,9 @@ import org.sayandev.stickynote.core.messaging.PayloadBehaviour
 import org.sayandev.stickynote.core.messaging.PayloadWrapper
 import org.sayandev.stickynote.core.messaging.websocket.WebSocketConnectionMeta
 import org.sayandev.stickynote.core.messaging.websocket.WebSocketPublisher
+import org.sayandev.stickynote.core.utils.async
 import java.net.URI
+import java.util.*
 
 class WebSocketMessagingService(
     val config: WebSocketConfig,
@@ -39,15 +40,24 @@ class WebSocketMessagingService(
         Platform.get().logger
     ) {
         override fun handle(payload: User): Boolean? {
-            VanishAPI.get().getCacheService().getUsers().put(payload.uniqueId, payload)
+            async(VanishAPI.get().getDatabase().dispatcher) {
+                if (VanishAPI.get().getDatabase().hasUser(payload.uniqueId).await()) {
+                    VanishAPI.get().getCacheService().getUsers().put(payload.uniqueId, payload)
+                } else {
+                    VanishAPI.get().getCacheService().getUsers().remove(payload.uniqueId)
+                }
+            }
             return true
         }
 
         suspend fun sync(user: User): CompletableDeferred<Boolean> {
+            handle(user)
             return publish(
                 PayloadWrapper(
-                    user,
-                    PayloadBehaviour.FORWARD
+                    uniqueId = UUID.randomUUID(),
+                    payload = user,
+                    behaviour = PayloadBehaviour.FORWARD,
+                    excludeSource = true
                 )
             )
         }
@@ -59,15 +69,24 @@ class WebSocketMessagingService(
         Platform.get().logger
     ) {
         override fun handle(payload: VanishUser): Boolean? {
-            VanishAPI.get().getCacheService().getVanishUsers().put(payload.uniqueId, payload)
+            async(VanishAPI.get().getDatabase().dispatcher) {
+                if (VanishAPI.get().getDatabase().hasVanishUser(payload.uniqueId).await()) {
+                    VanishAPI.get().getCacheService().getVanishUsers().put(payload.uniqueId, payload)
+                } else {
+                    VanishAPI.get().getCacheService().getVanishUsers().remove(payload.uniqueId)
+                }
+            }
             return true
         }
 
         suspend fun sync(vanishUser: VanishUser): CompletableDeferred<Boolean> {
+            handle(vanishUser)
             return publish(
                 PayloadWrapper(
-                    vanishUser,
-                    PayloadBehaviour.FORWARD
+                    uniqueId = UUID.randomUUID(),
+                    payload = vanishUser,
+                    behaviour = PayloadBehaviour.FORWARD,
+                    excludeSource = true
                 )
             )
         }

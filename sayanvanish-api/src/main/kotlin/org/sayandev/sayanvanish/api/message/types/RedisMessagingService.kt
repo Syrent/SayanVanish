@@ -18,6 +18,7 @@ import org.sayandev.stickynote.core.messaging.PayloadWrapper
 import org.sayandev.stickynote.core.messaging.redis.RedisConnectionMeta
 import org.sayandev.stickynote.core.messaging.redis.RedisPublisher
 import org.sayandev.stickynote.core.utils.async
+import java.util.UUID
 
 // TODO: can't you merge some parts of publisher in another class since both redis and websocket has the same publisher interface?
 class RedisMessagingService(
@@ -54,10 +55,13 @@ class RedisMessagingService(
         }
 
         suspend fun sync(user: User): CompletableDeferred<Boolean> {
+            handle(user)
             return publish(
                 PayloadWrapper(
-                    user,
-                    PayloadBehaviour.FORWARD
+                    uniqueId = UUID.randomUUID(),
+                    payload = user,
+                    behaviour = PayloadBehaviour.FORWARD,
+                    excludeSource = true
                 )
             )
         }
@@ -80,10 +84,13 @@ class RedisMessagingService(
         }
 
         suspend fun sync(vanishUser: VanishUser): CompletableDeferred<Boolean> {
+            handle(vanishUser)
             return publish(
                 PayloadWrapper(
-                    vanishUser,
-                    PayloadBehaviour.FORWARD
+                    uniqueId = UUID.randomUUID(),
+                    payload = vanishUser,
+                    behaviour = PayloadBehaviour.FORWARD,
+                    excludeSource = true
                 )
             )
         }

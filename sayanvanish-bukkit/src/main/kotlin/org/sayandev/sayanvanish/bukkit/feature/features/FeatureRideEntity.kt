@@ -5,9 +5,8 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
-import org.sayandev.sayanvanish.bukkit.api.BukkitPlatformAdapter
+import org.sayandev.sayanvanish.bukkit.api.BukkitVanishUser.Companion.bukkitAdapt
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendComponent
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
@@ -27,7 +26,7 @@ class FeatureRideEntity(
             .filterIsInstance<Player>()
             .mapNotNull { player -> player.cachedVanishUser() }
             .filter { it.isVanished }
-            .mapNotNull { BukkitPlatformAdapter.adapt(it).player() }
+            .mapNotNull { it.bukkitAdapt().player() }
         for (vanishedPassenger in vanishedPassengers) {
             vanishedPassenger.leaveVehicle()
             vanishedPassenger.sendComponent(exitMessage)

@@ -1,9 +1,5 @@
 package org.sayandev.sayanvanish.api
 
-import com.google.gson.Gson
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
-
 data class VanishOptions(
     var sendMessage: Boolean = true,
     var notifyStatusChangeToOthers: Boolean = true,
@@ -49,28 +45,7 @@ data class VanishOptions(
         }
     }
 
-    fun toJson(): String {
-        val json = JsonObject()
-        json.addProperty("send-message", sendMessage)
-        json.addProperty("notify-status-change-to-others", notifyStatusChangeToOthers)
-        json.addProperty("notify-join-quit-vanished", notifyJoinQuitVanished)
-        json.addProperty("is-on-join", isOnJoin)
-        json.addProperty("is-on-quit", isOnQuit)
-        return Gson().toJson(json)
-    }
-
     companion object {
-        @JvmStatic
-        fun fromJson(serialized: String): VanishOptions {
-            val json = JsonParser.parseString(serialized).asJsonObject
-            return VanishOptions(
-                json.get("send-message").asBoolean,
-                json.get("notify-status-change-to-others").asBoolean,
-                json.get("notify-join-quit-vanished").asBoolean,
-                json.get("is-on-join").asBoolean
-            )
-        }
-
         @JvmStatic
         fun defaultOptions(): VanishOptions {
             return VanishOptions()

@@ -21,7 +21,7 @@ class MessageConfig(
     val categoryTypes: List<MessagingCategoryType> = MessagingCategoryTypes.entries,
 ) : Config(Platform.get().rootDirectory, fileName, serializers()) {
     companion object {
-        private val fileName = "database.yml"
+        private val fileName = "message.yml"
 
         @JvmStatic
         fun defaultConfig(): MessageConfig {

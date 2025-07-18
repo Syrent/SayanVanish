@@ -30,10 +30,15 @@ object SayanVanishAPI : VanishAPI {
     }
 
     init {
+        runBlocking {
+            database.initialize().await()
+            messagingService.initialize().await()
+        }
+
         launch(database.dispatcher) {
             for (user in database.getVanishUsers().await().filter { user -> user.serverId == Platform.get().serverId }) {
                 user.isOnline = false
-                user.save()
+                user.saveAndSync()
             }
             database.purgeUsers(Platform.get().serverId)
         }

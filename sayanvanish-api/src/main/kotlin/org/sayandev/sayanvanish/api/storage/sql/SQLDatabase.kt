@@ -3,21 +3,21 @@ package org.sayandev.sayanvanish.api.storage.sql
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 import org.jetbrains.exposed.v1.core.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.v1.core.Transaction
 import org.jetbrains.exposed.v1.jdbc.*
 import org.jetbrains.exposed.v1.jdbc.transactions.TransactionManager
 import org.jetbrains.exposed.v1.jdbc.transactions.experimental.suspendedTransactionAsync
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.User
+import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.storage.Database
 import org.sayandev.sayanvanish.api.storage.StorageConfig
+import org.sayandev.sayanvanish.api.utils.Gson
 import org.sayandev.stickynote.core.coroutine.dispatcher.AsyncDispatcher
 import org.sayandev.stickynote.core.utils.CoroutineUtils
-import org.sayandev.stickynote.core.utils.launch
 import java.util.*
 
 class SQLDatabase(
@@ -40,10 +40,12 @@ class SQLDatabase(
     lateinit var database: org.jetbrains.exposed.v1.jdbc.Database
 
     override suspend fun initialize(): Deferred<Boolean> {
-        SchemaUtils.createMissingTablesAndColumns(
-            *tables.toTypedArray(),
-            withLogs = false,
-        )
+        transaction {
+            SchemaUtils.createMissingTablesAndColumns(
+                *tables.toTypedArray(),
+                withLogs = false,
+            )
+        }
         return CompletableDeferred(true)
     }
 
@@ -87,9 +89,14 @@ class SQLDatabase(
                         result[User.Schema.serverId],
                         result[VanishUser.Schema.isVanished],
                         result[User.Schema.isOnline],
-                        result[VanishUser.Schema.vanishLevel]
+                        result[VanishUser.Schema.vanishLevel],
+                        Gson.get().fromJson(
+                            result[VanishUser.Schema.currentOptions],
+                            VanishOptions::class.java
+                        )
                     )
                 }
+                ?.adapt()
         }
     }
 
@@ -106,7 +113,7 @@ class SQLDatabase(
                         result[VanishUser.Schema.isVanished],
                         result[User.Schema.isOnline],
                         result[VanishUser.Schema.vanishLevel]
-                    )
+                    ).adapt()
                 }
         }
     }
@@ -124,6 +131,7 @@ class SQLDatabase(
                         result[User.Schema.serverId]
                     )
                 }
+                ?.adapt()
         }
     }
 
@@ -137,7 +145,7 @@ class SQLDatabase(
                         result[User.Schema.username],
                         result[User.Schema.isOnline],
                         result[User.Schema.serverId]
-                    )
+                    ).adapt()
                 }
         }
     }
@@ -148,6 +156,7 @@ class SQLDatabase(
                 row[uniqueId] = vanishUser.uniqueId
                 row[isVanished] = vanishUser.isVanished
                 row[vanishLevel] = vanishUser.vanishLevel
+                row[currentOptions] = Gson.get().toJson(vanishUser.currentOptions)
             }.isIgnore
         }
     }
@@ -195,13 +204,13 @@ class SQLDatabase(
         }
     }
 
-    override suspend fun updateVanishUser(user: VanishUser): Deferred<Boolean> {
+    override suspend fun updateVanishUser(vanishUser: VanishUser): Deferred<Boolean> {
         return async {
             VanishUser.Schema.upsert { row ->
-                row[uniqueId] = user.uniqueId
-                row[isVanished] = user.isVanished
-                row[vanishLevel] = user.vanishLevel
-                row[currentOptions] = user.currentOptions.toJson()
+                row[uniqueId] = vanishUser.uniqueId
+                row[isVanished] = vanishUser.isVanished
+                row[vanishLevel] = vanishUser.vanishLevel
+                row[currentOptions] = Gson.get().toJson(vanishUser.currentOptions)
             }.isIgnore
         }
     }

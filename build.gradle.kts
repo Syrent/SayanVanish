@@ -31,7 +31,10 @@ fun lastCommitMessages(): String {
     val connection = url.openConnection() as HttpURLConnection
     connection.requestMethod = "GET"
     connection.setRequestProperty("Accept", "application/vnd.github.v3+json")
-    val response = connection.inputStream.bufferedReader().use { it.readText() }
+    val response = runCatching { connection.inputStream.bufferedReader().use { it.readText() } }.getOrNull() ?: let {
+        println("Failed to fetch last commit messages from GitHub Actions API: ${connection.responseCode} ${connection.responseMessage}")
+        return "No recent commits found."
+    }
     val sha = JsonParser.parseString(response).asJsonObject.getAsJsonArray("workflow_runs").get(0).asJsonObject.get("head_sha").asString
 
     return executeGitCommand("log", "--pretty=format:%C(auto)%h %s %C(blue)<%an>", "$sha..HEAD")

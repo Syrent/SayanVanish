@@ -62,8 +62,11 @@ class FeatureState(
                 tempUser.isVanished = true
                 launch {
                     tempUser.disappear(vanishJoinOptions)
-                    tempUser.save()
                 }
+            }
+
+            launch {
+                tempUser.saveAndSync()
             }
             return
         }
@@ -118,7 +121,7 @@ class FeatureState(
         user.isOnline = false
 
         launch {
-            user.save()
+            user.saveAndSync()
         }
     }
 

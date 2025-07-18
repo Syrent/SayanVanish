@@ -22,6 +22,7 @@ class SQLConfig(
     @Comment("Properties for the connection pool")
     val poolProperties: PoolProperties = PoolProperties(),
     @Comment("The prefix for the table names in the SQL database")
+    // TODO: use this?
     val tablePrefix: String = "sayanvanish_",
 ) {
     @ConfigSerializable

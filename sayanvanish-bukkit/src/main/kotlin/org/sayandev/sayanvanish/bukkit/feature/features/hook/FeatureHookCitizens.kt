@@ -6,15 +6,11 @@ import net.citizensnpcs.api.ai.speech.event.SpeechEvent
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
-import org.sayandev.sayanvanish.bukkit.api.BukkitPlatformAdapter
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
+import org.sayandev.sayanvanish.bukkit.api.BukkitVanishUser.Companion.bukkitAdapt
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getCachedOrCreateVanishUser
 import org.sayandev.sayanvanish.bukkit.feature.HookFeature
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.stickynote.bukkit.registerListener
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.objectmapping.meta.Comment
@@ -58,7 +54,7 @@ private class CitizensHookImpl(val feature: FeatureHookCitizens): Listener {
     }
 
     private fun checkContext(context: SpeechContext): Boolean {
-        val contains = VanishAPI.get().getCacheService().getVanishUsers().getVanished().filter { it.isOnline }.mapNotNull { BukkitPlatformAdapter.adapt(it).player() }.any { context.message.contains(it.name) }
+        val contains = VanishAPI.get().getCacheService().getVanishUsers().getVanished().filter { it.isOnline }.mapNotNull { it.bukkitAdapt().player() }.any { context.message.contains(it.name) }
         if (contains) return false
 
         val iterator = context.iterator()

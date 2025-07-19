@@ -6,11 +6,11 @@ import com.velocitypowered.api.proxy.server.ServerPing
 import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.velocity.feature.ListenedFeature
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import kotlinx.serialization.Serializable
 import kotlin.jvm.optionals.getOrNull
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
 class FeatureUpdatePing : ListenedFeature("update_ping") {
 
     @Subscribe

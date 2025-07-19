@@ -1,5 +1,6 @@
 package org.sayandev.sayanvanish.bukkit.feature.features.hook
 
+import kotlinx.serialization.SerialName
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -9,10 +10,11 @@ import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.HookFeature
 import org.sayandev.stickynote.bukkit.registerListener
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import kotlinx.serialization.Serializable
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
+@SerialName("hook_dynmap")
 class FeatureHookDynmap: HookFeature("hook_dynmap", "dynmap") {
 
     override fun enable() {

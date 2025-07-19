@@ -1,5 +1,6 @@
 package org.sayandev.sayanvanish.bukkit.feature.features.hook
 
+import kotlinx.serialization.SerialName
 import net.pl3x.map.core.Pl3xMap
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -8,10 +9,11 @@ import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.HookFeature
 import org.sayandev.stickynote.bukkit.registerListener
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import kotlinx.serialization.Serializable
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
+@SerialName("hook_pl3xmap")
 class FeatureHookPl3xMap: HookFeature("hook_pl3xmap", "Pl3xMap") {
 
     override fun enable() {

@@ -1,5 +1,6 @@
 package org.sayandev.sayanvanish.bukkit.feature.features.hook
 
+import kotlinx.serialization.SerialName
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
@@ -7,11 +8,12 @@ import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.HookFeature
 import org.sayandev.stickynote.bukkit.registerListener
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import kotlinx.serialization.Serializable
 import xyz.jpenilla.squaremap.api.SquaremapProvider
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
+@SerialName("hook_squaremap")
 class FeatureHookSquareMap: HookFeature("hook_squaremap", "squaremap") {
 
     override fun enable() {

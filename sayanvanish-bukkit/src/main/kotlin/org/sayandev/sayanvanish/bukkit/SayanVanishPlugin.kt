@@ -1,6 +1,7 @@
 package org.sayandev.sayanvanish.bukkit
 
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.Serializable
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import org.sayandev.sayanvanish.api.Platform
@@ -10,7 +11,6 @@ import org.sayandev.sayanvanish.api.storage.DatabaseType
 import org.sayandev.sayanvanish.api.storage.sql.SQLConfig
 import org.sayandev.sayanvanish.api.storage.storageConfig
 import org.sayandev.sayanvanish.bukkit.api.Metrics
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.sayanvanish.bukkit.command.SayanVanishCommand
 import org.sayandev.sayanvanish.bukkit.config.Settings
 import org.sayandev.sayanvanish.bukkit.config.language
@@ -59,6 +59,8 @@ class SayanVanishPlugin : JavaPlugin() {
         }
     }
 
+    abstract class MozAb
+
     override fun onDisable() {
         runBlocking {
             Platform.get().unregister()
@@ -69,6 +71,11 @@ class SayanVanishPlugin : JavaPlugin() {
     fun pluginFile(): File {
         return this.file
     }
+
+    @Serializable
+    data class MozeTest(
+        val testsss: String = "moz"
+    )
 
     companion object {
         private lateinit var instance: SayanVanishPlugin

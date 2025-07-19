@@ -1,6 +1,7 @@
 package org.sayandev.sayanvanish.bukkit.feature.features.prevent
 
 import com.destroystokyo.paper.event.entity.PreSpawnerSpawnEvent
+import kotlinx.serialization.SerialName
 import org.bukkit.GameMode
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -12,10 +13,11 @@ import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.StickyNote
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.utils.ServerVersion
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import kotlinx.serialization.Serializable
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
+@SerialName("prevent_spawner_spawn")
 class FeaturePreventSpawnerSpawn: ListenedFeature("prevent_spawner_spawn", category = FeatureCategories.PREVENTION) {
 
     @Transient

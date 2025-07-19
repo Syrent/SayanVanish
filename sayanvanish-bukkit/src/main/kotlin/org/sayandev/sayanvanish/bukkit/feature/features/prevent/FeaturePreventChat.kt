@@ -1,6 +1,6 @@
 package org.sayandev.sayanvanish.bukkit.feature.features.prevent
 
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import org.sayandev.sayanventure.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Bukkit
 import org.bukkit.event.Event
 import org.bukkit.event.EventPriority
@@ -16,15 +16,17 @@ import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.StickyNote
 import org.sayandev.stickynote.bukkit.plugin
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
-import org.spongepowered.configurate.objectmapping.meta.Comment
+import kotlinx.serialization.Serializable
+import com.charleskorn.kaml.YamlComment
+import kotlinx.serialization.SerialName
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
+@SerialName("prevent_chat")
 class FeaturePreventChat(
-    @Comment("The character that vanished players can use to bypass the chat prevention.")
+    @YamlComment("The character that vanished players can use to bypass the chat prevention.")
     @Configurable val bypassChar: String = "!",
-    @Comment("Requires server restart to apply.")
+    @YamlComment("Requires server restart to apply.")
     val priority: EventPriority = EventPriority.HIGH,
 ): ListenedFeature("prevent_chat", category = FeatureCategories.PREVENTION) {
 

@@ -12,13 +12,15 @@ import org.sayandev.sayanvanish.bukkit.api.BukkitVanishUser.Companion.bukkitAdap
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.bukkit.feature.HookFeature
 import org.sayandev.stickynote.bukkit.registerListener
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
-import org.spongepowered.configurate.objectmapping.meta.Comment
+import kotlinx.serialization.Serializable
+import com.charleskorn.kaml.YamlComment
+import kotlinx.serialization.SerialName
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
+@SerialName("hook_citizens")
 class FeatureHookCitizens(
-    @Comment("Will cancel npc speech event if context of speech contains a vanished player")
+    @YamlComment("Will cancel npc speech event if context of speech contains a vanished player")
     val checkSpeech: Boolean = true,
 ): HookFeature("hook_citizens", "Citizens") {
 

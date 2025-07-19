@@ -6,8 +6,9 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 plugins {
-    java
     kotlin("jvm") version "2.1.0"
+    kotlin("plugin.serialization") version "2.1.0"
+    java
     `maven-publish`
     id("io.papermc.hangar-publish-plugin") version "0.1.2"
     id("com.modrinth.minotaur") version "2.8.7"
@@ -35,9 +36,19 @@ fun lastCommitMessages(): String {
         println("Failed to fetch last commit messages from GitHub Actions API: ${connection.responseCode} ${connection.responseMessage}")
         return "No recent commits found."
     }
-    val sha = JsonParser.parseString(response).asJsonObject.getAsJsonArray("workflow_runs").get(0).asJsonObject.get("head_sha").asString
+    val sha = JsonParser.parseString(response).asJsonObject.getAsJsonArray("workflow_runs").let {
+        if (it.size() == 0) {
+            null
+        } else {
+            it.get(0).asJsonObject.get("head_sha").asString
+        }
+    }
 
-    return executeGitCommand("log", "--pretty=format:%C(auto)%h %s %C(blue)<%an>", "$sha..HEAD")
+    return if (sha != null) {
+        executeGitCommand("log", "--pretty=format:%C(auto)%h %s %C(blue)<%an>", "$sha..HEAD")
+    } else {
+        "No changes"
+    }
 }
 
 fun lastReleaseCommitMessages(): String {
@@ -78,6 +89,7 @@ allprojects {
     plugins.apply("kotlin")
     plugins.apply("org.sayandev.stickynote.project")
     plugins.apply("com.modrinth.minotaur")
+    plugins.apply("org.jetbrains.kotlin.plugin.serialization")
 
     stickynote {
         relocate(!gradle.startParameter.taskNames.any { it.startsWith("runServer") || it.startsWith("runVelocity") })

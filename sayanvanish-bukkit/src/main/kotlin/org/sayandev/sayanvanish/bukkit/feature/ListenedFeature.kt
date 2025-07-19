@@ -1,21 +1,20 @@
 package org.sayandev.sayanvanish.bukkit.feature
 
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.bukkit.event.Listener
 import org.sayandev.sayanvanish.api.feature.Feature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.stickynote.bukkit.registerListener
 import org.sayandev.stickynote.bukkit.unregisterListener
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
-import org.spongepowered.configurate.serialize.TypeSerializerCollection
 
-@ConfigSerializable
+@Serializable
 abstract class ListenedFeature(
-    id: String,
-    enabled: Boolean = true,
-    category: FeatureCategories = FeatureCategories.DEFAULT,
-    additionalSerializers: TypeSerializerCollection = TypeSerializerCollection.defaults(),
-    critical: Boolean = false
-) : Feature(id, enabled, category, additionalSerializers, critical), Listener {
+    @Transient override val id: String = "@transient",
+    @Transient override var enabled: Boolean = true,
+    @Transient override val category: FeatureCategories = FeatureCategories.DEFAULT,
+    @Transient override val critical: Boolean = false
+) : Feature(id, enabled, category, critical), Listener {
 
     override fun enable() {
         if (!condition) return

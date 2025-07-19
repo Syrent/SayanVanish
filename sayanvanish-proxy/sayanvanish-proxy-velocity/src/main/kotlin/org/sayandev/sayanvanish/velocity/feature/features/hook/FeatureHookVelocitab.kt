@@ -17,18 +17,18 @@ import org.sayandev.sayanvanish.velocity.event.VelocityUserVanishEvent
 import org.sayandev.sayanvanish.velocity.feature.HookFeature
 import org.sayandev.stickynote.velocity.StickyNote
 import org.sayandev.stickynote.velocity.registerListener
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
-import org.spongepowered.configurate.objectmapping.meta.Comment
+import kotlinx.serialization.Serializable
+import com.charleskorn.kaml.YamlComment
 import java.util.concurrent.TimeUnit
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
 class FeatureHookVelocitab(
-    @Comment("The delay in milliseconds to check on post server connect event. low values may cause issues.")
+    @YamlComment("The delay in milliseconds to check on post server connect event. low values may cause issues.")
     val checkOnPostServerConnectDelay: Long = 150,
-    @Comment("The delay in milliseconds to check on server switch. low values may cause issues.")
+    @YamlComment("The delay in milliseconds to check on server switch. low values may cause issues.")
     val checkOnServerConnectedDelay: Long = 150,
-    @Comment("The delay in milliseconds to check on post login event. low values may cause issues.")
+    @YamlComment("The delay in milliseconds to check on post login event. low values may cause issues.")
     val checkOnPostLoginDelay: Long = 150,
 ) : HookFeature("hook_velocitab", "velocitab") {
     override fun enable() {

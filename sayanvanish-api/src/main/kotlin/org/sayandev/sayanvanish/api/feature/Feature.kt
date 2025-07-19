@@ -1,25 +1,22 @@
 package org.sayandev.sayanvanish.api.feature
 
+import com.charleskorn.kaml.Yaml
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.stickynote.core.configuration.Config
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
-import org.spongepowered.configurate.serialize.TypeSerializerCollection
 import java.io.File
 
-@ConfigSerializable
+@Serializable
 abstract class Feature(
-    val id: String,
-    open var enabled: Boolean = true,
-    @Transient val category: FeatureCategories = FeatureCategories.DEFAULT,
-    @Transient val additionalSerializers: TypeSerializerCollection = TypeSerializerCollection.defaults(),
-    @Transient val critical: Boolean = false
-) : Config(
-    directory(category),
-    "${id}.yml",
-    additionalSerializers
+    @Transient open val id: String = "@transient",
+    open var enabled: Boolean,
+    @Transient open val category: FeatureCategories = FeatureCategories.DEFAULT,
+    @Transient open val critical: Boolean = false
 ) {
+
     @Transient open var condition: Boolean = true
 
     open fun isActive(): Boolean {
@@ -67,6 +64,10 @@ abstract class Feature(
         loadAndRegister(this)
     }
 
+    fun save() {
+        Config.save(File(directory(category), "${id}.yml"), this, Yaml(Platform.get().serializers, Config.yaml.configuration))
+    }
+
     companion object {
         fun directory(category: FeatureCategories) =
             when (category.directory) {
@@ -83,15 +84,14 @@ abstract class Feature(
             return createFromInstance(freshInstance)
         }
 
-        fun createFromInstance(feature: Feature): Feature {
+        inline fun <reified T : Feature> createFromInstance(feature: T): T {
             val category = feature.category
-            val instance = getConfigFromFile(File(
+            val instance = Config.fromFile<T>(File(
                 if (category.directory == null) {
                     File(Platform.get().rootDirectory, "features")
                 } else {
                     File(File(Platform.get().rootDirectory, "features"), category.directory)
-                }, "${feature.id}.yml"),
-                feature.additionalSerializers)?.get(feature::class.java) ?: feature
+                }, "${feature.id}.yml"), Platform.get().serializers) ?: feature
             if (instance.enabled) {
                 instance.enable()
             } else {

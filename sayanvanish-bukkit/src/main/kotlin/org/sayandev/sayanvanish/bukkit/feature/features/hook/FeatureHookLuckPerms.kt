@@ -1,5 +1,10 @@
 package org.sayandev.sayanvanish.bukkit.feature.features.hook
 
+import com.charleskorn.kaml.YamlComment
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import net.luckperms.api.LuckPermsProvider
 import net.luckperms.api.context.ContextCalculator
 import net.luckperms.api.context.ContextConsumer
@@ -9,30 +14,28 @@ import net.luckperms.api.node.NodeEqualityPredicate
 import net.luckperms.api.node.types.PermissionNode
 import net.luckperms.api.query.QueryOptions
 import org.bukkit.Bukkit
+import org.bukkit.Location
 import org.bukkit.entity.Player
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getCachedOrCreateVanishUser
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrCreateUser
 import org.sayandev.sayanvanish.bukkit.feature.HookFeature
 import org.sayandev.stickynote.bukkit.warn
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
-import org.spongepowered.configurate.objectmapping.meta.Comment
 import java.util.*
 
-
 @RegisteredFeature
-@ConfigSerializable
-class FeatureLuckPermsHook(
-    @Comment("""
-    Whether to register custom context for vanished players.
-    This will allow you to check if a player is vanished using the context "vanished".
-    This is useful for checking permissions based on the player's vanish status.
-    """)
+@Serializable
+@SerialName("hook_luckperms")
+class FeatureHookLuckPerms(
+    @YamlComment(
+    "Whether to register custom context for vanished players.",
+    "This will allow you to check if a player is vanished using the context \"vanished\".",
+    "This is useful for checking permissions based on the player's vanish status.",
+    )
     @Configurable val registerCustomContext: Boolean = true,
-    @Comment("Whether to check permission using LuckPerms. If false, it will fallback to bukkit permission check.")
+    @YamlComment("Whether to check permission using LuckPerms. If false, it will fallback to bukkit permission check.")
     @Configurable val checkPermissionViaLuckPerms: Boolean = false,
-    @Configurable val checkPermissionViaLuckPermsFeatures: Boolean = true
+    @Configurable val checkPermissionViaLuckPermsFeatures: Boolean = true,
 ): HookFeature("hook_luckperms", "LuckPerms") {
 
     @Transient var vanishContext: VanishedContext? = null

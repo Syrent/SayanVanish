@@ -1,6 +1,6 @@
 package org.sayandev.sayanvanish.bukkit.api
 
-import net.kyori.adventure.text.Component
+import org.sayandev.sayanventure.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.permissions.Permission
 import org.bukkit.permissions.PermissionDefault

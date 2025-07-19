@@ -13,17 +13,19 @@ import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cached
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.utils.ServerVersion
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
-import org.spongepowered.configurate.objectmapping.meta.Comment
+import kotlinx.serialization.Serializable
+import com.charleskorn.kaml.YamlComment
+import kotlinx.serialization.SerialName
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
+@SerialName("prevent_interact_event")
 class FeaturePreventInteract(
-    @Comment("Prevent players from activating pressure plates while vanished")
+    @YamlComment("Prevent players from activating pressure plates while vanished")
     @Configurable val pressurePlateTrigger: Boolean = true,
-    @Comment("Prevent players from interacting with big dripleaf while vanished")
+    @YamlComment("Prevent players from interacting with big dripleaf while vanished")
     @Configurable val dripLeaf: Boolean = true,
-    @Comment("Prevent players from interacting")
+    @YamlComment("Prevent players from interacting")
     @Configurable val interact: Boolean = false,
     @Configurable val tripwire: Boolean = true,
     @Configurable val button: Boolean = true,

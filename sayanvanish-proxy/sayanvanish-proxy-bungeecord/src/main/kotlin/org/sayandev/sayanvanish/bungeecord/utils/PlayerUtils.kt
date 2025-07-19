@@ -1,7 +1,7 @@
 package org.sayandev.sayanvanish.bungeecord.utils
 
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
+import org.sayandev.sayanventure.adventure.text.Component
+import org.sayandev.sayanventure.adventure.text.minimessage.tag.resolver.TagResolver
 import net.md_5.bungee.api.CommandSender
 import org.sayandev.sayanvanish.proxy.config.language
 import org.sayandev.sayanvanish.proxy.config.settings

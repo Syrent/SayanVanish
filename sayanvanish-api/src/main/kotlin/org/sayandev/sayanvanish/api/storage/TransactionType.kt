@@ -1,35 +1,24 @@
 package org.sayandev.sayanvanish.api.storage
 
-import org.spongepowered.configurate.ConfigurationNode
-import org.spongepowered.configurate.serialize.TypeSerializer
-import java.lang.reflect.Type
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 
+@Serializable(with = TransactionType.Serializer::class)
 interface TransactionType {
     val id: String
     val type: DatabaseType
 
-    object Serializer : TypeSerializer<TransactionType> {
-        override fun deserialize(
-            type: Type,
-            node: ConfigurationNode
-        ): TransactionType {
-            return object : TransactionType {
-                override val id: String = node.node("id").string!!
-                override val type: DatabaseType = node.node("type").get(DatabaseType::class.java)!!
+    object Serializer : KSerializer<TransactionType> {
+        override val descriptor = TransactionTypes.serializer().descriptor
+        override fun serialize(encoder: Encoder, value: TransactionType) {
+            when (value) {
+                is TransactionTypes -> TransactionTypes.serializer().serialize(encoder, value)
             }
         }
-
-        override fun serialize(
-            type: Type,
-            obj: TransactionType?,
-            node: ConfigurationNode
-        ) {
-            if (obj == null) {
-                node.raw(null)
-                return
-            }
-            node.node("id").set(obj.id)
-            node.node("type").set(obj.type)
+        override fun deserialize(decoder: Decoder): TransactionType {
+            return TransactionTypes.serializer().deserialize(decoder)
         }
     }
 }

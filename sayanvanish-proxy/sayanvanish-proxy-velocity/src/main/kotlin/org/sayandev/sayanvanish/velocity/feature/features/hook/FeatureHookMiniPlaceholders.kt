@@ -10,11 +10,11 @@ import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
 import org.sayandev.sayanvanish.velocity.feature.HookFeature
 import org.sayandev.stickynote.velocity.onlinePlayers
 import org.sayandev.stickynote.velocity.plugin
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import kotlinx.serialization.Serializable
 import kotlin.jvm.optionals.getOrNull
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
 class FeatureHookMiniPlaceholders: HookFeature("hook_miniplaceholders", "miniplaceholders") {
 
     override fun enable() {

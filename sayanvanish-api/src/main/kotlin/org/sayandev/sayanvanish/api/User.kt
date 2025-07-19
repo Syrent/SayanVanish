@@ -6,7 +6,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.future.asCompletableFuture
 import kotlinx.coroutines.runBlocking
-import net.kyori.adventure.text.Component
+import org.sayandev.sayanventure.adventure.text.Component
 import org.sayandev.sayanvanish.api.storage.PlatformTable
 import org.sayandev.stickynote.core.utils.async
 import java.lang.reflect.Type

@@ -1,7 +1,7 @@
 package org.sayandev.sayanvanish.bukkit.feature.features
 
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
+import org.sayandev.sayanventure.adventure.text.minimessage.tag.resolver.Placeholder
+import org.sayandev.sayanventure.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerJoinEvent
@@ -20,37 +20,39 @@ import org.sayandev.stickynote.bukkit.hook.PlaceholderAPIHook
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendComponent
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
-import org.spongepowered.configurate.objectmapping.meta.Comment
+import kotlinx.serialization.Serializable
+import com.charleskorn.kaml.YamlComment
+import kotlinx.serialization.SerialName
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
+@SerialName("fake_message")
 class FeatureFakeMessage(
-    @Comment("Whether to send a fake join message when a player vanishes")
+    @YamlComment("Whether to send a fake join message when a player vanishes")
     @Configurable val sendFakeJoinMessage: Boolean = false,
-    @Comment("The message to send when a player vanishes")
+    @YamlComment("The message to send when a player vanishes")
     @Configurable val sendFakeQuitMessage: Boolean = false,
-    @Comment("""
-    The message to send when a player vanishes
-    
-    Note: All PlaceholderAPI placeholders are supported
-    Internal Placeholders:
-    - <player> - the vanished player's name
-    """)
+    @YamlComment(
+    "The message to send when a player vanishes",
+    "",
+    "Note: All PlaceholderAPI placeholders are supported",
+    "Internal Placeholders:",
+    "- <player> - the vanished player's name",
+    )
     @Configurable val fakeJoinMessage: String = "<yellow><player> joined the game",
-    @Comment("""
-    The message to send when a player vanishes
-    
-    Note: All PlaceholderAPI placeholders are supported
-    Internal Placeholders:
-    - <player> - the vanished player's name
-    """)
+    @YamlComment(
+    "The message to send when a player vanishes",
+    "",
+    "Note: All PlaceholderAPI placeholders are supported",
+    "Internal Placeholders:",
+    "- <player> - the vanished player's name"
+    )
     @Configurable val fakeQuitMessage: String = "<yellow><player> left the game",
-    @Comment("Whether to use the legacy formatter for the fake messages (NOT RECOMMENDED)")
+    @YamlComment("Whether to use the legacy formatter for the fake messages (NOT RECOMMENDED)")
     @Configurable val useLegacyFormatter: Boolean = false,
-    @Comment("Whether to disable the join message if the player is vanished")
+    @YamlComment("Whether to disable the join message if the player is vanished")
     @Configurable val disableJoinMessageIfVanished: Boolean = true,
-    @Comment("Whether to disable the quit message if the player is vanished")
+    @YamlComment("Whether to disable the quit message if the player is vanished")
     @Configurable val disableQuitMessageIfVanished: Boolean = true,
 ) : ListenedFeature("fake_message") {
 

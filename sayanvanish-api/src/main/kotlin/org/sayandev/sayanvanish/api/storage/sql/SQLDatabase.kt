@@ -3,12 +3,16 @@ package org.sayandev.sayanvanish.api.storage.sql
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.awaitAll
-import org.jetbrains.exposed.v1.core.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.v1.core.Transaction
-import org.jetbrains.exposed.v1.jdbc.*
-import org.jetbrains.exposed.v1.jdbc.transactions.TransactionManager
-import org.jetbrains.exposed.v1.jdbc.transactions.experimental.suspendedTransactionAsync
-import org.jetbrains.exposed.v1.jdbc.transactions.transaction
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.Transaction
+import org.jetbrains.exposed.sql.deleteAll
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.transactions.TransactionManager
+import org.jetbrains.exposed.sql.transactions.experimental.suspendedTransactionAsync
+import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.upsert
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishOptions
@@ -19,6 +23,8 @@ import org.sayandev.sayanvanish.api.utils.Gson
 import org.sayandev.stickynote.core.coroutine.dispatcher.AsyncDispatcher
 import org.sayandev.stickynote.core.utils.CoroutineUtils
 import java.util.*
+
+typealias ExposedDatabase = org.jetbrains.exposed.sql.Database
 
 class SQLDatabase(
     val config: StorageConfig,
@@ -37,7 +43,7 @@ class SQLDatabase(
         VanishUser.Schema,
     )
 
-    lateinit var database: org.jetbrains.exposed.v1.jdbc.Database
+    lateinit var database: ExposedDatabase
 
     override suspend fun initialize(): Deferred<Boolean> {
         transaction {
@@ -51,7 +57,7 @@ class SQLDatabase(
 
     override suspend fun connect(): Deferred<Boolean> {
         database =
-            org.jetbrains.exposed.v1.jdbc.Database.connect(
+            ExposedDatabase.connect(
                 url =
                     when (config.sql.method) {
                         SQLConfig.SQLMethod.SQLITE -> "jdbc:sqlite:${Platform.get().rootDirectory.absolutePath}/database"

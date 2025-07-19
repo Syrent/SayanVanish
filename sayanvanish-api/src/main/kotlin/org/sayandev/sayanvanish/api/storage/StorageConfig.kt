@@ -5,24 +5,26 @@ import org.sayandev.sayanvanish.api.storage.redis.RedisConfig
 import org.sayandev.sayanvanish.api.storage.sql.SQLConfig
 import org.sayandev.sayanvanish.api.storage.websocket.WebSocketConfig
 import org.sayandev.stickynote.core.configuration.Config
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
-import org.spongepowered.configurate.objectmapping.meta.Comment
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import com.charleskorn.kaml.YamlComment
+import org.sayandev.sayanvanish.api.feature.Feature.Companion.directory
 import org.spongepowered.configurate.serialize.TypeSerializerCollection
 import java.io.File
 
 public var storageConfig = StorageConfig.fromConfig() ?: StorageConfig.defaultConfig()
 
-@ConfigSerializable
+@Serializable
 class StorageConfig(
     val transactionThreadCount: Int = 5,
-    @Comment("Configuration for the database, including method, SQL, Redis, and caching options.")
+    @YamlComment("Configuration for the database, including method, SQL, Redis, and caching options.")
     val method: DatabaseType = DatabaseType.SQL,
-    @Comment("Configuration for SQL database")
+    @YamlComment("Configuration for SQL database")
     val sql: SQLConfig = SQLConfig(),
-    @Comment("Configuration for Redis database")
+    @YamlComment("Configuration for Redis database")
     val redis: RedisConfig = RedisConfig(),
     val transactionTypes: MutableList<TransactionType> = TransactionTypes.entries.toMutableList(),
-) : Config(Platform.get().rootDirectory, FILE_NAME, serializers()) {
+) {
 
     init {
         // Make sure to add missing transaction types to configuration file
@@ -36,8 +38,13 @@ class StorageConfig(
         }
     }
 
+    fun save() {
+        Config.save(file, this)
+    }
+
     companion object {
         private const val FILE_NAME = "storage.yml"
+        val file = File(Platform.get().rootDirectory, FILE_NAME)
 
         @JvmStatic
         fun defaultConfig(): StorageConfig {
@@ -46,13 +53,7 @@ class StorageConfig(
 
         @JvmStatic
         fun fromConfig(): StorageConfig? {
-            return fromConfig<StorageConfig>(File(Platform.get().rootDirectory, FILE_NAME), serializers())
-        }
-
-        fun serializers(): TypeSerializerCollection {
-            return TypeSerializerCollection.builder()
-                .register(TransactionType::class.java, TransactionType.Serializer)
-                .build()
+            return Config.fromFile<StorageConfig>(File(Platform.get().rootDirectory, FILE_NAME))
         }
     }
 }

@@ -1,6 +1,6 @@
 package org.sayandev.sayanvanish.bukkit.command
 
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import org.sayandev.sayanventure.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -19,6 +19,7 @@ import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.feature.Configurable
+import org.sayandev.sayanvanish.api.feature.Feature
 import org.sayandev.sayanvanish.api.feature.Features
 import org.sayandev.sayanvanish.api.feature.RegisteredFeatureHandler
 import org.sayandev.sayanvanish.api.storage.StorageConfig
@@ -96,7 +97,7 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
 
             if (target.isPresent) {
                 if (!player.isOnline) {
-                    sender.sendMessage(language.vanish.offlineOnVanish.component(Placeholder.unparsed("player", player.name ?: "N/A"), Placeholder.parsed("state", user.stateText())))
+                    sender.sendComponent(language.vanish.offlineOnVanish, Placeholder.unparsed("player", player.name ?: "N/A"), Placeholder.parsed("state", user.stateText()))
                     options.sendMessage = false
                 }
             }
@@ -111,7 +112,6 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
 
     init {
         manager.settings().set(ManagerSetting.OVERRIDE_EXISTING_COMMANDS, true)
-        registerHelpLiteral()
 
         var forceUpdateConfirm = false
         rawCommandBuilder().registerCopy {
@@ -162,7 +162,7 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
                         "username",
                         "password",
                     )
-                    val databaseKey = Paste("yaml", storageConfig.file.readLines().filter { !blockedWords.any { blockedWord -> it.contains(blockedWord) } }).post().await()
+                    val databaseKey = Paste("yaml", StorageConfig.file.readLines().filter { !blockedWords.any { blockedWord -> it.contains(blockedWord) } }).post().await()
                     val settingsKey = Paste("yaml", Settings.settingsFile.readLines()).post().await()
                     val latestLogFile = File(File(pluginDirectory.parentFile.parentFile, "logs"), "latest.log")
                     if (latestLogFile.exists()) {
@@ -170,7 +170,7 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
 
                         val featurePastes = mutableMapOf<String, List<String>>()
                         for (feature in Features.features()) {
-                            featurePastes[feature.id] = feature.file.readLines()
+                            featurePastes[feature.id] = File(Feature.directory(feature.category), "${feature.id}.yml").readLines()
                         }
                         val featureKey = Paste("yaml", featurePastes.map { "${it.key}:\n     ${it.value.joinToString("\n     ")}" }).post().await()
                         generateMainPaste(sender, mapOf(

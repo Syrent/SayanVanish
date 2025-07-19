@@ -2,10 +2,10 @@ package org.sayandev.sayanvanish.velocity.feature
 
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import kotlinx.serialization.Serializable
 import org.sayandev.stickynote.velocity.hasPlugin
 
-@ConfigSerializable
+@Serializable
 abstract class HookFeature(
     id: String,
     @Transient val plugin: String,

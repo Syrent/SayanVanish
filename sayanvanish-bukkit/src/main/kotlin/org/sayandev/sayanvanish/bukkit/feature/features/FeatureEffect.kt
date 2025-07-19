@@ -1,5 +1,13 @@
 package org.sayandev.sayanvanish.bukkit.feature.features
 
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import org.bukkit.event.EventHandler
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
@@ -10,22 +18,20 @@ import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.nms.NMSUtils.sendPacket
 import org.sayandev.stickynote.bukkit.nms.PacketUtils
 import org.sayandev.stickynote.bukkit.utils.ServerVersion
-import org.spongepowered.configurate.ConfigurationNode
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
-import org.spongepowered.configurate.objectmapping.meta.Comment
-import org.spongepowered.configurate.serialize.TypeSerializer
-import org.spongepowered.configurate.serialize.TypeSerializerCollection
-import java.lang.reflect.Type
+import org.sayandev.stickynote.core.configuration.Config
+import com.charleskorn.kaml.YamlComment
+import kotlinx.serialization.SerialName
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
+@SerialName("effect")
 @Suppress("DEPRECATION")
 data class FeatureEffect(
-    @Comment("""
-    All effects will being sent using packets to prevent conflict with other plugins or desyncs.
-    List of effects to apply when a player vanishes
-    """)
-    val effects: List<PotionEffectData> = listOf(
+    @YamlComment(
+        "All effects will being sent using packets to prevent conflict with other plugins or desyncs.",
+        "List of effects to apply when a player vanishes"
+    )
+    @Contextual val effects: List<PotionEffectData> = listOf(
         PotionEffectData(
             ServerVersion.supports(9),
             false,
@@ -54,7 +60,7 @@ data class FeatureEffect(
             false,
         )
     )
-) : ListenedFeature("effect", additionalSerializers = TypeSerializerCollection.builder().register(PotionEffectType::class.java, PotionEffectTypeSerializer()).build()) {
+) : ListenedFeature("effect") {
 
     @EventHandler
     private fun onVanish(event: BukkitUserVanishEvent) {
@@ -86,9 +92,14 @@ data class FeatureEffect(
         }
     }
 
+    companion object {
+        init {
+            Config.registerSerializer(PotionEffectTypeSerializer)
+        }
+    }
 }
 
-@ConfigSerializable
+@Serializable
 class PotionEffectData(
     val usePacket: Boolean = true,
     val keepAfterAppear: Boolean = false,
@@ -101,12 +112,16 @@ class PotionEffectData(
     fun toPotionEffect() = PotionEffect(PotionEffectType.getByName(type)!!, if (ServerVersion.supports(19) && duration == Int.MAX_VALUE) -1 else duration, amplifier, ambient, particles)
 }
 
-class PotionEffectTypeSerializer : TypeSerializer<PotionEffectType> {
-    override fun deserialize(type: Type, node: ConfigurationNode): PotionEffectType {
-        return PotionEffectType.getByName(node.string!!)!!
+object PotionEffectTypeSerializer : KSerializer<PotionEffectType> {
+    override val descriptor: SerialDescriptor =
+        PrimitiveSerialDescriptor("name", PrimitiveKind.STRING)
+
+    override fun deserialize(decoder: Decoder): PotionEffectType {
+        val name = decoder.decodeString()
+        return PotionEffectType.getByName(name) ?: throw IllegalArgumentException("Unknown PotionEffectType: $name")
     }
 
-    override fun serialize(type: Type, effectType: PotionEffectType?, node: ConfigurationNode) {
-        node.set(effectType?.name)
+    override fun serialize(encoder: Encoder, value: PotionEffectType) {
+        encoder.encodeString(value.name)
     }
 }

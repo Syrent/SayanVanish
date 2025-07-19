@@ -20,24 +20,26 @@ import org.sayandev.stickynote.bukkit.nms.NMSUtils
 import org.sayandev.stickynote.bukkit.nms.NMSUtils.sendPacket
 import org.sayandev.stickynote.bukkit.nms.PacketUtils
 import org.sayandev.stickynote.bukkit.utils.ServerVersion
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
-import org.spongepowered.configurate.objectmapping.meta.Comment
+import kotlinx.serialization.Serializable
+import com.charleskorn.kaml.YamlComment
+import kotlinx.serialization.SerialName
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
+@SerialName("level")
 class FeatureLevel(
-    @Comment("""
-    This feature is a CRITICAL feature! do NOT disable this feature if you don't know what you're doing.
-    
-    If true, players will see vanished players as spectators. (ONLY WORKS ON MINECRAFT 1.9 AND ABOVE)""")
+    @YamlComment(
+    "This feature is a CRITICAL feature! do NOT disable this feature if you don't know what you're doing.",
+    "",
+    "If true, players will see vanished players as spectators. (ONLY WORKS ON MINECRAFT 1.9 AND ABOVE)")
     @Configurable val seeAsSpectator: Boolean = ServerVersion.supports(9),
-    @Comment("""
-    The method to use to determine the vanish level of a player.
-    
-    Options:
-    - PERMISSION: The vanish level is determined by player permission (permission: sayanvanish.level.<level>).
-    - DATABASE: The vanish level is determined by the vanish level stored in the database. (you can use plugin internal command to change database vanish level)
-    """)
+    @YamlComment(
+    "The method to use to determine the vanish level of a player.",
+    "",
+    "Options:",
+    "- PERMISSION: The vanish level is determined by player permission (permission: sayanvanish.level.<level>).",
+    "- DATABASE: The vanish level is determined by the vanish level stored in the database. (you can use plugin internal command to change database vanish level)",
+    )
     val levelMethod: LevelMethod = LevelMethod.PERMISSION
 ): ListenedFeature("level", critical = true) {
 
@@ -136,6 +138,7 @@ class FeatureLevel(
         }
     }
 
+    @Serializable
     enum class LevelMethod {
         PERMISSION,
         DATABASE

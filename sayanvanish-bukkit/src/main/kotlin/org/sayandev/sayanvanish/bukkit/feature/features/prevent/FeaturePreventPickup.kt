@@ -1,5 +1,6 @@
 package org.sayandev.sayanvanish.bukkit.feature.features.prevent
 
+import kotlinx.serialization.SerialName
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityPickupItemEvent
@@ -10,10 +11,11 @@ import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cached
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.utils.ServerVersion
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import kotlinx.serialization.Serializable
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
+@SerialName("prevent_pickup")
 class FeaturePreventPickup: ListenedFeature("prevent_pickup", category = FeatureCategories.PREVENTION) {
 
     override var condition: Boolean = ServerVersion.supports(9)
@@ -29,7 +31,7 @@ class FeaturePreventPickup: ListenedFeature("prevent_pickup", category = Feature
 }
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
 class FeatureLegacyPreventPickup: ListenedFeature("legacy_prevent_pickup", category = FeatureCategories.PREVENTION) {
 
     override var condition: Boolean = !ServerVersion.supports(9)

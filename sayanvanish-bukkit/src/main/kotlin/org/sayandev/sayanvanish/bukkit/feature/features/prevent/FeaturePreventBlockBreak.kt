@@ -1,5 +1,6 @@
 package org.sayandev.sayanvanish.bukkit.feature.features.prevent
 
+import kotlinx.serialization.SerialName
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.block.BlockBreakEvent
@@ -8,10 +9,11 @@ import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import kotlinx.serialization.Serializable
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
+@SerialName("prevent_block_break")
 class FeaturePreventBlockBreak: ListenedFeature("prevent_block_break", false, category = FeatureCategories.PREVENTION) {
 
     @EventHandler(priority = EventPriority.HIGHEST)

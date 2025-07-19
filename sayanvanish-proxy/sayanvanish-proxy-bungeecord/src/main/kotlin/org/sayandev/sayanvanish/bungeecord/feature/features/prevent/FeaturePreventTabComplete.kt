@@ -13,10 +13,10 @@ import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.sayanvanish.bungeecord.api.BungeeUser.Companion.generateAndSaveUser
 import org.sayandev.sayanvanish.bungeecord.api.SayanVanishBungeeAPI
 import org.sayandev.sayanvanish.bungeecord.feature.ListenedFeature
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import kotlinx.serialization.Serializable
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
 class FeaturePreventTabComplete(
     @Configurable val checkVanishLevel: Boolean = false
 ): ListenedFeature("prevent_tab_complete", category = FeatureCategories.PREVENTION) {

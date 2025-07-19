@@ -1,18 +1,19 @@
 package org.sayandev.sayanvanish.bukkit.feature.features.prevent
 
+import kotlinx.serialization.SerialName
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.FoodLevelChangeEvent
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import kotlinx.serialization.Serializable
 
 @RegisteredFeature
-@ConfigSerializable
-class PreventFoodLevelChange(
+@Serializable
+@SerialName("prevent_food_level_change")
+class FeaturePreventFoodLevelChange(
     val ignoreIfIncrease: Boolean = true
 ): ListenedFeature("prevent_food_level_change", category = FeatureCategories.PREVENTION) {
 

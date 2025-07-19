@@ -1,6 +1,7 @@
 package org.sayandev.sayanvanish.bukkit.feature.features
 
 import com.cryptomorin.xseries.XMaterial
+import kotlinx.serialization.SerialName
 import org.bukkit.GameMode
 import org.bukkit.block.Container
 import org.bukkit.entity.Player
@@ -20,11 +21,13 @@ import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.runSync
 import org.sayandev.stickynote.bukkit.utils.ServerVersion
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import java.util.*
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
+@SerialName("silent_container")
 class FeatureSilentContainer: ListenedFeature("silent_container") {
 
     @Transient override var condition: Boolean = ServerVersion.supports(13)

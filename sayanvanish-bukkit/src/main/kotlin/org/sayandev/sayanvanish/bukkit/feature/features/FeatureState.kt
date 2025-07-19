@@ -1,6 +1,6 @@
 package org.sayandev.sayanvanish.bukkit.feature.features
 
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import org.sayandev.sayanventure.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerJoinEvent
@@ -20,26 +20,28 @@ import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.launch
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
-import org.spongepowered.configurate.objectmapping.meta.Comment
+import kotlinx.serialization.Serializable
+import com.charleskorn.kaml.YamlComment
+import kotlinx.serialization.SerialName
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
+@SerialName("state")
 class FeatureState(
-    @Comment("""
-    This is a CRITICAL feature. It is responsible for handling the state of the player when they join or quit the server.
-    do NOT disable this feature if you don't know what you're doing.
-    
-    If true, players will be remembered when they join the server. (if they were vanished before quitting)
-    """)
+    @YamlComment(
+    "This is a CRITICAL feature. It is responsible for handling the state of the player when they join or quit the server.",
+    "do NOT disable this feature if you don't know what you're doing.",
+    "",
+    "If true, players will be remembered when they join the server. (if they were vanished before quitting)",
+    )
     @Configurable val remember: Boolean = true,
-    @Comment("Whether to vanish players when they join the server (they also need vanish on join permission)")
+    @YamlComment("Whether to vanish players when they join the server (they also need vanish on join permission)")
     @Configurable val vanishOnJoin: Boolean = false,
-    @Comment("Whether to reappear players when they quit the server")
+    @YamlComment("Whether to reappear players when they quit the server")
     @Configurable val reappearOnQuit: Boolean = false,
-    @Comment("Whether to check permission when a player joins the server")
+    @YamlComment("Whether to check permission when a player joins the server")
     @Configurable val checkPermissionOnQuit: Boolean = true,
-    @Comment("Whether to check permission when a player quits the server")
+    @YamlComment("Whether to check permission when a player quits the server")
     @Configurable val checkPermissionOnJoin: Boolean = true,
 ) : ListenedFeature("state", critical = true) {
 

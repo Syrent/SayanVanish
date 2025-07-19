@@ -12,17 +12,19 @@ import org.sayandev.stickynote.bukkit.StickyNote.runSync
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
-import org.spongepowered.configurate.objectmapping.meta.Comment
+import kotlinx.serialization.Serializable
+import com.charleskorn.kaml.YamlComment
+import kotlinx.serialization.SerialName
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
+@SerialName("gamemode")
 class FeatureGameMode(
-    @Comment("The fallback gamemode when the player is not vanished and doesn't have in-memory gamemode.")
+    @YamlComment("The fallback gamemode when the player is not vanished and doesn't have in-memory gamemode.")
     val fallbackMode: GameMode = GameMode.SURVIVAL,
-    @Comment("Update gamemode history on gamemode change event.")
+    @YamlComment("Update gamemode history on gamemode change event.")
     val checkGameModeChange: Boolean = false,
-    @Comment("Change gamemode to spectator on double-sneak")
+    @YamlComment("Change gamemode to spectator on double-sneak")
     val checkToggleSneak: Boolean = true,
     val timeWindowTicks: Long = 8
 ): ListenedFeature("gamemode") {

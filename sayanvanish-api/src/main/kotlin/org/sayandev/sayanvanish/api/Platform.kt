@@ -1,8 +1,11 @@
 package org.sayandev.sayanvanish.api
 
 import kotlinx.coroutines.runBlocking
-import org.sayandev.sayanvanish.api.storage.TransactionDatabase
+import kotlinx.serialization.modules.EmptySerializersModule
+import kotlinx.serialization.modules.SerializersModule
 import org.sayandev.sayanvanish.api.feature.RegisteredFeatureHandler
+import org.sayandev.sayanvanish.api.storage.TransactionDatabase
+import org.sayandev.stickynote.core.configuration.Config
 import java.io.File
 import java.util.logging.Logger
 
@@ -13,6 +16,7 @@ open class Platform(
     var rootDirectory: File,
     var serverId: String,
     val adapter: PlatformAdapter<out User, out VanishUser>,
+    val serializers: SerializersModule = EmptySerializersModule()
 ) {
 
     @JvmSynthetic
@@ -58,6 +62,9 @@ open class Platform(
         @JvmStatic
         fun setAndRegister(platform: Platform): Boolean {
             setPlatform(platform)
+
+            Config.registerSerializersModule(platform.serializers)
+
             platform.registerBlocking()
 
             (VanishAPI.get().getDatabase() as? TransactionDatabase)?.let {

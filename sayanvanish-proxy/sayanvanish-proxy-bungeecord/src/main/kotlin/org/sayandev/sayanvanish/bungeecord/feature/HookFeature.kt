@@ -3,9 +3,9 @@ package org.sayandev.sayanvanish.bungeecord.feature
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.stickynote.bungeecord.hasPlugin
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import kotlinx.serialization.Serializable
 
-@ConfigSerializable
+@Serializable
 abstract class HookFeature(
     id: String,
     @Transient val plugin: String,

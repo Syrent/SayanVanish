@@ -1,5 +1,6 @@
 package org.sayandev.sayanvanish.bukkit.feature.features.prevent
 
+import kotlinx.serialization.SerialName
 import org.bukkit.event.EventHandler
 import org.bukkit.scoreboard.Team
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
@@ -10,10 +11,11 @@ import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.StickyNote
 import org.sayandev.stickynote.bukkit.hasPlugin
 import org.sayandev.stickynote.bukkit.warn
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import kotlinx.serialization.Serializable
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
+@SerialName("prevent_push")
 class FeaturePreventPush: ListenedFeature("prevent_push", enabled = false, category = FeatureCategories.PREVENTION) {
 
     @EventHandler

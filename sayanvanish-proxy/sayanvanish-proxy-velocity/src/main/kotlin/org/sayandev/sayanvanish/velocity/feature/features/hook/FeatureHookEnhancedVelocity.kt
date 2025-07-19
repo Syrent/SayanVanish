@@ -6,13 +6,13 @@ import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.velocity.feature.HookFeature
 import org.sayandev.sayanvanish.velocity.api.VelocityVanishUser.Companion.generateVanishUser
 import org.sayandev.sayanvanish.velocity.api.VelocityVanishUser.Companion.getVanishUser
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import kotlinx.serialization.Serializable
 import org.sayandev.stickynote.velocity.StickyNote
 import org.sayandev.stickynote.velocity.launch
 import java.util.UUID
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
 class FeatureHookEnhancedVelocity : HookFeature("hook_enhancedvelocity", "enhancedvelocity") {
 
     override fun enable() {

@@ -2,7 +2,7 @@ package org.sayandev.sayanvanish.velocity.api
 
 import com.velocitypowered.api.proxy.Player
 import kotlinx.coroutines.future.await
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
+import org.sayandev.sayanventure.adventure.text.minimessage.tag.resolver.TagResolver
 import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.VanishUser

@@ -1,5 +1,6 @@
 package org.sayandev.sayanvanish.bukkit.feature.features.prevent
 
+import kotlinx.serialization.SerialName
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageByEntityEvent
@@ -8,10 +9,11 @@ import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import kotlinx.serialization.Serializable
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
+@SerialName("prevent_damage")
 class FeaturePreventDamage: ListenedFeature("prevent_damage", category = FeatureCategories.PREVENTION) {
 
     @EventHandler

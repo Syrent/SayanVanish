@@ -1,5 +1,6 @@
 package org.sayandev.sayanvanish.bukkit.feature.features
 
+import kotlinx.serialization.SerialName
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -9,10 +10,11 @@ import org.sayandev.sayanvanish.bukkit.api.BukkitVanishUser.Companion.bukkitAdap
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendComponent
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import kotlinx.serialization.Serializable
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
+@SerialName("ride_entity")
 class FeatureRideEntity(
     val leaveVehicleWhenOthersEnter: Boolean = true,
     val exitMessage: String = "<red>You have been removed from the vehicle. because someone else entered it.",

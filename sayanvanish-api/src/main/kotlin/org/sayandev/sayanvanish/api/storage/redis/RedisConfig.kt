@@ -1,31 +1,32 @@
 package org.sayandev.sayanvanish.api.storage.redis
 
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
-import org.spongepowered.configurate.objectmapping.meta.Comment
+import kotlinx.serialization.Serializable
+import com.charleskorn.kaml.YamlComment
 
-@ConfigSerializable
+@Serializable
 data class RedisConfig(
     val threadCount: Int = 5,
-    @Comment("The type of Redis configuration. Available types: STANDALONE")
+    @YamlComment("The type of Redis configuration. Available types: STANDALONE")
     val type: RedisType = RedisType.STANDALONE,
-    @Comment("Configuration for standalone Redis setup")
+    @YamlComment("Configuration for standalone Redis setup")
     val standalone: Standalone = Standalone(),
 ) {
 
-    @ConfigSerializable
+    @Serializable
     data class Standalone(
-        @Comment("The host address of the Redis database. If it's an IP address (x.x.x.x), ensure it is enclosed in double quotes (`\"`).")
+        @YamlComment("The host address of the Redis database. If it's an IP address (x.x.x.x), ensure it is enclosed in double quotes (`\"`).")
         val host: String = "127.0.0.1",
-        @Comment("The port number of the Redis server")
+        @YamlComment("The port number of the Redis server")
         val port: Int = 6379,
-        @Comment("The username for accessing the Redis server")
+        @YamlComment("The username for accessing the Redis server")
         val user: String = "",
-        @Comment("The password for accessing the Redis server")
+        @YamlComment("The password for accessing the Redis server")
         val password: String = "",
-        @Comment("Whether to use SSL for the connection")
+        @YamlComment("Whether to use SSL for the connection")
         val ssl: Boolean = false
     )
 
+    @Serializable
     enum class RedisType {
         STANDALONE
     }

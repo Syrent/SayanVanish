@@ -9,16 +9,18 @@ import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.bukkit.feature.HookFeature
 import org.sayandev.stickynote.bukkit.registerListener
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
-import org.spongepowered.configurate.objectmapping.meta.Comment
+import kotlinx.serialization.Serializable
+import com.charleskorn.kaml.YamlComment
+import kotlinx.serialization.SerialName
 import java.util.*
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
+@SerialName("hook_essentials")
 class FeatureHookEssentials(
-    @Comment("Prevent Essentials from changing the AFK status of vanished players")
+    @YamlComment("Prevent Essentials from changing the AFK status of vanished players")
     @Configurable val preventAfkStatusChange: Boolean = true,
-    @Comment("Prevent players to send private messages to vanished players using Essentials")
+    @YamlComment("Prevent players to send private messages to vanished players using Essentials")
     @Configurable val preventPrivateMessage: Boolean = true,
 ) : HookFeature("hook_essentials", "Essentials") {
 

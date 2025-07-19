@@ -9,19 +9,21 @@ import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.HookFeature
 import org.sayandev.stickynote.bukkit.registerListener
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
-import org.spongepowered.configurate.objectmapping.meta.Comment
+import kotlinx.serialization.Serializable
+import com.charleskorn.kaml.YamlComment
+import kotlinx.serialization.SerialName
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
+@SerialName("hook_discordsrv")
 class FeatureHookDiscordSRV(
-    @Comment("Send quit message on vanish")
+    @YamlComment("Send quit message on vanish")
     @Configurable val sendQuitMessageOnVanish: Boolean = true,
-    @Comment("Send join message on unvanish")
+    @YamlComment("Send join message on unvanish")
     @Configurable val sendJoinMessageOnUnvanish: Boolean = true,
-    @Comment("Quit message format")
+    @YamlComment("Quit message format")
     @Configurable val quitMessage: String = "%player% left the server",
-    @Comment("Join message format")
+    @YamlComment("Join message format")
     @Configurable val joinMessage: String = "%player% joined the server",
 ): HookFeature("hook_discordsrv", "DiscordSRV") {
 

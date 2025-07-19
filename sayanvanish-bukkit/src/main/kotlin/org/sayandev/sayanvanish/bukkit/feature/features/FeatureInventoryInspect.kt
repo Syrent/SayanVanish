@@ -1,5 +1,8 @@
 package org.sayandev.sayanvanish.bukkit.feature.features
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -10,19 +13,18 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.plugin
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import java.util.*
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
+@SerialName("inventory_inspect")
 class FeatureInventoryInspect(
     @Configurable val modificationPermission: String = "${plugin.name}.features.inventory_inspect.modify"
 ): ListenedFeature("inventory_inspect") {
 
-    val playerInventoryMap = mutableListOf<UUID>()
+    @Transient val playerInventoryMap = mutableListOf<UUID>()
 
     @EventHandler(priority = EventPriority.HIGHEST)
     private fun onInteractPlayer(event: PlayerInteractAtEntityEvent) {

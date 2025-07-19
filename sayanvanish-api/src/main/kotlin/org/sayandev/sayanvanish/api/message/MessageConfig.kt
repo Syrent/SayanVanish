@@ -4,24 +4,29 @@ import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.storage.redis.RedisConfig
 import org.sayandev.sayanvanish.api.storage.websocket.WebSocketConfig
 import org.sayandev.stickynote.core.configuration.Config
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
-import org.spongepowered.configurate.objectmapping.meta.Comment
-import org.spongepowered.configurate.serialize.TypeSerializerCollection
+import kotlinx.serialization.Serializable
+import com.charleskorn.kaml.YamlComment
+import org.sayandev.sayanvanish.api.feature.Feature.Companion.directory
 import java.io.File
 
 // TODO: use a singleton or something, i don't want global scope variables like this anymore
 public var messageConfig = MessageConfig.fromConfig() ?: MessageConfig.defaultConfig()
 
-@ConfigSerializable
+@Serializable
 class MessageConfig(
-    @Comment("Configuration for Redis database")
+    @YamlComment("Configuration for Redis database")
     val threadCount: Int = 5,
     val redis: RedisConfig = RedisConfig(),
     val webSocketConfig: WebSocketConfig = WebSocketConfig(),
     val categoryTypes: List<MessagingCategoryType> = MessagingCategoryTypes.entries,
-) : Config(Platform.get().rootDirectory, fileName, serializers()) {
+) {
+
+    fun save() {
+        Config.save(File(Platform.get().rootDirectory, FILE_NAME), this)
+    }
+
     companion object {
-        private val fileName = "message.yml"
+        private const val FILE_NAME = "message.yml"
 
         @JvmStatic
         fun defaultConfig(): MessageConfig {
@@ -30,13 +35,7 @@ class MessageConfig(
 
         @JvmStatic
         fun fromConfig(): MessageConfig? {
-            return fromConfig<MessageConfig>(File(Platform.get().rootDirectory, fileName), serializers())
-        }
-
-        fun serializers(): TypeSerializerCollection {
-            return TypeSerializerCollection.builder()
-                .register(MessagingCategoryType::class.java, MessagingCategoryType.Serializer)
-                .build()
+            return Config.fromFile<MessageConfig>(File(Platform.get().rootDirectory, FILE_NAME))
         }
     }
 }

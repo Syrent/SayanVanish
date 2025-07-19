@@ -11,13 +11,13 @@ import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI.Companion.getOrCreateUser
 import org.sayandev.sayanvanish.velocity.feature.ListenedFeature
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
-import org.spongepowered.configurate.objectmapping.meta.Comment
+import kotlinx.serialization.Serializable
+import com.charleskorn.kaml.YamlComment
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
 class FeaturePreventTabComplete(
-    @Comment("Whether to keep vanished player in tab completion if the player that is getting the suggestion has a higher level of vanish.")
+    @YamlComment("Whether to keep vanished player in tab completion if the player that is getting the suggestion has a higher level of vanish.")
     @Configurable val checkVanishLevel: Boolean = false
 ): ListenedFeature("prevent_tab_complete", category = FeatureCategories.PREVENTION) {
 

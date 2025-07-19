@@ -1,6 +1,6 @@
 package org.sayandev.sayanvanish.bukkit.api
 
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import org.sayandev.sayanventure.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
@@ -19,7 +19,7 @@ import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.config.Settings
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureLevel
-import org.sayandev.sayanvanish.bukkit.feature.features.hook.FeatureLuckPermsHook
+import org.sayandev.sayanvanish.bukkit.feature.features.hook.FeatureHookLuckPerms
 import org.sayandev.stickynote.bukkit.hasPlugin
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.plugin
@@ -102,7 +102,7 @@ open class BukkitVanishUser(
 
     override fun hasPermission(permission: String): Boolean {
         return if (hasPlugin("LuckPerms")) {
-            val luckPermsFeature = Features.getFeature<FeatureLuckPermsHook>()
+            val luckPermsFeature = Features.getFeature<FeatureHookLuckPerms>()
             /*
             * I have to check if the player is op or not and luckperms feature is enabled so it doesn't disable all feature for op players
             * (bukkit permission check return true for all permissions if the player is op)

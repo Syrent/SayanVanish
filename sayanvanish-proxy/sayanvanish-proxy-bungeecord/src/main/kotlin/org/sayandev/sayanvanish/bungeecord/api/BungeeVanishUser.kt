@@ -1,6 +1,6 @@
 package org.sayandev.sayanvanish.bungeecord.api
 
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
+import org.sayandev.sayanventure.adventure.text.minimessage.tag.resolver.TagResolver
 import net.md_5.bungee.api.connection.ProxiedPlayer
 import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.VanishUser

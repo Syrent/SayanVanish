@@ -2,7 +2,7 @@ package org.sayandev.sayanvanish.bukkit.feature.features
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
-import net.kyori.adventure.text.Component
+import org.sayandev.sayanventure.adventure.text.Component
 import org.bukkit.event.EventHandler
 import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.api.VanishAPI
@@ -17,17 +17,19 @@ import org.sayandev.stickynote.bukkit.launch
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import org.sayandev.stickynote.bukkit.warn
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
-import org.spongepowered.configurate.objectmapping.meta.Comment
+import kotlinx.serialization.Serializable
+import com.charleskorn.kaml.YamlComment
+import kotlinx.serialization.SerialName
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
+@SerialName("actionbar")
 class FeatureActionbar(
-    @Comment("The content of the actionbar message.")
+    @YamlComment("The content of the actionbar message.")
     @Configurable val content: String = "<gray>You are currently vanished!",
-    @Comment("The delay before the actionbar message is sent. doesn't really matter.")
+    @YamlComment("The delay before the actionbar message is sent. doesn't really matter.")
     @Configurable val delayMillis: Long = 1000,
-    @Comment("The period between each actionbar message. values higher than 40 will make it not always visible.")
+    @YamlComment("The period between each actionbar message. values higher than 40 will make it not always visible.")
     @Configurable val periodMillis: Long = 1000,
 ) : ListenedFeature("actionbar") {
 

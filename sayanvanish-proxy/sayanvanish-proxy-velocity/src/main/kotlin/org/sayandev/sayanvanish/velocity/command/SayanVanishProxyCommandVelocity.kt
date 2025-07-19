@@ -1,7 +1,7 @@
 package org.sayandev.sayanvanish.velocity.command
 
 import com.velocitypowered.api.proxy.Player
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import org.sayandev.sayanventure.adventure.text.minimessage.tag.resolver.Placeholder
 import org.incendo.cloud.component.CommandComponent
 import org.incendo.cloud.context.CommandContext
 import org.incendo.cloud.description.Description

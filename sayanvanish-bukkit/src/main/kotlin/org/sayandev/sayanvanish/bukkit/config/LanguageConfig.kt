@@ -1,21 +1,23 @@
 package org.sayandev.sayanvanish.bukkit.config
 
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import org.sayandev.sayanvanish.api.feature.Feature.Companion.directory
 import org.sayandev.stickynote.bukkit.pluginDirectory
 import org.sayandev.stickynote.core.configuration.Config
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import java.io.File
 
 public var language: LanguageConfig = LanguageConfig.fromConfig() ?: LanguageConfig.defaultConfig()
 
-@ConfigSerializable
-class LanguageConfig(
+@Serializable
+data class LanguageConfig(
     val general: General = General(),
     val vanish: Vanish = Vanish(),
     val feature: Feature = Feature(),
     val paste: Paste = Paste()
-) : Config(languageDirectory, "${Settings.get().general.language}.yml") {
+) {
 
-    @ConfigSerializable
+    @Serializable
     data class General(
         val prefix: String = "<#67e8f9>SayanVanish</#67e8f9> <gray>|</gray> <yellow>",
         val reloaded: String = "<green>Plugin successfully reloaded. <red>Please note that some changes may require a server restart to take effect. Subsequent reloads may cause issues.",
@@ -30,7 +32,7 @@ class LanguageConfig(
         val updateFailed: String = "<red>Failed to update the plugin. Please try again later."
     )
 
-    @ConfigSerializable
+    @Serializable
     data class Feature(
         val notFound: String = "<red>Feature not found",
         val enabled: String = "<gray><gold><feature></gold> has been enabled.",
@@ -48,7 +50,7 @@ class LanguageConfig(
         val flyDisabled: String = "<red>You don't have keep fly after reappear permission, fly has been disabled.",
     )
 
-    @ConfigSerializable
+    @Serializable
     data class Vanish(
         val placeholderPrefix: String = "&7[Vanished]&r ",
         val placeholderSuffix: String = " &r&7[Vanished]",
@@ -65,13 +67,18 @@ class LanguageConfig(
         val noPermissionToKeepVanished: String = "<red>You don't have <gray><permission></gray> permission to keep your vanish status.",
     )
 
-    @ConfigSerializable
+    @Serializable
     data class Paste(
         val use: String = "<gray>Your paste key is <gold><key></gold>, <red>Make sure to check the content before sharing it with others and remove the data you don't want to share. <white><click:open_url:'https://pastes.dev/<key>'>(Click to open in pastes.dev)</click>",
         val generating: String = "<gold>Generating paste, please wait...",
         val failedToGenerate: String = "<red>Failed to generate paste, please try again later and make sure your machine is connected to internet.",
     )
 
+    fun save() {
+        Config.save(File(languageDirectory, "${Settings.get().general.language}.yml"), this)
+    }
+
+    @Serializable
     enum class Language(val id: String) {
         EN_US("en_US"),
     }
@@ -86,7 +93,7 @@ class LanguageConfig(
 
         @JvmStatic
         fun fromConfig(): LanguageConfig? {
-            return fromConfig<LanguageConfig>(File(languageDirectory, "${Settings.get().general.language}.yml"))
+            return Config.fromFile<LanguageConfig>(File(languageDirectory, "${Settings.get().general.language}.yml"))
         }
     }
 }

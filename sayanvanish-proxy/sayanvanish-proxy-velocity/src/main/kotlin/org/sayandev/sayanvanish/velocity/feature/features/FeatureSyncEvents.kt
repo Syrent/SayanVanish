@@ -10,19 +10,19 @@ import org.sayandev.sayanvanish.velocity.api.VelocityVanishUser.Companion.adapt
 import org.sayandev.sayanvanish.velocity.event.VelocityUserUnVanishEvent
 import org.sayandev.sayanvanish.velocity.event.VelocityUserVanishEvent
 import org.sayandev.sayanvanish.velocity.feature.ListenedFeature
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import kotlinx.serialization.Serializable
 import org.sayandev.stickynote.velocity.StickyNote
 import org.sayandev.stickynote.velocity.launch
 import org.sayandev.stickynote.velocity.plugin
 import org.sayandev.stickynote.velocity.server
-import org.spongepowered.configurate.objectmapping.meta.Comment
+import com.charleskorn.kaml.YamlComment
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
 class FeatureSyncEvents(
-    @Comment("The period of time to check for vanished players. low values may cause performance issues.")
+    @YamlComment("The period of time to check for vanished players. low values may cause performance issues.")
     val checkPeriodMillis: Long = 50
 ) : ListenedFeature("sync_events") {
 

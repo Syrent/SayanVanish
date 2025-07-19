@@ -9,11 +9,11 @@ import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.proxy.config.language
 import org.sayandev.sayanvanish.velocity.feature.HookFeature
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import kotlinx.serialization.Serializable
 import org.sayandev.stickynote.velocity.registerListener
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
 class FeatureHookAdvancedServerList : HookFeature("hook_advanced_server_list", "advancedserverlist") {
     override fun enable() {
         if (hasPlugin()) {

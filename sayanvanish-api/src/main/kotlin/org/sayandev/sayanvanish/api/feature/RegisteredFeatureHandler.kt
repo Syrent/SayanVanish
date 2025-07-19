@@ -1,7 +1,9 @@
 package org.sayandev.sayanvanish.api.feature
 
+import kotlinx.serialization.modules.SerializersModule
 import org.reflections.Reflections
 import org.sayandev.sayanvanish.api.Platform
+import org.sayandev.stickynote.core.configuration.Config
 import java.io.IOException
 import java.net.URL
 import java.security.CodeSource

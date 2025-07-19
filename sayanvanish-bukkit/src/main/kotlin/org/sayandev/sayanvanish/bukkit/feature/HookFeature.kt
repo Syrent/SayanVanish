@@ -1,16 +1,17 @@
 package org.sayandev.sayanvanish.bukkit.feature
 
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.stickynote.bukkit.hasPlugin
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
 
-@ConfigSerializable
+@Serializable
 abstract class HookFeature(
-    id: String,
-    @Transient val plugin: String,
-    enabled: Boolean = true,
-    category: FeatureCategories = FeatureCategories.HOOK,
+    @Transient override val id: String = "@transient",
+    @Transient val plugin: String = "@transient",
+    @Transient override var enabled: Boolean = true,
+    @Transient override val category: FeatureCategories = FeatureCategories.HOOK,
 ) : ListenedFeature(id, enabled, category) {
 
     fun hasPlugin(): Boolean {

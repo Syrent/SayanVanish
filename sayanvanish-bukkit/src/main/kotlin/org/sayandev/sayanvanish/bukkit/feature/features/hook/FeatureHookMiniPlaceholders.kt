@@ -2,6 +2,7 @@ package org.sayandev.sayanvanish.bukkit.feature.features.hook
 
 import io.github.miniplaceholders.api.Expansion
 import io.github.miniplaceholders.api.utils.TagsUtils
+import kotlinx.serialization.SerialName
 import org.bukkit.entity.Player
 import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
@@ -9,10 +10,11 @@ import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cached
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.feature.HookFeature
 import org.sayandev.stickynote.bukkit.onlinePlayers
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import kotlinx.serialization.Serializable
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
+@SerialName("hook_miniplaceholders")
 class FeatureHookMiniPlaceholders: HookFeature("hook_miniplaceholders", "MiniPlaceholders") {
 
     override fun enable() {

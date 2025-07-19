@@ -9,12 +9,12 @@ import org.sayandev.sayanvanish.bungeecord.feature.ListenedFeature
 import org.sayandev.stickynote.bungeecord.StickyNote
 import org.sayandev.stickynote.bungeecord.launch
 import org.sayandev.stickynote.bungeecord.plugin
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import kotlinx.serialization.Serializable
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
 class FeatureSyncEvents(
     // TODO: previous time was 50millis, think of something to ignore/reset previous value
     val checkPeriodMillis: Long = 1000L

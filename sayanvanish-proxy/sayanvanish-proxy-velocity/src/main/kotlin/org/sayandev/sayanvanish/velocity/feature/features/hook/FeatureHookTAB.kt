@@ -8,14 +8,14 @@ import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
 import org.sayandev.sayanvanish.velocity.api.VelocityVanishUser
 import org.sayandev.sayanvanish.velocity.feature.HookFeature
 import org.sayandev.stickynote.velocity.plugin
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
-import org.spongepowered.configurate.objectmapping.meta.Comment
+import kotlinx.serialization.Serializable
+import com.charleskorn.kaml.YamlComment
 
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
 class FeatureHookTAB(
-    @Comment("Whether to use cache data for vanish status. This will improve performance but may cause a small delay in tablist removal after join.")
+    @YamlComment("Whether to use cache data for vanish status. This will improve performance but may cause a small delay in tablist removal after join.")
     val useCacheData: Boolean = false
 ): HookFeature("hook_tab", "TAB") {
     override fun enable() {

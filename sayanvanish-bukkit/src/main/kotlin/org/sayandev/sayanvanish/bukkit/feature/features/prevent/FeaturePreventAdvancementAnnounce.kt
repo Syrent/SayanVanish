@@ -11,15 +11,17 @@ import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.StickyNote
 import org.sayandev.stickynote.bukkit.utils.ServerVersion
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
-import org.spongepowered.configurate.objectmapping.meta.Comment
+import kotlinx.serialization.Serializable
+import com.charleskorn.kaml.YamlComment
+import kotlinx.serialization.SerialName
 
 @RegisteredFeature
-@ConfigSerializable
+@Serializable
+@SerialName("prevent_advancement_announce")
 class FeaturePreventAdvancementAnnounce(
-    @Comment("Whether to disable the advancement announce message when the player is vanished.")
+    @YamlComment("Whether to disable the advancement announce message when the player is vanished.")
     @Configurable val disableMessage: Boolean = true,
-    @Comment("Whether to revoke the criteria when the player is vanished.")
+    @YamlComment("Whether to revoke the criteria when the player is vanished.")
     @Configurable val revokeCriteria: Boolean = false
 ): ListenedFeature("prevent_advancement_announce", category = FeatureCategories.PREVENTION) {
 

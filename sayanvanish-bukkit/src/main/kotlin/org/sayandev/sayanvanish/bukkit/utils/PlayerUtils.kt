@@ -1,6 +1,6 @@
 package org.sayandev.sayanvanish.bukkit.utils
 
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
+import org.sayandev.sayanventure.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.command.CommandSender
 import org.sayandev.sayanvanish.bukkit.config.Settings
 import org.sayandev.sayanvanish.bukkit.config.language

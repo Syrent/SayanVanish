@@ -47,7 +47,7 @@ open class BukkitVanishUser(
                 player.effectivePermissions
                     .filter { it.permission.startsWith("sayanvanish.level.") }
                     .maxOfOrNull { it.permission.substringAfter("sayanvanish.level.").toIntOrNull() ?: field }
-                    ?: if (hasPermission(Permission.VANISH)) 1 else {
+                    ?: if (player.hasPermission(org.bukkit.permissions.Permission(Permission.VANISH.permission(), PermissionDefault.FALSE))) 1 else {
                         if (isVanished) 1 else field
                     }
             } ?: field

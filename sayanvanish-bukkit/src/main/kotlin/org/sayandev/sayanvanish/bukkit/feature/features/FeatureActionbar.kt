@@ -1,25 +1,22 @@
 package org.sayandev.sayanvanish.bukkit.feature.features
 
+import com.charleskorn.kaml.YamlComment
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
-import org.sayandev.sayanventure.adventure.text.Component
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import org.bukkit.event.EventHandler
-import org.sayandev.sayanvanish.api.Permission
-import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
+import org.sayandev.sayanventure.adventure.text.Component
 import org.sayandev.stickynote.bukkit.StickyNote
 import org.sayandev.stickynote.bukkit.launch
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
-import org.sayandev.stickynote.bukkit.warn
-import kotlinx.serialization.Serializable
-import com.charleskorn.kaml.YamlComment
-import kotlinx.serialization.SerialName
 
 @RegisteredFeature
 @Serializable
@@ -51,6 +48,8 @@ class FeatureActionbar(
         launch {
             delay(delayMillis)
             while (StickyNote.plugin().isEnabled && enabled && isActive) {
+                // TODO: remove this warning
+//                warn("vanished: ${VanishAPI.get().getCacheService().getVanishUsers().values.joinToString(" ,") { "${it.username}:${it.isVanished}" }}")
                 for (user in onlinePlayers.mapNotNull { it.cachedVanishUser() }.filter { it.isVanished }) {
                     if (!isActive(user)) continue
                     user.sendActionbar(content.component())

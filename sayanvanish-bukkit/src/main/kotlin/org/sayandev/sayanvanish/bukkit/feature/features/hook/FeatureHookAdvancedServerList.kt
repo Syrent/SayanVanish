@@ -9,7 +9,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 @SerialName("hook_advanced_server_list")
 class FeatureHookAdvancedServerList(
-) : HookFeature("hook_advanced_server_list", "AdvancedServerList") {
+    override var enabled: Boolean = true,
+) : HookFeature("hook_advanced_server_list", "AdvancedServerList", enabled) {
     override fun enable() {
         if (hasPlugin()) {
             AdvancedServerListImpl().register()

@@ -34,9 +34,7 @@ object SayanVanishAPI : VanishAPI {
             database.initialize().await()
             messagingService.initialize().await()
             cacheService.fetchData()
-        }
 
-        launch(database.dispatcher) {
             for (user in database.getVanishUsers().await().filter { user -> user.serverId == Platform.get().serverId }) {
                 user.isOnline = false
                 user.saveAndSync()
@@ -49,46 +47,10 @@ object SayanVanishAPI : VanishAPI {
         return Platform.get()
     }
 
-    override fun isVanished(uniqueId: UUID): Deferred<Boolean> {
-        return CompletableDeferred<Boolean>().apply {
-            launch(database.dispatcher) {
-                complete(database.getVanishUser(uniqueId).await()?.isVanished == true)
-            }
-        }
-    }
-
-    override fun isVanishedBlocking(uniqueId: UUID): Boolean {
-        return runBlocking { isVanished(uniqueId).await() }
-    }
-
     override fun canSee(user: VanishUser?, target: VanishUser): Boolean {
         if (!target.isVanished) return true
         val vanishLevel = user?.vanishLevel ?: -1
         return vanishLevel >= target.vanishLevel
-    }
-
-    override fun getOnlineVanishUsers(): Deferred<List<VanishUser>> {
-        return CompletableDeferred<List<VanishUser>>().apply {
-            launch(database.dispatcher) {
-                complete(database.getVanishUsers().await().filter { it.isOnline })
-            }
-        }
-    }
-
-    override fun getOnlineVanishedUsers(): Deferred<List<VanishUser>> {
-        return CompletableDeferred<List<VanishUser>>().apply {
-            launch(database.dispatcher) {
-                complete(database.getVanishUsers().await().filter { it.isOnline && it.isVanished })
-            }
-        }
-    }
-
-    override fun getVanishedUsers(): Deferred<List<VanishUser>> {
-        return CompletableDeferred<List<VanishUser>>().apply {
-            launch(database.dispatcher) {
-                complete(database.getVanishUsers().await().filter { it.isVanished })
-            }
-        }
     }
 
     suspend fun UUID.user(): VanishUser? {

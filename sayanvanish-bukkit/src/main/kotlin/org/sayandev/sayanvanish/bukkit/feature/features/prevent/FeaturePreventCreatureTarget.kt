@@ -16,7 +16,9 @@ import kotlinx.serialization.Serializable
 @RegisteredFeature
 @Serializable
 @SerialName("prevent_creature_target")
-class FeaturePreventCreatureTarget: ListenedFeature("prevent_creature_target", category = FeatureCategories.PREVENTION) {
+class FeaturePreventCreatureTarget(
+    override var enabled: Boolean = true,
+): ListenedFeature("prevent_creature_target", enabled, category = FeatureCategories.PREVENTION) {
 
     @EventHandler
     private fun preventEntityTargetOnVanish(event: BukkitUserVanishEvent) {

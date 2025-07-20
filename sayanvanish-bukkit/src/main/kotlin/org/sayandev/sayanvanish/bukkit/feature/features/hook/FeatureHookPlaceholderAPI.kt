@@ -20,6 +20,7 @@ import kotlinx.serialization.SerialName
 @Serializable
 @SerialName("hook_placeholderapi")
 class FeatureHookPlaceholderAPI(
+    override var enabled: Boolean = true,
     @YamlComment(
     "Inject placeholders into PlaceholderAPI",
     "Available placeholders:",
@@ -31,7 +32,7 @@ class FeatureHookPlaceholderAPI(
     "- %sayanvanish_online_<server_id>% - Returns the count of online players that are not vanished in the specified server",
     )
     @Configurable val injectPlaceholders: Boolean = true
-): HookFeature("hook_placeholderapi", "PlaceholderAPI") {
+): HookFeature("hook_placeholderapi", "PlaceholderAPI", enabled) {
 
     @Transient private var hook: Any? = null
 

@@ -1,5 +1,6 @@
 package org.sayandev.sayanvanish.bukkit.feature.features.prevent
 
+import com.charleskorn.kaml.YamlComment
 import kotlinx.serialization.SerialName
 import org.bukkit.event.EventHandler
 import org.bukkit.scoreboard.Team
@@ -16,7 +17,10 @@ import kotlinx.serialization.Serializable
 @RegisteredFeature
 @Serializable
 @SerialName("prevent_push")
-class FeaturePreventPush: ListenedFeature("prevent_push", enabled = false, category = FeatureCategories.PREVENTION) {
+class FeaturePreventPush(
+    @YamlComment("This feature might cause compatibility issues with eGlow plugin. If you use eGlow, disable this feature.")
+    override var enabled: Boolean = false,
+): ListenedFeature("prevent_push", enabled, category = FeatureCategories.PREVENTION) {
 
     @EventHandler
     private fun onVanish(event: BukkitUserVanishEvent) {

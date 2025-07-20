@@ -7,6 +7,7 @@ import org.sayandev.sayanvanish.velocity.feature.HookFeature
 import org.sayandev.sayanvanish.velocity.api.VelocityVanishUser.Companion.generateVanishUser
 import org.sayandev.sayanvanish.velocity.api.VelocityVanishUser.Companion.getVanishUser
 import kotlinx.serialization.Serializable
+import org.sayandev.sayanvanish.api.VanishUser.Companion.vanishUserFromCache
 import org.sayandev.stickynote.velocity.StickyNote
 import org.sayandev.stickynote.velocity.launch
 import java.util.UUID
@@ -25,7 +26,7 @@ class FeatureHookEnhancedVelocity : HookFeature("hook_enhancedvelocity", "enhanc
 
 private class EnhancedVelocityImpl : VanishHook {
     override fun setIsVanished(uniqueId: UUID): Boolean {
-        return VanishAPI.get().isVanishedBlocking(uniqueId)
+        return uniqueId.vanishUserFromCache()?.isVanished == true
     }
 
     override fun setVanished(uniqueId: UUID) {

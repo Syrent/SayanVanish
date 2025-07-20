@@ -20,9 +20,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 @SerialName("prevent_sculk")
 class FeaturePreventSculk(
+    override var enabled: Boolean = true,
     @Configurable val preventSculkSensor: Boolean = true,
     @Configurable val preventShriek: Boolean = true
-): ListenedFeature("prevent_sculk", category = FeatureCategories.PREVENTION) {
+): ListenedFeature("prevent_sculk", enabled, category = FeatureCategories.PREVENTION) {
 
     val sculkBlocks = listOf(
         "SCULK_SENSOR",

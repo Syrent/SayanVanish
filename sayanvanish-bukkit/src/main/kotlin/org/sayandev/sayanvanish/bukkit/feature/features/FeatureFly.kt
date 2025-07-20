@@ -17,9 +17,10 @@ import kotlinx.serialization.SerialName
 @Serializable
 @SerialName("fly")
 class FeatureFly(
+    override var enabled: Boolean = true,
     @YamlComment("Disable fly when player reappears and don't have keep fly permission.")
     @Configurable val disableOnReappear: Boolean = true
-) : ListenedFeature("fly") {
+) : ListenedFeature("fly", enabled) {
 
     @EventHandler
     private fun onVanish(event: BukkitUserVanishEvent) {

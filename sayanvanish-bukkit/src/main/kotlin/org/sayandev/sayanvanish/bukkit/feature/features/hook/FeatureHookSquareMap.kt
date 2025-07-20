@@ -14,7 +14,9 @@ import xyz.jpenilla.squaremap.api.SquaremapProvider
 @RegisteredFeature
 @Serializable
 @SerialName("hook_squaremap")
-class FeatureHookSquareMap: HookFeature("hook_squaremap", "squaremap") {
+class FeatureHookSquareMap(
+    override var enabled: Boolean = true,
+): HookFeature("hook_squaremap", "squaremap", enabled) {
 
     override fun enable() {
         if (hasPlugin()) {

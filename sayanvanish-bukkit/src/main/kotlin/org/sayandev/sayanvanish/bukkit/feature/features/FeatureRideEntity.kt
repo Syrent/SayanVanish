@@ -16,9 +16,10 @@ import kotlinx.serialization.Serializable
 @Serializable
 @SerialName("ride_entity")
 class FeatureRideEntity(
+    override var enabled: Boolean = true,
     val leaveVehicleWhenOthersEnter: Boolean = true,
     val exitMessage: String = "<red>You have been removed from the vehicle. because someone else entered it.",
-): ListenedFeature("ride_entity") {
+): ListenedFeature("ride_entity", enabled) {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     private fun removeVanishedPassengerOnEnter(event: PlayerInteractEntityEvent) {

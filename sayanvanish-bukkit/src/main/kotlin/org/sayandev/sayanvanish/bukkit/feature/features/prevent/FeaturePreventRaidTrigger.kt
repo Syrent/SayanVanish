@@ -15,7 +15,9 @@ import kotlinx.serialization.Serializable
 @RegisteredFeature
 @Serializable
 @SerialName("prevent_raid_trigger")
-class FeaturePreventRaidTrigger: ListenedFeature("prevent_raid_trigger", category = FeatureCategories.PREVENTION) {
+class FeaturePreventRaidTrigger(
+    override var enabled: Boolean = true,
+): ListenedFeature("prevent_raid_trigger", enabled, category = FeatureCategories.PREVENTION) {
 
     @Transient
     override var condition: Boolean = ServerVersion.supports(15)

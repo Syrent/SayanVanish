@@ -17,6 +17,7 @@ import kotlinx.serialization.SerialName
 @Serializable
 @SerialName("hook_discordsrv")
 class FeatureHookDiscordSRV(
+    override var enabled: Boolean = true,
     @YamlComment("Send quit message on vanish")
     @Configurable val sendQuitMessageOnVanish: Boolean = true,
     @YamlComment("Send join message on unvanish")
@@ -25,7 +26,7 @@ class FeatureHookDiscordSRV(
     @Configurable val quitMessage: String = "%player% left the server",
     @YamlComment("Join message format")
     @Configurable val joinMessage: String = "%player% joined the server",
-): HookFeature("hook_discordsrv", "DiscordSRV") {
+): HookFeature("hook_discordsrv", "DiscordSRV", enabled) {
 
     override fun enable() {
         if (hasPlugin()) {

@@ -14,8 +14,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 @SerialName("prevent_food_level_change")
 class FeaturePreventFoodLevelChange(
+    override var enabled: Boolean = true,
     val ignoreIfIncrease: Boolean = true
-): ListenedFeature("prevent_food_level_change", category = FeatureCategories.PREVENTION) {
+): ListenedFeature("prevent_food_level_change", enabled, category = FeatureCategories.PREVENTION) {
 
     @EventHandler
     private fun onBlockBreak(event: FoodLevelChangeEvent) {

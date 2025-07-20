@@ -15,7 +15,9 @@ import kotlinx.serialization.Serializable
 @RegisteredFeature
 @Serializable
 @SerialName("prevent_server_ping")
-class FeaturePreventServerPing: ListenedFeature("prevent_server_ping", category = FeatureCategories.PREVENTION) {
+class FeaturePreventServerPing(
+    override var enabled: Boolean = true,
+): ListenedFeature("prevent_server_ping", enabled, category = FeatureCategories.PREVENTION) {
 
     @EventHandler
     private fun onPing(event: PaperServerListPingEvent) {

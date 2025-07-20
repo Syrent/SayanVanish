@@ -28,6 +28,7 @@ import kotlinx.serialization.SerialName
 @Serializable
 @SerialName("level")
 class FeatureLevel(
+    override var enabled: Boolean = true,
     @YamlComment(
     "This feature is a CRITICAL feature! do NOT disable this feature if you don't know what you're doing.",
     "",
@@ -41,7 +42,7 @@ class FeatureLevel(
     "- DATABASE: The vanish level is determined by the vanish level stored in the database. (you can use plugin internal command to change database vanish level)",
     )
     val levelMethod: LevelMethod = LevelMethod.PERMISSION
-): ListenedFeature("level", critical = true) {
+): ListenedFeature("level", enabled, critical = true) {
 
     @EventHandler
     private fun onVanish(event: BukkitUserVanishEvent) {

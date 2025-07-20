@@ -29,20 +29,3 @@ class FeaturePreventPickup: ListenedFeature("prevent_pickup", category = Feature
         }
     }
 }
-
-@RegisteredFeature
-@Serializable
-class FeatureLegacyPreventPickup: ListenedFeature("legacy_prevent_pickup", category = FeatureCategories.PREVENTION) {
-
-    override var condition: Boolean = !ServerVersion.supports(9)
-
-    @EventHandler
-    @Suppress("DEPRECATION")
-    private fun onPickupItem(event: PlayerPickupItemEvent) {
-        val user = event.player.cachedVanishUser() ?: return
-        if (!isActive(user)) return
-        if (user.isVanished) {
-            event.isCancelled = true
-        }
-    }
-}

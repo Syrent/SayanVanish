@@ -18,7 +18,9 @@ import kotlinx.serialization.Serializable
 @RegisteredFeature
 @Serializable
 @SerialName("prevent_spawner_spawn")
-class FeaturePreventSpawnerSpawn: ListenedFeature("prevent_spawner_spawn", category = FeatureCategories.PREVENTION) {
+class FeaturePreventSpawnerSpawn(
+    override var enabled: Boolean = true,
+): ListenedFeature("prevent_spawner_spawn", enabled, category = FeatureCategories.PREVENTION) {
 
     @Transient
     override var condition: Boolean = StickyNote.isPaper && ServerVersion.supports(16)

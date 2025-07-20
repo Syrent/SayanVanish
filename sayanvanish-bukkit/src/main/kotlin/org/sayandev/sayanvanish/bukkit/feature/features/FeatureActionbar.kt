@@ -22,13 +22,14 @@ import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 @Serializable
 @SerialName("actionbar")
 class FeatureActionbar(
+    override var enabled: Boolean = true,
     @YamlComment("The content of the actionbar message.")
     @Configurable val content: String = "<gray>You are currently vanished!",
     @YamlComment("The delay before the actionbar message is sent. doesn't really matter.")
     @Configurable val delayMillis: Long = 1000,
     @YamlComment("The period between each actionbar message. values higher than 40 will make it not always visible.")
     @Configurable val periodMillis: Long = 1000,
-) : ListenedFeature("actionbar") {
+) : ListenedFeature("actionbar", enabled) {
 
     @EventHandler
     private fun onVanish(event: BukkitUserVanishEvent) {

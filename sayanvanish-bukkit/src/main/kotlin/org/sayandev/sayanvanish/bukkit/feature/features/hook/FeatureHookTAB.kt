@@ -16,7 +16,9 @@ import kotlinx.serialization.SerialName
 @RegisteredFeature
 @Serializable
 @SerialName("hook_tab")
-class FeatureHookTAB: HookFeature("hook_tab", "TAB") {
+class FeatureHookTAB(
+    override var enabled: Boolean = true,
+): HookFeature("hook_tab", "TAB", enabled) {
     override fun enable() {
         if (hasPlugin()) {
             VanishIntegrationTAB(this).register()

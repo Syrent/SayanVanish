@@ -24,11 +24,12 @@ import kotlinx.serialization.SerialName
 @Serializable
 @SerialName("prevent_chat")
 class FeaturePreventChat(
+    override var enabled: Boolean = true,
     @YamlComment("The character that vanished players can use to bypass the chat prevention.")
     @Configurable val bypassChar: String = "!",
     @YamlComment("Requires server restart to apply.")
     val priority: EventPriority = EventPriority.HIGH,
-): ListenedFeature("prevent_chat", category = FeatureCategories.PREVENTION) {
+): ListenedFeature("prevent_chat", enabled, category = FeatureCategories.PREVENTION) {
 
     override fun enable() {
         Bukkit.getPluginManager().registerEvent(

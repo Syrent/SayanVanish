@@ -431,7 +431,7 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
                 // TODO: better implementation?
                 val sender = context.sender().platformSender()
                 sender.sendComponent("<gray>Fetching vanish users from database...")
-                sender.sendComponent("<green>Database Vanished Users: <yellow>${VanishAPI.get().getVanishedUsers().await().map { it.username }}")
+                sender.sendComponent("<green>Database Vanished Users: <yellow>${VanishAPI.get().getDatabase().getVanishUsers().await().filter { it.isVanished }.map { it.username }}")
                 sender.sendComponent("<green>Cache Vanished Users: <yellow>${VanishAPI.get().getCacheService().getVanishUsers().values.map { it.username }}")
             }
         }

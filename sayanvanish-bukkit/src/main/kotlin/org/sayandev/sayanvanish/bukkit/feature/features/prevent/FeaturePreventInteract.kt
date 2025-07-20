@@ -21,6 +21,7 @@ import kotlinx.serialization.SerialName
 @Serializable
 @SerialName("prevent_interact_event")
 class FeaturePreventInteract(
+    override var enabled: Boolean = true,
     @YamlComment("Prevent players from activating pressure plates while vanished")
     @Configurable val pressurePlateTrigger: Boolean = true,
     @YamlComment("Prevent players from interacting with big dripleaf while vanished")
@@ -29,7 +30,7 @@ class FeaturePreventInteract(
     @Configurable val interact: Boolean = false,
     @Configurable val tripwire: Boolean = true,
     @Configurable val button: Boolean = true,
-) : ListenedFeature("prevent_interact_event", category = FeatureCategories.PREVENTION) {
+) : ListenedFeature("prevent_interact_event", enabled, category = FeatureCategories.PREVENTION) {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     private fun cancelInteract(event: PlayerInteractEvent) {

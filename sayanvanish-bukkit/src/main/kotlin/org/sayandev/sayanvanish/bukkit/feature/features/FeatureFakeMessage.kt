@@ -28,6 +28,7 @@ import kotlinx.serialization.SerialName
 @Serializable
 @SerialName("fake_message")
 class FeatureFakeMessage(
+    override var enabled: Boolean = true,
     @YamlComment("Whether to send a fake join message when a player vanishes")
     @Configurable val sendFakeJoinMessage: Boolean = false,
     @YamlComment("The message to send when a player vanishes")
@@ -54,7 +55,7 @@ class FeatureFakeMessage(
     @Configurable val disableJoinMessageIfVanished: Boolean = true,
     @YamlComment("Whether to disable the quit message if the player is vanished")
     @Configurable val disableQuitMessageIfVanished: Boolean = true,
-) : ListenedFeature("fake_message") {
+) : ListenedFeature("fake_message", enabled) {
 
     @EventHandler(priority = EventPriority.LOWEST)
     private fun onJoin(event: PlayerJoinEvent) {

@@ -14,7 +14,9 @@ import kotlinx.serialization.Serializable
 @RegisteredFeature
 @Serializable
 @SerialName("prevent_block_place")
-class FeaturePreventBlockPlace: ListenedFeature("prevent_block_place", false, category = FeatureCategories.PREVENTION) {
+class FeaturePreventBlockPlace(
+    override var enabled: Boolean = false,
+): ListenedFeature("prevent_block_place", enabled, category = FeatureCategories.PREVENTION) {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     private fun onBlockPlace(event: BlockPlaceEvent) {

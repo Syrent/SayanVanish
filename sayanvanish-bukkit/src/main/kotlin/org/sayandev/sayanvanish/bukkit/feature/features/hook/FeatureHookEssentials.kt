@@ -18,11 +18,12 @@ import java.util.*
 @Serializable
 @SerialName("hook_essentials")
 class FeatureHookEssentials(
+    override var enabled: Boolean = true,
     @YamlComment("Prevent Essentials from changing the AFK status of vanished players")
     @Configurable val preventAfkStatusChange: Boolean = true,
     @YamlComment("Prevent players to send private messages to vanished players using Essentials")
     @Configurable val preventPrivateMessage: Boolean = true,
-) : HookFeature("hook_essentials", "Essentials") {
+) : HookFeature("hook_essentials", "Essentials", enabled) {
 
     override fun enable() {
         if (hasPlugin()) {

@@ -20,6 +20,7 @@ import kotlinx.serialization.SerialName
 @Serializable
 @SerialName("gamemode")
 class FeatureGameMode(
+    override var enabled: Boolean = true,
     @YamlComment("The fallback gamemode when the player is not vanished and doesn't have in-memory gamemode.")
     val fallbackMode: GameMode = GameMode.SURVIVAL,
     @YamlComment("Update gamemode history on gamemode change event.")
@@ -27,7 +28,7 @@ class FeatureGameMode(
     @YamlComment("Change gamemode to spectator on double-sneak")
     val checkToggleSneak: Boolean = true,
     val timeWindowTicks: Long = 8
-): ListenedFeature("gamemode") {
+): ListenedFeature("gamemode", enabled) {
 
     @Transient val sneakMap = mutableMapOf<Player, GameMode>()
     @Transient val sneakList = mutableListOf<Player>()

@@ -12,7 +12,7 @@ import java.io.File
 @Serializable
 abstract class Feature(
     @Transient open val id: String = "@transient",
-    open var enabled: Boolean,
+    @Transient open var enabled: Boolean = true,
     @Transient open val category: FeatureCategories = FeatureCategories.DEFAULT,
     @Transient open val critical: Boolean = false
 ) {

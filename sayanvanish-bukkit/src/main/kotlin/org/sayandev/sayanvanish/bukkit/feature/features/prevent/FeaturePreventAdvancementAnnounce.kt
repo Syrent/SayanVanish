@@ -19,11 +19,12 @@ import kotlinx.serialization.SerialName
 @Serializable
 @SerialName("prevent_advancement_announce")
 class FeaturePreventAdvancementAnnounce(
+    override var enabled: Boolean = true,
     @YamlComment("Whether to disable the advancement announce message when the player is vanished.")
     @Configurable val disableMessage: Boolean = true,
     @YamlComment("Whether to revoke the criteria when the player is vanished.")
     @Configurable val revokeCriteria: Boolean = false
-): ListenedFeature("prevent_advancement_announce", category = FeatureCategories.PREVENTION) {
+): ListenedFeature("prevent_advancement_announce", enabled, category = FeatureCategories.PREVENTION) {
 
     @Transient
     override var condition: Boolean = StickyNote.isPaper && ServerVersion.supports(13)

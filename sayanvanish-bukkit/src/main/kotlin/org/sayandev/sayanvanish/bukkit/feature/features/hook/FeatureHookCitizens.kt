@@ -20,9 +20,10 @@ import kotlinx.serialization.SerialName
 @Serializable
 @SerialName("hook_citizens")
 class FeatureHookCitizens(
+    override var enabled: Boolean = true,
     @YamlComment("Will cancel npc speech event if context of speech contains a vanished player")
     val checkSpeech: Boolean = true,
-): HookFeature("hook_citizens", "Citizens") {
+): HookFeature("hook_citizens", "Citizens", enabled) {
 
     override fun enable() {
         if (hasPlugin()) {

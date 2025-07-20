@@ -15,7 +15,9 @@ import kotlinx.serialization.Serializable
 @RegisteredFeature
 @Serializable
 @SerialName("hook_miniplaceholders")
-class FeatureHookMiniPlaceholders: HookFeature("hook_miniplaceholders", "MiniPlaceholders") {
+class FeatureHookMiniPlaceholders(
+    override var enabled: Boolean = true
+) : HookFeature("hook_miniplaceholders", "MiniPlaceholders", enabled) {
 
     override fun enable() {
         if (hasPlugin()) {

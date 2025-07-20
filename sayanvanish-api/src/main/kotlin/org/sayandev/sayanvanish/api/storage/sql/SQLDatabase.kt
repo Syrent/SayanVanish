@@ -5,6 +5,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.awaitAll
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
 import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.deleteWhere
@@ -158,12 +159,13 @@ class SQLDatabase(
 
     override suspend fun saveVanishUser(vanishUser: VanishUser): Deferred<Boolean> {
         return async {
+            saveUser(vanishUser).await()
             VanishUser.Schema.upsert { row ->
                 row[uniqueId] = vanishUser.uniqueId
                 row[isVanished] = vanishUser.isVanished
                 row[vanishLevel] = vanishUser.vanishLevel
                 row[currentOptions] = Gson.get().toJson(vanishUser.currentOptions)
-            }.isIgnore
+            }.insertedCount == 1
         }
     }
 
@@ -174,7 +176,7 @@ class SQLDatabase(
                 row[username] = user.username
                 row[serverId] = user.serverId
                 row[isOnline] = user.isOnline
-            }.isIgnore
+            }.insertedCount == 1
         }
     }
 
@@ -204,6 +206,7 @@ class SQLDatabase(
 
     override suspend fun removeUser(uniqueId: UUID): Deferred<Boolean> {
         return async {
+            removeVanishUser(uniqueId).await()
             User.Schema
                 .deleteWhere { User.Schema.uniqueId eq uniqueId }
             true
@@ -217,7 +220,7 @@ class SQLDatabase(
                 row[isVanished] = vanishUser.isVanished
                 row[vanishLevel] = vanishUser.vanishLevel
                 row[currentOptions] = Gson.get().toJson(vanishUser.currentOptions)
-            }.isIgnore
+            }.insertedCount == 1
         }
     }
 
@@ -228,7 +231,7 @@ class SQLDatabase(
                 row[username] = user.username
                 row[serverId] = user.serverId
                 row[isOnline] = user.isOnline
-            }.isIgnore
+            }.insertedCount == 1
         }
     }
 
@@ -239,15 +242,22 @@ class SQLDatabase(
 
     override suspend fun purgeUsers(): Deferred<Boolean> {
         return async {
-            User.Schema.deleteAll()
-            true
+            VanishUser.Schema.deleteAll() + User.Schema.deleteAll() > 0
         }
     }
 
     override suspend fun purgeUsers(serverId: String): Deferred<Boolean> {
         return async {
-            User.Schema.deleteWhere { User.Schema.serverId eq serverId }
-            true
+            val userIds = User.Schema
+                .select(User.Schema.uniqueId)
+                .where { User.Schema.serverId eq serverId }
+                .map { it[User.Schema.uniqueId] }
+
+            if (userIds.isNotEmpty()) {
+                (VanishUser.Schema.deleteWhere { uniqueId inList userIds } + User.Schema.deleteWhere { uniqueId inList userIds }) > 0
+            } else {
+                true
+            }
         }
     }
 

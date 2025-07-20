@@ -14,7 +14,9 @@ import kotlinx.serialization.Serializable
 @RegisteredFeature
 @Serializable
 @SerialName("prevent_block_break")
-class FeaturePreventBlockBreak: ListenedFeature("prevent_block_break", false, category = FeatureCategories.PREVENTION) {
+class FeaturePreventBlockBreak(
+    override var enabled: Boolean = false,
+): ListenedFeature("prevent_block_break", enabled, category = FeatureCategories.PREVENTION) {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     private fun onBlockBreak(event: BlockBreakEvent) {

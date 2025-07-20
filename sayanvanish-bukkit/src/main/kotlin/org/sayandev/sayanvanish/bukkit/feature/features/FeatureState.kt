@@ -28,6 +28,7 @@ import kotlinx.serialization.SerialName
 @Serializable
 @SerialName("state")
 class FeatureState(
+    override var enabled: Boolean = true,
     @YamlComment(
     "This is a CRITICAL feature. It is responsible for handling the state of the player when they join or quit the server.",
     "do NOT disable this feature if you don't know what you're doing.",
@@ -43,7 +44,7 @@ class FeatureState(
     @Configurable val checkPermissionOnQuit: Boolean = true,
     @YamlComment("Whether to check permission when a player quits the server")
     @Configurable val checkPermissionOnJoin: Boolean = true,
-) : ListenedFeature("state", critical = true) {
+) : ListenedFeature("state", enabled, critical = true) {
 
     @EventHandler(priority = EventPriority.LOWEST)
     private fun onJoin(event: PlayerJoinEvent) {

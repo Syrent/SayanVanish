@@ -15,7 +15,9 @@ import kotlinx.serialization.Serializable
 @RegisteredFeature
 @Serializable
 @SerialName("hook_dynmap")
-class FeatureHookDynmap: HookFeature("hook_dynmap", "dynmap") {
+class FeatureHookDynmap(
+    override var enabled: Boolean = true,
+) : HookFeature("hook_dynmap", "dynmap", enabled) {
 
     override fun enable() {
         if (hasPlugin()) {

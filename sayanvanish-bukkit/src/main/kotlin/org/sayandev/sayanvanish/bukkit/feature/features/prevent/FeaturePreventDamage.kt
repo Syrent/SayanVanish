@@ -14,7 +14,9 @@ import kotlinx.serialization.Serializable
 @RegisteredFeature
 @Serializable
 @SerialName("prevent_damage")
-class FeaturePreventDamage: ListenedFeature("prevent_damage", category = FeatureCategories.PREVENTION) {
+class FeaturePreventDamage(
+    override var enabled: Boolean = true,
+): ListenedFeature("prevent_damage", enabled, category = FeatureCategories.PREVENTION) {
 
     @EventHandler
     private fun onEntityDamage(event: EntityDamageByEntityEvent) {

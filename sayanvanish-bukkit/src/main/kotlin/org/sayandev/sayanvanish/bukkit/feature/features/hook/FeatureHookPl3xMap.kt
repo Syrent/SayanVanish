@@ -14,7 +14,9 @@ import kotlinx.serialization.Serializable
 @RegisteredFeature
 @Serializable
 @SerialName("hook_pl3xmap")
-class FeatureHookPl3xMap: HookFeature("hook_pl3xmap", "Pl3xMap") {
+class FeatureHookPl3xMap(
+    override var enabled: Boolean = true,
+): HookFeature("hook_pl3xmap", "Pl3xMap", enabled) {
 
     override fun enable() {
         if (hasPlugin()) {

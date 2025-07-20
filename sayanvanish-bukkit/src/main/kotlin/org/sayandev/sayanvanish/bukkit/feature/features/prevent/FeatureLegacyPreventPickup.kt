@@ -1,30 +1,31 @@
 package org.sayandev.sayanvanish.bukkit.feature.features.prevent
 
 import kotlinx.serialization.SerialName
-import org.bukkit.entity.Player
+import kotlinx.serialization.Serializable
 import org.bukkit.event.EventHandler
-import org.bukkit.event.entity.EntityChangeBlockEvent
+import org.bukkit.event.player.PlayerPickupItemEvent
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
-import kotlinx.serialization.Serializable
+import org.sayandev.stickynote.bukkit.utils.ServerVersion
 
 @RegisteredFeature
 @Serializable
-@SerialName("prevent_block_grief")
-class FeaturePreventBlockGrief(
+@SerialName("legacy_prevent_pickup")
+class FeatureLegacyPreventPickup(
     override var enabled: Boolean = true,
-): ListenedFeature("prevent_block_grief", enabled, category = FeatureCategories.PREVENTION) {
+): ListenedFeature("legacy_prevent_pickup", enabled, category = FeatureCategories.PREVENTION) {
+
+    override var condition: Boolean = !ServerVersion.supports(9)
 
     @EventHandler
-    private fun onChangeBlock(event: EntityChangeBlockEvent) {
-        val user = (event.entity as? Player)?.cachedVanishUser() ?: return
+    @Suppress("DEPRECATION")
+    private fun onPickupItem(event: PlayerPickupItemEvent) {
+        val user = event.player.cachedVanishUser() ?: return
         if (!isActive(user)) return
         if (user.isVanished) {
             event.isCancelled = true
         }
     }
-
 }

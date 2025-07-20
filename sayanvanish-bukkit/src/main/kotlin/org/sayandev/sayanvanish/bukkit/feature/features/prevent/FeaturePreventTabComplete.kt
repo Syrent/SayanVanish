@@ -22,9 +22,10 @@ import kotlinx.serialization.SerialName
 @Serializable
 @SerialName("prevent_tab_complete")
 class FeaturePreventTabComplete(
+    override var enabled: Boolean = true,
     @YamlComment("Whether to keep vanished player in tab completion if the player that is getting the suggestion has a higher level of vanish.")
     @Configurable val checkVanishLevel: Boolean = false
-): ListenedFeature("prevent_tab_complete", category = FeatureCategories.PREVENTION) {
+): ListenedFeature("prevent_tab_complete", enabled, category = FeatureCategories.PREVENTION) {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     private fun onTabComplete(event: TabCompleteEvent) {

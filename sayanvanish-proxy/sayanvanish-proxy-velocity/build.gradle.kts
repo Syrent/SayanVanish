@@ -22,7 +22,7 @@ tasks.withType(xyz.jpenilla.runtask.task.AbstractRun::class) {
         vendor = JvmVendorSpec.JETBRAINS
         languageVersion = JavaLanguageVersion.of(21)
     }
-    jvmArgs("-XX:+AllowEnhancedClassRedefinition", "-Dnet.kyori.adventure.text.warnWhenLegacyFormattingDetected=false", "-Dvelocity.packet-decode-logging=true")
+    jvmArgs("-XX:+AllowEnhancedClassRedefinition", "-Dorg.sayandev.sayanventure.adventure.text.warnWhenLegacyFormattingDetected=false", "-Dvelocity.packet-decode-logging=true")
 }
 
 

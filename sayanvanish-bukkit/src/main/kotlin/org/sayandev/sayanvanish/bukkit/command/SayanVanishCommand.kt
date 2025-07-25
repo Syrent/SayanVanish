@@ -1,6 +1,6 @@
 package org.sayandev.sayanvanish.bukkit.command
 
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import org.sayandev.sayanventure.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -112,7 +112,6 @@ class SayanVanishCommand : BukkitCommand(settings.vanishCommand.name, *settings.
 
     init {
         manager.settings().set(ManagerSetting.OVERRIDE_EXISTING_COMMANDS, true)
-        registerHelpLiteral()
 
         var forceUpdateConfirm = false
         rawCommandBuilder().registerCopy {

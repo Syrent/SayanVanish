@@ -1,6 +1,6 @@
 package org.sayandev.sayanvanish.bukkit.feature.features
 
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import org.sayandev.sayanventure.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerJoinEvent

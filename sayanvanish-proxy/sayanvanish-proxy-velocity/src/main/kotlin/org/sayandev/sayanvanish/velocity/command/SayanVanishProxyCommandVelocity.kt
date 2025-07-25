@@ -1,6 +1,7 @@
 package org.sayandev.sayanvanish.velocity.command
 
 import com.velocitypowered.api.proxy.Player
+import javassist.compiler.ast.Pair
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.incendo.cloud.component.CommandComponent
 import org.incendo.cloud.context.CommandContext
@@ -65,7 +66,7 @@ class SayanVanishProxyCommandVelocity : VelocityCommand(settings.command.name, *
         val user = player.getOrAddUser()
 
         if (!user.hasPermission(Permission.VANISH)) {
-            user.sendComponent(language.general.dontHavePermission, Placeholder.unparsed("permission", Permission.VANISH.permission()))
+            user.sendComponent(language.general.dontHavePermission, Pair("permission", Permission.VANISH.permission()))
             return
         }
 

@@ -34,7 +34,7 @@ tasks.withType(xyz.jpenilla.runtask.task.AbstractRun::class) {
         vendor = JvmVendorSpec.JETBRAINS
         languageVersion = JavaLanguageVersion.of(21)
     }
-    jvmArgs("-XX:+AllowEnhancedClassRedefinition", "-Dnet.kyori.adventure.text.warnWhenLegacyFormattingDetected=false")
+    jvmArgs("-XX:+AllowEnhancedClassRedefinition", "-Dorg.sayandev.sayanventure.adventure.text.warnWhenLegacyFormattingDetected=false")
 }
 
 tasks {
@@ -57,7 +57,7 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.21.7")
+        minecraftVersion("1.21.8")
 
         downloadPlugins {
             hangar("ViaVersion", "5.4.2-SNAPSHOT+776")
@@ -75,7 +75,7 @@ tasks {
 //            url("https://github.com/NEZNAMY/TAB-Bridge/releases/download/6.0.1/TAB-Bridge.v6.0.1.jar")
 //            url("https://download.luckperms.net/1593/bukkit/loader/LuckPerms-Bukkit-5.5.8.jar")
         }
-        jvmArgs("-Dnet.kyori.adventure.text.warnWhenLegacyFormattingDetected=false")
+        jvmArgs("-Dorg.sayandev.sayanventure.adventure.text.warnWhenLegacyFormattingDetected=false")
     }
 
     runPaper {

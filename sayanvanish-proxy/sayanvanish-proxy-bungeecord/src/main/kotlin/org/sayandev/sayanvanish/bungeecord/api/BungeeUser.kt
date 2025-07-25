@@ -1,6 +1,6 @@
 package org.sayandev.sayanvanish.bungeecord.api
 
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
+import org.sayandev.sayanventure.adventure.text.minimessage.tag.resolver.TagResolver
 import net.md_5.bungee.api.connection.ProxiedPlayer
 import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.User
@@ -9,6 +9,7 @@ import org.sayandev.sayanvanish.bungeecord.event.BungeeUserUnVanishEvent
 import org.sayandev.sayanvanish.bungeecord.event.BungeeUserVanishEvent
 import org.sayandev.sayanvanish.bungeecord.utils.PlayerUtils.sendComponent
 import org.sayandev.sayanvanish.proxy.config.settings
+import org.sayandev.sayanventure.adventure.text.minimessage.tag.resolver.Placeholder
 import org.sayandev.stickynote.bungeecord.utils.AdventureUtils.component
 import org.sayandev.stickynote.bungeecord.utils.AdventureUtils.sendMessage
 import org.sayandev.stickynote.bungeecord.utils.AdventureUtils.sendActionbar
@@ -58,11 +59,19 @@ open class BungeeUser(
         return player()?.hasPermission(permission) == true
     }
 
-    override fun sendComponent(content: String, vararg placeholder: TagResolver) {
+    override fun sendComponent(content: String, vararg placeholder: Pair<String, String>) {
+        sendComponent(content, *placeholder.map { Placeholder.parsed(it.first, it.second) }.toTypedArray())
+    }
+
+    override fun sendActionbar(content: String, vararg placeholder: Pair<String, String>) {
+        sendActionbar(content, *placeholder.map { Placeholder.parsed(it.first, it.second) }.toTypedArray())
+    }
+
+    fun sendComponent(content: String, vararg placeholder: TagResolver) {
         player()?.sendComponent(content.component())
     }
 
-    override fun sendActionbar(content: String, vararg placeholder: TagResolver) {
+    fun sendActionbar(content: String, vararg placeholder: TagResolver) {
         player()?.sendActionbar(content.component())
     }
 

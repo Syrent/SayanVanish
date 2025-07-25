@@ -3,7 +3,6 @@ package org.sayandev.sayanvanish.api
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.sayandev.sayanvanish.api.exception.UnsupportedPlatformException
 import java.util.*
 
@@ -40,11 +39,19 @@ interface User : BasicUser {
         toggleVanish(VanishOptions.defaultOptions())
     }
 
-    fun sendComponent(content: String, vararg placeholder: TagResolver) {
+    fun sendComponent(content: String) {
+        sendComponent(content, *emptyArray())
+    }
+
+    fun sendActionbar(content: String) {
+        sendActionbar(content, *emptyArray())
+    }
+
+    fun sendComponent(content: String, vararg placeholder: Pair<String, String>) {
         throw UnsupportedPlatformException("sendMessage")
     }
 
-    fun sendActionbar(content: String, vararg placeholder: TagResolver) {
+    fun sendActionbar(content: String, vararg placeholder: Pair<String, String>) {
         throw UnsupportedPlatformException("sendActionbar")
     }
 

@@ -3,10 +3,8 @@ package org.sayandev.sayanvanish.velocity.utils
 import com.velocitypowered.api.command.CommandSource
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
-import org.sayandev.sayanvanish.proxy.config.LanguageConfig
 import org.sayandev.sayanvanish.proxy.config.language
 import org.sayandev.sayanvanish.proxy.config.settings
-import org.sayandev.stickynote.velocity.utils.AdventureUtils
 import org.sayandev.stickynote.velocity.utils.AdventureUtils.component
 
 object PlayerUtils {

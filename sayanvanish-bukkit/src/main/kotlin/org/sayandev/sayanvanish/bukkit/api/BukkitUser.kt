@@ -1,7 +1,7 @@
 package org.sayandev.sayanvanish.bukkit.api
 
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
+import org.sayandev.sayanventure.adventure.text.minimessage.tag.resolver.Placeholder
+import org.sayandev.sayanventure.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
@@ -132,11 +132,19 @@ open class BukkitUser(
         }
     }
 
-    override fun sendComponent(content: String, vararg placeholder: TagResolver) {
+    override fun sendComponent(content: String, vararg placeholder: Pair<String, String>) {
+        sendComponent(content, *placeholder.map { Placeholder.parsed(it.first, it.second) }.toTypedArray())
+    }
+
+    override fun sendActionbar(content: String, vararg placeholder: Pair<String, String>) {
+        sendActionbar(content, *placeholder.map { Placeholder.parsed(it.first, it.second) }.toTypedArray())
+    }
+
+    fun sendComponent(content: String, vararg placeholder: TagResolver) {
         player()?.sendComponent(content, *placeholder)
     }
 
-    override fun sendActionbar(content: String, vararg placeholder: TagResolver) {
+    fun sendActionbar(content: String, vararg placeholder: TagResolver) {
         player()?.sendComponentActionbar(content, *placeholder)
     }
 

@@ -1,6 +1,7 @@
 package org.sayandev.sayanvanish.velocity.api
 
 import com.velocitypowered.api.proxy.Player
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.api.SayanVanishAPI
@@ -16,6 +17,7 @@ import org.sayandev.stickynote.velocity.StickyNote
 import org.sayandev.stickynote.velocity.server
 import org.sayandev.stickynote.velocity.utils.AdventureUtils.component
 import java.util.*
+import kotlin.collections.toTypedArray
 import kotlin.jvm.optionals.getOrNull
 
 
@@ -77,12 +79,12 @@ open class VelocityUser(
         return player()?.hasPermission(permission) == true
     }
 
-    override fun sendComponent(content: String, vararg placeholder: TagResolver) {
-        player()?.sendComponent(content, *placeholder)
+    override fun sendComponent(content: String, vararg placeholder: Pair<String, String>) {
+        player()?.sendComponent(content, *placeholder.map { Placeholder.parsed(it.first, it.second) }.toTypedArray())
     }
 
-    override fun sendActionbar(content: String, vararg placeholder: TagResolver) {
-        player()?.sendActionBar(content.component(*placeholder))
+    override fun sendActionbar(content: String, vararg placeholder: Pair<String, String>) {
+        player()?.sendActionBar(content.component(*placeholder.map { Placeholder.parsed(it.first, it.second) }.toTypedArray()))
     }
 
     companion object {

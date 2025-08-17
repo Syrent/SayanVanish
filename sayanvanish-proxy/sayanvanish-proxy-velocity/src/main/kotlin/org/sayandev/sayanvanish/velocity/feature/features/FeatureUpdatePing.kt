@@ -18,8 +18,13 @@ class FeatureUpdatePing : ListenedFeature("update_ping") {
         if (!isActive()) return
         val pingPlayers = event.ping.players.getOrNull() ?: return
         val vanishedOnlineUsers = SayanVanishVelocityAPI.getInstance().database.getUsers().filter { user -> user.isVanished && user.isOnline }
-        val nonVanishedPlayersCount = SayanVanishVelocityAPI.getInstance().database.getBasicUsers(true).filter { !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size
-        val nonVanishedPlayersSample = pingPlayers.sample.filter { !vanishedOnlineUsers.map { it.username }.contains(it.name) }
+        val vanishedOnlineUsersNames = vanishedOnlineUsers.map { vanishUser -> vanishUser.username }
+        val nonVanishedPlayersCount = SayanVanishVelocityAPI.getInstance().database.getBasicUsers(true).filter { basicUser ->
+            !vanishedOnlineUsersNames.contains(basicUser.username)
+        }.size
+        val nonVanishedPlayersSample = pingPlayers.sample.filter { pingPlayer ->
+            !vanishedOnlineUsersNames.contains(pingPlayer.name)
+        }
         event.ping = event.ping
             .asBuilder()
             .onlinePlayers(nonVanishedPlayersCount)

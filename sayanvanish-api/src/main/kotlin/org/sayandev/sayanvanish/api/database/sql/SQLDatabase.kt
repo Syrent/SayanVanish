@@ -13,6 +13,7 @@ import org.sayandev.stickynote.core.database.mysql.MySQLDatabase
 import org.sayandev.stickynote.core.database.sqlite.SQLiteDatabase
 import java.io.File
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.safeCast
 
 class SQLDatabase<U: User>(
@@ -22,7 +23,7 @@ class SQLDatabase<U: User>(
 ) : Database<U> {
 
     override var cache = mutableMapOf<UUID, U>()
-    var basicCache = mutableMapOf<UUID, BasicUser>()
+    var basicCache = ConcurrentHashMap<UUID, BasicUser>()
     val database: org.sayandev.stickynote.core.database.Database = when (config.method) {
         SQLConfig.SQLMethod.MYSQL -> {
             MySQLDatabase(

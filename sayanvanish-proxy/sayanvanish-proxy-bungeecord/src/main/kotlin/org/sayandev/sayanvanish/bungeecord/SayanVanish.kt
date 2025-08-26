@@ -13,6 +13,7 @@ import org.sayandev.stickynote.bungeecord.dataDirectory
 import org.sayandev.stickynote.bungeecord.registerListener
 import org.sayandev.stickynote.bungeecord.server
 import org.sayandev.stickynote.loader.bungee.StickyNoteBungeeLoader
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 
 class SayanVanish : Plugin() {
@@ -45,8 +46,8 @@ class SayanVanish : Plugin() {
         StickyNote.run({
             if (databaseConfig.method == DatabaseMethod.SQL) {
                 SayanVanishBungeeAPI.getInstance().database.getBasicUsersAsync { users ->
-                    (SayanVanishBungeeAPI.getInstance().database as SQLDatabase).basicCache = users.associateBy { it.uniqueId }.toMutableMap()
-                    (SayanVanishAPI.getInstance().database as SQLDatabase).basicCache = users.associateBy { it.uniqueId }.toMutableMap()
+                    (SayanVanishBungeeAPI.getInstance().database as SQLDatabase).basicCache = ConcurrentHashMap(users.associateBy { it.uniqueId })
+                    (SayanVanishAPI.getInstance().database as SQLDatabase).basicCache = ConcurrentHashMap(users.associateBy { it.uniqueId })
                 }
             }
         }, settings.general.cacheUpdatePeriodMillis, settings.general.cacheUpdatePeriodMillis, TimeUnit.MILLISECONDS)

@@ -23,6 +23,7 @@ import org.sayandev.stickynote.velocity.registerListener
 import org.slf4j.Logger
 import java.io.File
 import java.nio.file.Path
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 
 lateinit var sayanvanish: SayanVanish
@@ -81,8 +82,8 @@ class SayanVanish @Inject constructor(
         StickyNote.run({
             if (databaseConfig.method == DatabaseMethod.SQL) {
                 SayanVanishVelocityAPI.getInstance().database.getBasicUsersAsync { users ->
-                    (SayanVanishVelocityAPI.getInstance().database as SQLDatabase).basicCache = users.associateBy { it.uniqueId }.toMutableMap()
-                    (SayanVanishAPI.getInstance().database as SQLDatabase).basicCache = users.associateBy { it.uniqueId }.toMutableMap()
+                    (SayanVanishVelocityAPI.getInstance().database as SQLDatabase).basicCache = ConcurrentHashMap(users.associateBy { it.uniqueId })
+                    (SayanVanishAPI.getInstance().database as SQLDatabase).basicCache = ConcurrentHashMap(users.associateBy { it.uniqueId })
                 }
             }
         }, settings.general.basicCacheUpdatePeriodMillis, TimeUnit.MILLISECONDS, settings.general.basicCacheUpdatePeriodMillis, TimeUnit.MILLISECONDS)

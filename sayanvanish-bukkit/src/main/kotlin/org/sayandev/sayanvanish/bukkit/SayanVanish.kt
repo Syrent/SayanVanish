@@ -21,6 +21,7 @@ import org.sayandev.stickynote.bukkit.pluginDirectory
 import org.sayandev.stickynote.bukkit.runAsync
 import org.sayandev.stickynote.loader.bukkit.StickyNoteBukkitLoader
 import java.io.File
+import java.util.concurrent.ConcurrentHashMap
 
 public lateinit var sayanvanish: SayanVanish
 
@@ -61,8 +62,8 @@ open class SayanVanish : JavaPlugin() {
         runAsync({
             if (databaseConfig.method == DatabaseMethod.SQL) {
                 SayanVanishBukkitAPI.getInstance().database.getBasicUsersAsync { users ->
-                    (SayanVanishBukkitAPI.getInstance().database as SQLDatabase).basicCache = users.associateBy { it.uniqueId }.toMutableMap()
-                    (SayanVanishAPI.getInstance().database as SQLDatabase).basicCache = users.associateBy { it.uniqueId }.toMutableMap()
+                    (SayanVanishBukkitAPI.getInstance().database as SQLDatabase).basicCache = ConcurrentHashMap(users.associateBy { it.uniqueId })
+                    (SayanVanishAPI.getInstance().database as SQLDatabase).basicCache = ConcurrentHashMap(users.associateBy { it.uniqueId })
                 }
             }
         }, 0, settings.general.basicCacheUpdatePeriodTicks)

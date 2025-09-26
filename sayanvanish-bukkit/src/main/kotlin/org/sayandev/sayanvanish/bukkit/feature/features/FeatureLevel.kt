@@ -23,12 +23,12 @@ import org.sayandev.stickynote.bukkit.utils.ServerVersion
 import kotlinx.serialization.Serializable
 import com.charleskorn.kaml.YamlComment
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Transient
 
 @RegisteredFeature
 @Serializable
 @SerialName("level")
 class FeatureLevel(
-    override var enabled: Boolean = true,
     @YamlComment(
     "This feature is a CRITICAL feature! do NOT disable this feature if you don't know what you're doing.",
     "",
@@ -42,7 +42,11 @@ class FeatureLevel(
     "- DATABASE: The vanish level is determined by the vanish level stored in the database. (you can use plugin internal command to change database vanish level)",
     )
     val levelMethod: LevelMethod = LevelMethod.PERMISSION
-): ListenedFeature("level", enabled, critical = true) {
+): ListenedFeature() {
+
+    @Transient override val id = "level"
+    override var enabled: Boolean = true
+    @Transient override val critical: Boolean = true
 
     @EventHandler
     private fun onVanish(event: BukkitUserVanishEvent) {

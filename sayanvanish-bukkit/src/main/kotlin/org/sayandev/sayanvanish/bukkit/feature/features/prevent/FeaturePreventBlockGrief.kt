@@ -10,13 +10,17 @@ import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cached
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @RegisteredFeature
 @Serializable
 @SerialName("prevent_block_grief")
 class FeaturePreventBlockGrief(
-    override var enabled: Boolean = true,
-): ListenedFeature("prevent_block_grief", enabled, category = FeatureCategories.PREVENTION) {
+): ListenedFeature() {
+
+    @Transient override val id = "prevent_block_grief"
+    override var enabled: Boolean = false
+    @Transient override val category: FeatureCategories = FeatureCategories.PREVENTION
 
     @EventHandler
     private fun onChangeBlock(event: EntityChangeBlockEvent) {

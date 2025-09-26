@@ -13,6 +13,11 @@ object Features {
     }
 
     @JvmStatic
+    fun getFeatureById(id: String): Feature? {
+        return features.find { it.id.equals(id, ignoreCase = true) }
+    }
+
+    @JvmStatic
     inline fun <reified T> getUserFeature(uniqueId: UUID): T {
         return userFeatures[uniqueId] as T
     }

@@ -12,12 +12,12 @@ import org.sayandev.stickynote.bukkit.registerListener
 import kotlinx.serialization.Serializable
 import com.charleskorn.kaml.YamlComment
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Transient
 
 @RegisteredFeature
 @Serializable
 @SerialName("hook_discordsrv")
 class FeatureHookDiscordSRV(
-    override var enabled: Boolean = true,
     @YamlComment("Send quit message on vanish")
     @Configurable val sendQuitMessageOnVanish: Boolean = true,
     @YamlComment("Send join message on unvanish")
@@ -26,7 +26,11 @@ class FeatureHookDiscordSRV(
     @Configurable val quitMessage: String = "%player% left the server",
     @YamlComment("Join message format")
     @Configurable val joinMessage: String = "%player% joined the server",
-): HookFeature("hook_discordsrv", "DiscordSRV", enabled) {
+): HookFeature() {
+
+    @Transient override val id = "hook_discordsrv"
+    override var enabled: Boolean = true
+    override val plugin: String = "DiscordSRV"
 
     override fun enable() {
         if (hasPlugin()) {

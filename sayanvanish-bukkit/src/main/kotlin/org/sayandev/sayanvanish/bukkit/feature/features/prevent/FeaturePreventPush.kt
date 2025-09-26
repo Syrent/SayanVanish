@@ -13,14 +13,17 @@ import org.sayandev.stickynote.bukkit.StickyNote
 import org.sayandev.stickynote.bukkit.hasPlugin
 import org.sayandev.stickynote.bukkit.warn
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @RegisteredFeature
 @Serializable
 @SerialName("prevent_push")
-class FeaturePreventPush(
+class FeaturePreventPush: ListenedFeature() {
+
+    @Transient override val id = "prevent_push"
     @YamlComment("This feature might cause compatibility issues with eGlow plugin. If you use eGlow, disable this feature.")
-    override var enabled: Boolean = false,
-): ListenedFeature("prevent_push", enabled, category = FeatureCategories.PREVENTION) {
+    override var enabled: Boolean = false
+    @Transient override val category: FeatureCategories = FeatureCategories.PREVENTION
 
     @EventHandler
     private fun onVanish(event: BukkitUserVanishEvent) {

@@ -10,13 +10,16 @@ import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cached
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @RegisteredFeature
 @Serializable
 @SerialName("prevent_block_break")
-class FeaturePreventBlockBreak(
-    override var enabled: Boolean = false,
-): ListenedFeature("prevent_block_break", enabled, category = FeatureCategories.PREVENTION) {
+class FeaturePreventBlockBreak: ListenedFeature() {
+
+    @Transient override val id = "prevent_block_break"
+    override var enabled: Boolean = false
+    @Transient override val category: FeatureCategories = FeatureCategories.PREVENTION
 
     @EventHandler(priority = EventPriority.HIGHEST)
     private fun onBlockBreak(event: BlockBreakEvent) {

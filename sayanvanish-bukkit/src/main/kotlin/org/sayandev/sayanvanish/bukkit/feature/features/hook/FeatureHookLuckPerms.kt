@@ -27,7 +27,6 @@ import java.util.*
 @Serializable
 @SerialName("hook_luckperms")
 class FeatureHookLuckPerms(
-    override var enabled: Boolean = true,
     @YamlComment(
     "Whether to register custom context for vanished players.",
     "This will allow you to check if a player is vanished using the context \"vanished\".",
@@ -37,7 +36,11 @@ class FeatureHookLuckPerms(
     @YamlComment("Whether to check permission using LuckPerms. If false, it will fallback to bukkit permission check.")
     @Configurable val checkPermissionViaLuckPerms: Boolean = false,
     @Configurable val checkPermissionViaLuckPermsFeatures: Boolean = true,
-): HookFeature("hook_luckperms", "LuckPerms", enabled) {
+): HookFeature() {
+
+    @Transient override val id = "hook_luckperms"
+    override var enabled: Boolean = true
+    override val plugin: String = "LuckPerms"
 
     @Transient var vanishContext: VanishedContext? = null
 

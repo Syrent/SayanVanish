@@ -7,10 +7,8 @@ import com.charleskorn.kaml.YamlComment
 import java.io.File
 import java.util.UUID
 
-public var settings: SettingsConfig = SettingsConfig.fromConfig() ?: SettingsConfig.defaultConfig()
-
 @Serializable
-class SettingsConfig(
+class Settings(
     @YamlComment("""
     Do NOT copy and paste the SayanVanish directory across multiple servers.
     The server-id is generated during the plugin's first startup.
@@ -21,9 +19,6 @@ class SettingsConfig(
     val general: General = General(),
     @YamlComment("Command settings for the plugin")
     val command: Command = Command()
-) : Config(
-    Platform.get().rootDirectory,
-    fileName
 ) {
 
     @Serializable
@@ -59,18 +54,34 @@ class SettingsConfig(
         )
     )
 
+    fun save() {
+        Config.save(settingsFile, this)
+    }
+
     companion object {
-        private val fileName = "settings.yml"
-        val settingsFile = File(Platform.get().rootDirectory, fileName)
+        private const val FILE_NAME = "settings.yml"
+
+        val settingsFile = File(Platform.get().rootDirectory, FILE_NAME)
+        var config = fromConfig() ?: defaultConfig()
 
         @JvmStatic
-        fun defaultConfig(): SettingsConfig {
-            return SettingsConfig().also { it.save() }
+        fun defaultConfig(): Settings {
+            return Settings().also { it.save() }
         }
 
         @JvmStatic
-        fun fromConfig(): SettingsConfig? {
-            return fromFile<SettingsConfig>(settingsFile)
+        fun fromConfig(): Settings? {
+            return Config.fromFile<Settings>(settingsFile)
+        }
+
+        @JvmStatic
+        fun reload() {
+            config = fromConfig() ?: defaultConfig()
+        }
+
+        @JvmStatic
+        fun get(): Settings {
+            return config
         }
     }
 }

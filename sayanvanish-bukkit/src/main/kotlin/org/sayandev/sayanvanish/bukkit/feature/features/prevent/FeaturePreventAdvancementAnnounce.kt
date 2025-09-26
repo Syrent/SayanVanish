@@ -14,17 +14,21 @@ import org.sayandev.stickynote.bukkit.utils.ServerVersion
 import kotlinx.serialization.Serializable
 import com.charleskorn.kaml.YamlComment
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Transient
 
 @RegisteredFeature
 @Serializable
 @SerialName("prevent_advancement_announce")
 class FeaturePreventAdvancementAnnounce(
-    override var enabled: Boolean = true,
     @YamlComment("Whether to disable the advancement announce message when the player is vanished.")
     @Configurable val disableMessage: Boolean = true,
     @YamlComment("Whether to revoke the criteria when the player is vanished.")
     @Configurable val revokeCriteria: Boolean = false
-): ListenedFeature("prevent_advancement_announce", enabled, category = FeatureCategories.PREVENTION) {
+): ListenedFeature() {
+
+    @Transient override val id = "prevent_advancement_announce"
+    override var enabled: Boolean = true
+    @Transient override val category: FeatureCategories = FeatureCategories.PREVENTION
 
     @Transient
     override var condition: Boolean = StickyNote.isPaper && ServerVersion.supports(13)

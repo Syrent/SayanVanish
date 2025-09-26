@@ -16,12 +16,12 @@ import org.sayandev.stickynote.bukkit.utils.ServerVersion
 import kotlinx.serialization.Serializable
 import com.charleskorn.kaml.YamlComment
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Transient
 
 @RegisteredFeature
 @Serializable
 @SerialName("prevent_interact_event")
 class FeaturePreventInteract(
-    override var enabled: Boolean = true,
     @YamlComment("Prevent players from activating pressure plates while vanished")
     @Configurable val pressurePlateTrigger: Boolean = true,
     @YamlComment("Prevent players from interacting with big dripleaf while vanished")
@@ -30,7 +30,11 @@ class FeaturePreventInteract(
     @Configurable val interact: Boolean = false,
     @Configurable val tripwire: Boolean = true,
     @Configurable val button: Boolean = true,
-) : ListenedFeature("prevent_interact_event", enabled, category = FeatureCategories.PREVENTION) {
+) : ListenedFeature() {
+
+    @Transient override val id = "prevent_interact_event"
+    override var enabled: Boolean = true
+    @Transient override val category: FeatureCategories = FeatureCategories.PREVENTION
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     private fun cancelInteract(event: PlayerInteractEvent) {

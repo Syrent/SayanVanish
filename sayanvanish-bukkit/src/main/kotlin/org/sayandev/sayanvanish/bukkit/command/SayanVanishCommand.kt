@@ -18,6 +18,7 @@ import org.incendo.cloud.suggestion.Suggestion
 import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.VanishOptions
+import org.sayandev.sayanvanish.api.command.FeatureParser
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.Feature
 import org.sayandev.sayanvanish.api.feature.Features
@@ -256,7 +257,7 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
 
         val featureLiteral = rawCommandBuilder().registerCopy {
             literalWithPermission("feature")
-            required("feature", Features.features.map { it.id })
+            required("feature", FeatureParser.featureParser())
         }
 
         val togglePlayerLiteral = featureLiteral.registerCopy {
@@ -278,10 +279,7 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
 
                 val target = targetArg ?: sender as Player
 
-                val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
-                    sender.sendComponent(language.feature.notFound)
-                    return@suspendingHandler
-                }
+                val feature = context.get<Feature>("feature")
 
                 val user = target.user().await() ?: let {
                     sender.sendComponent(language.general.userNotFound, Placeholder.unparsed("player", target.name))
@@ -301,10 +299,7 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
             literalWithPermission("disable")
             handler { context ->
                 val sender = context.sender().platformSender()
-                val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
-                    sender.sendComponent(language.feature.notFound)
-                    return@handler
-                }
+                val feature = context.get<Feature>("feature")
 
                 if (!feature.enabled) {
                     sender.sendComponent(language.feature.alreadyDisabled, Placeholder.unparsed("feature", feature.id))
@@ -321,10 +316,7 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
             literalWithPermission("enable")
             handler { context ->
                 val sender = context.sender().platformSender()
-                val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
-                    sender.sendComponent(language.feature.notFound)
-                    return@handler
-                }
+                val feature = context.get<Feature>("feature")
 
                 if (feature.enabled) {
                     sender.sendComponent(language.feature.alreadyEnabled, Placeholder.unparsed("feature", feature.id))
@@ -341,10 +333,7 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
             literalWithPermission("reset")
             handler { context ->
                 val sender = context.sender().platformSender()
-                val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
-                    sender.sendComponent(language.feature.notFound)
-                    return@handler
-                }
+                val feature = context.get<Feature>("feature")
 
                 feature.disable()
                 Features.features.remove(feature)
@@ -362,10 +351,7 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
             literalWithPermission("status")
             handler { context ->
                 val sender = context.sender().platformSender()
-                val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
-                    sender.sendComponent(language.feature.notFound)
-                    return@handler
-                }
+                val feature = context.get<Feature>("feature")
 
                 sender.sendComponent(language.feature.status, Placeholder.unparsed("feature", feature.id), Placeholder.parsed("status", if (feature.enabled) "<green>Enabled</green>" else "<red>Disabled</red>"))
             }
@@ -375,16 +361,13 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
             literalWithPermission("update")
             required(CommandComponent.builder<BukkitSender, String>("option", StringParser.stringParser())
                 .suggestionProvider { context, _ ->
-                    val feature = Features.features.find { it.id == context.get<String>("feature") } ?: return@suggestionProvider CompletableFuture.completedFuture(emptyList())
+                    val feature = context.get<Feature>("feature")
                     CompletableFuture.completedFuture(feature::class.java.declaredFields.filter { it.isAnnotationPresent(Configurable::class.java) }.map { Suggestion.suggestion(it.name) })
                 })
             required("value", StringParser.stringParser(StringParser.StringMode.QUOTED))
             handler { context ->
                 val sender = context.sender().platformSender()
-                val feature = Features.features.find { it.id == context.get<String>("feature") } ?: let {
-                    sender.sendComponent(language.feature.notFound)
-                    return@handler
-                }
+                val feature = context.get<Feature>("feature")
 
                 val field = feature.javaClass.getDeclaredField(context.get("option"))
                 if (field == null) {

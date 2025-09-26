@@ -11,13 +11,16 @@ import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.feature.HookFeature
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @RegisteredFeature
 @Serializable
 @SerialName("hook_miniplaceholders")
-class FeatureHookMiniPlaceholders(
+class FeatureHookMiniPlaceholders: HookFeature() {
+
+    @Transient override val id = "hook_miniplaceholders"
     override var enabled: Boolean = true
-) : HookFeature("hook_miniplaceholders", "MiniPlaceholders", enabled) {
+    override val plugin: String = "MiniPlaceholders"
 
     override fun enable() {
         if (hasPlugin()) {

@@ -21,9 +21,11 @@ import java.util.*
 @Serializable
 @SerialName("inventory_inspect")
 class FeatureInventoryInspect(
-    override var enabled: Boolean = true,
     @Configurable val modificationPermission: String = "${plugin.name}.features.inventory_inspect.modify"
-): ListenedFeature("inventory_inspect", enabled) {
+): ListenedFeature() {
+
+    @Transient override val id = "inventory_inspect"
+    override var enabled: Boolean = true
 
     @Transient val playerInventoryMap = mutableListOf<UUID>()
 

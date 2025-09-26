@@ -14,13 +14,16 @@ import org.sayandev.stickynote.bukkit.StickyNote
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.utils.ServerVersion
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @RegisteredFeature
 @Serializable
 @SerialName("prevent_spawner_spawn")
-class FeaturePreventSpawnerSpawn(
-    override var enabled: Boolean = true,
-): ListenedFeature("prevent_spawner_spawn", enabled, category = FeatureCategories.PREVENTION) {
+class FeaturePreventSpawnerSpawn: ListenedFeature() {
+
+    @Transient override val id = "prevent_spawner_spawn"
+    override var enabled: Boolean = true
+    @Transient override val category: FeatureCategories = FeatureCategories.PREVENTION
 
     @Transient
     override var condition: Boolean = StickyNote.isPaper && ServerVersion.supports(16)

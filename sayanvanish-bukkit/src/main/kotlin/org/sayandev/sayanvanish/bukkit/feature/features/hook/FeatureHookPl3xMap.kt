@@ -10,13 +10,16 @@ import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.HookFeature
 import org.sayandev.stickynote.bukkit.registerListener
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @RegisteredFeature
 @Serializable
 @SerialName("hook_pl3xmap")
-class FeatureHookPl3xMap(
-    override var enabled: Boolean = true,
-): HookFeature("hook_pl3xmap", "Pl3xMap", enabled) {
+class FeatureHookPl3xMap: HookFeature() {
+
+    @Transient override val id = "hook_pl3xmap"
+    override var enabled: Boolean = true
+    override val plugin: String = "Pl3xMap"
 
     override fun enable() {
         if (hasPlugin()) {

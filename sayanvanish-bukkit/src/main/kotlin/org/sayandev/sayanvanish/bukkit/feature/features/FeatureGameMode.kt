@@ -15,12 +15,12 @@ import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import kotlinx.serialization.Serializable
 import com.charleskorn.kaml.YamlComment
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Transient
 
 @RegisteredFeature
 @Serializable
 @SerialName("gamemode")
 class FeatureGameMode(
-    override var enabled: Boolean = true,
     @YamlComment("The fallback gamemode when the player is not vanished and doesn't have in-memory gamemode.")
     val fallbackMode: GameMode = GameMode.SURVIVAL,
     @YamlComment("Update gamemode history on gamemode change event.")
@@ -28,7 +28,10 @@ class FeatureGameMode(
     @YamlComment("Change gamemode to spectator on double-sneak")
     val checkToggleSneak: Boolean = true,
     val timeWindowTicks: Long = 8
-): ListenedFeature("gamemode", enabled) {
+): ListenedFeature() {
+
+    @Transient override val id = "gamemode"
+    override var enabled: Boolean = true
 
     @Transient val sneakMap = mutableMapOf<Player, GameMode>()
     @Transient val sneakList = mutableListOf<Player>()

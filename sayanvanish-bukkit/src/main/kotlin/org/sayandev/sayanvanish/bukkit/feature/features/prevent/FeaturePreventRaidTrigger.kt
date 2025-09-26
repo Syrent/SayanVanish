@@ -11,13 +11,16 @@ import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.event.registerListener
 import org.sayandev.stickynote.bukkit.utils.ServerVersion
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @RegisteredFeature
 @Serializable
 @SerialName("prevent_raid_trigger")
-class FeaturePreventRaidTrigger(
-    override var enabled: Boolean = true,
-): ListenedFeature("prevent_raid_trigger", enabled, category = FeatureCategories.PREVENTION) {
+class FeaturePreventRaidTrigger: ListenedFeature() {
+
+    @Transient override val id = "prevent_raid_trigger"
+    override var enabled: Boolean = true
+    @Transient override val category: FeatureCategories = FeatureCategories.PREVENTION
 
     @Transient
     override var condition: Boolean = ServerVersion.supports(15)

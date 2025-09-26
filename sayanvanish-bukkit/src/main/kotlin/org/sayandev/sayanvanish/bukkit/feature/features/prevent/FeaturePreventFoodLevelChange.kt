@@ -9,14 +9,18 @@ import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @RegisteredFeature
 @Serializable
 @SerialName("prevent_food_level_change")
 class FeaturePreventFoodLevelChange(
-    override var enabled: Boolean = true,
     val ignoreIfIncrease: Boolean = true
-): ListenedFeature("prevent_food_level_change", enabled, category = FeatureCategories.PREVENTION) {
+): ListenedFeature() {
+
+    @Transient override val id = "prevent_food_level_change"
+    override var enabled: Boolean = true
+    @Transient override val category: FeatureCategories = FeatureCategories.PREVENTION
 
     @EventHandler
     private fun onBlockBreak(event: FoodLevelChangeEvent) {

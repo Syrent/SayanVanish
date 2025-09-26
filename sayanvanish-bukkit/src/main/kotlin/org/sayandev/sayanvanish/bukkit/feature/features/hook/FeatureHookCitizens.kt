@@ -15,15 +15,19 @@ import org.sayandev.stickynote.bukkit.registerListener
 import kotlinx.serialization.Serializable
 import com.charleskorn.kaml.YamlComment
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Transient
 
 @RegisteredFeature
 @Serializable
 @SerialName("hook_citizens")
 class FeatureHookCitizens(
-    override var enabled: Boolean = true,
     @YamlComment("Will cancel npc speech event if context of speech contains a vanished player")
     val checkSpeech: Boolean = true,
-): HookFeature("hook_citizens", "Citizens", enabled) {
+): HookFeature() {
+
+    @Transient override val id = "hook_citizens"
+    override var enabled: Boolean = true
+    override val plugin: String = "Citizens"
 
     override fun enable() {
         if (hasPlugin()) {

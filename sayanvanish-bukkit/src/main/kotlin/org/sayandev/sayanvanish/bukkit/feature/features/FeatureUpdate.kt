@@ -27,8 +27,7 @@ import java.util.concurrent.CompletableFuture
 @RegisteredFeature
 @Serializable
 @SerialName("update")
-class FeatureUpdate(
-    override var enabled: Boolean = true,
+data class FeatureUpdate(
     @YamlComment("The interval to check for updates in minutes")
     @Configurable val checkEveryXMinutes: Int = 60 * 24,
     @YamlComment("The permission required to receive update notifications")
@@ -55,7 +54,10 @@ class FeatureUpdate(
         "<hover:show_text:'<red>Click to update'><click:run_command:'/${Settings.get().vanishCommand.name} forceupdate'><aqua>You can install version <version> by clicking on this message</click></hover>",
         "<red>Make sure to read the changelog before doing any update to prevent unexpected behaviors",
     )
-) : ListenedFeature("update", enabled) {
+) : ListenedFeature() {
+
+    @Transient override val id = "update"
+    override var enabled: Boolean = true
 
     @Transient var latestRelease: VersionInfo? = null
     @Transient var latestSnapshot: VersionInfo? = null

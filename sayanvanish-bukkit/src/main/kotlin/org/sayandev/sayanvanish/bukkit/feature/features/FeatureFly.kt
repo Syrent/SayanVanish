@@ -12,15 +12,18 @@ import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import kotlinx.serialization.Serializable
 import com.charleskorn.kaml.YamlComment
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Transient
 
 @RegisteredFeature
 @Serializable
 @SerialName("fly")
 class FeatureFly(
-    override var enabled: Boolean = true,
     @YamlComment("Disable fly when player reappears and don't have keep fly permission.")
     @Configurable val disableOnReappear: Boolean = true
-) : ListenedFeature("fly", enabled) {
+) : ListenedFeature() {
+
+    @Transient override val id = "fly"
+    override var enabled: Boolean = true
 
     @EventHandler
     private fun onVanish(event: BukkitUserVanishEvent) {

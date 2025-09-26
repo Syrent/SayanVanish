@@ -28,9 +28,10 @@ import java.util.*
 @RegisteredFeature
 @Serializable
 @SerialName("silent_container")
-class FeatureSilentContainer(
-    override var enabled: Boolean = true,
-): ListenedFeature("silent_container", enabled) {
+class FeatureSilentContainer: ListenedFeature() {
+
+    @Transient override val id = "silent_container"
+    override var enabled: Boolean = true
 
     @Transient override var condition: Boolean = ServerVersion.supports(13)
     @Transient private val containerPlayersData = mutableMapOf<UUID, ContainerPlayerData>()

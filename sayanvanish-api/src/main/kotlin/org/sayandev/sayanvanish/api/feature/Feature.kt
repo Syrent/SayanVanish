@@ -1,6 +1,9 @@
 package org.sayandev.sayanvanish.api.feature
 
 import com.charleskorn.kaml.Yaml
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.Required
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import org.sayandev.sayanvanish.api.Platform
@@ -10,12 +13,13 @@ import org.sayandev.stickynote.core.configuration.Config
 import java.io.File
 
 @Serializable
-abstract class Feature(
-    @Transient open val id: String = "@transient",
-    @Transient open var enabled: Boolean = true,
-    @Transient open val category: FeatureCategories = FeatureCategories.DEFAULT,
+@OptIn(ExperimentalSerializationApi::class)
+abstract class Feature {
+    abstract val id: String
+
+    @Transient open var enabled: Boolean = true
+    @Transient open val category: FeatureCategories = FeatureCategories.DEFAULT
     @Transient open val critical: Boolean = false
-) {
 
     @Transient open var condition: Boolean = true
 

@@ -12,13 +12,16 @@ import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @RegisteredFeature
 @Serializable
 @SerialName("prevent_creature_target")
-class FeaturePreventCreatureTarget(
-    override var enabled: Boolean = true,
-): ListenedFeature("prevent_creature_target", enabled, category = FeatureCategories.PREVENTION) {
+class FeaturePreventCreatureTarget: ListenedFeature() {
+
+    @Transient override val id = "prevent_creature_target"
+    override var enabled: Boolean = true
+    @Transient override val category: FeatureCategories = FeatureCategories.PREVENTION
 
     @EventHandler
     private fun preventEntityTargetOnVanish(event: BukkitUserVanishEvent) {

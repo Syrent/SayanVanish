@@ -19,17 +19,21 @@ import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import kotlinx.serialization.Serializable
 import com.charleskorn.kaml.YamlComment
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Transient
 
 @RegisteredFeature
 @Serializable
 @SerialName("prevent_chat")
 class FeaturePreventChat(
-    override var enabled: Boolean = true,
     @YamlComment("The character that vanished players can use to bypass the chat prevention.")
     @Configurable val bypassChar: String = "!",
     @YamlComment("Requires server restart to apply.")
     val priority: EventPriority = EventPriority.HIGH,
-): ListenedFeature("prevent_chat", enabled, category = FeatureCategories.PREVENTION) {
+): ListenedFeature() {
+
+    @Transient override val id = "prevent_chat"
+    override var enabled: Boolean = true
+    @Transient override val category: FeatureCategories = FeatureCategories.PREVENTION
 
     override fun enable() {
         Bukkit.getPluginManager().registerEvent(

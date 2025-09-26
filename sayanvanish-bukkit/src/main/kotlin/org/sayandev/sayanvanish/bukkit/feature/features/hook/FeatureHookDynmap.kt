@@ -11,13 +11,16 @@ import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.HookFeature
 import org.sayandev.stickynote.bukkit.registerListener
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @RegisteredFeature
 @Serializable
 @SerialName("hook_dynmap")
-class FeatureHookDynmap(
-    override var enabled: Boolean = true,
-) : HookFeature("hook_dynmap", "dynmap", enabled) {
+class FeatureHookDynmap : HookFeature() {
+
+    @Transient override val id = "hook_dynmap"
+    override var enabled: Boolean = true
+    override val plugin: String = "dynmap"
 
     override fun enable() {
         if (hasPlugin()) {

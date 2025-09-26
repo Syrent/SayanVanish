@@ -11,15 +11,18 @@ import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cached
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendComponent
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @RegisteredFeature
 @Serializable
 @SerialName("ride_entity")
 class FeatureRideEntity(
-    override var enabled: Boolean = true,
     val leaveVehicleWhenOthersEnter: Boolean = true,
     val exitMessage: String = "<red>You have been removed from the vehicle. because someone else entered it.",
-): ListenedFeature("ride_entity", enabled) {
+): ListenedFeature() {
+
+    @Transient override val id = "ride_entity"
+    override var enabled: Boolean = true
 
     @EventHandler(priority = EventPriority.HIGHEST)
     private fun removeVanishedPassengerOnEnter(event: PlayerInteractEntityEvent) {

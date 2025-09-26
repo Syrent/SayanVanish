@@ -1,10 +1,8 @@
 package org.sayandev.sayanvanish.proxy.config
 
-import github.scarsz.discordsrv.dependencies.okhttp3.internal.http2.Settings
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.stickynote.core.configuration.Config
 import kotlinx.serialization.Serializable
-import org.sayandev.sayanvanish.api.feature.Feature.Companion.directory
 import java.io.File
 
 public var language: LanguageConfig = LanguageConfig.fromConfig() ?: LanguageConfig.defaultConfig()
@@ -43,7 +41,7 @@ class LanguageConfig(
     }
 
     fun save() {
-        Config.save(File(languageDirectory, "${settings.general.language}.yml"), this)
+        Config.save(File(languageDirectory, "${Settings.get().general.language}.yml"), this)
     }
 
     companion object {
@@ -57,7 +55,7 @@ class LanguageConfig(
 
         @JvmStatic
         fun fromConfig(): LanguageConfig? {
-            return Config.fromFile<LanguageConfig>(File(languageDirectory, "${settings.general.language}.yml"))
+            return Config.fromFile<LanguageConfig>(File(languageDirectory, "${Settings.get().general.language}.yml"))
         }
     }
 }

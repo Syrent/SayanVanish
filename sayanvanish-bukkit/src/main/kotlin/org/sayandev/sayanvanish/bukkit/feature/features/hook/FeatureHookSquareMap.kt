@@ -9,14 +9,17 @@ import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.HookFeature
 import org.sayandev.stickynote.bukkit.registerListener
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import xyz.jpenilla.squaremap.api.SquaremapProvider
 
 @RegisteredFeature
 @Serializable
 @SerialName("hook_squaremap")
-class FeatureHookSquareMap(
-    override var enabled: Boolean = true,
-): HookFeature("hook_squaremap", "squaremap", enabled) {
+class FeatureHookSquareMap: HookFeature() {
+
+    @Transient override val id = "hook_squaremap"
+    override var enabled: Boolean = true
+    override val plugin: String = "squaremap"
 
     override fun enable() {
         if (hasPlugin()) {

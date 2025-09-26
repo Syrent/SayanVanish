@@ -23,12 +23,12 @@ import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import kotlinx.serialization.Serializable
 import com.charleskorn.kaml.YamlComment
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Transient
 
 @RegisteredFeature
 @Serializable
 @SerialName("state")
 class FeatureState(
-    override var enabled: Boolean = true,
     @YamlComment(
     "This is a CRITICAL feature. It is responsible for handling the state of the player when they join or quit the server.",
     "do NOT disable this feature if you don't know what you're doing.",
@@ -44,7 +44,11 @@ class FeatureState(
     @Configurable val checkPermissionOnQuit: Boolean = true,
     @YamlComment("Whether to check permission when a player quits the server")
     @Configurable val checkPermissionOnJoin: Boolean = true,
-) : ListenedFeature("state", enabled, critical = true) {
+) : ListenedFeature() {
+
+    @Transient override val id = "state"
+    override var enabled: Boolean = true
+    @Transient override val critical: Boolean = true
 
     @EventHandler(priority = EventPriority.LOWEST)
     private fun onJoin(event: PlayerJoinEvent) {

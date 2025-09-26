@@ -17,15 +17,19 @@ import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import kotlinx.serialization.Serializable
 import com.charleskorn.kaml.YamlComment
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Transient
 
 @RegisteredFeature
 @Serializable
 @SerialName("prevent_tab_complete")
 class FeaturePreventTabComplete(
-    override var enabled: Boolean = true,
     @YamlComment("Whether to keep vanished player in tab completion if the player that is getting the suggestion has a higher level of vanish.")
     @Configurable val checkVanishLevel: Boolean = false
-): ListenedFeature("prevent_tab_complete", enabled, category = FeatureCategories.PREVENTION) {
+): ListenedFeature() {
+
+    @Transient override val id = "prevent_tab_complete"
+    override var enabled: Boolean = true
+    @Transient override val category: FeatureCategories = FeatureCategories.PREVENTION
 
     @EventHandler(priority = EventPriority.HIGHEST)
     private fun onTabComplete(event: TabCompleteEvent) {

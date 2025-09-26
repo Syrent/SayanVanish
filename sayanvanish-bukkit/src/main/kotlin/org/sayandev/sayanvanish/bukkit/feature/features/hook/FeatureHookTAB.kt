@@ -12,13 +12,17 @@ import org.sayandev.stickynote.bukkit.plugin
 import kotlinx.serialization.Serializable
 import com.charleskorn.kaml.YamlComment
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Transient
 
 @RegisteredFeature
 @Serializable
 @SerialName("hook_tab")
-class FeatureHookTAB(
-    override var enabled: Boolean = true,
-): HookFeature("hook_tab", "TAB", enabled) {
+class FeatureHookTAB: HookFeature() {
+
+    @Transient override val id = "hook_tab"
+    override var enabled: Boolean = true
+    override val plugin: String = "TAB"
+
     override fun enable() {
         if (hasPlugin()) {
             VanishIntegrationTAB(this).register()

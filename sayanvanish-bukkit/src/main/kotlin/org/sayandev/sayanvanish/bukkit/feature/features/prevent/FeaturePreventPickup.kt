@@ -12,11 +12,16 @@ import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.utils.ServerVersion
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @RegisteredFeature
 @Serializable
 @SerialName("prevent_pickup")
-class FeaturePreventPickup: ListenedFeature("prevent_pickup", category = FeatureCategories.PREVENTION) {
+class FeaturePreventPickup: ListenedFeature() {
+
+    @Transient override val id = "prevent_pickup"
+    override var enabled: Boolean = true
+    @Transient override val category: FeatureCategories = FeatureCategories.PREVENTION
 
     override var condition: Boolean = ServerVersion.supports(9)
 

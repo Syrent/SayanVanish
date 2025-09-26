@@ -23,12 +23,12 @@ import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendComponent
 import kotlinx.serialization.Serializable
 import com.charleskorn.kaml.YamlComment
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Transient
 
 @RegisteredFeature
 @Serializable
 @SerialName("fake_message")
 class FeatureFakeMessage(
-    override var enabled: Boolean = true,
     @YamlComment("Whether to send a fake join message when a player vanishes")
     @Configurable val sendFakeJoinMessage: Boolean = false,
     @YamlComment("The message to send when a player vanishes")
@@ -55,7 +55,10 @@ class FeatureFakeMessage(
     @Configurable val disableJoinMessageIfVanished: Boolean = true,
     @YamlComment("Whether to disable the quit message if the player is vanished")
     @Configurable val disableQuitMessageIfVanished: Boolean = true,
-) : ListenedFeature("fake_message", enabled) {
+) : ListenedFeature() {
+
+    @Transient override val id = "fake_message"
+    override var enabled: Boolean = true
 
     @EventHandler(priority = EventPriority.LOWEST)
     private fun onJoin(event: PlayerJoinEvent) {

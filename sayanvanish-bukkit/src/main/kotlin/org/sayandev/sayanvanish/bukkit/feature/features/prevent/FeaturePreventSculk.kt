@@ -15,15 +15,19 @@ import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.utils.ServerVersion
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @RegisteredFeature
 @Serializable
 @SerialName("prevent_sculk")
 class FeaturePreventSculk(
-    override var enabled: Boolean = true,
     @Configurable val preventSculkSensor: Boolean = true,
     @Configurable val preventShriek: Boolean = true
-): ListenedFeature("prevent_sculk", enabled, category = FeatureCategories.PREVENTION) {
+): ListenedFeature() {
+
+    @Transient override val id = "prevent_sculk"
+    override var enabled: Boolean = true
+    @Transient override val category: FeatureCategories = FeatureCategories.PREVENTION
 
     val sculkBlocks = listOf(
         "SCULK_SENSOR",

@@ -21,13 +21,13 @@ import org.sayandev.stickynote.bukkit.utils.ServerVersion
 import org.sayandev.stickynote.core.configuration.Config
 import com.charleskorn.kaml.YamlComment
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Transient
 
 @RegisteredFeature
 @Serializable
 @SerialName("effect")
 @Suppress("DEPRECATION")
 data class FeatureEffect(
-    override var enabled: Boolean = true,
     @YamlComment(
         "All effects will being sent using packets to prevent conflict with other plugins or desyncs.",
         "List of effects to apply when a player vanishes"
@@ -61,7 +61,10 @@ data class FeatureEffect(
             false,
         )
     )
-) : ListenedFeature("effect", enabled) {
+) : ListenedFeature() {
+
+    @Transient override val id = "effect"
+    override var enabled: Boolean = true
 
     @EventHandler
     private fun onVanish(event: BukkitUserVanishEvent) {

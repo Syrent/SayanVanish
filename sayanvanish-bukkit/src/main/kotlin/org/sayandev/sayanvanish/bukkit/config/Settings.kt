@@ -65,7 +65,6 @@ class Settings(
         return general.serverId
     }
 
-
     fun save() {
         Config.save(settingsFile, this)
     }

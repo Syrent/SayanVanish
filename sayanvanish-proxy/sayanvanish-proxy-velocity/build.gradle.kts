@@ -12,6 +12,7 @@ dependencies {
     compileOnly(libs.velocity.api)
     compileOnly(libs.velocitab)
     compileOnly(libs.enhancedvelocity)
+    compileOnly(libs.miniplaceholders.api)
     annotationProcessor(libs.velocity.api)
 
     api(project(":sayanvanish-proxy"))

@@ -23,6 +23,7 @@ dependencies {
     compileOnly(libs.pl3xmap.api)
     compileOnly(libs.dynmap.core.api)
     compileOnly(libs.dynmap.api)
+    compileOnly(libs.miniplaceholders.api)
 
 //    compileOnly("io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT")
 //    paperweight.paperDevBundle("1.21.1-R0.1-SNAPSHOT")

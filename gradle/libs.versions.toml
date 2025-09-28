@@ -2,7 +2,7 @@
 # api
 discordsrv = "1.27.0"
 luckperms-api = "5.4"
-miniplaceholders-api = "2.2.3"
+miniplaceholders-api = "3.0.1"
 advancedserverlist = "3.3.0"
 tab-api = "5.0.2"
 
@@ -13,7 +13,7 @@ placeholderapi = "2.11.6"
 essentialsx = "2.20.1"
 citizens-api = "2.0.28-SNAPSHOT"
 squaremap-api = "1.2.3"
-pl3xmap-api = "1.21.4-512"
+pl3xmap-api = "1.21.8-534"
 dynmap = "3.7-beta-6"
 
 # proxy

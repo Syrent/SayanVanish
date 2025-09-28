@@ -1,10 +1,10 @@
 package org.sayandev.sayanvanish.bukkit.feature.features.hook
 
 import io.github.miniplaceholders.api.Expansion
-import io.github.miniplaceholders.api.utils.TagsUtils
+import io.github.miniplaceholders.api.utils.Tags
+import net.kyori.adventure.text.minimessage.tag.Tag
 import org.bukkit.entity.Player
 import org.sayandev.sayanvanish.api.SayanVanishAPI
-import org.sayandev.sayanvanish.api.SayanVanishAPI.Companion.user
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
@@ -12,6 +12,8 @@ import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.sayanvanish.bukkit.feature.HookFeature
 import org.sayandev.stickynote.bukkit.onlinePlayers
+import org.sayandev.stickynote.bukkit.utils.AdventureUtils.adventureComponent
+import org.sayandev.stickynote.bukkit.warn
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @RegisteredFeature
@@ -41,30 +43,30 @@ private class MiniPlaceholdersHookImpl(val feature: FeatureHookMiniPlaceholders)
         unregister()
 
         builder.audiencePlaceholder("vanished") { audience, queue, context ->
-            val player = audience as? Player ?: return@audiencePlaceholder TagsUtils.EMPTY_TAG
-            return@audiencePlaceholder TagsUtils.staticTag(if (player.user()?.isVanished == true) "true" else "false")
+            val player = audience as? Player ?: return@audiencePlaceholder Tags.EMPTY_TAG
+            return@audiencePlaceholder Tag.selfClosingInserting((if (player.user()?.isVanished == true) "true" else "false").adventureComponent())
         }
 
         builder.audiencePlaceholder("level") { audience, queue, context ->
-            val player = audience as? Player ?: return@audiencePlaceholder TagsUtils.staticTag("0")
-            return@audiencePlaceholder TagsUtils.staticTag(player.user()?.vanishLevel?.toString() ?: "0")
+            val player = audience as? Player ?: return@audiencePlaceholder Tag.selfClosingInserting("0".adventureComponent())
+            return@audiencePlaceholder Tag.selfClosingInserting((player.user()?.vanishLevel?.toString() ?: "0").adventureComponent())
         }
 
         builder.globalPlaceholder("count") { queue, context ->
-            TagsUtils.staticTag(SayanVanishBukkitAPI.getInstance().database.getUsers().filter { user -> user.isOnline && user.isVanished }.size.toString())
+            Tag.selfClosingInserting(SayanVanishBukkitAPI.getInstance().database.getUsers().filter { user -> user.isOnline && user.isVanished }.size.toString().adventureComponent())
         }
 
         builder.audiencePlaceholder("vanish_prefix") { audience, queue, context ->
-            TagsUtils.staticTag(if ((audience as? Player)?.user()?.isVanished == true) language.vanish.placeholderPrefix else "")
+            Tag.selfClosingInserting((if ((audience as? Player)?.user()?.isVanished == true) language.vanish.placeholderPrefix else "").adventureComponent())
         }
 
         builder.audiencePlaceholder("vanish_suffix") { audience, queue, context ->
-            TagsUtils.staticTag(if ((audience as? Player)?.user()?.isVanished == true) language.vanish.placeholderSuffix else "")
+            Tag.selfClosingInserting((if ((audience as? Player)?.user()?.isVanished == true) language.vanish.placeholderSuffix else "").adventureComponent())
         }
 
         builder.globalPlaceholder("online") { queue, context ->
             if (!queue.hasNext()) {
-                return@globalPlaceholder TagsUtils.EMPTY_TAG
+                return@globalPlaceholder Tags.EMPTY_TAG
             }
 
             val vanishedOnlineUsers = SayanVanishBukkitAPI.getInstance().database.getUsers().filter { user -> user.isVanished && user.isOnline }
@@ -90,7 +92,7 @@ private class MiniPlaceholdersHookImpl(val feature: FeatureHookMiniPlaceholders)
                 }
             }
 
-            TagsUtils.staticTag(result)
+            Tag.selfClosingInserting(result.adventureComponent())
         }
 
         builder.build().register()

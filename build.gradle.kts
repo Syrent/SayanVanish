@@ -1,22 +1,22 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import com.google.gson.JsonParser
 import io.papermc.hangarpublishplugin.model.Platforms
+import org.gradle.kotlin.dsl.exclude
 import java.io.ByteArrayOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
 
 plugins {
-    kotlin("jvm") version "2.1.0"
-    kotlin("plugin.serialization") version "2.1.0"
     java
+    kotlin("plugin.serialization") version "2.2.0"
     `maven-publish`
     id("io.papermc.hangar-publish-plugin") version "0.1.2"
     id("com.modrinth.minotaur") version "2.8.7"
     id("org.sayandev.stickynote.project")
 }
 
-val slug = findProperty("slug")!! as String
-description = findProperty("description")!! as String
+val slug = findProperty("slug") as String
+description = findProperty("description") as String
 
 fun executeGitCommand(vararg command: String): String {
     val processBuilder = ProcessBuilder("git", *command)
@@ -167,7 +167,7 @@ allprojects {
                     "version" to commitVersion,
                     "slug" to slug,
                     "name" to rootProject.name,
-                    "description" to rootProject.description
+                    "description" to rootProject.description.toString()
                 )
             }
         }
@@ -194,11 +194,9 @@ allprojects {
 }
 
 subprojects {
-    configurations {
-        create("compileOnlyApiResolved") {
-            isCanBeResolved = true
-            extendsFrom(configurations.getByName("compileOnlyApi"))
-        }
+    configurations.create("compileOnlyApiResolved") {
+        isCanBeResolved = true
+        extendsFrom(configurations.getByName("compileOnlyApi"))
     }
 
     java {
@@ -207,7 +205,7 @@ subprojects {
         disableAutoTargetJvm()
     }
 
-    val publicationShadowJar by tasks.registering(com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar::class) {
+    val publicationShadowJar by tasks.registering(ShadowJar::class) {
         from(sourceSets.main.get().output)
         configurations = listOf(*configurations.get().toTypedArray(), this@subprojects.configurations["compileOnlyApiResolved"])
         archiveClassifier.set("")

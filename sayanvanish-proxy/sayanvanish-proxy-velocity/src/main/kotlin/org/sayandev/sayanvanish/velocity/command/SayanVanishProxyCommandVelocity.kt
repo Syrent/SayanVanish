@@ -1,7 +1,7 @@
 package org.sayandev.sayanvanish.velocity.command
 
 import com.velocitypowered.api.proxy.Player
-import org.sayandev.sayanventure.adventure.text.minimessage.tag.resolver.Placeholder
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.incendo.cloud.component.CommandComponent
 import org.incendo.cloud.context.CommandContext
 import org.incendo.cloud.description.Description
@@ -12,8 +12,8 @@ import org.incendo.cloud.velocity.parser.PlayerParser
 import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.feature.Features
+import org.sayandev.sayanvanish.proxy.config.Settings
 import org.sayandev.sayanvanish.proxy.config.language
-import org.sayandev.sayanvanish.proxy.config.settings
 import org.sayandev.sayanvanish.velocity.api.VelocityVanishUser.Companion.generateVanishUser
 import org.sayandev.sayanvanish.velocity.api.VelocityVanishUser.Companion.getVanishUser
 import org.sayandev.sayanvanish.velocity.feature.features.FeatureUpdate
@@ -28,7 +28,7 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 import kotlin.jvm.optionals.getOrNull
 
-class SayanVanishProxyCommandVelocity : VelocityCommand(settings.command.name, *settings.command.aliases.toTypedArray()) {
+class SayanVanishProxyCommandVelocity : VelocityCommand(Settings.get().command.name, *Settings.get().command.aliases.toTypedArray()) {
 
     override fun rootBuilder(builder: MutableCommandBuilder<VelocitySender>) {
         builder.permission("${plugin.container.description.name.get().lowercase()}.commands.use")

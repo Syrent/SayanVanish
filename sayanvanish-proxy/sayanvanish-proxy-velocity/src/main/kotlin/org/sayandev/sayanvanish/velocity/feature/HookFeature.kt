@@ -1,17 +1,17 @@
 package org.sayandev.sayanvanish.velocity.feature
 
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
-import kotlinx.serialization.Serializable
 import org.sayandev.stickynote.velocity.hasPlugin
 
 @Serializable
-abstract class HookFeature(
-    id: String,
-    @Transient val plugin: String,
-    enabled: Boolean = true,
-    category: FeatureCategories = FeatureCategories.HOOK,
-) : ListenedFeature(id, enabled, category) {
+abstract class HookFeature : ListenedFeature() {
+
+    abstract val plugin: String
+    @Transient override var enabled: Boolean = true
+    override val category: FeatureCategories = FeatureCategories.HOOK
 
     fun hasPlugin(): Boolean {
         return hasPlugin(plugin)

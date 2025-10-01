@@ -1,6 +1,6 @@
 package org.sayandev.sayanvanish.bukkit.command
 
-import org.sayandev.sayanventure.adventure.text.minimessage.tag.resolver.Placeholder
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -26,8 +26,6 @@ import org.sayandev.sayanvanish.api.feature.RegisteredFeatureHandler
 import org.sayandev.sayanvanish.api.storage.StorageConfig
 import org.sayandev.sayanvanish.api.storage.storageConfig
 import org.sayandev.sayanvanish.api.utils.Paste
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getCachedOrCreateUser
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getCachedOrCreateVanishUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrAddVanishUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrCreateVanishUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
@@ -41,7 +39,6 @@ import org.sayandev.sayanvanish.bukkit.utils.ServerUtils
 import org.sayandev.stickynote.bukkit.*
 import org.sayandev.stickynote.bukkit.command.BukkitCommand
 import org.sayandev.stickynote.bukkit.command.BukkitSender
-import org.sayandev.stickynote.bukkit.command.required
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import org.sayandev.stickynote.core.utils.MilliCounter
 import java.io.File
@@ -87,7 +84,7 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
             val user = player.getOrCreateVanishUser()
 
             if (!user.hasPermission(Permission.VANISH)) {
-                user.sendMessage(language.vanish.dontHaveUsePermission.component(Placeholder.unparsed("permission", Permission.VANISH.permission())))
+                user.sendMessage(language.vanish.dontHaveUsePermission, Placeholder.unparsed("permission", Permission.VANISH.permission()))
             }
 
             val options = VanishOptions.defaultOptions().apply {

@@ -2,6 +2,7 @@ package org.sayandev.sayanvanish.api.message.types
 
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
+import org.jetbrains.exposed.sql.Except
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishAPI

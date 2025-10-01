@@ -8,10 +8,8 @@ import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.utils.DownloadUtils
 import org.sayandev.sayanvanish.api.utils.HangarUtils
 import org.sayandev.sayanvanish.api.utils.VersionInfo
-import org.sayandev.sayanvanish.proxy.config.settings
 import org.sayandev.sayanvanish.velocity.api.VelocityVanishUser.Companion.getVanishUser
 import org.sayandev.sayanvanish.velocity.feature.ListenedFeature
-import org.sayandev.sayanvanish.velocity.sayanvanish
 import org.sayandev.sayanvanish.velocity.utils.PlayerUtils.sendComponent
 import org.sayandev.sayanvanish.velocity.utils.PlayerUtils.sendRawComponent
 import org.sayandev.stickynote.velocity.StickyNote
@@ -21,11 +19,16 @@ import org.sayandev.stickynote.velocity.plugin
 import org.sayandev.stickynote.velocity.utils.AdventureUtils.component
 import kotlinx.serialization.Serializable
 import com.charleskorn.kaml.YamlComment
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Transient
+import org.sayandev.sayanvanish.proxy.config.Settings
+import org.sayandev.sayanvanish.velocity.SayanVanishPlugin
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
 @RegisteredFeature
 @Serializable
+@SerialName("update")
 class FeatureUpdate(
     @YamlComment("The period of time to check for updates.")
     @Configurable val checkEveryXMinutes: Int = 60 * 24,
@@ -50,10 +53,12 @@ class FeatureUpdate(
     @YamlComment("The content of the update request message")
     val updateRequestContent: List<String> = listOf(
         "<green>A new version of <white>SayanVanish Velocity</white> is available!",
-        "<hover:show_text:'<red>Click to update'><click:run_command:'/${settings.command.name} forceupdate'><aqua>You can install version <version> by clicking on this message</click></hover>",
+        "<hover:show_text:'<red>Click to update'><click:run_command:'/${Settings.get().command.name} forceupdate'><aqua>You can install version <version> by clicking on this message</click></hover>",
         "<red>Make sure to read the changelog before doing any update to prevent unexpected behaviors",
     )
-) : ListenedFeature("update") {
+) : ListenedFeature() {
+
+    @Transient override val id = "update"
 
     @Transient var latestRelease: VersionInfo? = null
     @Transient var latestSnapshot: VersionInfo? = null
@@ -144,7 +149,7 @@ class FeatureUpdate(
         val future = CompletableFuture<Boolean>()
         if (!isNewerVersionAvailable(notifyForSnapshotBuilds)) future.complete(false)
 
-        val pluginFile = sayanvanish.pluginFile() ?: let {
+        val pluginFile = SayanVanishPlugin.getInstance().pluginFile() ?: let {
             future.complete(false)
             return future
         }

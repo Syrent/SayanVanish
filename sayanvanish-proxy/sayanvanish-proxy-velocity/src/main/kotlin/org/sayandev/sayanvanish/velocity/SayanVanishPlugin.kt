@@ -7,13 +7,12 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.plugin.annotation.DataDirectory
 import com.velocitypowered.api.proxy.ProxyServer
 import org.sayandev.sayanvanish.api.Platform
+import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.VanishAPI
+import org.sayandev.sayanvanish.proxy.config.Settings
 import org.sayandev.sayanvanish.proxy.config.language
-import org.sayandev.sayanvanish.proxy.config.settings
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
 import org.sayandev.sayanvanish.velocity.command.SayanVanishProxyCommandVelocity
-import org.sayandev.sayanvanish.velocity.health.HealthCheckMessageSubscriber
-import org.sayandev.sayanvanish.velocity.health.ServerInfoPublisher
 import org.sayandev.stickynote.loader.velocity.StickyNoteVelocityLoader
 import org.sayandev.stickynote.velocity.launch
 import org.sayandev.stickynote.velocity.registerListener
@@ -21,9 +20,7 @@ import org.slf4j.Logger
 import java.io.File
 import java.nio.file.Path
 
-lateinit var sayanvanish: SayanVanish
-
-class SayanVanish @Inject constructor(
+class SayanVanishPlugin @Inject constructor(
     val suspendingPluginContainer: SuspendingPluginContainer
 ) {
 
@@ -40,36 +37,32 @@ class SayanVanish @Inject constructor(
     fun onProxyInitialize(event: ProxyInitializeEvent) {
         StickyNoteVelocityLoader(this, PLUGIN_ID, server, logger, dataDirectory)
         suspendingPluginContainer.initialize(this)
-        sayanvanish = this
+        setInstance(this)
         Platform.get().rootDirectory = dataDirectory.toFile()
 
-        if (!Platform.setAndRegister(Platform("velocity", PLUGIN_ID, java.util.logging.Logger.getLogger("sayanvanish"), dataDirectory.toFile(), "", VelocityPlatformAdapter))) return
+        if (!Platform.setAndRegister(VelocityPlatform())) return
 
-        settings
+        SayanVanishAPI.initialize()
+
+        Settings.reload()
         language
 
-        Platform.get().serverId = settings.general.serverId
-
-        SayanVanishVelocityAPI
-
-        HealthCheckMessageSubscriber().register()
-        ServerInfoPublisher
+        Platform.get().serverId = Settings.get().general.serverId
 
         SayanVanishProxyCommandVelocity()
-
 
         registerListener(VanishManager)
 
         // TODO: move this somewhere else. it's not something to be on main class and the main initialization method
         launch {
-            if (settings.general.purgeOnlineHistoryOnStartup) {
+            if (Settings.get().general.purgeOnlineHistoryOnStartup) {
                 for (onlineServer in server.allServers) {
                     VanishAPI.get().getDatabase().purgeUsers(onlineServer.serverInfo.name)
                 }
-                VanishAPI.get().getDatabase().purgeUsers(settings.general.serverId)
+                VanishAPI.get().getDatabase().purgeUsers(Settings.get().general.serverId)
             }
 
-            if (settings.general.purgeUsersOnStartup) {
+            if (Settings.get().general.purgeUsersOnStartup) {
                 for (user in VanishAPI.get().getDatabase().getUsers().await()) {
                     user.isOnline = false
                     user.save()
@@ -84,6 +77,16 @@ class SayanVanish @Inject constructor(
 
     companion object {
         const val PLUGIN_ID = "sayanvanish"
+        
+        private lateinit var instance: SayanVanishPlugin
+
+        fun getInstance(): SayanVanishPlugin {
+            return instance
+        }
+
+        private fun setInstance(plugin: SayanVanishPlugin) {
+            instance = plugin
+        }
     }
 
 }

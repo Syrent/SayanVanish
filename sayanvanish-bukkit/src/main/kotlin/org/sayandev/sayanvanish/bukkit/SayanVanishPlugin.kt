@@ -59,8 +59,6 @@ class SayanVanishPlugin : JavaPlugin() {
         }
     }
 
-    abstract class MozAb
-
     override fun onDisable() {
         runBlocking {
             Platform.get().unregister()
@@ -71,11 +69,6 @@ class SayanVanishPlugin : JavaPlugin() {
     fun pluginFile(): File {
         return this.file
     }
-
-    @Serializable
-    data class MozeTest(
-        val testsss: String = "moz"
-    )
 
     companion object {
         private lateinit var instance: SayanVanishPlugin

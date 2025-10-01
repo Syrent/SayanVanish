@@ -1,6 +1,10 @@
 package org.sayandev.sayanvanish.bukkit.feature.features
 
-import org.sayandev.sayanventure.adventure.text.minimessage.tag.resolver.Placeholder
+import com.charleskorn.kaml.YamlComment
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerJoinEvent
@@ -10,20 +14,12 @@ import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getCachedOrCreateVanishUser
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrAddUser
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrAddVanishUser
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.launch
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
-import kotlinx.serialization.Serializable
-import com.charleskorn.kaml.YamlComment
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Transient
 
 @RegisteredFeature
 @Serializable
@@ -81,7 +77,7 @@ class FeatureState(
         user.isOnline = true
 
         if (checkPermissionOnJoin && !user.hasPermission(Permission.VANISH)) {
-            user.sendMessage(language.vanish.noPermissionToKeepVanished.component(Placeholder.unparsed("permission", Permission.VANISH.permission())))
+            user.sendMessage(language.vanish.noPermissionToKeepVanished, Placeholder.unparsed("permission", Permission.VANISH.permission()))
             user.appear(vanishJoinOptions)
             launch {
                 user.delete()
@@ -97,7 +93,7 @@ class FeatureState(
         if (user.isVanished) {
             if (user.currentOptions.notifyJoinQuitVanished) {
                 for (vanishedUser in VanishAPI.get().getCacheService().getVanishUsers().values.filter { it.hasPermission(Permission.VANISH) && it.vanishLevel >= user.vanishLevel }) {
-                    vanishedUser.sendMessage(language.vanish.joinedTheServerWhileVanished.component(Placeholder.unparsed("player", user.username)))
+                    vanishedUser.sendMessage(language.vanish.joinedTheServerWhileVanished, Placeholder.unparsed("player", user.username))
                 }
             }
         }
@@ -117,7 +113,7 @@ class FeatureState(
         if (user.isVanished) {
             if (user.currentOptions.notifyJoinQuitVanished) {
                 for (vanishedUser in VanishAPI.get().getCacheService().getVanishUsers().values.filter { it.hasPermission(Permission.VANISH) && it.vanishLevel >= user.vanishLevel }) {
-                    vanishedUser.sendMessage(language.vanish.leftTheServerWhileVanished.component(Placeholder.unparsed("player", user.username)))
+                    vanishedUser.sendMessage(language.vanish.leftTheServerWhileVanished, Placeholder.unparsed("player", user.username))
                 }
             }
         }

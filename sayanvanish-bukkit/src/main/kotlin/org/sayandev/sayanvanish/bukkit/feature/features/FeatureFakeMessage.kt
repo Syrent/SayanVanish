@@ -1,7 +1,11 @@
 package org.sayandev.sayanvanish.bukkit.feature.features
 
-import org.sayandev.sayanventure.adventure.text.minimessage.tag.resolver.Placeholder
-import org.sayandev.sayanventure.adventure.text.serializer.legacy.LegacyComponentSerializer
+import com.charleskorn.kaml.YamlComment
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerJoinEvent
@@ -10,20 +14,13 @@ import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
-import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendComponent
 import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendRawComponent
 import org.sayandev.stickynote.bukkit.hook.PlaceholderAPIHook
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils
-import org.sayandev.stickynote.bukkit.utils.AdventureUtils.sendComponent
-import kotlinx.serialization.Serializable
-import com.charleskorn.kaml.YamlComment
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Transient
 
 @RegisteredFeature
 @Serializable

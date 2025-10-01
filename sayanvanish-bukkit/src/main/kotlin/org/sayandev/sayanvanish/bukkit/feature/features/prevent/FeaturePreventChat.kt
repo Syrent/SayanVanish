@@ -1,6 +1,10 @@
 package org.sayandev.sayanvanish.bukkit.feature.features.prevent
 
-import org.sayandev.sayanventure.adventure.text.minimessage.tag.resolver.Placeholder
+import com.charleskorn.kaml.YamlComment
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Bukkit
 import org.bukkit.event.Event
 import org.bukkit.event.EventPriority
@@ -10,16 +14,11 @@ import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.StickyNote
 import org.sayandev.stickynote.bukkit.plugin
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
-import kotlinx.serialization.Serializable
-import com.charleskorn.kaml.YamlComment
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Transient
 
 @RegisteredFeature
 @Serializable
@@ -50,7 +49,7 @@ class FeaturePreventChat(
                 if (message.startsWith(bypassChar)) {
                     event.message = message.removePrefix(bypassChar)
                 } else {
-                    user.sendMessage(language.vanish.cantChatWhileVanished.component(Placeholder.unparsed("char", bypassChar)))
+                    user.sendMessage(language.vanish.cantChatWhileVanished, Placeholder.unparsed("char", bypassChar))
                     event.isCancelled = true
                 }
             },

@@ -25,5 +25,5 @@
       "optional": true
     }
   ],
-  "main": "org.sayandev.sayanvanish.velocity.SayanVanish"
+  "main": "org.sayandev.sayanvanish.velocity.SayanVanishPlugin"
 }

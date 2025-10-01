@@ -1,20 +1,11 @@
 package org.sayandev.sayanvanish.api.storage
 
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.isActive
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.polymorphic
-import org.sayandev.sayanvanish.api.User
+import kotlinx.coroutines.*
 import org.sayandev.sayanvanish.api.Platform
+import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.storage.redis.RedisDatabase
 import org.sayandev.sayanvanish.api.storage.sql.SQLDatabase
-import org.sayandev.stickynote.core.configuration.Config
 import org.sayandev.stickynote.core.coroutine.dispatcher.AsyncDispatcher
 import java.util.*
 
@@ -178,7 +169,7 @@ class TransactionDatabase: Database {
     fun database(method: DatabaseType): Database {
         return databaseTypes[method] ?: let {
             val (fallbackMethod, fallbackDatabase) = databaseTypes.entries.first()
-            Platform.Companion.get().logger.warning("Tried to get a database of type $method, but it was not initialized. falling back to ${fallbackMethod} database method.")
+            Platform.get().logger.warning("Tried to get a database of type $method, but it was not initialized. falling back to ${fallbackMethod} database method.")
             fallbackDatabase
         }
     }

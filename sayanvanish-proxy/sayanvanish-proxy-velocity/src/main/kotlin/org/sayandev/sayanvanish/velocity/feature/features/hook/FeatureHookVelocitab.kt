@@ -1,28 +1,31 @@
 package org.sayandev.sayanvanish.velocity.feature.features.hook
 
+import com.charleskorn.kaml.YamlComment
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.PostLoginEvent
 import com.velocitypowered.api.event.player.ServerConnectedEvent
 import com.velocitypowered.api.event.player.ServerPostConnectEvent
 import com.velocitypowered.api.proxy.Player
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import net.william278.velocitab.api.VelocitabAPI
 import net.william278.velocitab.vanish.VanishIntegration
 import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
-import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
-import org.sayandev.sayanvanish.velocity.api.VelocityVanishUser.Companion.generateVanishUser
-import org.sayandev.sayanvanish.velocity.api.VelocityVanishUser.Companion.getVanishUser
+import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI.Companion.cachedVanishUser
+import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI.Companion.getCachedOrCreateVanishUser
+import org.sayandev.sayanvanish.velocity.api.VelocityVanishUser.Companion.velocityAdapt
 import org.sayandev.sayanvanish.velocity.event.VelocityUserUnVanishEvent
 import org.sayandev.sayanvanish.velocity.event.VelocityUserVanishEvent
 import org.sayandev.sayanvanish.velocity.feature.HookFeature
 import org.sayandev.stickynote.velocity.StickyNote
 import org.sayandev.stickynote.velocity.registerListener
-import kotlinx.serialization.Serializable
-import com.charleskorn.kaml.YamlComment
 import java.util.concurrent.TimeUnit
 
 @RegisteredFeature
 @Serializable
+@SerialName("hook_velocitab")
 class FeatureHookVelocitab(
     @YamlComment("The delay in milliseconds to check on post server connect event. low values may cause issues.")
     val checkOnPostServerConnectDelay: Long = 150,
@@ -30,7 +33,12 @@ class FeatureHookVelocitab(
     val checkOnServerConnectedDelay: Long = 150,
     @YamlComment("The delay in milliseconds to check on post login event. low values may cause issues.")
     val checkOnPostLoginDelay: Long = 150,
-) : HookFeature("hook_velocitab", "velocitab") {
+) : HookFeature() {
+
+    @Transient override val id = "hook_velocitab"
+    override var enabled: Boolean = true
+    override val plugin: String = "velocitab"
+
     override fun enable() {
         if (hasPlugin()) {
             VelocitabAPI.getInstance().vanishIntegration = VelocitabImpl(this)
@@ -48,15 +56,15 @@ private class VelocitabImpl(val feature: FeatureHookVelocitab) : VanishIntegrati
     override fun canSee(name: String, otherName: String): Boolean {
         val player = StickyNote.getPlayer(name) ?: return true
         val otherPlayer = StickyNote.getPlayer(otherName) ?: return true
-        val user = VanishAPI.get().getDatabase().getVanishUserCache(player.uniqueId) ?: player.generateVanishUser()
-        val otherUser = VanishAPI.get().getDatabase().getVanishUserCache(otherPlayer.uniqueId) ?: otherPlayer.generateVanishUser()
+        val user = player.getCachedOrCreateVanishUser()
+        val otherUser = otherPlayer.getCachedOrCreateVanishUser()
         return if (user.isVanished && otherUser.isVanished && user.vanishLevel >= otherUser.vanishLevel) true
         else if (otherUser.isVanished) false
         else true
     }
 
     override fun isVanished(name: String): Boolean {
-        return StickyNote.getPlayer(name)?.let { VanishAPI.get().getDatabase().getCachedVanishUsers().values.find { it.username == name } }?.isVanished == true
+        return StickyNote.getPlayer(name)?.let { VanishAPI.get().getCacheService().getVanishUsers().values.find { it.username == name } }?.isVanished == true
     }
 
     @Subscribe
@@ -75,12 +83,12 @@ private class VelocitabImpl(val feature: FeatureHookVelocitab) : VanishIntegrati
     private fun onServerPostConnect(event: ServerPostConnectEvent) {
         val player = event.player ?: return
         StickyNote.run({
-            for (vanishedUser in SayanVanishVelocityAPI.getInstance().getVanishedUsers()) {
+            for (vanishedUser in VanishAPI.get().getCacheService().getVanishUsers().values.map { it.velocityAdapt() }) {
                 val vanishedPlayer = vanishedUser.player() ?: continue
                 vanish(vanishedPlayer)
             }
 
-            val user = player.user() ?: return@run
+            val user = player.cachedVanishUser() ?: return@run
             if (user.isVanished) {
                 vanish(player)
             } else {
@@ -93,12 +101,12 @@ private class VelocitabImpl(val feature: FeatureHookVelocitab) : VanishIntegrati
     private fun onServerConnected(event: ServerConnectedEvent) {
         val player = event.player ?: return
         StickyNote.run({
-            for (vanishedUser in SayanVanishVelocityAPI.getInstance().getVanishedUsers()) {
+            for (vanishedUser in VanishAPI.get().getCacheService().getVanishUsers().values.map { it.velocityAdapt() }) {
                 val vanishedPlayer = vanishedUser.player() ?: continue
                 vanish(vanishedPlayer)
             }
 
-            val user = player.user() ?: return@run
+            val user = player.cachedVanishUser() ?: return@run
             if (user.isVanished) {
                 vanish(player)
             } else {
@@ -111,12 +119,12 @@ private class VelocitabImpl(val feature: FeatureHookVelocitab) : VanishIntegrati
     private fun onPostLogin(event: PostLoginEvent) {
         val player = event.player ?: return
         StickyNote.run({
-            for (vanishedUser in SayanVanishVelocityAPI.getInstance().getVanishedUsers()) {
+            for (vanishedUser in VanishAPI.get().getCacheService().getVanishUsers().values.map { it.velocityAdapt() }) {
                 val vanishedPlayer = vanishedUser.player() ?: continue
                 vanish(vanishedPlayer)
             }
 
-            val user = player.user() ?: return@run
+            val user = player.cachedVanishUser() ?: return@run
             if (user.isVanished) {
                 vanish(player)
             } else {

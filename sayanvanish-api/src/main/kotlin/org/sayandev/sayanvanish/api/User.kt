@@ -6,7 +6,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.future.asCompletableFuture
 import kotlinx.coroutines.runBlocking
-import org.sayandev.sayanventure.adventure.text.Component
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.sayandev.sayanvanish.api.storage.PlatformTable
 import org.sayandev.stickynote.core.utils.async
 import java.lang.reflect.Type
@@ -72,12 +72,12 @@ interface User {
         return hasPermission(permission.permission())
     }
 
-    fun sendMessage(content: Component) {
-        Platform.get().adapter.adapt(this).sendMessage(content)
+    fun sendMessage(content: String, vararg placeholders: TagResolver) {
+        Platform.get().adapter.adapt(this).sendMessage(content, *placeholders)
     }
 
-    fun sendActionbar(content: Component) {
-        Platform.get().adapter.adapt(this).sendActionbar(content)
+    fun sendActionbar(content: String, vararg placeholders: TagResolver) {
+        Platform.get().adapter.adapt(this).sendActionbar(content, *placeholders)
     }
 
     /**

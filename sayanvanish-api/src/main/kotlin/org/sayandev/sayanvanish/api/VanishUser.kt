@@ -152,9 +152,9 @@ interface VanishUser : User {
 
     object Schema : PlatformTable("vanish_users") {
         val uniqueId = reference("unique_id", User.Schema.uniqueId).uniqueIndex()
-        val isVanished = bool("is_vanished")
-        val vanishLevel = integer("vanish_level")
-        val currentOptions = varchar("current_options", 255)
+        val isVanished = bool("is_vanished").default(false)
+        val vanishLevel = integer("vanish_level").default(0)
+        val currentOptions = text("current_options")
 
         override val primaryKey = PrimaryKey(uniqueId)
     }

@@ -3,15 +3,20 @@ package org.sayandev.sayanvanish.velocity
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.DisconnectEvent
 import com.velocitypowered.api.event.player.ServerPostConnectEvent
+import kotlinx.coroutines.awaitAll
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishAPI
+import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI.Companion.getOrCreateVanishUser
+import org.sayandev.sayanvanish.velocity.api.VelocityUser
 import org.sayandev.sayanvanish.velocity.api.VelocityVanishUser.Companion.generateVanishUser
 import org.sayandev.sayanvanish.velocity.api.VelocityVanishUser.Companion.getVanishUser
+import org.sayandev.sayanvanish.velocity.api.VelocityVanishUser.Companion.velocityAdapt
 import org.sayandev.sayanvanish.velocity.event.VelocityUserUnVanishEvent
 import org.sayandev.sayanvanish.velocity.event.VelocityUserVanishEvent
 import org.sayandev.stickynote.velocity.launch
 import org.sayandev.stickynote.velocity.server
+import org.sayandev.stickynote.velocity.warn
 import kotlin.jvm.optionals.getOrNull
 
 object VanishManager {
@@ -20,9 +25,11 @@ object VanishManager {
     private fun onPostLogin(event: ServerPostConnectEvent) {
         val player = event.player ?: return
         launch {
-            VanishAPI.get().getDatabase().saveUser(User.of(player.uniqueId, player.username, true, player.currentServer.getOrNull()?.serverInfo?.name ?: Platform.get().id))
+            val user = player.getOrCreateVanishUser().velocityAdapt()
+            user.serverId = player.currentServer.getOrNull()?.serverInfo?.name ?: Platform.get().id
+            user.isOnline = true
+            user.saveAndSync().awaitAll()
 
-            val user = player.getVanishUser() ?: player.generateVanishUser()
             if (user.isVanished) {
                 server.eventManager.fireAndForget(VelocityUserVanishEvent(user, user.currentOptions))
             } else {
@@ -35,6 +42,10 @@ object VanishManager {
     private fun onDisconnect(event: DisconnectEvent) {
         val player = event.player ?: return
         launch {
+            player.getVanishUser()?.velocityAdapt()?.let { user ->
+                user.isOnline = false
+                user.saveAndSync()
+            }
             VanishAPI.get().getDatabase().removeUser(player.uniqueId)
         }
     }

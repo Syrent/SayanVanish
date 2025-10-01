@@ -1,12 +1,10 @@
 package org.sayandev.sayanvanish.velocity.utils
 
 import com.velocitypowered.api.command.CommandSource
-import org.sayandev.sayanventure.adventure.text.Component
-import org.sayandev.sayanventure.adventure.text.minimessage.tag.resolver.TagResolver
-import org.sayandev.sayanvanish.proxy.config.LanguageConfig
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
+import org.sayandev.sayanvanish.proxy.config.Settings
 import org.sayandev.sayanvanish.proxy.config.language
-import org.sayandev.sayanvanish.proxy.config.settings
-import org.sayandev.stickynote.velocity.utils.AdventureUtils
 import org.sayandev.stickynote.velocity.utils.AdventureUtils.component
 
 object PlayerUtils {
@@ -15,7 +13,7 @@ object PlayerUtils {
 
         val prefix = language.general.prefix.component()
         val contentComponent = content.component(*placeholders)
-        this.sendMessage(if (settings.general.includePrefixInMessages) {
+        this.sendMessage(if (Settings.get().general.includePrefixInMessages) {
             prefix.append(contentComponent)
         } else {
             contentComponent
@@ -26,7 +24,7 @@ object PlayerUtils {
         if (content == Component.empty()) return
 
         val prefix = language.general.prefix.component()
-        this.sendMessage(if (settings.general.includePrefixInMessages) {
+        this.sendMessage(if (Settings.get().general.includePrefixInMessages) {
             prefix.append(content)
         } else {
             content

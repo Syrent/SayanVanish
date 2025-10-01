@@ -1,14 +1,16 @@
 package org.sayandev.sayanvanish.bukkit.api
 
+import net.kyori.adventure.audience.Audience
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.Bukkit
 import org.bukkit.permissions.Permission
 import org.bukkit.permissions.PermissionDefault
 import org.sayandev.sayanvanish.api.User
-import org.sayandev.sayanventure.adventure.audience.Audience
-import org.sayandev.sayanventure.adventure.text.Component
 import org.sayandev.stickynote.bukkit.extension.sendComponent
 import org.sayandev.stickynote.bukkit.extension.sendComponentActionbar
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils
+import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import java.util.*
 
 class BukkitUser(
@@ -26,11 +28,19 @@ class BukkitUser(
         return player()?.hasPermission(Permission(permission, PermissionDefault.FALSE)) == true
     }
 
-    override fun sendMessage(content: Component) {
+    override fun sendMessage(content: String, vararg placeholders: TagResolver) {
+        sendMessage(content.component(*placeholders))
+    }
+
+    override fun sendActionbar(content: String, vararg placeholders: TagResolver) {
+        sendActionbar(content.component(*placeholders))
+    }
+
+    fun sendMessage(content: Component) {
         player()?.sendComponent(content)
     }
 
-    override fun sendActionbar(content: Component) {
+    fun sendActionbar(content: Component) {
         player()?.sendComponentActionbar(content)
     }
 

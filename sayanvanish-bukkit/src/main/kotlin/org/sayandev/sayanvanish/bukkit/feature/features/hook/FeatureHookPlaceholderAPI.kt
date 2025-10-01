@@ -15,6 +15,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import com.charleskorn.kaml.YamlComment
 import kotlinx.serialization.SerialName
+import org.sayandev.stickynote.bukkit.warn
 
 @RegisteredFeature
 @Serializable
@@ -115,13 +116,15 @@ private class HookPlaceholderAPI : PlaceholderExpansion() {
 
         if (params.startsWith("online_")) {
             val type = params.removePrefix("online_")
-            val vanishedOnlineUsers = VanishAPI.get().getCacheService().getVanishUsers().getVanished().filter { user -> user.isOnline }
+            val vanishedOnlineUsers = VanishAPI.get().getCacheService().getVanishUsers().getOnlineVanished()
 
             return if (type.equals("here", true)) {
                 onlinePlayers.filter { onlinePlayer -> !vanishedOnlineUsers.map { vanishedOnlineUser -> vanishedOnlineUser.username }.contains(onlinePlayer.name) }.size.toString()
             } else if (type.equals("total", true)) {
                 return VanishAPI.get().getCacheService().getUsers().values.filter { !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
             } else {
+                warn("vanished online users: ${vanishedOnlineUsers.joinToString(", ") { it.username }}")
+                warn("users by server: ${VanishAPI.get().getCacheService().getUsers().values.joinToString(", ") { "${it.username}:${it.serverId}" }}")
                 return VanishAPI.get().getCacheService().getUsers().getByServer(type).filter { !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
             }
         }

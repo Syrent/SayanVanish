@@ -6,6 +6,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import net.kyori.adventure.text.Component
 import org.bukkit.event.EventHandler
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
@@ -13,7 +14,6 @@ import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cached
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
-import org.sayandev.sayanventure.adventure.text.Component
 import org.sayandev.stickynote.bukkit.StickyNote
 import org.sayandev.stickynote.bukkit.launch
 import org.sayandev.stickynote.bukkit.onlinePlayers
@@ -38,14 +38,14 @@ class FeatureActionbar(
     private fun onVanish(event: BukkitUserVanishEvent) {
         val user = event.user
         if (!isActive(user)) return
-        user.sendActionbar(content.component())
+        user.sendActionbar(content)
     }
 
     @EventHandler
     private fun onUnVanish(event: BukkitUserUnVanishEvent) {
         val user = event.user
         if (!isActive(user)) return
-        user.sendActionbar(Component.empty())
+        user.sendActionbar("")
     }
 
     override fun enable() {
@@ -56,7 +56,7 @@ class FeatureActionbar(
 //                warn("vanished: ${VanishAPI.get().getCacheService().getVanishUsers().values.joinToString(" ,") { "${it.username}:${it.isVanished}" }}")
                 for (user in onlinePlayers.mapNotNull { it.cachedVanishUser() }.filter { it.isVanished }) {
                     if (!isActive(user)) continue
-                    user.sendActionbar(content.component())
+                    user.sendActionbar(content)
                 }
                 delay(periodMillis)
             }

@@ -7,7 +7,7 @@ import org.spongepowered.configurate.objectmapping.meta.Setting
 @Serializable
 class SQLConfig(
     var threadCount: Int = 5,
-    @YamlComment("The method to use for the database. Available methods: MYSQL, SQLITE")
+    @YamlComment("The method to use for the database. Available methods: MARIADB, MYSQL, SQLITE")
     val method: SQLMethod = SQLMethod.SQLITE,
     @YamlComment("The host address of the SQL database. If it's an IP address (x.x.x.x), ensure it is enclosed in double quotes (`\"`).")
     val host: String = "127.0.0.1",

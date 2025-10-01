@@ -7,7 +7,7 @@ import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.stickynote.bukkit.hasPlugin
 
 @Serializable
-abstract class HookFeature: ListenedFeature() {
+abstract class HookFeature : ListenedFeature() {
     abstract val plugin: String
     @Transient override var enabled: Boolean = true
     override val category: FeatureCategories = FeatureCategories.HOOK

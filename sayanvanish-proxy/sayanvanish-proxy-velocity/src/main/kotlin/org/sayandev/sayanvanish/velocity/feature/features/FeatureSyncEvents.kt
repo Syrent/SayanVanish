@@ -1,35 +1,28 @@
 package org.sayandev.sayanvanish.velocity.feature.features
 
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import org.sayandev.sayanvanish.api.VanishAPI
-import org.sayandev.sayanvanish.api.feature.RegisteredFeature
-import org.sayandev.sayanvanish.velocity.VelocityPlatformAdapter
-import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
-import org.sayandev.sayanvanish.velocity.api.VelocityVanishUser.Companion.adapt
-import org.sayandev.sayanvanish.velocity.event.VelocityUserUnVanishEvent
-import org.sayandev.sayanvanish.velocity.event.VelocityUserVanishEvent
-import org.sayandev.sayanvanish.velocity.feature.ListenedFeature
-import kotlinx.serialization.Serializable
-import org.sayandev.stickynote.velocity.StickyNote
-import org.sayandev.stickynote.velocity.launch
-import org.sayandev.stickynote.velocity.plugin
-import org.sayandev.stickynote.velocity.server
 import com.charleskorn.kaml.YamlComment
-import java.util.UUID
-import java.util.concurrent.TimeUnit
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import org.sayandev.sayanvanish.api.feature.RegisteredFeature
+import org.sayandev.sayanvanish.velocity.feature.ListenedFeature
+import java.util.*
 
+// TODO: new event implementation using messaging and custom api
 @RegisteredFeature
 @Serializable
+@SerialName("sync_events")
 class FeatureSyncEvents(
     @YamlComment("The period of time to check for vanished players. low values may cause performance issues.")
     val checkPeriodMillis: Long = 50
-) : ListenedFeature("sync_events") {
+) : ListenedFeature() {
+
+    @Transient override val id = "sync_events"
 
     @Transient val previousUsers = mutableMapOf<UUID, Boolean>()
 
     override fun enable() {
-        launch {
+        /*launch {
             // TODO: rewrite this so it uses messaging to call events
             while (isActive) {
                 for (vanishUser in VanishAPI.get().getDatabase().getVanishUsers().await()) {
@@ -50,7 +43,7 @@ class FeatureSyncEvents(
                 }
                 delay(checkPeriodMillis)
             }
-        }
+        }*/
         super.enable()
     }
 }

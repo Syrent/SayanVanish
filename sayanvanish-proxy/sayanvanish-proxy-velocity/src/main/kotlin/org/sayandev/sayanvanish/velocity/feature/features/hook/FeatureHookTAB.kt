@@ -10,14 +10,19 @@ import org.sayandev.sayanvanish.velocity.feature.HookFeature
 import org.sayandev.stickynote.velocity.plugin
 import kotlinx.serialization.Serializable
 import com.charleskorn.kaml.YamlComment
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Transient
 
 
 @RegisteredFeature
 @Serializable
-class FeatureHookTAB(
-    @YamlComment("Whether to use cache data for vanish status. This will improve performance but may cause a small delay in tablist removal after join.")
-    val useCacheData: Boolean = false
-): HookFeature("hook_tab", "TAB") {
+@SerialName("hook_tab")
+class FeatureHookTAB : HookFeature() {
+
+    @Transient override val id = "hook_tab"
+    override var enabled: Boolean = true
+    override val plugin: String = "TAB"
+
     override fun enable() {
         if (hasPlugin()) {
             VanishIntegrationTAB(this).register()
@@ -35,13 +40,13 @@ class FeatureHookTAB(
 
 private class VanishIntegrationTAB(val feature: FeatureHookTAB): VanishIntegration(plugin.container.description.name.get()) {
     override fun isVanished(player: TabPlayer): Boolean {
-        return VanishAPI.get().getDatabase().getCachedVanishUser(player.uniqueId)?.isVanished == true
+        return VanishAPI.get().getCacheService().getVanishUsers()[player.uniqueId]?.isVanished == true
     }
 
     override fun canSee(viewer: TabPlayer, target: TabPlayer): Boolean {
         if (viewer.uniqueId == target.uniqueId) return true
-        val viewerUser = VanishAPI.get().getDatabase().getVanishUserCache(viewer.uniqueId) ?: VelocityVanishUser(viewer.uniqueId, viewer.name)
-        val targetUser = VanishAPI.get().getDatabase().getVanishUserCache(target.uniqueId) ?: return true
+        val viewerUser = VanishAPI.get().getCacheService().getVanishUsers()[viewer.uniqueId] ?: VelocityVanishUser(viewer.uniqueId, viewer.name)
+        val targetUser = VanishAPI.get().getCacheService().getVanishUsers()[target.uniqueId] ?: return true
         return VanishAPI.get().canSee(viewerUser, targetUser)
     }
 }

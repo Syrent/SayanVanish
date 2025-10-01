@@ -2,20 +2,27 @@ package org.sayandev.sayanvanish.velocity.feature.features.hook
 
 import com.velocitypowered.api.proxy.Player
 import io.github.miniplaceholders.api.Expansion
-import io.github.miniplaceholders.api.utils.TagsUtils
+import io.github.miniplaceholders.api.utils.Tags
+import ir.syrent.enhancedvelocity.utils.component
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import net.kyori.adventure.text.minimessage.tag.Tag
 import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.proxy.config.language
-import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
+import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.velocity.feature.HookFeature
 import org.sayandev.stickynote.velocity.onlinePlayers
-import org.sayandev.stickynote.velocity.plugin
-import kotlinx.serialization.Serializable
-import kotlin.jvm.optionals.getOrNull
 
 @RegisteredFeature
 @Serializable
-class FeatureHookMiniPlaceholders: HookFeature("hook_miniplaceholders", "miniplaceholders") {
+@SerialName("hook_mini_placeholders")
+class FeatureHookMiniPlaceholders: HookFeature() {
+
+    @Transient override val id = "hook_miniplaceholders"
+    override var enabled: Boolean = true
+    override val plugin: String = "miniplaceholders"
 
     override fun enable() {
         if (hasPlugin()) {
@@ -40,51 +47,48 @@ private class MiniPlaceholdersHookImpl(val feature: FeatureHookMiniPlaceholders)
         unregister()
 
         builder.audiencePlaceholder("vanished") { audience, queue, context ->
-            val player = audience as? Player ?: return@audiencePlaceholder TagsUtils.EMPTY_TAG
-            return@audiencePlaceholder TagsUtils.staticTag(if (VanishAPI.get().getDatabase().getCachedVanishUser(player.uniqueId)?.isVanished == true) "true" else "false")
+            val player = audience as? Player ?: return@audiencePlaceholder Tags.EMPTY_TAG
+            return@audiencePlaceholder Tag.selfClosingInserting((if (player.cachedVanishUser()?.isVanished == true) "true" else "false").component())
         }
 
         builder.audiencePlaceholder("level") { audience, queue, context ->
-            val player = audience as? Player ?: return@audiencePlaceholder TagsUtils.staticTag("0")
-//            return@audiencePlaceholder TagsUtils.staticTag(player.user()?.vanishLevel?.toString() ?: "0")
-            return@audiencePlaceholder TagsUtils.staticTag(VanishAPI.get().getDatabase().getCachedVanishUser(player.uniqueId)?.vanishLevel?.toString() ?: "0")
+            val player = audience as? Player ?: return@audiencePlaceholder Tag.selfClosingInserting("0".component())
+            return@audiencePlaceholder Tag.selfClosingInserting((player.cachedVanishUser()?.vanishLevel?.toString() ?: "0").component())
         }
 
         builder.globalPlaceholder("count") { queue, context ->
-            TagsUtils.staticTag(VanishAPI.get().getDatabase().getCachedVanishUsers().values.filter { user -> user.isOnline && user.isVanished }.size.toString())
+            Tag.selfClosingInserting(VanishAPI.get().getCacheService().getVanishUsers().values.filter { it.isVanished && it.isOnline }.size.toString().component())
         }
 
         builder.audiencePlaceholder("vanish_prefix") { audience, queue, context ->
-            val player = audience as? Player ?: return@audiencePlaceholder TagsUtils.staticTag("")
-            TagsUtils.staticTag(if (VanishAPI.get().getDatabase().getCachedVanishUser(player.uniqueId)?.isVanished == true) language.vanish.placeholderPrefix else "")
+            Tag.selfClosingInserting((if ((audience as? Player)?.cachedVanishUser()?.isVanished == true) language.vanish.placeholderPrefix else "").component())
         }
 
         builder.audiencePlaceholder("vanish_suffix") { audience, queue, context ->
-            val player = audience as? Player ?: return@audiencePlaceholder TagsUtils.staticTag("")
-            TagsUtils.staticTag(if (VanishAPI.get().getDatabase().getCachedVanishUser(player.uniqueId)?.isVanished == true) language.vanish.placeholderSuffix else "")
+            Tag.selfClosingInserting((if ((audience as? Player)?.cachedVanishUser()?.isVanished == true) language.vanish.placeholderSuffix else "").component())
         }
 
-        for (server in plugin.server.allServers) {
-            builder.globalPlaceholder("online_${server.serverInfo.name.lowercase()}") { queue, context ->
-                val vanishedOnlineUsers = VanishAPI.get().getDatabase().getCachedVanishUsers().values.filter { vanishUser -> vanishUser.isVanished && vanishUser.isOnline }
-                TagsUtils.staticTag(VanishAPI.get().getDatabase().getCachedUserCount().getValue(server.serverInfo.name.lowercase()).toString())
+        builder.globalPlaceholder("online") { queue, context ->
+            if (!queue.hasNext()) {
+                return@globalPlaceholder Tags.EMPTY_TAG
             }
-        }
 
-        builder.audiencePlaceholder("online_here") { audience, queue, context ->
-            val player = audience as? Player ?: return@audiencePlaceholder TagsUtils.staticTag("0")
-            val currentServerVanishedOnlineUsers = VanishAPI.get().getDatabase().getCachedVanishUsers().values.filter { vanishUser ->
-                vanishUser.isVanished && vanishUser.isOnline && vanishUser.serverId == player.currentServer.getOrNull()?.serverInfo?.name
-            }
-            val currentServerPlayerCount = player.currentServer.getOrNull()?.server?.playersConnected?.size ?: currentServerVanishedOnlineUsers.size
-            TagsUtils.staticTag((currentServerPlayerCount - currentServerVanishedOnlineUsers.size).toString())
-        }
+            val vanishedOnlineUsers = VanishAPI.get().getCacheService().getVanishUsers().values.filter { user -> user.isVanished && user.isOnline }
+            val serverName = queue.pop().value()
 
-        builder.globalPlaceholder("online_total") { queue, context ->
-            val onlineVanishedUsers = VanishAPI.get().getDatabase().getCachedVanishUsers().values.filter { vanishUser ->
-                vanishUser.isVanished && vanishUser.isOnline
+            val result = when (serverName) {
+                "here" -> {
+                    onlinePlayers.filter { onlinePlayer -> !vanishedOnlineUsers.map { vanishedOnlineUser -> vanishedOnlineUser.username }.contains(onlinePlayer.username) }.size.toString()
+                }
+                "total" -> {
+                    VanishAPI.get().getCacheService().getUsers().values.filter { !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
+                }
+                else -> {
+                    VanishAPI.get().getCacheService().getUsers().values.filter { it.serverId == serverName && !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
+                }
             }
-            TagsUtils.staticTag((plugin.server.playerCount - onlineVanishedUsers.size).toString())
+
+            Tag.selfClosingInserting(result.component())
         }
 
         builder.build().register()

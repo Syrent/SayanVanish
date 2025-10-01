@@ -9,13 +9,11 @@ import java.util.UUID
 
 @Serializable
 class Settings(
-    @YamlComment("""
-    Do NOT copy and paste the SayanVanish directory across multiple servers.
-    The server-id is generated during the plugin's first startup.
-    Duplicating this file could lead to synchronization issues.
-    
-    General settings for the plugin
-    """)
+    @YamlComment("Do NOT copy and paste the SayanVanish directory across multiple servers.",
+    "The server-id is generated during the plugin's first startup.",
+    "Duplicating this file could lead to synchronization issues.",
+    "",
+    "General settings for the plugin")
     val general: General = General(),
     @YamlComment("Command settings for the plugin")
     val command: Command = Command()
@@ -25,11 +23,9 @@ class Settings(
     data class General(
         @YamlComment("Unique server identifier. doesn't do anything special yet.")
         val serverId: String = "${Platform.get().id}-${UUID.randomUUID()}",
-        @YamlComment("""
-        Language name
-        Note: By default, it only includes the `en_US` language.
-        However, you can create and add your own custom languages.
-        """)
+        @YamlComment("Language name",
+        "Note: By default, it only includes the `en_US` language.",
+        "However, you can create and add your own custom languages.")
         val language: String = LanguageConfig.Language.EN_US.id,
         @YamlComment("Weather to purge online history of users on startup.")
         val purgeOnlineHistoryOnStartup: Boolean = true,

@@ -1,14 +1,11 @@
 package org.sayandev.sayanvanish.api
 
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.runBlocking
 import org.sayandev.sayanvanish.api.cache.CacheService
 import org.sayandev.sayanvanish.api.cache.MemoryCacheService
-import org.sayandev.sayanvanish.api.storage.TransactionDatabase
 import org.sayandev.sayanvanish.api.message.MessagingService
 import org.sayandev.sayanvanish.api.message.TypedMessagingService
-import org.sayandev.stickynote.core.utils.launch
+import org.sayandev.sayanvanish.api.storage.TransactionDatabase
 import java.util.*
 
 object SayanVanishAPI : VanishAPI {

@@ -7,7 +7,7 @@ import org.sayandev.stickynote.bukkit.registerListener
 import org.sayandev.stickynote.bukkit.unregisterListener
 
 @Serializable
-abstract class ListenedFeature: Feature(), Listener {
+abstract class ListenedFeature : Feature(), Listener {
 
     override fun enable() {
         if (!condition) return

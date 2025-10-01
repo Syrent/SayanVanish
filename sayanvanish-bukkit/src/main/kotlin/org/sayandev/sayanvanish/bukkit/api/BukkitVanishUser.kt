@@ -1,13 +1,12 @@
 package org.sayandev.sayanvanish.bukkit.api
 
-import org.sayandev.sayanventure.adventure.text.minimessage.tag.resolver.Placeholder
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.permissions.PermissionDefault
 import org.sayandev.sayanvanish.api.Permission
-import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.VanishUser
@@ -77,7 +76,7 @@ open class BukkitVanishUser(
         // order matters - don't move hideUser before vanish (hideUser have a canSee check for vanish state notify)
         hideUser()
 
-        sendMessage(language.vanish.vanishStateUpdate.component(Placeholder.parsed("state", stateText())))
+        sendMessage(language.vanish.vanishStateUpdate, Placeholder.parsed("state", stateText()))
     }
 
     override fun appear(options: VanishOptions) {
@@ -97,7 +96,7 @@ open class BukkitVanishUser(
 
         super.appear(options)
 
-        sendMessage(language.vanish.vanishStateUpdate.component(Placeholder.parsed("state", stateText())))
+        sendMessage(language.vanish.vanishStateUpdate, Placeholder.parsed("state", stateText()))
     }
 
     override fun hasPermission(permission: String): Boolean {
@@ -105,7 +104,7 @@ open class BukkitVanishUser(
             val luckPermsFeature = Features.getFeature<FeatureHookLuckPerms>()
             /*
             * I have to check if the player is op or not and luckperms feature is enabled so it doesn't disable all feature for op players
-            * (bukkit permission check return true for all permissions if the player is op)
+            * (bukkit permission check return true for all permissions if the player is op and the permission default is not false)
             * */
             // Can't use luckperms feature isActive per-player, because per-player features check for player permissions and it causes stackoverflow
             if (luckPermsFeature.isActive() && luckPermsFeature.checkPermissionViaLuckPerms) {
@@ -134,7 +133,7 @@ open class BukkitVanishUser(
         }
         if (currentOptions.notifyStatusChangeToOthers) {
             for (otherUser in VanishAPI.get().getCacheService().getUsers().getOnline().filter { it.username != username && it.generatedVanishUser().canSee(this) }) {
-                otherUser.sendMessage(language.vanish.vanishStateOther.component(Placeholder.parsed("player", username), Placeholder.parsed("state", stateText(true))))
+                otherUser.sendMessage(language.vanish.vanishStateOther, Placeholder.parsed("player", username), Placeholder.parsed("state", stateText(true)))
             }
         }
     }
@@ -151,7 +150,7 @@ open class BukkitVanishUser(
         }
         if (currentOptions.notifyStatusChangeToOthers) {
             for (otherUser in VanishAPI.get().getCacheService().getUsers().getOnline().filter { it.username != this.username && it.generatedVanishUser().canSee(this) }) {
-                otherUser.sendMessage(language.vanish.vanishStateOther.component(Placeholder.parsed("player", username), Placeholder.parsed("state", stateText(false))))
+                otherUser.sendMessage(language.vanish.vanishStateOther, Placeholder.parsed("player", username), Placeholder.parsed("state", stateText(false)))
             }
         }
     }

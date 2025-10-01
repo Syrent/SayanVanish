@@ -1,21 +1,16 @@
 package org.sayandev.sayanvanish.velocity.api
 
 import com.velocitypowered.api.proxy.Player
-import kotlinx.coroutines.future.await
-import org.sayandev.sayanventure.adventure.text.minimessage.tag.resolver.TagResolver
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.api.VanishAPI
-import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.VanishOptions
+import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.feature.Features
-import org.sayandev.sayanvanish.proxy.config.settings
+import org.sayandev.sayanvanish.proxy.config.Settings
 import org.sayandev.sayanvanish.velocity.VelocityPlatformAdapter
-import org.sayandev.sayanvanish.velocity.event.VelocityUserUnVanishEvent
-import org.sayandev.sayanvanish.velocity.event.VelocityUserVanishEvent
-import org.sayandev.sayanvanish.velocity.feature.features.hook.FeatureLuckPermsHook
-import org.sayandev.sayanvanish.velocity.utils.PlayerUtils.sendComponent
+import org.sayandev.sayanvanish.velocity.feature.features.hook.FeatureHookLuckPerms
 import org.sayandev.stickynote.velocity.StickyNote
-import org.sayandev.stickynote.velocity.server
 import org.sayandev.stickynote.velocity.utils.AdventureUtils.component
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
@@ -26,14 +21,14 @@ open class VelocityVanishUser(
 ) : VanishUser {
 
     override var serverId: String
-        get() = player()?.currentServer?.getOrNull()?.serverInfo?.name ?: settings.general.serverId
+        get() = player()?.currentServer?.getOrNull()?.serverInfo?.name ?: Settings.get().general.serverId
         set(_) {}
     override var currentOptions = VanishOptions.defaultOptions()
     override var isVanished = false
     override var isOnline: Boolean = player() != null
     override var vanishLevel: Int = 0
         get() = player()?.let { player ->
-                val luckPermsHook = Features.getFeature<FeatureLuckPermsHook>()
+                val luckPermsHook = Features.getFeature<FeatureHookLuckPerms>()
                     if (luckPermsHook.isActive()) {
                         luckPermsHook.getPermissions(uniqueId)
                             .filter { it.startsWith("sayanvanish.level.") }
@@ -46,36 +41,22 @@ open class VelocityVanishUser(
                     }
             } ?: field
 
-    fun stateText(isVanished: Boolean = this.isVanished) = if (isVanished) "<green>ON</green>" else "<red>OFF</red>"
+    override fun stateText(isVanished: Boolean) = if (isVanished) "<green>ON</green>" else "<red>OFF</red>"
 
     fun player(): Player? = StickyNote.getPlayer(uniqueId)
 
-    override suspend fun disappear(options: VanishOptions) {
-        val event = server.eventManager.fire(VelocityUserVanishEvent(this, options)).await()
-        val newOptions = event.options
-        currentOptions = newOptions
-        VanishAPI.get().getDatabase().saveToQueue(uniqueId, true)
-        super.disappear(newOptions)
+    override fun disappear(options: VanishOptions) {
+        // TODO: create event. and make sure to apply the options from the event
+        super.disappear(options)
     }
 
-    override suspend fun appear(options: VanishOptions) {
-        val event = server.eventManager.fire(VelocityUserUnVanishEvent(this, options)).await()
-        val newOptions = event.options
-        currentOptions = newOptions
-        VanishAPI.get().getDatabase().saveToQueue(uniqueId, false)
-        super.appear(newOptions)
+    override fun appear(options: VanishOptions) {
+        // TODO: create event. and make sure to apply the options from the event
+        super.appear(options)
     }
 
     override fun hasPermission(permission: String): Boolean {
         return player()?.hasPermission(permission) == true
-    }
-
-    override fun sendMessage(content: String, vararg placeholder: TagResolver) {
-        player()?.sendComponent(content, *placeholder)
-    }
-
-    override fun sendActionbar(content: String, vararg placeholder: TagResolver) {
-        player()?.sendActionBar(content.component(*placeholder))
     }
 
     companion object {
@@ -101,7 +82,7 @@ open class VelocityVanishUser(
         }
 
         @JvmStatic
-        fun VanishUser.adapt(): VelocityVanishUser {
+        fun VanishUser.velocityAdapt(): VelocityVanishUser {
             return VelocityPlatformAdapter.adapt(this)
         }
     }

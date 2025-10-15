@@ -74,6 +74,10 @@ open class BukkitUser(
         }
         player()?.isSleepingIgnored = true
 
+        if (ServerVersion.supports(16)) {
+            player()?.isInvisible = true
+        }
+
         player()?.setMetadata("vanished", FixedMetadataValue(plugin, true))
 
         super.vanish(options)
@@ -95,6 +99,11 @@ open class BukkitUser(
             player()?.isCollidable = true
         }
         player()?.isSleepingIgnored = false
+
+
+        if (ServerVersion.supports(16)) {
+            player()?.isInvisible = true
+        }
 
         player()?.removeMetadata("vanished", plugin)
         showUser()

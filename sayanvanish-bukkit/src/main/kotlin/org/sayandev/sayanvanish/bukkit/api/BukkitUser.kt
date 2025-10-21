@@ -74,6 +74,7 @@ open class BukkitUser(
         }
         player()?.isSleepingIgnored = true
 
+        // TODO: make this an options in state config
         if (ServerVersion.supports(16)) {
             player()?.isInvisible = true
         }
@@ -102,7 +103,7 @@ open class BukkitUser(
 
 
         if (ServerVersion.supports(16)) {
-            player()?.isInvisible = true
+            player()?.isInvisible = false
         }
 
         player()?.removeMetadata("vanished", plugin)

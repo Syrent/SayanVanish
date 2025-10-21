@@ -32,10 +32,10 @@ dependencies {
 
 tasks.withType(xyz.jpenilla.runtask.task.AbstractRun::class) {
     javaLauncher = javaToolchains.launcherFor {
-        vendor = JvmVendorSpec.JETBRAINS
+        vendor = JvmVendorSpec.AMAZON
         languageVersion = JavaLanguageVersion.of(21)
     }
-    jvmArgs("-XX:+AllowEnhancedClassRedefinition", "-Dorg.sayandev.sayanventure.adventure.text.warnWhenLegacyFormattingDetected=false")
+    jvmArgs(/*"-XX:+AllowEnhancedClassRedefinition", */"-Dorg.sayandev.sayanventure.adventure.text.warnWhenLegacyFormattingDetected=false")
 }
 
 tasks {
@@ -58,13 +58,13 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.21.8")
+        minecraftVersion("1.21.10")
 
         downloadPlugins {
             hangar("ViaVersion", "5.4.2-SNAPSHOT+776")
             hangar("PlaceholderAPI", "2.11.6")
             modrinth("essentialsx", "2.21.1")
-            url("https://download.luckperms.net/1594/bukkit/loader/LuckPerms-Bukkit-5.5.9.jar")
+            url("https://download.luckperms.net/1606/bukkit/loader/LuckPerms-Bukkit-5.5.17.jar")
 //            hangar("AdvancedServerList", "5.4.1")
 //            url("https://cdn.modrinth.com/data/qvdtDX3s/versions/TD9kTO2n/multiverse-inventories-4.2.7-pre.jar")
 //            url("https://github.com/SkinsRestorer/SkinsRestorer/releases/download/15.5.1/SkinsRestorer.jar")

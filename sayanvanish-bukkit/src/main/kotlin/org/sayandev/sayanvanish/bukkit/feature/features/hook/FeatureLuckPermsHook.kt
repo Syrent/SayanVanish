@@ -64,7 +64,7 @@ class FeatureLuckPermsHook(
             .contains(permissionNode, NodeEqualityPredicate.IGNORE_EXPIRY_TIME)
             .asBoolean()
         if (!userPermission) {
-            return user.getInheritedGroups(QueryOptions.nonContextual()).any { it.data().contains(permissionNode, NodeEqualityPredicate.IGNORE_EXPIRY_TIME).asBoolean() }
+            return user.getInheritedGroups(QueryOptions.defaultContextualOptions()).any { it.data().contains(permissionNode, NodeEqualityPredicate.IGNORE_EXPIRY_TIME).asBoolean() }
         }
         return userPermission
     }

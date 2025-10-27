@@ -115,31 +115,7 @@ open class BukkitUser(
     }
 
     override fun hasPermission(permission: String): Boolean {
-        return if (hasPlugin("LuckPerms")) {
-            val luckPermsFeature = Features.getFeature<FeatureLuckPermsHook>()
-            /*
-            * I have to check if the player is op or not and luckperms feature is enabled so it doesn't disable all feature for op players
-            * (bukkit permission check return true for all permissions if the player is op)
-            * */
-            // Can't use luckperms feature isActive per-player, because per-player features check for player permissions and it causes stackoverflow
-            if (luckPermsFeature.isActive() && luckPermsFeature.checkPermissionViaLuckPerms) {
-                luckPermsFeature.hasPermission(uniqueId, permission)
-            } else {
-                if (permission.startsWith("sayanvanish.feature.disable.")) {
-                    return if (luckPermsFeature.isActive() && luckPermsFeature.checkPermissionViaLuckPermsFeatures) {
-                        luckPermsFeature.hasPermission(uniqueId, permission)
-                    } else {
-                        false
-                    }
-                }
-                player()?.hasPermission(org.bukkit.permissions.Permission(permission, PermissionDefault.FALSE)) == true
-            }
-        } else {
-            if (permission.startsWith("sayanvanish.feature.disable.")) {
-                return false
-            }
-            player()?.hasPermission(org.bukkit.permissions.Permission(permission, PermissionDefault.FALSE)) == true
-        }
+        return player()?.hasPermission(org.bukkit.permissions.Permission(permission, PermissionDefault.FALSE)) == true
     }
 
     override fun sendComponent(content: String, vararg placeholder: Pair<String, String>) {
@@ -163,7 +139,7 @@ open class BukkitUser(
             hideUser(onlinePlayer)
         }
         if (currentOptions.notifyStatusChangeToOthers) {
-            for (otherUsers in SayanVanishBukkitAPI.getInstance().getOnlineUsers().filter { it.username != username && it.canSee(this) }) {
+            for (otherUsers in SayanVanishBukkitAPI.getInstance().getOnlineUsers().filter { it.username != username && SayanVanishBukkitAPI.getInstance().canSee(it, this) }) {
                 otherUsers.sendComponent(language.vanish.vanishStateOther, Placeholder.parsed("player", username), Placeholder.parsed("state", stateText(true)))
             }
         }
@@ -180,7 +156,7 @@ open class BukkitUser(
             showUser(onlinePlayer)
         }
         if (currentOptions.notifyStatusChangeToOthers) {
-            for (otherUsers in SayanVanishBukkitAPI.getInstance().getOnlineUsers().filter { it.username != this.username && it.canSee(this) }) {
+            for (otherUsers in SayanVanishBukkitAPI.getInstance().getOnlineUsers().filter { it.username != this.username && SayanVanishBukkitAPI.getInstance().canSee(it, this) }) {
                 otherUsers.sendComponent(language.vanish.vanishStateOther, Placeholder.parsed("player", username), Placeholder.parsed("state", stateText(false)))
             }
         }

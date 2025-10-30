@@ -4,12 +4,13 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import org.bukkit.plugin.Plugin
+import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrCreateUser
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.plugin
 import org.sayandev.stickynote.bukkit.server
 import java.time.Instant
-
 
 object ServerUtils {
 
@@ -45,7 +46,19 @@ object ServerUtils {
         })
 
         jsonObject.add("vanished-users", JsonArray().apply {
-            SayanVanishBukkitAPI.getInstance().getVanishedUsers().map { it.username }.forEach(this::add)
+            SayanVanishBukkitAPI.getInstance().getVanishedUsers().map { "${it.username}:${it.vanishLevel} (${if (it.hasPermission(
+                    Permission.VANISH.permission())) "has permisison" else "no permission"})" }.forEach(this::add)
+        })
+
+        jsonObject.add("vanished-access", JsonArray().apply {
+            SayanVanishBukkitAPI.getInstance().getVanishedUsers()
+                .filter { it.hasPermission(Permission.VANISH.permission()) }
+                .map { "${it.username}:${it.vanishLevel} (${if (it.hasPermission(
+                    Permission.VANISH.permission())) "has permisison" else "no permission"})" }.forEach(this::add)
+        })
+
+        jsonObject.add("vanish-levels", JsonArray().apply {
+            onlinePlayers.map { it.getOrCreateUser() }.filter { it.vanishLevel > 0 }.map { "${it.username}:${it.vanishLevel}" }.forEach(this::add)
         })
 
         jsonObject.add("plugin", serializePlugin(plugin))

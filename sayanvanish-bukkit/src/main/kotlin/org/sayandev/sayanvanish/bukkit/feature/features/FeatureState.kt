@@ -11,10 +11,12 @@ import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrAddUser
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrCreateUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
+import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
+import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
+import org.sayandev.stickynote.bukkit.utils.ServerVersion
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.objectmapping.meta.Comment
 
@@ -36,6 +38,7 @@ class FeatureState(
     @Configurable val checkPermissionOnQuit: Boolean = true,
     @Comment("Whether to check permission when a player quits the server")
     @Configurable val checkPermissionOnJoin: Boolean = true,
+    @Configurable val useBukkitInvisibilityApi: Boolean = false,
 ) : ListenedFeature("state", critical = true) {
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -106,6 +109,23 @@ class FeatureState(
         user.isOnline = false
 
         user.save()
+    }
+
+    @EventHandler
+    private fun onPlayerVanish(event: BukkitUserVanishEvent) {
+        val user = event.user
+        if (!useBukkitInvisibilityApi) return
+        if (!ServerVersion.supports(16)) return
+
+        user.player()?.isInvisible = true
+    }
+
+    @EventHandler
+    private fun onPlayerUnVanish(event: BukkitUserUnVanishEvent) {
+        val user = event.user
+        if (!ServerVersion.supports(16)) return
+
+        user.player()?.isInvisible = false
     }
 
 }

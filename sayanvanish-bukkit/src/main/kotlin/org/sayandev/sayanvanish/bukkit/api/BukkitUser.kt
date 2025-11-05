@@ -6,7 +6,6 @@ import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
-import org.bukkit.permissions.PermissionDefault
 import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.User
@@ -19,10 +18,8 @@ import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureLevel
-import org.sayandev.sayanvanish.bukkit.feature.features.hook.FeatureLuckPermsHook
 import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendComponent
 import org.sayandev.stickynote.bukkit.extension.sendComponentActionbar
-import org.sayandev.stickynote.bukkit.hasPlugin
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.plugin
 import org.sayandev.stickynote.bukkit.server
@@ -105,7 +102,11 @@ open class BukkitUser(
     }
 
     override fun hasPermission(permission: String): Boolean {
-        return player()?.hasPermission(org.bukkit.permissions.Permission(permission, PermissionDefault.FALSE)) == true
+        val player = player() ?: return false
+        val effectivePermission = player.effectivePermissions.find {
+            it.permission.equals(permission, ignoreCase = true)
+        }
+        return effectivePermission?.value ?: false
     }
 
     override fun sendComponent(content: String, vararg placeholder: Pair<String, String>) {

@@ -51,7 +51,7 @@ object ServerUtils {
         })
 
         jsonObject.add("vanished-access", JsonArray().apply {
-            SayanVanishBukkitAPI.getInstance().getVanishedUsers()
+            onlinePlayers.map { it.getOrCreateUser() }
                 .filter { it.hasPermission(Permission.VANISH.permission()) }
                 .map { "${it.username}:${it.vanishLevel} (${if (it.hasPermission(
                     Permission.VANISH.permission())) "has permisison" else "no permission"})" }.forEach(this::add)

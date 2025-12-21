@@ -10,7 +10,7 @@ plugins {
     java
     `maven-publish`
     id("io.papermc.hangar-publish-plugin") version "0.1.2"
-    id("com.modrinth.minotaur") version "2.8.7"
+    id("com.modrinth.minotaur") version "2.8.10"
     id("org.sayandev.stickynote.project")
 }
 
@@ -177,7 +177,7 @@ allprojects {
 }
 
 subprojects {
-    configurations.create("compileOnlyApiResolved") {
+    configurations.create("compileOnlyApiResolved").apply {
         isCanBeResolved = true
         extendsFrom(configurations.getByName("compileOnlyApi"))
     }

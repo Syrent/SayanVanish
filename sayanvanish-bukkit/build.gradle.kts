@@ -58,14 +58,14 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.21.10")
+        minecraftVersion("1.21.11")
 
         downloadPlugins {
-            hangar("ViaVersion", "5.4.2-SNAPSHOT+776")
-            hangar("PlaceholderAPI", "2.11.6")
-            modrinth("essentialsx", "2.21.1")
-            url("https://download.luckperms.net/1606/bukkit/loader/LuckPerms-Bukkit-5.5.17.jar")
-            url("https://github.com/NEZNAMY/TAB/releases/download/5.3.2/TAB.v5.3.2.jar")
+            hangar("ViaVersion", "5.6.1-SNAPSHOT+877")
+            hangar("PlaceholderAPI", "2.11.7")
+            modrinth("essentialsx", "2.21.2")
+            modrinth("luckperms", "v5.5.17-bukkit")
+            url("https://github.com/NEZNAMY/TAB/releases/download/5.4.0/TAB.v5.4.0.jar")
 //            hangar("AdvancedServerList", "5.4.1")
 //            url("https://cdn.modrinth.com/data/qvdtDX3s/versions/TD9kTO2n/multiverse-inventories-4.2.7-pre.jar")
 //            url("https://github.com/SkinsRestorer/SkinsRestorer/releases/download/15.5.1/SkinsRestorer.jar")

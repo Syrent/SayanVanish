@@ -1,15 +1,14 @@
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
-import org.sayandev.*
 import org.sayandev.plugin.StickyNoteModules
 
 plugins {
-    id("xyz.jpenilla.run-paper") version "2.3.0"
+    id("xyz.jpenilla.run-paper") version "3.0.2"
 //    id("io.papermc.paperweight.userdev") version "1.7.2"
-    id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
+    id("de.eldoria.plugin-yml.paper") version "0.8.0"
 }
 
 stickynote {
-    modules(StickyNoteModules.BUKKIT, StickyNoteModules.BUKKIT_NMS)
+    modules(StickyNoteModules.PAPER, StickyNoteModules.BUKKIT, StickyNoteModules.BUKKIT_NMS)
 //    relocate(!gradle.startParameter.getTaskNames().any { it.startsWith("runServer") || it.startsWith("runFolia") || it.startsWith("runVelocity") })
 }
 
@@ -52,19 +51,19 @@ tasks {
     }
 
     java {
-        if (gradle.startParameter.getTaskNames().isNotEmpty() && (gradle.startParameter.getTaskNames().contains("runServer") || gradle.startParameter.getTaskNames().contains("runFolia"))) {
+        if (gradle.startParameter.taskNames.isNotEmpty() && (gradle.startParameter.taskNames.contains("runServer") || gradle.startParameter.taskNames.contains("runFolia"))) {
             toolchain.languageVersion = JavaLanguageVersion.of(21)
         }
     }
 
     runServer {
-        minecraftVersion("1.21.8")
+        minecraftVersion("1.21.9")
 
         downloadPlugins {
             hangar("ViaVersion", "5.4.2-SNAPSHOT+776")
             hangar("PlaceholderAPI", "2.11.6")
             modrinth("essentialsx", "2.21.1")
-            url("https://download.luckperms.net/1594/bukkit/loader/LuckPerms-Bukkit-5.5.9.jar")
+            modrinth("luckperms", "v5.5.17-bukkit")
 //            hangar("AdvancedServerList", "5.4.1")
 //            url("https://cdn.modrinth.com/data/qvdtDX3s/versions/TD9kTO2n/multiverse-inventories-4.2.7-pre.jar")
 //            url("https://github.com/SkinsRestorer/SkinsRestorer/releases/download/15.5.1/SkinsRestorer.jar")
@@ -86,7 +85,7 @@ tasks {
 //    paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION
 }
 
-bukkit {
+paper {
     name = rootProject.name
     version = rootProject.version as String
     description = rootProject.description
@@ -94,11 +93,12 @@ bukkit {
     author = findProperty("author")!! as String
     defaultPermission = BukkitPluginDescription.Permission.Default.FALSE
 
+    loader = "${rootProject.group}.${findProperty("slug")!! as String}.bukkit.${rootProject.name}Loader"
     main = "${rootProject.group}.${findProperty("slug")!! as String}.bukkit.${rootProject.name}Plugin"
 
     foliaSupported = true
 
-    apiVersion = "1.13"
+    apiVersion = "1.20"
 
     permissions {
         register("sayanvanish.action.vanish.onjoin") {
@@ -109,17 +109,29 @@ bukkit {
         }
     }
 
-    softDepend = listOf(
-        "Essentials",
-        "squaremap",
-        "LuckPerms",
-        "PlaceholderAPI",
-        "MiniPlaceholders",
-        "Citizens",
-        // just to fix adventure problem on 1.8
-        "packetevents",
-        "TAB"
-    )
+    serverDependencies {
+        register("Essentials") {
+            required = false
+        }
+        register("squaremap") {
+            required = false
+        }
+        register("LuckPerms") {
+            required = false
+        }
+        register("PlaceholderAPI") {
+            required = false
+        }
+        register("MiniPlaceholders") {
+            required = false
+        }
+        register("Citizens") {
+            required = false
+        }
+        register("TAB") {
+            required = false
+        }
+    }
 }
 
 modrinth {

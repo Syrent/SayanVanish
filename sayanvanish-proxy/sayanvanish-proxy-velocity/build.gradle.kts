@@ -1,7 +1,7 @@
 import org.sayandev.plugin.StickyNoteModules
 
 plugins {
-    id("xyz.jpenilla.run-velocity") version "2.3.0"
+    id("xyz.jpenilla.run-velocity") version "3.0.2"
 }
 
 stickynote {

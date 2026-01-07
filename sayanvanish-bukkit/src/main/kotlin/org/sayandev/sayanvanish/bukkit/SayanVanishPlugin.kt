@@ -15,6 +15,7 @@ import org.sayandev.sayanvanish.bukkit.command.SayanVanishCommand
 import org.sayandev.sayanvanish.bukkit.config.Settings
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.stickynote.bukkit.StickyNote
+import org.sayandev.stickynote.bukkit.WrappedStickyNotePlugin
 import org.sayandev.stickynote.bukkit.error
 import org.sayandev.stickynote.loader.bukkit.StickyNoteBukkitLoader
 import java.io.File
@@ -22,7 +23,7 @@ import java.io.File
 class SayanVanishPlugin : JavaPlugin() {
 
     override fun onEnable() {
-        StickyNoteBukkitLoader(this)
+        WrappedStickyNotePlugin(this)
         setInstance(this)
 
         if (!Platform.setAndRegister(BukkitPlatform())) {

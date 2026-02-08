@@ -6,6 +6,8 @@ miniplaceholders-api = "3.0.1"
 advancedserverlist = "3.3.0"
 tab-api = "5.0.2"
 
+exposed = "1.0.0"
+
 # bukkit
 paper-api = "1.20.6-R0.1-SNAPSHOT"
 folia-api = "1.20.4-R0.1-SNAPSHOT"
@@ -31,6 +33,10 @@ luckperms-api = { group = "net.luckperms", name="api", version.ref="luckperms-ap
 miniplaceholders-api = { group = "io.github.miniplaceholders", name="miniplaceholders-api", version.ref="miniplaceholders-api" }
 advancedserverlist = { group = "ch.andre601.asl-api", name="api", version.ref="advancedserverlist" }
 tab-api = { group = "com.github.NEZNAMY", name="TAB-API", version.ref="tab-api" }
+
+exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
+exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
+exposed-java-time = { module = "org.jetbrains.exposed:exposed-java-time", version.ref = "exposed" }
 
 # bukkit
 paper-api = { group = "io.papermc.paper", name="paper-api", version.ref="paper-api" }

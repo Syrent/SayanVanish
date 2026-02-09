@@ -35,7 +35,7 @@ tasks.withType(xyz.jpenilla.runtask.task.AbstractRun::class) {
         vendor = JvmVendorSpec.AMAZON
         languageVersion = JavaLanguageVersion.of(21)
     }
-    jvmArgs(/*"-XX:+AllowEnhancedClassRedefinition", */"-Dorg.sayandev.sayanventure.adventure.text.warnWhenLegacyFormattingDetected=false")
+    jvmArgs(/*"-XX:+AllowEnhancedClassRedefinition", */"-Dnet.kyori.adventure.text.warnWhenLegacyFormattingDetected=false")
 }
 
 tasks {
@@ -77,7 +77,7 @@ tasks {
 //            url("https://github.com/NEZNAMY/TAB-Bridge/releases/download/6.0.1/TAB-Bridge.v6.0.1.jar")
 //            url("https://download.luckperms.net/1593/bukkit/loader/LuckPerms-Bukkit-5.5.8.jar")
         }
-        jvmArgs("-Dorg.sayandev.sayanventure.adventure.text.warnWhenLegacyFormattingDetected=false")
+        jvmArgs("-Dnet.kyori.adventure.text.warnWhenLegacyFormattingDetected=false")
     }
 
     runPaper {

@@ -9,12 +9,16 @@ import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
+import org.sayandev.stickynote.bukkit.StickyNote
 import org.sayandev.stickynote.bukkit.utils.ServerVersion
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 
 @RegisteredFeature
 @ConfigSerializable
 class FeaturePreventCreatureTarget: ListenedFeature("prevent_creature_target", category = FeatureCategories.PREVENTION) {
+
+    // TODO: I don't have the time to investigate the problem with folia
+    override var condition: Boolean = !StickyNote.isFolia
 
     @EventHandler
     private fun preventEntityTargetOnVanish(event: BukkitUserVanishEvent) {

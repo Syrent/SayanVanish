@@ -54,10 +54,9 @@ class RedisDatabase<U : User>(
     override fun getUser(uniqueId: UUID, useCache: Boolean): U? {
         val cacheUser = cache[uniqueId]
         if (this.useCache && useCache) {
-            if (cacheUser == null) {
-                return null
+            if (cacheUser != null) {
+                return (type.kotlin.safeCast(cacheUser) as? U) ?: (cacheUser.convert(type) as U)
             }
-            return (type.kotlin.safeCast(cacheUser) as? U) ?: (cacheUser.convert(type) as U)
         }
 
         val user = redis.hget("users", uniqueId.toString())

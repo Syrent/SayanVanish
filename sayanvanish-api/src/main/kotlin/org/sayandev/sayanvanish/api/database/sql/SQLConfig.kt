@@ -44,6 +44,7 @@ class SQLConfig(
     )
 
     enum class SQLMethod {
+        MARIADB,
         MYSQL,
         SQLITE
     }

@@ -1,17 +1,16 @@
 package org.sayandev.sayanvanish.bukkit.feature.features
 
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.Feature
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrAddUser
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.runSync
-import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
-import org.sayandev.sayanventure.adventure.text.minimessage.tag.resolver.Placeholder
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.user
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.objectmapping.meta.Comment
 

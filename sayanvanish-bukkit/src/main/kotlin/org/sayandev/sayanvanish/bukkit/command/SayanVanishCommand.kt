@@ -1,6 +1,6 @@
 package org.sayandev.sayanvanish.bukkit.command
 
-import org.sayandev.sayanventure.adventure.text.minimessage.tag.resolver.Placeholder
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player

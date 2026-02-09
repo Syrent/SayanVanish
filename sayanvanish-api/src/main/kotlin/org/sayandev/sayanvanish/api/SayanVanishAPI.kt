@@ -85,7 +85,7 @@ open class SayanVanishAPI<U: User>(val type: Class<out User>) {
         Platform.get().logger.severe("Please check the following:")
         Platform.get().logger.severe("- Make sure your database server is not misconfigured.")
         Platform.get().logger.severe("- Make sure your database server is running.")
-        Platform.get().logger.severe("- Make sure you've set the databse method to `MARIADB` instead of `MYSQL` if your database is mariadb")
+        Platform.get().logger.severe("- Make sure you've set the sql method to `MARIADB` instead of `MYSQL` if your database is mariadb")
         Platform.get().logger.severe("Here's the full error trace:")
     }
 

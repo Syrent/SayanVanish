@@ -17,6 +17,10 @@ interface Database<U: User> {
 
     fun addUser(user: U)
 
+    fun addUserAsync(user: U) {
+        addUser(user)
+    }
+
     fun hasUser(uniqueId: UUID): Boolean
 
     fun updateUser(user: U)

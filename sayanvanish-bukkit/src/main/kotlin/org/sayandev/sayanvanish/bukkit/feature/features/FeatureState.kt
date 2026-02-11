@@ -1,11 +1,13 @@
 package org.sayandev.sayanvanish.bukkit.feature.features
 
+import kotlinx.coroutines.delay
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.sayandev.sayanvanish.api.Permission
+import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
@@ -59,7 +61,7 @@ class FeatureState(
 
             if (tempUser.hasPermission(Permission.VANISH_ON_JOIN) || vanishOnJoin) {
                 tempUser.isVanished = true
-                tempUser.vanish(vanishJoinOptions)
+                tempUser.vanishAsync(vanishJoinOptions)
             }
             return
         }
@@ -68,14 +70,14 @@ class FeatureState(
 
         if (checkPermissionOnJoin && !user.hasPermission(Permission.VANISH)) {
             user.sendComponent(language.vanish.noPermissionToKeepVanished, Placeholder.unparsed("permission", Permission.VANISH.permission()))
-            user.unVanish(vanishJoinOptions)
+            user.unVanishAsync(vanishJoinOptions)
             user.delete()
             return
         }
 
         if (user.hasPermission(Permission.VANISH_ON_JOIN) || (user.isVanished && remember) || vanishOnJoin) {
             user.isVanished = true
-            user.vanish(vanishJoinOptions)
+            user.vanishAsync(vanishJoinOptions)
         }
 
         if (user.isVanished) {
@@ -104,8 +106,16 @@ class FeatureState(
         if ((reappearOnQuit && user.isVanished) || (checkPermissionOnQuit && !user.hasPermission(Permission.VANISH))) {
             user.unVanish(VanishOptions.Builder().isOnQuit(true).build())
         } else {
-            user.isOnline = false
-            user.save()
+            if (user.isOnline) {
+                launch {
+                    delay(2500)
+                    val isOnlineAfterQuit = SayanVanishAPI.getInstance().database.hasBasicUser(user.uniqueId, false)
+                    if (!isOnlineAfterQuit) {
+                        user.isOnline = false
+                        user.saveAsync()
+                    }
+                }
+            }
         }
     }
 

@@ -241,25 +241,7 @@ class SQLDatabase<U: User>(
 
     suspend fun addUserSuspended(user: U) {
         cache[user.uniqueId] = user
-        dbQuery {
-            val updated =
-                tables.users.update({ tables.users.uniqueId eq user.uniqueId.toString() }) { row ->
-                    row[tables.users.username] = user.username
-                    row[tables.users.isVanished] = boolInt(user.isVanished)
-                    row[tables.users.isOnline] = boolInt(user.isOnline)
-                    row[tables.users.vanishLevel] = user.vanishLevel
-                }
-            if (updated == 0) {
-                tables.users.insert { row ->
-                    row[tables.users.uniqueId] = user.uniqueId.toString()
-                    row[tables.users.username] = user.username
-                    row[tables.users.serverId] = user.serverId
-                    row[tables.users.isVanished] = boolInt(user.isVanished)
-                    row[tables.users.isOnline] = boolInt(user.isOnline)
-                    row[tables.users.vanishLevel] = user.vanishLevel
-                }
-            }
-        }
+        upsertUser(user)
     }
 
     fun addUserDeferred(user: U): Deferred<Unit> =
@@ -291,6 +273,18 @@ class SQLDatabase<U: User>(
 
     fun addBasicUserDeferred(user: BasicUser): Deferred<Unit> =
         scope.async { addBasicUserSuspended(user) }
+
+    override fun addUserAsync(user: U) {
+        cache[user.uniqueId] = user
+        scope.launch {
+            try {
+                upsertUser(user)
+            } catch (e: Exception) {
+                Platform.get().logger.severe("Failed to add user asynchronously (addUserAsync)")
+                e.printStackTrace()
+            }
+        }
+    }
 
     suspend fun hasUserSuspended(uniqueId: UUID): Boolean =
         dbQuery {
@@ -511,6 +505,28 @@ class SQLDatabase<U: User>(
             this[tables.basicUsers.username],
             this[tables.basicUsers.serverId]
         )
+
+    private suspend fun upsertUser(user: U) {
+        dbQuery {
+            val updated =
+                tables.users.update({ tables.users.uniqueId eq user.uniqueId.toString() }) { row ->
+                    row[tables.users.username] = user.username
+                    row[tables.users.isVanished] = boolInt(user.isVanished)
+                    row[tables.users.isOnline] = boolInt(user.isOnline)
+                    row[tables.users.vanishLevel] = user.vanishLevel
+                }
+            if (updated == 0) {
+                tables.users.insert { row ->
+                    row[tables.users.uniqueId] = user.uniqueId.toString()
+                    row[tables.users.username] = user.username
+                    row[tables.users.serverId] = user.serverId
+                    row[tables.users.isVanished] = boolInt(user.isVanished)
+                    row[tables.users.isOnline] = boolInt(user.isOnline)
+                    row[tables.users.vanishLevel] = user.vanishLevel
+                }
+            }
+        }
+    }
 
     private fun boolInt(value: Boolean): Int = if (value) 1 else 0
 

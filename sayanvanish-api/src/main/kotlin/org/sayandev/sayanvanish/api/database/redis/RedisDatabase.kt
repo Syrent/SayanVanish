@@ -110,6 +110,13 @@ class RedisDatabase<U : User>(
         redis.hset("users", user.uniqueId.toString(), user.toJson())
     }
 
+    override fun addUserAsync(user: U) {
+        cache[user.uniqueId] = user
+        thread.submit {
+            redis.hset("users", user.uniqueId.toString(), user.toJson())
+        }
+    }
+
     override fun addBasicUser(user: BasicUser) {
         basicCache[user.uniqueId] = user
         redis.hset("basic_users", user.uniqueId.toString(), user.toJson())

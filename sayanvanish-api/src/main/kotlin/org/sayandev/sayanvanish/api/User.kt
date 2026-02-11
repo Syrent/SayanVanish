@@ -72,6 +72,11 @@ interface User : BasicUser {
         SayanVanishAPI.getInstance().database.addUser(this)
     }
 
+    fun saveAsync() {
+        serverId = Platform.get().serverId
+        SayanVanishAPI.getInstance().database.addUserAsync(this)
+    }
+
     fun delete() {
         SayanVanishAPI.getInstance().database.removeUser(uniqueId)
     }

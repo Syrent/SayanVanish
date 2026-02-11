@@ -20,6 +20,7 @@ import org.sayandev.sayanvanish.bukkit.config.settings
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureLevel
 import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendComponent
 import org.sayandev.stickynote.bukkit.extension.sendComponentActionbar
+import org.sayandev.stickynote.bukkit.launch
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.plugin
 import org.sayandev.stickynote.bukkit.server
@@ -81,6 +82,30 @@ open class BukkitUser(
         sendComponent(language.vanish.vanishStateUpdate, Placeholder.parsed("state", stateText()))
     }
 
+    fun vanishAsync(options: VanishOptions) {
+        val vanishEvent = BukkitUserVanishEvent(this, options)
+        server.pluginManager.callEvent(vanishEvent)
+        if (vanishEvent.isCancelled) return
+        val options = vanishEvent.options
+        currentOptions = options
+
+        if (ServerVersion.supports(9)) {
+            player()?.isCollidable = false
+        }
+        player()?.isSleepingIgnored = true
+
+        player()?.setMetadata("vanished", FixedMetadataValue(plugin, true))
+
+        launch {
+            super.vanish(options)
+        }
+
+        // order matters - don't move hideUser before vanish (hideUser have a canSee check for vanish state notify)
+        hideUser()
+
+        sendComponent(language.vanish.vanishStateUpdate, Placeholder.parsed("state", stateText()))
+    }
+
     override fun unVanish(options: VanishOptions) {
         val unVanishEvent = BukkitUserUnVanishEvent(this, options)
         server.pluginManager.callEvent(unVanishEvent)
@@ -99,6 +124,32 @@ open class BukkitUser(
         super.unVanish(options)
 
         sendComponent(language.vanish.vanishStateUpdate, Placeholder.parsed("state", stateText()))
+    }
+
+    fun unVanishAsync(options: VanishOptions) {
+        val unVanishEvent = BukkitUserUnVanishEvent(this, options)
+        server.pluginManager.callEvent(unVanishEvent)
+        if (unVanishEvent.isCancelled) return
+        val options = unVanishEvent.options
+        currentOptions = options
+
+        if (ServerVersion.supports(9)) {
+            player()?.isCollidable = true
+        }
+        player()?.isSleepingIgnored = false
+
+        player()?.removeMetadata("vanished", plugin)
+        showUser()
+
+        launch {
+            super.unVanish(options)
+        }
+
+        sendComponent(language.vanish.vanishStateUpdate, Placeholder.parsed("state", stateText()))
+    }
+
+    fun toggleVanishAsync(options: VanishOptions) {
+        if (isVanished) unVanishAsync(options) else vanishAsync(options)
     }
 
     override fun hasPermission(permission: String): Boolean {

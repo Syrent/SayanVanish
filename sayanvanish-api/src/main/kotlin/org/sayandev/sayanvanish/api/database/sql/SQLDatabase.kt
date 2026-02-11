@@ -61,8 +61,7 @@ class SQLDatabase<U: User>(
 
     override fun getUser(uniqueId: UUID, useCache: Boolean): U? {
         if (this.useCache && useCache) {
-            val cacheUser = cache[uniqueId]
-            if (cacheUser == null) return null
+            val cacheUser = cache[uniqueId] ?: return null
             return (type.kotlin.safeCast(cacheUser) as? U) ?: (cacheUser.convert(type) as U)
         }
 
@@ -243,24 +242,18 @@ class SQLDatabase<U: User>(
     suspend fun addUserSuspended(user: U) {
         cache[user.uniqueId] = user
         dbQuery {
-            val exists =
-                tables.users
-                    .selectAll()
-                    .where { tables.users.uniqueId eq user.uniqueId.toString() }
-                    .limit(1)
-                    .count() > 0
-            if (!exists) {
-                tables.users.insert { row ->
-                    row[tables.users.uniqueId] = user.uniqueId.toString()
+            val updated =
+                tables.users.update({ tables.users.uniqueId eq user.uniqueId.toString() }) { row ->
                     row[tables.users.username] = user.username
-                    row[tables.users.serverId] = user.serverId
                     row[tables.users.isVanished] = boolInt(user.isVanished)
                     row[tables.users.isOnline] = boolInt(user.isOnline)
                     row[tables.users.vanishLevel] = user.vanishLevel
                 }
-            } else {
-                tables.users.update({ tables.users.uniqueId eq user.uniqueId.toString() }) { row ->
+            if (updated == 0) {
+                tables.users.insert { row ->
+                    row[tables.users.uniqueId] = user.uniqueId.toString()
                     row[tables.users.username] = user.username
+                    row[tables.users.serverId] = user.serverId
                     row[tables.users.isVanished] = boolInt(user.isVanished)
                     row[tables.users.isOnline] = boolInt(user.isOnline)
                     row[tables.users.vanishLevel] = user.vanishLevel

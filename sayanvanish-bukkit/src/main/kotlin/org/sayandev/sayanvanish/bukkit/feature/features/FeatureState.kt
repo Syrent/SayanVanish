@@ -16,6 +16,7 @@ import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
+import org.sayandev.stickynote.bukkit.launch
 import org.sayandev.stickynote.bukkit.utils.ServerVersion
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.objectmapping.meta.Comment
@@ -59,7 +60,6 @@ class FeatureState(
             if (tempUser.hasPermission(Permission.VANISH_ON_JOIN) || vanishOnJoin) {
                 tempUser.isVanished = true
                 tempUser.vanish(vanishJoinOptions)
-                tempUser.save()
             }
             return
         }
@@ -85,8 +85,6 @@ class FeatureState(
                 }
             }
         }
-
-        user.save()
         return
     }
 
@@ -105,10 +103,10 @@ class FeatureState(
 
         if ((reappearOnQuit && user.isVanished) || (checkPermissionOnQuit && !user.hasPermission(Permission.VANISH))) {
             user.unVanish(VanishOptions.Builder().isOnQuit(true).build())
+        } else {
+            user.isOnline = false
+            user.save()
         }
-        user.isOnline = false
-
-        user.save()
     }
 
     @EventHandler

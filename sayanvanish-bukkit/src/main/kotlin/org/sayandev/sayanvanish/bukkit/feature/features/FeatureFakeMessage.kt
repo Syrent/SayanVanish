@@ -108,7 +108,7 @@ class FeatureFakeMessage(
                         )
                     )
                 } else {
-                    player.sendRawComponent(fakeQuitMessage, Placeholder.unparsed("player", user.username))
+                    player.sendRawComponent(PlaceholderAPIHook.injectPlaceholders(user.offlinePlayer(), fakeQuitMessage), Placeholder.unparsed("player", user.username))
                 }
             }
         }
@@ -129,7 +129,7 @@ class FeatureFakeMessage(
                         )
                     )
                 } else {
-                    player.sendRawComponent(fakeJoinMessage, Placeholder.unparsed("player", user.username))
+                    player.sendRawComponent(PlaceholderAPIHook.injectPlaceholders(user.offlinePlayer(), fakeJoinMessage), Placeholder.unparsed("player", user.username))
                 }
             }
         }

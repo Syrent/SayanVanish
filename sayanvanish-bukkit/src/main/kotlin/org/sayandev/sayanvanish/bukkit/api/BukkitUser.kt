@@ -82,7 +82,7 @@ open class BukkitUser(
         sendComponent(language.vanish.vanishStateUpdate, Placeholder.parsed("state", stateText()))
     }
 
-    fun vanishAsync(options: VanishOptions) {
+    override fun vanishAsync(options: VanishOptions) {
         val vanishEvent = BukkitUserVanishEvent(this, options)
         server.pluginManager.callEvent(vanishEvent)
         if (vanishEvent.isCancelled) return
@@ -97,7 +97,7 @@ open class BukkitUser(
         player()?.setMetadata("vanished", FixedMetadataValue(plugin, true))
 
         launch {
-            super.vanish(options)
+            super.vanishAsync(options)
         }
 
         // order matters - don't move hideUser before vanish (hideUser have a canSee check for vanish state notify)
@@ -126,7 +126,7 @@ open class BukkitUser(
         sendComponent(language.vanish.vanishStateUpdate, Placeholder.parsed("state", stateText()))
     }
 
-    fun unVanishAsync(options: VanishOptions) {
+    override fun unVanishAsync(options: VanishOptions) {
         val unVanishEvent = BukkitUserUnVanishEvent(this, options)
         server.pluginManager.callEvent(unVanishEvent)
         if (unVanishEvent.isCancelled) return
@@ -142,7 +142,7 @@ open class BukkitUser(
         showUser()
 
         launch {
-            super.unVanish(options)
+            super.unVanishAsync(options)
         }
 
         sendComponent(language.vanish.vanishStateUpdate, Placeholder.parsed("state", stateText()))

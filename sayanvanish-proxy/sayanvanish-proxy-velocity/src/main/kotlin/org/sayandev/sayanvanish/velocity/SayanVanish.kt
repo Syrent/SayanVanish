@@ -4,6 +4,7 @@ import com.github.shynixn.mccoroutine.velocity.SuspendingPluginContainer
 import com.google.inject.Inject
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
+import com.velocitypowered.api.event.proxy.ProxyShutdownEvent
 import com.velocitypowered.api.plugin.annotation.DataDirectory
 import com.velocitypowered.api.proxy.ProxyServer
 import org.sayandev.sayanvanish.api.Platform
@@ -94,6 +95,14 @@ class SayanVanish @Inject constructor(
                 SayanVanishAPI.getInstance().database.cache = users.associateBy { it.uniqueId }.toMutableMap()
             }
         }, settings.general.cacheUpdatePeriodMillis, TimeUnit.MILLISECONDS, settings.general.cacheUpdatePeriodMillis, TimeUnit.MILLISECONDS)
+    }
+
+    @Subscribe
+    fun onProxyShutdown(event: ProxyShutdownEvent) {
+        Platform.get().onDisable()
+        StickyNote.shutdown()
+        SayanVanishVelocityAPI.getInstance().database.disconnect()
+        SayanVanishAPI.getInstance().database.disconnect()
     }
 
     fun pluginFile(): File? {

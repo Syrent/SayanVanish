@@ -1,6 +1,7 @@
 package org.sayandev.sayanvanish.api.database.redis
 
 import org.sayandev.sayanvanish.api.BasicUser
+import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.User.Companion.convert
 import org.sayandev.sayanvanish.api.database.Database
@@ -21,6 +22,7 @@ class RedisDatabase<U : User>(
     override var cache = mutableMapOf<UUID, U>()
     var basicCache = mutableMapOf<UUID, BasicUser>()
     private val thread = Executors.newSingleThreadExecutor()
+    private fun isShuttingDown(): Boolean = Platform.get().shuttingDown
 
     lateinit var redis: JedisPooled
 
@@ -49,6 +51,7 @@ class RedisDatabase<U : User>(
 
     override fun disconnect() {
         redis.close()
+        thread.shutdownNow()
     }
 
     override fun getUser(uniqueId: UUID, useCache: Boolean): U? {
@@ -71,6 +74,10 @@ class RedisDatabase<U : User>(
     }
 
     override fun getUsersAsync(result: (List<U>) -> Unit) {
+        if (isShuttingDown()) {
+            result(emptyList())
+            return
+        }
         thread.submit {
             val users = getUsers()
             result(users)
@@ -99,6 +106,10 @@ class RedisDatabase<U : User>(
     }
 
     override fun getBasicUsersAsync(result: (List<BasicUser>) -> Unit) {
+        if (isShuttingDown()) {
+            result(emptyList())
+            return
+        }
         thread.submit {
             val users = getBasicUsers(true)
             result(users)
@@ -111,6 +122,7 @@ class RedisDatabase<U : User>(
     }
 
     override fun addUserAsync(user: U) {
+        if (isShuttingDown()) return
         cache[user.uniqueId] = user
         thread.submit {
             redis.hset("users", user.uniqueId.toString(), user.toJson())
@@ -154,6 +166,10 @@ class RedisDatabase<U : User>(
     }
 
     override fun isInQueue(uniqueId: UUID, result: (Boolean) -> Unit) {
+        if (isShuttingDown()) {
+            result(false)
+            return
+        }
         thread.submit {
             redis.get("queue:$uniqueId")?.let { result(true) } ?: result(false)
         }
@@ -168,6 +184,10 @@ class RedisDatabase<U : User>(
     }
 
     override fun getFromQueue(uniqueId: UUID, result: (Boolean) -> Unit) {
+        if (isShuttingDown()) {
+            result(false)
+            return
+        }
         thread.submit {
             redis.get("queue:$uniqueId")?.let { result(it.toBoolean()) } ?: result(false)
         }

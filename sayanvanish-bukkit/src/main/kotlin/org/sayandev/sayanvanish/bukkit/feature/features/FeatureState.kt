@@ -18,6 +18,7 @@ import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
+import org.sayandev.stickynote.bukkit.async
 import org.sayandev.stickynote.bukkit.launch
 import org.sayandev.stickynote.bukkit.utils.ServerVersion
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
@@ -108,11 +109,13 @@ class FeatureState(
         } else {
             if (user.isOnline) {
                 launch {
-                    delay(2500)
-                    val isOnlineAfterQuit = SayanVanishAPI.getInstance().database.hasBasicUser(user.uniqueId, false)
-                    if (!isOnlineAfterQuit) {
-                        user.isOnline = false
-                        user.saveAsync()
+                    async {
+                        delay(2500)
+                        val isOnlineAfterQuit = SayanVanishAPI.getInstance().database.hasBasicUser(user.uniqueId, false)
+                        if (!isOnlineAfterQuit) {
+                            user.isOnline = false
+                            user.saveAsync()
+                        }
                     }
                 }
             }

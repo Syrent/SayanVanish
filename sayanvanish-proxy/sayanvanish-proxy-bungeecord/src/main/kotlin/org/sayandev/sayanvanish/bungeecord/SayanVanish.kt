@@ -52,4 +52,11 @@ class SayanVanish : Plugin() {
             }
         }, settings.general.cacheUpdatePeriodMillis, settings.general.cacheUpdatePeriodMillis, TimeUnit.MILLISECONDS)
     }
+
+    override fun onDisable() {
+        Platform.get().onDisable()
+        StickyNote.shutdown()
+        SayanVanishBungeeAPI.getInstance().database.disconnect()
+        SayanVanishAPI.getInstance().database.disconnect()
+    }
 }

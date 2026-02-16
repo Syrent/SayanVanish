@@ -19,6 +19,12 @@ interface User : BasicUser {
         Platform.get().logger.info("$username has vanished.")
     }
 
+    fun vanishAsync(options: VanishOptions) {
+        isVanished = true
+        saveAsync()
+        Platform.get().logger.info("$username has vanished.")
+    }
+
     fun vanish() {
         vanish(VanishOptions.defaultOptions())
     }
@@ -26,6 +32,12 @@ interface User : BasicUser {
     fun unVanish(options: VanishOptions) {
         isVanished = false
         save()
+        Platform.get().logger.info("$username has un-vanished.")
+    }
+
+    fun unVanishAsync(options: VanishOptions) {
+        isVanished = false
+        saveAsync()
         Platform.get().logger.info("$username has un-vanished.")
     }
 

@@ -34,6 +34,7 @@ class SQLDatabase<U: User>(
 
     private val tables = SqlTables(config.tablePrefix)
     private var exposedDatabase: ExposedDatabase? = null
+    private fun isShuttingDown(): Boolean = Platform.get().shuttingDown
 
     override fun initialize() {
         runBlocking {
@@ -71,9 +72,17 @@ class SQLDatabase<U: User>(
     }
 
     override fun getUsersAsync(result: (List<U>) -> Unit) {
+        if (isShuttingDown()) {
+            result(emptyList())
+            return
+        }
         val deferred = scope.async { getUsersFromDatabase() }
         deferred.invokeOnCompletion { throwable ->
             if (throwable != null) {
+                if (isShuttingDown() || throwable is CancellationException) {
+                    result(emptyList())
+                    return@invokeOnCompletion
+                }
                 Platform.get().logger.severe("Failed to fetch users from database (getUsersAsync)")
                 throwable.printStackTrace()
                 result(emptyList())
@@ -84,19 +93,29 @@ class SQLDatabase<U: User>(
     }
 
     override fun getUsers(): List<U> {
+        if (isShuttingDown()) return cache.values.toList()
         if (useCache) return cache.values.toList()
         return runBlocking { getUsersFromDatabase() }
     }
 
     override fun getBasicUsers(useCache: Boolean): List<BasicUser> {
+        if (isShuttingDown()) return basicCache.values.toList()
         if (useCache) return basicCache.values.toList()
         return runBlocking { getBasicUsersFromDatabase() }
     }
 
     override fun getBasicUsersAsync(result: (List<BasicUser>) -> Unit) {
+        if (isShuttingDown()) {
+            result(emptyList())
+            return
+        }
         val deferred = scope.async { getBasicUsersFromDatabase() }
         deferred.invokeOnCompletion { throwable ->
             if (throwable != null) {
+                if (isShuttingDown() || throwable is CancellationException) {
+                    result(emptyList())
+                    return@invokeOnCompletion
+                }
                 Platform.get().logger.severe("Failed to fetch users from database (getBasicUsersAsync)")
                 throwable.printStackTrace()
                 result(emptyList())
@@ -140,9 +159,17 @@ class SQLDatabase<U: User>(
     }
 
     override fun isInQueue(uniqueId: UUID, result: (Boolean) -> Unit) {
+        if (isShuttingDown()) {
+            result(false)
+            return
+        }
         val deferred = scope.async { isInQueueSuspended(uniqueId) }
         deferred.invokeOnCompletion { throwable ->
             if (throwable != null) {
+                if (isShuttingDown() || throwable is CancellationException) {
+                    result(false)
+                    return@invokeOnCompletion
+                }
                 Platform.get().logger.severe("Failed to fetch is in queue from database (isInQueue)")
                 throwable.printStackTrace()
                 result(false)
@@ -153,19 +180,30 @@ class SQLDatabase<U: User>(
     }
 
     override fun addToQueue(uniqueId: UUID, vanished: Boolean) {
+        if (isShuttingDown()) return
         scope.launch {
             try {
                 addToQueueSuspended(uniqueId, vanished)
             } catch (e: Exception) {
-                e.printStackTrace()
+                if (!isShuttingDown()) {
+                    e.printStackTrace()
+                }
             }
         }
     }
 
     override fun getFromQueue(uniqueId: UUID, result: (Boolean) -> Unit) {
+        if (isShuttingDown()) {
+            result(false)
+            return
+        }
         val deferred = scope.async { getFromQueueSuspended(uniqueId) }
         deferred.invokeOnCompletion { throwable ->
             if (throwable != null) {
+                if (isShuttingDown() || throwable is CancellationException) {
+                    result(false)
+                    return@invokeOnCompletion
+                }
                 Platform.get().logger.severe("Failed to fetch queue from database (getFromQueue)")
                 throwable.printStackTrace()
                 result(false)
@@ -176,11 +214,14 @@ class SQLDatabase<U: User>(
     }
 
     override fun removeFromQueue(uniqueId: UUID) {
+        if (isShuttingDown()) return
         scope.launch {
             try {
                 removeFromQueueSuspended(uniqueId)
             } catch (e: Exception) {
-                e.printStackTrace()
+                if (!isShuttingDown()) {
+                    e.printStackTrace()
+                }
             }
         }
     }
@@ -275,13 +316,16 @@ class SQLDatabase<U: User>(
         scope.async { addBasicUserSuspended(user) }
 
     override fun addUserAsync(user: U) {
+        if (isShuttingDown()) return
         cache[user.uniqueId] = user
         scope.launch {
             try {
                 upsertUser(user)
             } catch (e: Exception) {
-                Platform.get().logger.severe("Failed to add user asynchronously (addUserAsync)")
-                e.printStackTrace()
+                if (!isShuttingDown()) {
+                    Platform.get().logger.severe("Failed to add user asynchronously (addUserAsync)")
+                    e.printStackTrace()
+                }
             }
         }
     }

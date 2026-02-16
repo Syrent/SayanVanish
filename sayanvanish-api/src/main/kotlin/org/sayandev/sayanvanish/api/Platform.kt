@@ -11,6 +11,14 @@ data class Platform(
     var serverId: String,
 ) {
 
+    @Volatile
+    var shuttingDown: Boolean = false
+        private set
+
+    fun onDisable() {
+        shuttingDown = true
+    }
+
     companion object {
         private var currentPlatform = Platform("default", Logger.getGlobal(), File("."), "unknown")
 

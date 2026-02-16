@@ -84,8 +84,10 @@ open class SayanVanish : JavaPlugin() {
     }
 
     override fun onDisable() {
-        SayanVanishBukkitAPI.getInstance().database.disconnect()
+        Platform.get().onDisable()
         StickyNote.shutdown()
+        SayanVanishBukkitAPI.getInstance().database.disconnect()
+        SayanVanishAPI.getInstance().database.disconnect()
     }
 
     fun pluginFile(): File {

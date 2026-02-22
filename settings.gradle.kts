@@ -8,7 +8,7 @@ pluginManagement {
 }
 
 plugins {
-    id("org.sayandev.stickynote.settings") version "2.0.0-alpha.29"
+    id("org.sayandev.stickynote.settings") version "2.0.0-alpha.36"
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 

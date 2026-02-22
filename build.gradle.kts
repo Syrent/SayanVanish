@@ -1,5 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import io.papermc.hangarpublishplugin.model.Platforms
+import org.sayandev.plugin.StickyNotePackagingMode
 import java.io.ByteArrayOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
@@ -97,6 +98,7 @@ allprojects {
     plugins.apply("com.modrinth.minotaur")
 
     stickynote {
+        packagingMode(StickyNotePackagingMode.FAT)
         useSubmodule(true)
 //        relocate(!gradle.startParameter.taskNames.any { it.startsWith("runServer") || it.startsWith("runVelocity") })
     }

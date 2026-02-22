@@ -88,6 +88,8 @@ allprojects {
     version = findProperty("version")!! as String
 
     plugins.apply("java")
+    plugins.apply("org.jetbrains.kotlin.jvm")
+    plugins.apply("org.jetbrains.kotlin.plugin.serialization")
     plugins.apply("maven-publish")
     plugins.apply("com.gradleup.shadow")
     plugins.apply("java-library")
@@ -95,6 +97,7 @@ allprojects {
     plugins.apply("com.modrinth.minotaur")
 
     stickynote {
+        useSubmodule(true)
 //        relocate(!gradle.startParameter.taskNames.any { it.startsWith("runServer") || it.startsWith("runVelocity") })
     }
 

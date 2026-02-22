@@ -113,7 +113,13 @@ class PotionEffectData(
     val ambient: Boolean = false,
     val particles: Boolean = false,
 ) {
-    fun toPotionEffect() = PotionEffect(PotionEffectType.getByName(type)!!, if (ServerVersion.supports(19) && duration == Int.MAX_VALUE) -1 else duration, amplifier, ambient, particles)
+    fun toPotionEffect() = PotionEffect(
+        PotionEffectType.getByName(type)!!,
+        if (ServerVersion.supports(19) && duration == Int.MAX_VALUE) -1 else duration,
+        amplifier,
+        ambient,
+        particles
+    )
 }
 
 object PotionEffectTypeSerializer : KSerializer<PotionEffectType> {

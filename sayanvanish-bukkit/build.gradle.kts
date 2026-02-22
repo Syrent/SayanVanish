@@ -31,10 +31,10 @@ dependencies {
 
 tasks.withType(xyz.jpenilla.runtask.task.AbstractRun::class) {
     javaLauncher = javaToolchains.launcherFor {
-        vendor = JvmVendorSpec.JETBRAINS
+        vendor = JvmVendorSpec.AMAZON
         languageVersion = JavaLanguageVersion.of(21)
     }
-    jvmArgs("-XX:+AllowEnhancedClassRedefinition", "-Dorg.sayandev.sayanventure.adventure.text.warnWhenLegacyFormattingDetected=false")
+    jvmArgs(/*"-XX:+AllowEnhancedClassRedefinition", */"-Dnet.kyori.adventure.text.warnWhenLegacyFormattingDetected=false")
 }
 
 tasks {
@@ -57,13 +57,14 @@ tasks {
     }
 
     runServer {
-        minecraftVersion("1.21.9")
+        minecraftVersion("1.21.11")
 
         downloadPlugins {
-            hangar("ViaVersion", "5.4.2-SNAPSHOT+776")
-            hangar("PlaceholderAPI", "2.11.6")
-            modrinth("essentialsx", "2.21.1")
+            hangar("ViaVersion", "5.6.1-SNAPSHOT+877")
+            hangar("PlaceholderAPI", "2.11.7")
+            modrinth("essentialsx", "2.21.2")
             modrinth("luckperms", "v5.5.17-bukkit")
+            url("https://github.com/NEZNAMY/TAB/releases/download/5.4.0/TAB.v5.4.0.jar")
 //            hangar("AdvancedServerList", "5.4.1")
 //            url("https://cdn.modrinth.com/data/qvdtDX3s/versions/TD9kTO2n/multiverse-inventories-4.2.7-pre.jar")
 //            url("https://github.com/SkinsRestorer/SkinsRestorer/releases/download/15.5.1/SkinsRestorer.jar")
@@ -75,7 +76,7 @@ tasks {
 //            url("https://github.com/NEZNAMY/TAB-Bridge/releases/download/6.0.1/TAB-Bridge.v6.0.1.jar")
 //            url("https://download.luckperms.net/1593/bukkit/loader/LuckPerms-Bukkit-5.5.8.jar")
         }
-        jvmArgs("-Dorg.sayandev.sayanventure.adventure.text.warnWhenLegacyFormattingDetected=false")
+        jvmArgs("-Dnet.kyori.adventure.text.warnWhenLegacyFormattingDetected=false")
     }
 
     runPaper {

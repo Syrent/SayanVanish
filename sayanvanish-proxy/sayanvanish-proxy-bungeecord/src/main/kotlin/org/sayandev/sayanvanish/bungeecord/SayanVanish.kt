@@ -33,4 +33,11 @@ class SayanVanish : Plugin() {
             }
         }
     }
+
+    override fun onDisable() {
+        Platform.get().onDisable()
+        StickyNote.shutdown()
+        SayanVanishBungeeAPI.getInstance().database.disconnect()
+        SayanVanishAPI.getInstance().database.disconnect()
+    }
 }

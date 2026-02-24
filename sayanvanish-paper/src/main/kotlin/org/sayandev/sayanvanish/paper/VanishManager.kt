@@ -1,0 +1,52 @@
+package org.sayandev.sayanvanish.paper
+
+import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
+import org.bukkit.event.Listener
+import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerQuitEvent
+import org.sayandev.sayanvanish.api.VanishAPI
+import org.sayandev.sayanvanish.paper.api.PaperVanishUser.Companion.bukkitAdapt
+import org.sayandev.sayanvanish.paper.api.SayanVanishBukkitAPI.Companion.getCachedOrCreateUser
+import org.sayandev.sayanvanish.paper.api.SayanVanishBukkitAPI.Companion.getOrAddUser
+import org.sayandev.sayanvanish.paper.config.Settings
+import org.sayandev.stickynote.bukkit.launch
+import org.sayandev.stickynote.bukkit.registerListener
+
+object VanishManager : Listener {
+
+    init {
+        registerListener(this)
+    }
+
+    @EventHandler
+    private fun addUserOnJoin(event: PlayerJoinEvent) {
+        if (Settings.get().general.proxyMode) return
+
+        val player = event.player
+        launch {
+            player.getOrAddUser()
+        }
+    }
+
+    @EventHandler
+    private fun makeUserOfflineOnQuit(event: PlayerQuitEvent) {
+        if (Settings.get().general.proxyMode) return
+
+        val player = event.player
+
+        launch {
+            val user = player.getCachedOrCreateUser()
+            user.isOnline = false
+            user.saveAndSync()
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    private fun hideVanishedPlayersForJoinedPlayer(event: PlayerJoinEvent) {
+        for (vanishedUser in VanishAPI.get().getCacheService().getVanishUsers().getVanished().map { it.bukkitAdapt() }.filter { it.player() != null }) {
+            vanishedUser.hideFor(event.player)
+        }
+    }
+
+}

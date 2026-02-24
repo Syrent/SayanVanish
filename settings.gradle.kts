@@ -15,7 +15,6 @@ plugins {
 rootProject.name = "SayanVanish"
 
 include("sayanvanish-api")
-include("sayanvanish-bukkit")
+include("sayanvanish-paper")
 include("sayanvanish-proxy")
 include("sayanvanish-proxy:sayanvanish-proxy-velocity")
-include("sayanvanish-proxy:sayanvanish-proxy-bungeecord")

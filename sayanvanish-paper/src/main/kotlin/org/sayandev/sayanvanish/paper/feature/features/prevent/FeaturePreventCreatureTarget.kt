@@ -1,0 +1,44 @@
+package org.sayandev.sayanvanish.paper.feature.features.prevent
+
+import kotlinx.serialization.SerialName
+import org.bukkit.entity.Mob
+import org.bukkit.entity.Player
+import org.bukkit.event.EventHandler
+import org.bukkit.event.entity.EntityTargetEvent
+import org.sayandev.sayanvanish.api.feature.RegisteredFeature
+import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
+import org.sayandev.sayanvanish.paper.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
+import org.sayandev.sayanvanish.paper.api.event.PaperUserVanishEvent
+import org.sayandev.sayanvanish.paper.feature.ListenedFeature
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+
+@RegisteredFeature
+@Serializable
+@SerialName("prevent_creature_target")
+class FeaturePreventCreatureTarget: ListenedFeature() {
+
+    @Transient override val id = "prevent_creature_target"
+    override var enabled: Boolean = true
+    @Transient override val category: FeatureCategories = FeatureCategories.PREVENTION
+
+    @EventHandler
+    private fun preventEntityTargetOnVanish(event: PaperUserVanishEvent) {
+        val user = event.user
+        val player = user.player() ?: return
+        for (entity in player.world.entities.filterIsInstance<Mob>()) {
+            if (entity.target != player) continue
+            entity.target = null
+        }
+    }
+
+    @EventHandler
+    private fun onEntityTarget(event: EntityTargetEvent) {
+        val target = event.target as? Player ?: return
+        val user = target.cachedVanishUser() ?: return
+        if (!isActive(user)) return
+        if (!user.isVanished) return
+        event.isCancelled = true
+    }
+
+}

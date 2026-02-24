@@ -286,18 +286,13 @@ hangarPublish {
 
         platforms {
             register(Platforms.PAPER) {
-                jar.set(project(":sayanvanish-bukkit").tasks.shadowJar.flatMap { it.archiveFile })
+                jar.set(project(":sayanvanish-paper").tasks.shadowJar.flatMap { it.archiveFile })
                 platformVersions.set((property("paperVersion") as String).split(",").map { it.trim() })
             }
 
             register(Platforms.VELOCITY) {
                 jar.set(project(":sayanvanish-proxy:sayanvanish-proxy-velocity").tasks.shadowJar.flatMap { it.archiveFile })
                 platformVersions.set((property("velocityVersion") as String).split(",").map { it.trim() })
-            }
-
-            register(Platforms.WATERFALL) {
-                jar.set(project(":sayanvanish-proxy:sayanvanish-proxy-bungeecord").tasks.shadowJar.flatMap { it.archiveFile })
-                platformVersions.set((property("waterfallVersion") as String).split(",").map { it.trim() })
             }
         }
     }

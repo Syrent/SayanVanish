@@ -3,10 +3,13 @@ package org.sayandev.sayanvanish.bukkit.api
 import kotlinx.coroutines.Deferred
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
+import org.bukkit.entity.Player
+import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.bukkit.config.Settings
+import org.sayandev.stickynote.bukkit.plugin
 import java.util.*
 
 class SayanVanishBukkitAPI {
@@ -20,11 +23,9 @@ class SayanVanishBukkitAPI {
         suspend fun UUID.getOrCreateUser(): User  {
             val offlinePlayer = Bukkit.getOfflinePlayer(this)
             val player = offlinePlayer.player
-            return VanishAPI.get().getDatabase().getUser(this).await() ?: User.Generic(
+            return VanishAPI.get().getDatabase().getUser(this).await() ?: BukkitVanishUser(
                 this,
-                offlinePlayer.name ?: this.toString(),
-                player != null,
-                Settings.get().serverId()
+                offlinePlayer.name ?: this.toString()
             )
         }
 
@@ -42,11 +43,9 @@ class SayanVanishBukkitAPI {
 
         @JvmSynthetic
         fun UUID.getCachedOrCreateUser(): User {
-            return VanishAPI.get().getCacheService().getUsers().getUser(this) ?: User.Generic(
+            return VanishAPI.get().getCacheService().getUsers().getUser(this) ?: BukkitVanishUser(
                 this,
                 Bukkit.getOfflinePlayer(this).name ?: "N/A",
-                false,
-                Settings.get().serverId()
             )
         }
 
@@ -57,7 +56,7 @@ class SayanVanishBukkitAPI {
 
         @JvmSynthetic
         suspend fun UUID.getOrCreateVanishUser(): VanishUser {
-            return VanishAPI.get().getDatabase().getVanishUser(this).await() ?: VanishUser.Generic(
+            return VanishAPI.get().getDatabase().getVanishUser(this).await() ?: BukkitVanishUser(
                 this,
                 Bukkit.getOfflinePlayer(this).name ?: "N/A",
             )
@@ -79,7 +78,7 @@ class SayanVanishBukkitAPI {
 
         @JvmSynthetic
         fun UUID.getCachedOrCreateVanishUser(): VanishUser {
-            return VanishAPI.get().getCacheService().getVanishUsers().getVanishUser(this) ?: VanishUser.Generic(
+            return VanishAPI.get().getCacheService().getVanishUsers().getVanishUser(this) ?: BukkitVanishUser(
                 this,
                 Bukkit.getOfflinePlayer(this).name ?: "N/A",
             )
@@ -133,6 +132,12 @@ class SayanVanishBukkitAPI {
         @JvmSynthetic
         fun OfflinePlayer.getCachedOrCreateVanishUser(): VanishUser {
             return this.uniqueId.getCachedOrCreateVanishUser()
+        }
+
+        fun hidePlayer(player: Player, target: Player) {
+            if (target.uniqueId != player.uniqueId && !target.isOp && !target.hasPermission(Permission.VANISH.permission())) {
+                target.hidePlayer(plugin, player)
+            }
         }
     }
 }

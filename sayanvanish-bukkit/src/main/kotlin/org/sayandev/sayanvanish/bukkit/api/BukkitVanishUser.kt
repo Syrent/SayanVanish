@@ -11,8 +11,6 @@ import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.feature.Features
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedUser
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getCachedOrCreateUser
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.config.Settings
@@ -23,7 +21,6 @@ import org.sayandev.stickynote.bukkit.hasPlugin
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.plugin
 import org.sayandev.stickynote.bukkit.server
-import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import org.sayandev.stickynote.bukkit.utils.ServerVersion
 import java.util.*
 
@@ -32,7 +29,7 @@ open class BukkitVanishUser(
     override var username: String
 ) : VanishUser {
 
-    override var serverId = Settings.get().general.serverId
+    override var serverId = Settings.get().serverId()
     override var currentOptions = VanishOptions.defaultOptions()
     override var isVanished = false
     override var isOnline: Boolean = if (!Settings.get().general.proxyMode) {
@@ -74,7 +71,7 @@ open class BukkitVanishUser(
         super.disappear(options)
 
         // order matters - don't move hideUser before vanish (hideUser have a canSee check for vanish state notify)
-        hideUser()
+        hideForAll()
 
         sendMessage(language.vanish.vanishStateUpdate, Placeholder.parsed("state", stateText()))
     }
@@ -127,9 +124,12 @@ open class BukkitVanishUser(
         }
     }
 
-    fun hideUser() {
-        for (onlinePlayer in onlinePlayers) {
-            hideUser(onlinePlayer)
+    fun hideForAll() {
+        val player = player()
+        if (player != null) {
+            for (onlinePlayer in onlinePlayers) {
+                SayanVanishBukkitAPI.hidePlayer(player, onlinePlayer)
+            }
         }
         if (currentOptions.notifyStatusChangeToOthers) {
             for (otherUser in VanishAPI.get().getCacheService().getUsers().getOnline().filter { it.username != username && it.generatedVanishUser().canSee(this) }) {
@@ -138,10 +138,9 @@ open class BukkitVanishUser(
         }
     }
 
-    fun hideUser(target: Player) {
-        if (target.cachedUser() == null && (target.isOp || target.hasPermission(Permission.VANISH.permission()))) {
-            target.getCachedOrCreateUser()
-        }
+    fun hideFor(target: Player) {
+        val player = player() ?: return
+        target.hidePlayer(plugin, player)
     }
 
     fun showUser() {

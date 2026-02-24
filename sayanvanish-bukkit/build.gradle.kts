@@ -1,5 +1,6 @@
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 import org.sayandev.plugin.StickyNoteModules
+import xyz.jpenilla.runpaper.task.RunServer
 
 plugins {
     id("xyz.jpenilla.run-paper") version "3.0.2"
@@ -57,6 +58,10 @@ tasks {
     }
 
     runServer {
+        runDirectory = file("run/bukkit-1")
+        jvmArgs("-Dnet.kyori.adventure.text.warnWhenLegacyFormattingDetected=false", "-Dserver.id=lobby-1")
+    }
+    withType(RunServer::class.java) {
         minecraftVersion("1.21.11")
 
         downloadPlugins {
@@ -67,6 +72,10 @@ tasks {
             url("https://github.com/NEZNAMY/TAB/releases/download/5.4.0/TAB.v5.4.0.jar")
         }
         jvmArgs("-Dnet.kyori.adventure.text.warnWhenLegacyFormattingDetected=false")
+    }
+    register<RunServer>("runServer2") {
+        runDirectory = file("run/bukkit-2")
+        jvmArgs("-Dnet.kyori.adventure.text.warnWhenLegacyFormattingDetected=false", "-Dserver.id=lobby-2")
     }
 
     runPaper {

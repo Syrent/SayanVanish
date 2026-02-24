@@ -3,13 +3,10 @@ package org.sayandev.sayanvanish.bukkit.api
 import kotlinx.coroutines.Deferred
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
-import org.bukkit.entity.Player
-import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.bukkit.config.Settings
-import org.sayandev.stickynote.bukkit.plugin
 import java.util.*
 
 class SayanVanishBukkitAPI {
@@ -132,12 +129,6 @@ class SayanVanishBukkitAPI {
         @JvmSynthetic
         fun OfflinePlayer.getCachedOrCreateVanishUser(): VanishUser {
             return this.uniqueId.getCachedOrCreateVanishUser()
-        }
-
-        fun hidePlayer(player: Player, target: Player) {
-            if (target.uniqueId != player.uniqueId && !target.isOp && !target.hasPermission(Permission.VANISH.permission())) {
-                target.hidePlayer(plugin, player)
-            }
         }
     }
 }

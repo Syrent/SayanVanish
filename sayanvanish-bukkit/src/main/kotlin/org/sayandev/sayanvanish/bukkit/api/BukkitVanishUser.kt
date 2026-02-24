@@ -11,6 +11,7 @@ import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.feature.Features
+import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getCachedOrCreateVanishUser
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.config.Settings
@@ -127,8 +128,11 @@ open class BukkitVanishUser(
     fun hideForAll() {
         val player = player()
         if (player != null) {
-            for (onlinePlayer in onlinePlayers) {
-                SayanVanishBukkitAPI.hidePlayer(player, onlinePlayer)
+            for (onlinePlayer in onlinePlayers.filter { it.uniqueId != uniqueId }) {
+                val viewer = onlinePlayer.getCachedOrCreateVanishUser()
+                if (!viewer.canSee(this)) {
+                    hidePlayer(onlinePlayer, player)
+                }
             }
         }
         if (currentOptions.notifyStatusChangeToOthers) {
@@ -140,7 +144,10 @@ open class BukkitVanishUser(
 
     fun hideFor(target: Player) {
         val player = player() ?: return
-        target.hidePlayer(plugin, player)
+        val viewer = target.getCachedOrCreateVanishUser()
+        if (!viewer.canSee(this)) {
+            hidePlayer(target, player)
+        }
     }
 
     fun showUser() {
@@ -165,6 +172,14 @@ open class BukkitVanishUser(
             player.showPlayer(plugin, target)
         } else {
             player.showPlayer(target)
+        }
+    }
+
+    private fun hidePlayer(player: Player, target: Player) {
+        if (ServerVersion.supports(9)) {
+            player.hidePlayer(plugin, target)
+        } else {
+            player.hidePlayer(target)
         }
     }
 

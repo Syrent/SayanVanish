@@ -92,7 +92,7 @@ class FeatureState(
 
         if (user.isVanished) {
             if (user.currentOptions.notifyJoinQuitVanished) {
-                for (vanishedUser in VanishAPI.get().getCacheService().getVanishUsers().values.filter { it.hasPermission(Permission.VANISH) && it.vanishLevel >= user.vanishLevel }) {
+                for (vanishedUser in VanishAPI.get().getCacheService().getVanishUsers().values.filter { it.canSee(user) }) {
                     vanishedUser.sendMessage(language.vanish.joinedTheServerWhileVanished, Placeholder.unparsed("player", user.username))
                 }
             }
@@ -112,7 +112,7 @@ class FeatureState(
 
         if (user.isVanished) {
             if (user.currentOptions.notifyJoinQuitVanished) {
-                for (vanishedUser in VanishAPI.get().getCacheService().getVanishUsers().values.filter { it.hasPermission(Permission.VANISH) && it.vanishLevel >= user.vanishLevel }) {
+                for (vanishedUser in VanishAPI.get().getCacheService().getVanishUsers().values.filter { it.canSee(user) }) {
                     vanishedUser.sendMessage(language.vanish.leftTheServerWhileVanished, Placeholder.unparsed("player", user.username))
                 }
             }

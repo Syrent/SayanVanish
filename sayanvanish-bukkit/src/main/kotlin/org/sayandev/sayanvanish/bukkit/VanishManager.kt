@@ -5,10 +5,8 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
-import org.sayandev.sayanvanish.api.Permission
 import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.bukkit.api.BukkitVanishUser.Companion.bukkitAdapt
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getCachedOrCreateUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrAddUser
 import org.sayandev.sayanvanish.bukkit.config.Settings
@@ -47,10 +45,7 @@ object VanishManager : Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     private fun hideVanishedPlayersForJoinedPlayer(event: PlayerJoinEvent) {
         for (vanishedUser in VanishAPI.get().getCacheService().getVanishUsers().getVanished().map { it.bukkitAdapt() }.filter { it.player() != null }) {
-            val target = event.player
-            if (!target.isOp && !target.hasPermission(Permission.VANISH.permission())) {
-                vanishedUser.hideFor(target)
-            }
+            vanishedUser.hideFor(event.player)
         }
     }
 

@@ -46,8 +46,10 @@ object SayanVanishAPI : VanishAPI {
 
     override fun canSee(user: VanishUser?, target: VanishUser): Boolean {
         if (!target.isVanished) return true
-        val vanishLevel = user?.vanishLevel ?: -1
-        return vanishLevel >= target.vanishLevel
+        if (user == null) return false
+        if (user.uniqueId == target.uniqueId) return true
+        if (!user.hasPermission(Permission.VANISH)) return false
+        return user.vanishLevel >= target.vanishLevel
     }
 
     suspend fun UUID.user(): VanishUser? {

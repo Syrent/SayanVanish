@@ -76,7 +76,7 @@ class FeatureState(
         user.isOnline = true
 
         if (checkPermissionOnJoin && !user.hasPermission(Permissions.VANISH)) {
-            user.sendMessage(language.vanish.noPermissionToKeepVanished, Placeholder.unparsed("permission", Permissions.VANISH.permission()))
+            user.sendMessageWithPrefix(language.vanish.noPermissionToKeepVanished, Placeholder.unparsed("permission", Permissions.VANISH.permission()))
             user.appear(vanishJoinOptions)
             launch {
                 user.delete()

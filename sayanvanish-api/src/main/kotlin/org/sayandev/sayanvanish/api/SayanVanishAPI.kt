@@ -26,10 +26,10 @@ object SayanVanishAPI : VanishAPI {
         return cacheService
     }
 
-    fun initialize() {
+    fun initialize(enableMessaging: Boolean = true) {
         runBlocking {
             database.initialize().await()
-            messagingService.initialize().await()
+            messagingService.initialize(enableMessaging).await()
             cacheService.fetchData()
 
             for (user in database.getVanishUsers().await().filter { user -> user.serverId == Platform.get().serverId }) {
@@ -37,6 +37,12 @@ object SayanVanishAPI : VanishAPI {
                 user.saveAndSync()
             }
             database.purgeUsers(Platform.get().serverId)
+        }
+    }
+
+    fun reloadMessaging(enableMessaging: Boolean) {
+        runBlocking {
+            messagingService.reload(enableMessaging).await()
         }
     }
 
@@ -48,7 +54,7 @@ object SayanVanishAPI : VanishAPI {
         if (!target.isVanished) return true
         if (user == null) return false
         if (user.uniqueId == target.uniqueId) return true
-        if (!user.hasPermission(Permission.VANISH)) return false
+        if (!user.hasPermission(Permissions.VANISH)) return false
         return user.vanishLevel >= target.vanishLevel
     }
 

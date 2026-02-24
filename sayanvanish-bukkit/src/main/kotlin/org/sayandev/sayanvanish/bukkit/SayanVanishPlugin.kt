@@ -31,9 +31,8 @@ class SayanVanishPlugin : JavaPlugin() {
             return
         }
 
-        SayanVanishAPI.initialize()
-
         Settings.reload()
+        SayanVanishAPI.initialize(Settings.get().general.proxyMode)
 
         if (Settings.get().general.proxyMode && storageConfig.method == DatabaseType.SQL && storageConfig.sql.method == SQLConfig.SQLMethod.SQLITE) {
             error("The `proxy-mode` is enabled, but the database method is set to SQLite, which might lead to unexpected results. If you're using proxies such as Velocity or BungeeCord, make sure to use a different database method, such as MySQL or Redis.")

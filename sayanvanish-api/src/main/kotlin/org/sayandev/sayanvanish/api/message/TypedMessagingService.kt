@@ -20,8 +20,34 @@ class TypedMessagingService: MessagingService {
 
     val messageTypes = mutableMapOf<MessagingTypes, MessagingService>()
     var messagingConnected: Boolean = true
+        private set
+    var enabled: Boolean = true
+        private set
 
-    suspend fun initialize(): Deferred<Boolean> {
+    private val noOpMessagingService = object : MessagingService {
+        override val dispatcher: AsyncDispatcher = this@TypedMessagingService.dispatcher
+
+        override suspend fun syncUser(user: User): Deferred<Boolean> {
+            return CompletableDeferred(true)
+        }
+
+        override suspend fun syncVanishUser(vanishUser: VanishUser): Deferred<Boolean> {
+            return CompletableDeferred(true)
+        }
+    }
+
+    suspend fun initialize(enabled: Boolean = true): Deferred<Boolean> {
+        this.enabled = enabled
+        if (!enabled) {
+            disable()
+            return CompletableDeferred(true)
+        }
+        if (messageTypes.isNotEmpty()) {
+            return CompletableDeferred(true)
+        }
+
+        messagingConnected = true
+
         PayloadWrapper.registerSerializer(User::class.java, User.JsonAdapter())
         PayloadWrapper.registerDeserializer(User::class.java, User.JsonAdapter())
         PayloadWrapper.registerDeserializer(VanishUser::class.java, VanishUser.JsonAdapter())
@@ -57,20 +83,43 @@ class TypedMessagingService: MessagingService {
         return CompletableDeferred(true)
     }
 
+    suspend fun reload(enabled: Boolean): Deferred<Boolean> {
+        if (!enabled) {
+            disable()
+            return CompletableDeferred(true)
+        }
+
+        if (this.enabled && messageTypes.isNotEmpty()) {
+            return CompletableDeferred(true)
+        }
+
+        disable()
+        return initialize(true)
+    }
+
     inline fun <reified M: MessagingService> getByType(): M {
         return messageTypes.values.filterIsInstance<M>().firstOrNull()
             ?: throw IllegalArgumentException("Received database with type `${M::class.simpleName}` but it isn't registered in the TransactionDatabase database types.")
     }
 
     override suspend fun syncUser(user: User): Deferred<Boolean> {
+        if (!enabled || messageTypes.isEmpty()) {
+            return CompletableDeferred(true)
+        }
         return messagingService(MessagingCategoryTypes.SYNC_USER).syncUser(user)
     }
 
     override suspend fun syncVanishUser(vanishUser: VanishUser): Deferred<Boolean> {
+        if (!enabled || messageTypes.isEmpty()) {
+            return CompletableDeferred(true)
+        }
         return messagingService(MessagingCategoryTypes.SYNC_VANISH_USER).syncVanishUser(vanishUser)
     }
 
     fun messagingService(type: MessagingType): MessagingService {
+        if (!enabled || messageTypes.isEmpty()) {
+            return noOpMessagingService
+        }
         return messageTypes[type] ?: let {
             val (fallbackMethod, fallbackService) = messageTypes.entries.first()
             Platform.get().logger.warning("Tried to get a messaging service of type $type, but it was not initialized. falling back to ${fallbackMethod} database method.")
@@ -92,5 +141,19 @@ class TypedMessagingService: MessagingService {
             Platform.get().logger.severe("- ${service.key.name} (${service.value::class.simpleName})")
         }
         Platform.get().logger.severe("Here's the full error trace:")
+    }
+
+    private suspend fun disable(): Deferred<Boolean> {
+        for ((_, messagingService) in messageTypes) {
+            when (messagingService) {
+                is RedisMessagingService -> messagingService.shutdown().await()
+                is WebSocketMessagingService -> messagingService.shutdown().await()
+            }
+        }
+
+        messageTypes.clear()
+        this.enabled = false
+        this.messagingConnected = true
+        return CompletableDeferred(true)
     }
 }

@@ -35,6 +35,12 @@ class WebSocketMessagingService(
         return syncVanishUserPublisher.sync(vanishUser)
     }
 
+    suspend fun shutdown(): Deferred<Boolean> {
+        syncUserPublisher.shutdown()
+        syncVanishUserPublisher.shutdown()
+        return CompletableDeferred(true)
+    }
+
     inner class SyncUserPublisher : WebSocketPublisher<User, Boolean>(
         MessageMeta.create(Platform.get().pluginName.lowercase(), MessagingCategoryTypes.SYNC_USER.id),
         WebSocketConnectionMeta(URI.create(config.uri), dispatcher),

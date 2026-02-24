@@ -15,7 +15,8 @@ import org.incendo.cloud.parser.standard.IntegerParser
 import org.incendo.cloud.parser.standard.StringParser
 import org.incendo.cloud.setting.ManagerSetting
 import org.incendo.cloud.suggestion.Suggestion
-import org.sayandev.sayanvanish.api.Permission
+import org.sayandev.sayanvanish.api.Permissions
+import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.command.FeatureParser
@@ -25,6 +26,7 @@ import org.sayandev.sayanvanish.api.feature.Features
 import org.sayandev.sayanvanish.api.feature.RegisteredFeatureHandler
 import org.sayandev.sayanvanish.api.storage.StorageConfig
 import org.sayandev.sayanvanish.api.storage.storageConfig
+import org.sayandev.sayanvanish.api.message.MessageConfig
 import org.sayandev.sayanvanish.api.utils.Paste
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrAddVanishUser
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrCreateVanishUser
@@ -39,7 +41,6 @@ import org.sayandev.sayanvanish.bukkit.utils.ServerUtils
 import org.sayandev.stickynote.bukkit.*
 import org.sayandev.stickynote.bukkit.command.BukkitCommand
 import org.sayandev.stickynote.bukkit.command.BukkitSender
-import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import org.sayandev.stickynote.core.utils.MilliCounter
 import java.io.File
 import java.util.concurrent.CompletableFuture
@@ -74,7 +75,7 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
             return
         }
 
-        if (target.isPresent && !sender.hasPermission(Permission.VANISH_OTHERS.permission())) {
+        if (target.isPresent && !sender.hasPermission(Permissions.VANISH_OTHERS.permission())) {
             sender.sendComponent(language.general.dontHavePermission)
             return
         }
@@ -83,8 +84,8 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
         launch {
             val user = player.getOrCreateVanishUser()
 
-            if (!user.hasPermission(Permission.VANISH)) {
-                user.sendMessage(language.vanish.dontHaveUsePermission, Placeholder.unparsed("permission", Permission.VANISH.permission()))
+            if (!user.hasPermission(Permissions.VANISH)) {
+                user.sendMessage(language.vanish.dontHaveUsePermission, Placeholder.unparsed("permission", Permissions.VANISH.permission()))
             }
 
             val options = VanishOptions.defaultOptions().apply {
@@ -188,7 +189,6 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
             literalWithPermission("reload")
             handler { context ->
                 val sender = context.sender().platformSender()
-                language = LanguageConfig.fromConfig() ?: LanguageConfig.defaultConfig()
                 Features.features.forEach { feature ->
                     feature.disable(true)
                     if (feature::class.java.isAssignableFrom(Listener::class.java)) {
@@ -197,9 +197,12 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
                 }
                 Features.features.clear()
                 Features.userFeatures.clear()
-                RegisteredFeatureHandler.process()
                 Settings.reload()
                 storageConfig = StorageConfig.fromConfig() ?: StorageConfig.defaultConfig()
+                MessageConfig.reload()
+                SayanVanishAPI.reloadMessaging(Settings.get().general.proxyMode)
+                language = LanguageConfig.fromConfig() ?: LanguageConfig.defaultConfig()
+                RegisteredFeatureHandler.process()
                 sender.sendComponent(language.general.reloaded)
             }
         }
@@ -264,7 +267,7 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
                 val targetArg = context.optional<Player>("player").getOrNull()
 
                 val sender = context.sender().platformSender()
-                if (targetArg != null && !sender.hasPermission(Permission.FEATURE_PLAYER_TOGGLE.permission())) {
+                if (targetArg != null && !sender.hasPermission(Permissions.FEATURE_PLAYER_TOGGLE.permission())) {
                     sender.sendComponent(language.feature.togglePlayerOther)
                     return@suspendingHandler
                 }

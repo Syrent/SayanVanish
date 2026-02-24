@@ -18,6 +18,7 @@ import org.sayandev.sayanvanish.bukkit.feature.features.FeatureGameMode
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureInventoryInspect
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureInvulnerability
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureLevel
+import org.sayandev.sayanvanish.bukkit.feature.features.FeatureRegisterPermissions
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureRideEntity
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureSilentContainer
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureState
@@ -96,6 +97,7 @@ class BukkitPlatform : Platform(
             subclass(FeatureRideEntity::class)
             subclass(FeatureSilentContainer::class)
             subclass(FeatureState::class)
+            subclass(FeatureRegisterPermissions::class)
             subclass(FeatureUpdate::class)
         }
         polymorphic(Feature::class) {

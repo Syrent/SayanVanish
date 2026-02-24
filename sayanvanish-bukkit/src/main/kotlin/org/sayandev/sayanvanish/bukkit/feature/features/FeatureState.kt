@@ -9,7 +9,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
-import org.sayandev.sayanvanish.api.Permission
+import org.sayandev.sayanvanish.api.Permissions
 import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.feature.Configurable
@@ -19,7 +19,6 @@ import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getCac
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.launch
-import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 
 @RegisteredFeature
 @Serializable
@@ -54,14 +53,14 @@ class FeatureState(
         val vanishJoinOptions = VanishOptions.Builder().sendMessage(false).notifyStatusChangeToOthers(false).isOnJoin(true).build()
 
         if (user == null) {
-            if (!player.hasPermission(Permission.VANISH.permission())) {
+            if (!player.hasPermission(Permissions.VANISH.permission())) {
                 return
             }
 
             val tempUser = player.getCachedOrCreateVanishUser()
             tempUser.isOnline = true
 
-            if (tempUser.hasPermission(Permission.VANISH_ON_JOIN) || vanishOnJoin) {
+            if (tempUser.hasPermission(Permissions.VANISH_ON_JOIN) || vanishOnJoin) {
                 tempUser.isVanished = true
                 launch {
                     tempUser.disappear(vanishJoinOptions)
@@ -76,8 +75,8 @@ class FeatureState(
 
         user.isOnline = true
 
-        if (checkPermissionOnJoin && !user.hasPermission(Permission.VANISH)) {
-            user.sendMessage(language.vanish.noPermissionToKeepVanished, Placeholder.unparsed("permission", Permission.VANISH.permission()))
+        if (checkPermissionOnJoin && !user.hasPermission(Permissions.VANISH)) {
+            user.sendMessage(language.vanish.noPermissionToKeepVanished, Placeholder.unparsed("permission", Permissions.VANISH.permission()))
             user.appear(vanishJoinOptions)
             launch {
                 user.delete()
@@ -85,7 +84,7 @@ class FeatureState(
             return
         }
 
-        if (user.hasPermission(Permission.VANISH_ON_JOIN) || (user.isVanished && remember) || vanishOnJoin) {
+        if (user.hasPermission(Permissions.VANISH_ON_JOIN) || (user.isVanished && remember) || vanishOnJoin) {
             user.isVanished = true
             user.disappear(vanishJoinOptions)
         }
@@ -118,7 +117,7 @@ class FeatureState(
             }
         }
 
-        if ((reappearOnQuit && user.isVanished) || (checkPermissionOnQuit && !user.hasPermission(Permission.VANISH))) {
+        if ((reappearOnQuit && user.isVanished) || (checkPermissionOnQuit && !user.hasPermission(Permissions.VANISH))) {
             user.appear(VanishOptions.Builder().isOnQuit(true).build())
         }
         user.isOnline = false

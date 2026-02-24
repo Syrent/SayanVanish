@@ -1,14 +1,13 @@
 package org.sayandev.sayanvanish.bukkit.feature.features
 
 import org.bukkit.event.EventHandler
-import org.sayandev.sayanvanish.api.Permission
+import org.sayandev.sayanvanish.api.Permissions
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserUnVanishEvent
 import org.sayandev.sayanvanish.bukkit.api.event.BukkitUserVanishEvent
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
-import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import kotlinx.serialization.Serializable
 import com.charleskorn.kaml.YamlComment
 import kotlinx.serialization.SerialName
@@ -29,7 +28,7 @@ class FeatureFly(
     private fun onVanish(event: BukkitUserVanishEvent) {
         val user = event.user
         if (!isActive(user)) return
-        if (user.hasPermission(Permission.FLY)) {
+        if (user.hasPermission(Permissions.FLY)) {
             user.player()?.allowFlight = true
             user.player()?.isFlying = true
         }
@@ -39,7 +38,7 @@ class FeatureFly(
     private fun onUnVanish(event: BukkitUserUnVanishEvent) {
         val user = event.user
         if (!isActive(user)) return
-        if (!user.hasPermission(Permission.FLY_KEEP_AFTER_REAPPEAR) && disableOnReappear) {
+        if (!user.hasPermission(Permissions.FLY_KEEP_AFTER_REAPPEAR) && disableOnReappear) {
             user.sendMessage(language.feature.flyDisabled)
             user.player()?.allowFlight = false
             user.player()?.isFlying = false

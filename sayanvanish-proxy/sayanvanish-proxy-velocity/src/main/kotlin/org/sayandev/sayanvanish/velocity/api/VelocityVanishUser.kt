@@ -1,8 +1,7 @@
 package org.sayandev.sayanvanish.velocity.api
 
 import com.velocitypowered.api.proxy.Player
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
-import org.sayandev.sayanvanish.api.Permission
+import org.sayandev.sayanvanish.api.Permissions
 import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.VanishUser
@@ -11,7 +10,6 @@ import org.sayandev.sayanvanish.proxy.config.Settings
 import org.sayandev.sayanvanish.velocity.VelocityPlatformAdapter
 import org.sayandev.sayanvanish.velocity.feature.features.hook.FeatureHookLuckPerms
 import org.sayandev.stickynote.velocity.StickyNote
-import org.sayandev.stickynote.velocity.utils.AdventureUtils.component
 import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
@@ -33,7 +31,7 @@ open class VelocityVanishUser(
                         luckPermsHook.getPermissions(uniqueId)
                             .filter { it.startsWith("sayanvanish.level.") }
                             .maxOfOrNull { it.substringAfter("sayanvanish.level.").toIntOrNull() ?: field }
-                            ?: if (hasPermission(Permission.VANISH)) 1 else {
+                            ?: if (hasPermission(Permissions.VANISH)) 1 else {
                                 if (isVanished) 1 else field
                             }
                     } else {

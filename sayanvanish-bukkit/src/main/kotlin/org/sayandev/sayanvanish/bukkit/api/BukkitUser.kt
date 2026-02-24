@@ -6,7 +6,9 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.Bukkit
 import org.bukkit.permissions.Permission
 import org.bukkit.permissions.PermissionDefault
+import org.sayandev.sayanvanish.api.Permissions
 import org.sayandev.sayanvanish.api.User
+import org.sayandev.sayanvanish.bukkit.utils.PermissionUtils.asBukkitPermissionDefault
 import org.sayandev.stickynote.bukkit.extension.sendComponent
 import org.sayandev.stickynote.bukkit.extension.sendComponentActionbar
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils
@@ -26,6 +28,10 @@ class BukkitUser(
 
     override fun hasPermission(permission: String): Boolean {
         return player()?.hasPermission(Permission(permission, PermissionDefault.FALSE)) == true
+    }
+
+    override fun hasPermission(permission: Permissions): Boolean {
+        return player()?.hasPermission(Permission(permission.permission(), permission.default.asBukkitPermissionDefault())) == true
     }
 
     override fun sendMessage(content: String, vararg placeholders: TagResolver) {

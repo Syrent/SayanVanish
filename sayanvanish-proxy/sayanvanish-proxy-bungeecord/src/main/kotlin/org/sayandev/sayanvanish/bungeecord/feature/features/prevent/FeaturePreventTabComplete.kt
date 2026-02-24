@@ -4,7 +4,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer
 import net.md_5.bungee.api.event.TabCompleteEvent
 import net.md_5.bungee.event.EventHandler
 import net.md_5.bungee.event.EventPriority
-import org.sayandev.sayanvanish.api.Permission
+import org.sayandev.sayanvanish.api.Permissions
 import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.feature.Configurable
@@ -27,7 +27,7 @@ class FeaturePreventTabComplete(
         val user = VanishAPI.get().getDatabase().getUserCache(player.uniqueId) ?: player.generateAndSaveUser()
         if (!isActive(user)) return
         val vanishUsers = SayanVanishBungeeAPI.getDatabase().getCachedVanishUsers().values
-        if (!user.hasPermission(Permission.VANISH) || !checkVanishLevel) {
+        if (!user.hasPermission(Permissions.VANISH) || !checkVanishLevel) {
             event.suggestions
                 .removeIf { suggestion -> vanishUsers.map(VanishUser::username).contains(suggestion) }
             return

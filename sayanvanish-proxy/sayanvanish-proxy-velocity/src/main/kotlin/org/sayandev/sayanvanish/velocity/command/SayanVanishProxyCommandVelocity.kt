@@ -9,7 +9,7 @@ import org.incendo.cloud.kotlin.MutableCommandBuilder
 import org.incendo.cloud.parser.standard.StringParser
 import org.incendo.cloud.suggestion.Suggestion
 import org.incendo.cloud.velocity.parser.PlayerParser
-import org.sayandev.sayanvanish.api.Permission
+import org.sayandev.sayanvanish.api.Permissions
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.feature.Features
 import org.sayandev.sayanvanish.proxy.config.Settings
@@ -55,7 +55,7 @@ class SayanVanishProxyCommandVelocity : VelocityCommand(Settings.get().command.n
             return
         }
 
-        if (target.isPresent && !sender.hasPermission(Permission.VANISH_OTHERS.permission())) {
+        if (target.isPresent && !sender.hasPermission(Permissions.VANISH_OTHERS.permission())) {
             sender.sendComponent(language.general.dontHavePermission.component())
             return
         }
@@ -65,8 +65,8 @@ class SayanVanishProxyCommandVelocity : VelocityCommand(Settings.get().command.n
         launch {
             val user = player.getVanishUser() ?: player.generateVanishUser()
 
-            if (!user.hasPermission(Permission.VANISH)) {
-                user.sendMessage(language.general.dontHavePermission, Placeholder.unparsed("permission", Permission.VANISH.permission()))
+            if (!user.hasPermission(Permissions.VANISH)) {
+                user.sendMessage(language.general.dontHavePermission, Placeholder.unparsed("permission", Permissions.VANISH.permission()))
                 return@launch
             }
 

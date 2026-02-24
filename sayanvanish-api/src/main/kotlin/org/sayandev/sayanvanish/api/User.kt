@@ -62,14 +62,14 @@ interface User {
     }
 
     /**
-     * Checks if the user has the specified [Permission] object.
+     * Checks if the user has the specified [Permissions] object.
      *
-     * @param permission The [Permission] to check.
+     * @param permission The [Permissions] to check.
      * @return True if the user has the permission, false otherwise.
      * @since 1.0.0
      */
-    fun hasPermission(permission: Permission): Boolean {
-        return hasPermission(permission.permission())
+    fun hasPermission(permission: Permissions): Boolean {
+        return Platform.get().adapter.adapt(this).hasPermission(permission)
     }
 
     fun sendMessage(content: String, vararg placeholders: TagResolver) {

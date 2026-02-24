@@ -6,7 +6,7 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.permissions.PermissionDefault
-import org.sayandev.sayanvanish.api.Permission
+import org.sayandev.sayanvanish.api.Permissions
 import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.VanishUser
@@ -44,7 +44,7 @@ open class BukkitVanishUser(
                 player.effectivePermissions
                     .filter { it.permission.startsWith("sayanvanish.level.") }
                     .maxOfOrNull { it.permission.substringAfter("sayanvanish.level.").toIntOrNull() ?: field }
-                    ?: if (player.hasPermission(org.bukkit.permissions.Permission(Permission.VANISH.permission(), PermissionDefault.FALSE))) 1 else {
+                    ?: if (hasPermission(Permissions.VANISH)) 1 else {
                         if (isVanished) 1 else field
                     }
             } ?: field

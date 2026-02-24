@@ -10,7 +10,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
-import org.sayandev.sayanvanish.api.Permission
+import org.sayandev.sayanvanish.api.Permissions
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
@@ -61,7 +61,7 @@ class FeatureFakeMessage(
     private fun onJoin(event: PlayerJoinEvent) {
         val user = event.player.cachedVanishUser() ?: return
         if (!isActive(user)) return
-        if (!user.isVanished && !user.hasPermission(Permission.VANISH_ON_JOIN)) return
+        if (!user.isVanished && !user.hasPermission(Permissions.VANISH_ON_JOIN)) return
         if (disableJoinMessageIfVanished) {
             event.joinMessage = null
         }
@@ -81,7 +81,7 @@ class FeatureFakeMessage(
     private fun onJoinLast(event: PlayerJoinEvent) {
         val user = event.player.cachedVanishUser() ?: return
         if (!isActive(user)) return
-        if (!user.isVanished && !user.hasPermission(Permission.VANISH_ON_JOIN)) return
+        if (!user.isVanished && !user.hasPermission(Permissions.VANISH_ON_JOIN)) return
         if (disableJoinMessageIfVanished) {
             event.joinMessage = null
         }
@@ -105,7 +105,7 @@ class FeatureFakeMessage(
         if (sendFakeQuitMessage && !event.options.isOnJoin && !event.options.isOnQuit) {
             for (player in onlinePlayers) {
                 if (useLegacyFormatter) {
-                    AdventureUtils.audience.player(player).sendMessage(
+                    player.sendMessage(
                         LegacyComponentSerializer.legacyAmpersand().deserialize(
                             PlaceholderAPIHook.injectPlaceholders(user.offlinePlayer(), fakeQuitMessage)
                                 .replace("<player>", user.username)
@@ -126,7 +126,7 @@ class FeatureFakeMessage(
         if (sendFakeJoinMessage && !event.options.isOnJoin && !event.options.isOnQuit) {
             for (player in onlinePlayers) {
                 if (useLegacyFormatter) {
-                    AdventureUtils.audience.player(player).sendMessage(
+                    player.sendMessage(
                         LegacyComponentSerializer.legacyAmpersand().deserialize(
                             PlaceholderAPIHook.injectPlaceholders(user.offlinePlayer(), fakeJoinMessage)
                                 .replace("<player>", user.username)

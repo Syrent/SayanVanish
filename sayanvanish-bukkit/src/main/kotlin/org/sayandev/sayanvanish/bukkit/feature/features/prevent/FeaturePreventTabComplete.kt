@@ -4,15 +4,13 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.server.TabCompleteEvent
-import org.sayandev.sayanvanish.api.Permission
+import org.sayandev.sayanvanish.api.Permissions
 import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getCachedOrCreateVanishUser
-import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrCreateUser
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
 import kotlinx.serialization.Serializable
 import com.charleskorn.kaml.YamlComment
@@ -38,7 +36,7 @@ class FeaturePreventTabComplete(
         if (!isActive(user)) return
         val vanishedUsers = VanishAPI.get().getCacheService().getVanishUsers().getVanished()
         val completions = event.completions.toMutableSet()
-        if (!user.hasPermission(Permission.VANISH) || !checkVanishLevel) {
+        if (!user.hasPermission(Permissions.VANISH) || !checkVanishLevel) {
             event.completions = completions
                 .filter { completion -> !vanishedUsers.map(VanishUser::username).contains(completion) }
             return

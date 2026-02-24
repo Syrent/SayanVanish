@@ -38,6 +38,17 @@ class RedisMessagingService(
         return syncVanishUserPublisher.sync(vanishUser)
     }
 
+    suspend fun shutdown(): Deferred<Boolean> {
+        syncUserPublisher.shutdown()
+        syncVanishUserPublisher.shutdown()
+
+        if (connection.connected) {
+            connection.disconnect().await()
+        }
+
+        return CompletableDeferred(true)
+    }
+
     inner class SyncUserPublisher : RedisPublisher<User, Boolean>(
         MessageMeta.create(Platform.get().pluginName.lowercase(), MessagingCategoryTypes.SYNC_USER.id),
         RedisConnectionMeta(connection.redis, dispatcher),

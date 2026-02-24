@@ -3,13 +3,11 @@ package org.sayandev.sayanvanish.velocity.feature.features.prevent
 import com.velocitypowered.api.event.PostOrder
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.player.TabCompleteEvent
-import org.sayandev.sayanvanish.api.Permission
+import org.sayandev.sayanvanish.api.Permissions
 import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
-import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
-import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI.Companion.getOrCreateUser
 import org.sayandev.sayanvanish.velocity.feature.ListenedFeature
 import kotlinx.serialization.Serializable
 import com.charleskorn.kaml.YamlComment
@@ -36,7 +34,7 @@ class FeaturePreventTabComplete(
         val user = player.getCachedOrCreateVanishUser()
         if (!isActive(user)) return
         val vanishedUsers = VanishAPI.get().getCacheService().getVanishUsers().values.filter { it.isVanished }
-        if (!user.hasPermission(Permission.VANISH) || !checkVanishLevel) {
+        if (!user.hasPermission(Permissions.VANISH) || !checkVanishLevel) {
             event.suggestions
                 .removeIf { suggestion -> vanishedUsers.map(VanishUser::username).contains(suggestion) }
             return

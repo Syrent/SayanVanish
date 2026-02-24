@@ -37,5 +37,10 @@ class MessageConfig(
         fun fromConfig(): MessageConfig? {
             return Config.fromFile<MessageConfig>(File(Platform.get().rootDirectory, FILE_NAME))
         }
+
+        @JvmStatic
+        fun reload() {
+            messageConfig = fromConfig() ?: defaultConfig()
+        }
     }
 }

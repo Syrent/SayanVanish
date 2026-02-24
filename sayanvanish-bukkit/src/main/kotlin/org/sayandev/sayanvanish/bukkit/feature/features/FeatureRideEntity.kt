@@ -9,7 +9,7 @@ import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.bukkit.api.BukkitVanishUser.Companion.bukkitAdapt
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
-import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendComponent
+import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendPrefixComponent
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
@@ -35,7 +35,7 @@ class FeatureRideEntity(
             .mapNotNull { it.bukkitAdapt().player() }
         for (vanishedPassenger in vanishedPassengers) {
             vanishedPassenger.leaveVehicle()
-            vanishedPassenger.sendComponent(exitMessage)
+            vanishedPassenger.sendPrefixComponent(exitMessage)
         }
     }
 

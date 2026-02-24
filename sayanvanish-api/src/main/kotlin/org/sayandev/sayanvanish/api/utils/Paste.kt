@@ -43,7 +43,13 @@ class Paste(
                     response.append(inputLine)
                 }
 
-                val key = JsonParser.parseString(response.toString()).asJsonObject.get("key").asString
+                val body = response.toString()
+                val key =
+                    runCatching {
+                        JsonParser.parseString(body).asJsonObject.get("key").asString
+                    }.getOrNull()
+                        ?: connection.getHeaderField("Location")
+                        ?: throw IOException("Paste API did not return a key.")
 
                 deferred.complete(key)
                 return deferred
@@ -58,7 +64,11 @@ class Paste(
         private const val POST_URL = "$BASE_URL/post"
         private const val USER_AGENT: String = "Mozilla/5.0"
 
-        const val PASTE_URL = "https://pastes.dev"
+        const val PASTE_URL = BASE_URL
+
+        fun url(key: String): String {
+            return "$PASTE_URL/$key"
+        }
     }
 
 }

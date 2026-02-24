@@ -76,6 +76,10 @@ interface User {
         Platform.get().adapter.adapt(this).sendMessage(content, *placeholders)
     }
 
+    fun sendMessageWithPrefix(content: String, vararg placeholders: TagResolver) {
+        Platform.get().adapter.adapt(this).sendMessageWithPrefix(content, *placeholders)
+    }
+
     fun sendActionbar(content: String, vararg placeholders: TagResolver) {
         Platform.get().adapter.adapt(this).sendActionbar(content, *placeholders)
     }

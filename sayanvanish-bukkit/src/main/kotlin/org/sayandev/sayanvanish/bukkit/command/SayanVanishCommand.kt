@@ -36,11 +36,12 @@ import org.sayandev.sayanvanish.bukkit.config.Settings
 import org.sayandev.sayanvanish.bukkit.config.language
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureLevel
 import org.sayandev.sayanvanish.bukkit.feature.features.FeatureUpdate
-import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendComponent
+import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendPrefixComponent
 import org.sayandev.sayanvanish.bukkit.utils.ServerUtils
 import org.sayandev.stickynote.bukkit.*
 import org.sayandev.stickynote.bukkit.command.BukkitCommand
 import org.sayandev.stickynote.bukkit.command.BukkitSender
+import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 import org.sayandev.stickynote.core.utils.MilliCounter
 import java.io.File
 import java.util.concurrent.CompletableFuture
@@ -71,12 +72,12 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
         val state = context.flags().get<String>("state")
 
         if (!target.isPresent && sender !is Player) {
-            sender.sendComponent(language.general.haveToProvidePlayer)
+            sender.sendPrefixComponent(language.general.haveToProvidePlayer)
             return
         }
 
         if (target.isPresent && !sender.hasPermission(Permissions.VANISH_OTHERS.permission())) {
-            sender.sendComponent(language.general.dontHavePermission)
+            sender.sendPrefixComponent(language.general.dontHavePermission)
             return
         }
 
@@ -85,7 +86,7 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
             val user = player.getOrCreateVanishUser()
 
             if (!user.hasPermission(Permissions.VANISH)) {
-                user.sendMessage(language.vanish.dontHaveUsePermission, Placeholder.unparsed("permission", Permissions.VANISH.permission()))
+                sender.sendPrefixComponent(language.vanish.dontHaveUsePermission.component(Placeholder.unparsed("permission", Permissions.VANISH.permission())))
             }
 
             val options = VanishOptions.defaultOptions().apply {
@@ -96,7 +97,7 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
 
             if (target.isPresent) {
                 if (!player.isOnline) {
-                    sender.sendComponent(language.vanish.offlineOnVanish, Placeholder.unparsed("player", player.name ?: "N/A"), Placeholder.parsed("state", user.stateText()))
+                    sender.sendPrefixComponent(language.vanish.offlineOnVanish, Placeholder.unparsed("player", player.name ?: "N/A"), Placeholder.parsed("state", user.stateText()))
                     options.sendMessage = false
                 }
             }
@@ -118,7 +119,7 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
             handler { context ->
                 val sender = context.sender().platformSender()
                 if (!forceUpdateConfirm) {
-                    sender.sendComponent(language.general.confirmUpdate)
+                    sender.sendPrefixComponent(language.general.confirmUpdate)
                     forceUpdateConfirm = true
                     runSync({
                         forceUpdateConfirm = false
@@ -126,7 +127,7 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
                     return@handler
                 }
 
-                sender.sendComponent(language.general.updating)
+                sender.sendPrefixComponent(language.general.updating)
 
                 runAsync {
                     val updateFeature = Features.getFeature<FeatureUpdate>()
@@ -135,12 +136,12 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
 
                         runSync {
                             if (isSuccessful) {
-                                sender.sendComponent(language.general.updated, Placeholder.unparsed("version", updateFeature.latestVersion()))
+                                sender.sendPrefixComponent(language.general.updated, Placeholder.unparsed("version", updateFeature.latestVersion()))
                                 if (Settings.get().general.proxyMode && updateFeature.willAffectProxy()) {
-                                    sender.sendComponent(language.general.proxyUpdateWarning)
+                                    sender.sendPrefixComponent(language.general.proxyUpdateWarning)
                                 }
                             } else {
-                                sender.sendComponent(language.general.updateFailed)
+                                sender.sendPrefixComponent(language.general.updateFailed)
                             }
                         }
                     }
@@ -152,34 +153,39 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
             literalWithPermission("paste")
             suspendingHandler { context ->
                 val sender = context.sender().platformSender()
-                sender.sendComponent(language.paste.generating)
+                sender.sendPrefixComponent(language.paste.generating)
                 async {
-                    val blockedWords = listOf(
-                        "host",
-                        "port",
-                        "database",
-                        "username",
-                        "password",
-                    )
-                    val databaseKey = Paste("yaml", StorageConfig.file.readLines().filter { !blockedWords.any { blockedWord -> it.contains(blockedWord) } }).post().await()
-                    val settingsKey = Paste("yaml", Settings.settingsFile.readLines()).post().await()
-                    val latestLogFile = File(File(pluginDirectory.parentFile.parentFile, "logs"), "latest.log")
-                    if (latestLogFile.exists()) {
-                        val logKey = Paste("log", latestLogFile.readLines()).post().await()
+                    try {
+                        val blockedWords = listOf(
+                            "host",
+                            "port",
+                            "database",
+                            "username",
+                            "password",
+                        )
+                        val databaseKey = Paste("yaml", StorageConfig.file.readLines().filter { !blockedWords.any { blockedWord -> it.contains(blockedWord) } }).post().await()
+                        val settingsKey = Paste("yaml", Settings.settingsFile.readLines()).post().await()
+                        val latestLogFile = File(File(pluginDirectory.parentFile.parentFile, "logs"), "latest.log")
+                        if (latestLogFile.exists()) {
+                            val logKey = Paste("log", latestLogFile.readLines()).post().await()
 
-                        val featurePastes = mutableMapOf<String, List<String>>()
-                        for (feature in Features.features()) {
-                            featurePastes[feature.id] = File(Feature.directory(feature.category), "${feature.id}.yml").readLines()
+                            val featurePastes = mutableMapOf<String, List<String>>()
+                            for (feature in Features.features()) {
+                                featurePastes[feature.id] = File(Feature.directory(feature.category), "${feature.id}.yml").readLines()
+                            }
+                            val featureKey = Paste("yaml", featurePastes.map { "${it.key}:\n     ${it.value.joinToString("\n     ")}" }).post().await()
+                            generateMainPaste(sender, mapOf(
+                                "storage.yml" to Paste.url(databaseKey),
+                                "settings.yml" to Paste.url(settingsKey),
+                                "latest.log" to Paste.url(logKey),
+                                "features" to Paste.url(featureKey)
+                            ))
+                        } else {
+                            generateMainPaste(sender, mapOf("settings.yml" to Paste.url(settingsKey)))
                         }
-                        val featureKey = Paste("yaml", featurePastes.map { "${it.key}:\n     ${it.value.joinToString("\n     ")}" }).post().await()
-                        generateMainPaste(sender, mapOf(
-                            "storage.yml" to "${Paste.PASTE_URL}/$databaseKey",
-                            "settings.yml" to "${Paste.PASTE_URL}/$settingsKey",
-                            "latest.log" to "${Paste.PASTE_URL}/$logKey",
-                            "features" to "${Paste.PASTE_URL}/$featureKey"
-                        ))
-                    } else {
-                        generateMainPaste(sender, mapOf("settings.yml" to "${Paste.PASTE_URL}/$settingsKey"))
+                    } catch (exception: Exception) {
+                        exception.printStackTrace()
+                        sender.sendPrefixComponent(language.paste.failedToGenerate)
                     }
                 }
             }
@@ -203,7 +209,7 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
                 SayanVanishAPI.reloadMessaging(Settings.get().general.proxyMode)
                 language = LanguageConfig.fromConfig() ?: LanguageConfig.defaultConfig()
                 RegisteredFeatureHandler.process()
-                sender.sendComponent(language.general.reloaded)
+                sender.sendPrefixComponent(language.general.reloaded)
             }
         }
 
@@ -220,7 +226,7 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
                 val target = context.get<OfflinePlayer>("player")
 
                 if (!target.hasPlayedBefore()) {
-                    sender.sendComponent(language.general.playerNotFound)
+                    sender.sendPrefixComponent(language.general.playerNotFound)
                     return@suspendingHandler
                 }
 
@@ -229,11 +235,11 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
                 user.saveAndSync()
 
                 if (Features.getFeature<FeatureLevel>().levelMethod == FeatureLevel.LevelMethod.PERMISSION) {
-                    sender.sendComponent(language.feature.permissionLevelMethodWarning, Placeholder.unparsed("method", FeatureLevel.LevelMethod.PERMISSION.name), Placeholder.unparsed("methods", FeatureLevel.LevelMethod.entries.joinToString(", ") { it.name }))
+                    sender.sendPrefixComponent(language.feature.permissionLevelMethodWarning, Placeholder.unparsed("method", FeatureLevel.LevelMethod.PERMISSION.name), Placeholder.unparsed("methods", FeatureLevel.LevelMethod.entries.joinToString(", ") { it.name }))
                     return@suspendingHandler
                 }
 
-                sender.sendComponent(language.vanish.levelSet, Placeholder.unparsed("level", user.vanishLevel.toString()), Placeholder.unparsed("player", user.username))
+                sender.sendPrefixComponent(language.vanish.levelSet, Placeholder.unparsed("level", user.vanishLevel.toString()), Placeholder.unparsed("player", user.username))
             }
         }
 
@@ -245,13 +251,13 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
                 val target = context.get<OfflinePlayer>("player")
 
                 if (!target.hasPlayedBefore()) {
-                    sender.sendComponent(language.general.playerNotFound)
+                    sender.sendPrefixComponent(language.general.playerNotFound)
                     return@suspendingHandler
                 }
 
                 val user = target.getOrCreateVanishUser()
 
-                sender.sendComponent(language.vanish.levelGet, Placeholder.unparsed("player", target.name ?: "N/A"), Placeholder.unparsed("level", user.vanishLevel.toString()))
+                sender.sendPrefixComponent(language.vanish.levelGet, Placeholder.unparsed("player", target.name ?: "N/A"), Placeholder.unparsed("level", user.vanishLevel.toString()))
             }
         }
 
@@ -268,12 +274,12 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
 
                 val sender = context.sender().platformSender()
                 if (targetArg != null && !sender.hasPermission(Permissions.FEATURE_PLAYER_TOGGLE.permission())) {
-                    sender.sendComponent(language.feature.togglePlayerOther)
+                    sender.sendPrefixComponent(language.feature.togglePlayerOther)
                     return@suspendingHandler
                 }
 
                 if (targetArg == null && sender !is Player) {
-                    sender.sendComponent(language.general.haveToProvidePlayer)
+                    sender.sendPrefixComponent(language.general.haveToProvidePlayer)
                     return@suspendingHandler
                 }
 
@@ -282,14 +288,14 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
                 val feature = context.get<Feature>("feature")
 
                 val user = target.user().await() ?: let {
-                    sender.sendComponent(language.general.userNotFound, Placeholder.unparsed("player", target.name))
+                    sender.sendPrefixComponent(language.general.userNotFound, Placeholder.unparsed("player", target.name))
                     return@suspendingHandler
                 }
 
                 val userFeature = Features.userFeatures(user).find { it.id == feature.id }!!
 
                 userFeature.toggle()
-                sender.sendComponent(language.feature.togglePlayer, Placeholder.unparsed("player", target.name), Placeholder.unparsed("feature", feature.id), Placeholder.unparsed("state", if (userFeature.enabled) "enabled" else "disabled"))
+                sender.sendPrefixComponent(language.feature.togglePlayer, Placeholder.unparsed("player", target.name), Placeholder.unparsed("feature", feature.id), Placeholder.unparsed("state", if (userFeature.enabled) "enabled" else "disabled"))
                 return@suspendingHandler
             }
         }
@@ -302,13 +308,13 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
                 val feature = context.get<Feature>("feature")
 
                 if (!feature.enabled) {
-                    sender.sendComponent(language.feature.alreadyDisabled, Placeholder.unparsed("feature", feature.id))
+                    sender.sendPrefixComponent(language.feature.alreadyDisabled, Placeholder.unparsed("feature", feature.id))
                     return@handler
                 }
 
                 feature.disable()
                 feature.save()
-                sender.sendComponent(language.feature.disabled, Placeholder.unparsed("feature", feature.id))
+                sender.sendPrefixComponent(language.feature.disabled, Placeholder.unparsed("feature", feature.id))
             }
         }
 
@@ -319,13 +325,13 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
                 val feature = context.get<Feature>("feature")
 
                 if (feature.enabled) {
-                    sender.sendComponent(language.feature.alreadyEnabled, Placeholder.unparsed("feature", feature.id))
+                    sender.sendPrefixComponent(language.feature.alreadyEnabled, Placeholder.unparsed("feature", feature.id))
                     return@handler
                 }
 
                 feature.enable()
                 feature.save()
-                sender.sendComponent(language.feature.enabled, Placeholder.unparsed("feature", feature.id))
+                sender.sendPrefixComponent(language.feature.enabled, Placeholder.unparsed("feature", feature.id))
             }
         }
 
@@ -343,7 +349,7 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
                 }
                 freshFeature.save()
                 Features.features.add(freshFeature)
-                sender.sendComponent(language.feature.reset, Placeholder.unparsed("feature", feature.id))
+                sender.sendPrefixComponent(language.feature.reset, Placeholder.unparsed("feature", feature.id))
             }
         }
 
@@ -353,7 +359,7 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
                 val sender = context.sender().platformSender()
                 val feature = context.get<Feature>("feature")
 
-                sender.sendComponent(language.feature.status, Placeholder.unparsed("feature", feature.id), Placeholder.parsed("status", if (feature.enabled) "<green>Enabled</green>" else "<red>Disabled</red>"))
+                sender.sendPrefixComponent(language.feature.status, Placeholder.unparsed("feature", feature.id), Placeholder.parsed("status", if (feature.enabled) "<green>Enabled</green>" else "<red>Disabled</red>"))
             }
         }
 
@@ -371,7 +377,7 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
 
                 val field = feature.javaClass.getDeclaredField(context.get("option"))
                 if (field == null) {
-                    sender.sendComponent(language.feature.invalidOption, Placeholder.unparsed("options", feature::class.memberProperties.joinToString(", ") { it.name }))
+                    sender.sendPrefixComponent(language.feature.invalidOption, Placeholder.unparsed("options", feature::class.memberProperties.joinToString(", ") { it.name }))
                     return@handler
                 }
 
@@ -395,12 +401,12 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
                         }
                     }
                 } catch (_: Exception) {
-                    sender.sendComponent(language.feature.invalidValue, Placeholder.unparsed("values", field.type.simpleName ?: "N/A"))
+                    sender.sendPrefixComponent(language.feature.invalidValue, Placeholder.unparsed("values", field.type.simpleName ?: "N/A"))
                     return@handler
                 }
                 feature.save()
 
-                sender.sendComponent(language.feature.updated, Placeholder.unparsed("feature", feature.id), Placeholder.unparsed("option", field.name), Placeholder.unparsed("state", value))
+                sender.sendPrefixComponent(language.feature.updated, Placeholder.unparsed("feature", feature.id), Placeholder.unparsed("option", field.name), Placeholder.unparsed("state", value))
             }
         }
 
@@ -413,9 +419,9 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
             suspendingHandler { context ->
                 // TODO: better implementation?
                 val sender = context.sender().platformSender()
-                sender.sendComponent("<gray>Fetching vanish users from database...")
-                sender.sendComponent("<green>Database Vanished Users: <yellow>${VanishAPI.get().getDatabase().getVanishUsers().await().filter { it.isVanished }.map { it.username }}")
-                sender.sendComponent("<green>Cache Vanished Users: <yellow>${VanishAPI.get().getCacheService().getVanishUsers().values.map { it.username }}")
+                sender.sendPrefixComponent("<gray>Fetching vanish users from database...")
+                sender.sendPrefixComponent("<green>Database Vanished Users: <yellow>${VanishAPI.get().getDatabase().getVanishUsers().await().filter { it.isVanished }.map { it.username }}")
+                sender.sendPrefixComponent("<green>Cache Vanished Users: <yellow>${VanishAPI.get().getCacheService().getVanishUsers().values.map { it.username }}")
             }
         }
 
@@ -450,10 +456,10 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
                             }
                         }
 
-                    sender.sendComponent("<gold>[${index + 1}] <gray>$userProperties")
+                    sender.sendPrefixComponent("<gold>[${index + 1}] <gray>$userProperties")
                 }
                 counter.stop()
-                sender.sendComponent("<gray>Took <green>${counter.get()}ms</green>")
+                sender.sendPrefixComponent("<gray>Took <green>${counter.get()}ms</green>")
             }
         }
 
@@ -470,12 +476,12 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
                 repeat(context.get("tries")) {
                     val counter = MilliCounter()
                     counter.start()
-                    sender.sendComponent("<gold>[${it + 1}] <gray>Trying <green>${amount} Get Users</green> from data storage")
+                    sender.sendPrefixComponent("<gold>[${it + 1}] <gray>Trying <green>${amount} Get Users</green> from data storage")
                     repeat(amount) {
                         database.getVanishUsers().await()
                     }
                     counter.stop()
-                    sender.sendComponent("<gold>[${it + 1}] <gray>Took <green>${counter.get()}ms</green>")
+                    sender.sendPrefixComponent("<gold>[${it + 1}] <gray>Took <green>${counter.get()}ms</green>")
                 }
             }
         }
@@ -490,6 +496,13 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
                 this.putAll(otherKeys)
             }
         ))).post().await()
-        sender.sendComponent(language.paste.use.replace("<key>", key ?: "N/A"))
+        val pasteKey = key.ifEmpty { "N/A" }
+        val pasteUrl = if (pasteKey == "N/A") "N/A" else Paste.url(pasteKey)
+        sender.sendPrefixComponent(
+            language.paste.use
+                .replace("https://pastes.dev/<key>", pasteUrl)
+                .replace("<url>", pasteUrl)
+                .replace("<key>", pasteKey)
+        )
     }
 }

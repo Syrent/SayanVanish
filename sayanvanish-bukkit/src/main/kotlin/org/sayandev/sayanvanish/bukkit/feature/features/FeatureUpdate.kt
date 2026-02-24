@@ -14,7 +14,7 @@ import org.sayandev.sayanvanish.bukkit.SayanVanishPlugin
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.cachedUser
 import org.sayandev.sayanvanish.bukkit.config.Settings
 import org.sayandev.sayanvanish.bukkit.feature.ListenedFeature
-import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendComponent
+import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendPrefixComponent
 import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendRawComponent
 import org.sayandev.stickynote.bukkit.*
 import kotlinx.serialization.Serializable
@@ -126,7 +126,7 @@ data class FeatureUpdate(
         if (!isNewerVersionAvailable(notifyForSnapshotBuilds)) return
 
         for (line in updateRequestContent) {
-            sender.sendComponent(line.replace("<version>", latestVersion()))
+            sender.sendPrefixComponent(line.replace("<version>", latestVersion()))
         }
     }
 

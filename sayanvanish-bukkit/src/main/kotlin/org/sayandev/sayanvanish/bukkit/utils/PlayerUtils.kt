@@ -1,5 +1,6 @@
 package org.sayandev.sayanvanish.bukkit.utils
 
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -11,7 +12,7 @@ import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 
 object PlayerUtils {
 
-    fun CommandSender.sendComponent(content: String, vararg placeholders: TagResolver) {
+    fun CommandSender.sendPrefixComponent(content: String, vararg placeholders: TagResolver) {
         if (content.isBlank()) return
 
         val prefix = language.general.prefix
@@ -22,6 +23,17 @@ object PlayerUtils {
         }
 
         AdventureUtils.sendComponent(this, PlaceholderAPIHook.injectPlaceholders(this as? Player, finalContent).component(*placeholders))
+    }
+
+    fun CommandSender.sendPrefixComponent(content: Component) {
+        val prefix = language.general.prefix
+        val finalContent = if (Settings.get().general.includePrefixInMessages) {
+            prefix.component().append(content)
+        } else {
+            content
+        }
+
+        AdventureUtils.sendComponent(this, finalContent)
     }
 
     fun CommandSender.sendRawComponent(content: String, vararg placeholders: TagResolver) {

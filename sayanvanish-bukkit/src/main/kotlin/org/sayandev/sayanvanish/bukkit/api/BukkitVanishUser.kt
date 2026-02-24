@@ -74,7 +74,7 @@ open class BukkitVanishUser(
         // order matters - don't move hideUser before vanish (hideUser have a canSee check for vanish state notify)
         hideForAll()
 
-        sendMessage(language.vanish.vanishStateUpdate, Placeholder.parsed("state", stateText()))
+        sendMessageWithPrefix(language.vanish.vanishStateUpdate, Placeholder.parsed("state", stateText()))
     }
 
     override fun appear(options: VanishOptions) {
@@ -94,7 +94,7 @@ open class BukkitVanishUser(
 
         super.appear(options)
 
-        sendMessage(language.vanish.vanishStateUpdate, Placeholder.parsed("state", stateText()))
+        sendMessageWithPrefix(language.vanish.vanishStateUpdate, Placeholder.parsed("state", stateText()))
     }
 
     override fun hasPermission(permission: String): Boolean {

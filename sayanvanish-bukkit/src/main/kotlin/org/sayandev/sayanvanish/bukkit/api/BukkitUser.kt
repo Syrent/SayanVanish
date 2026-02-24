@@ -9,6 +9,7 @@ import org.bukkit.permissions.PermissionDefault
 import org.sayandev.sayanvanish.api.Permissions
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.bukkit.utils.PermissionUtils.asBukkitPermissionDefault
+import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendPrefixComponent
 import org.sayandev.stickynote.bukkit.extension.sendComponent
 import org.sayandev.stickynote.bukkit.extension.sendComponentActionbar
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils
@@ -44,6 +45,10 @@ class BukkitUser(
 
     fun sendMessage(content: Component) {
         player()?.sendComponent(content)
+    }
+
+    override fun sendMessageWithPrefix(content: String, vararg placeholders: TagResolver) {
+        player()?.sendPrefixComponent(content, *placeholders)
     }
 
     fun sendActionbar(content: Component) {

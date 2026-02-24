@@ -7,6 +7,7 @@ import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.utils.DownloadUtils
 import org.sayandev.sayanvanish.api.utils.HangarUtils
+import org.sayandev.sayanvanish.api.utils.VersionUtils
 import org.sayandev.sayanvanish.api.utils.VersionInfo
 import org.sayandev.sayanvanish.velocity.api.VelocityVanishUser.Companion.getVanishUser
 import org.sayandev.sayanvanish.velocity.feature.ListenedFeature
@@ -95,7 +96,7 @@ class FeatureUpdate(
             val user = player.getVanishUser() ?: return@launch
             if (!isActive(user)) return@launch
             if (player.hasPermission(notifyBypassPermission)) return@launch
-            if (notifyOnJoin && latestRelease != null && latestSnapshot != null) {
+            if (notifyOnJoin && latestComparableVersion(notifyForSnapshotBuilds) != null) {
                 sendUpdateNotification(player)
 
                 if (autoUpdateNotification) {
@@ -133,52 +134,56 @@ class FeatureUpdate(
     }
 
     private fun isNewerVersionAvailable(includeSnapshots: Boolean): Boolean {
-        if (latestRelease == null || latestSnapshot == null) return false
-        val currentVersion = plugin.container.description.version.get() // eg: 1.1.0-SNAPSHOT-build.121-ed8f2b2
-        val commitHash = currentVersion.split("-").last()
-        val snapshotVersion = latestSnapshot!!.name // eg: 1.1.0-SNAPSHOT-build.121
-        if (currentVersion.removeSuffix("-${commitHash}") == snapshotVersion) return false
-        if (includeSnapshots) {
-            val releaseVersion = latestRelease!!.name // eg: 1.0.1-263f0bf
-            if (currentVersion.removeSuffix("-${commitHash}") == releaseVersion) return false
-        }
-        return true
+        val target = latestComparableVersion(includeSnapshots) ?: return false
+        val currentVersion = plugin.container.description.version.get()
+        return VersionUtils.isNewer(target.name, currentVersion)
     }
 
     fun updatePlugin(): CompletableFuture<Boolean> {
         val future = CompletableFuture<Boolean>()
-        if (!isNewerVersionAvailable(notifyForSnapshotBuilds)) future.complete(false)
+        if (!isNewerVersionAvailable(notifyForSnapshotBuilds)) {
+            future.complete(false)
+            return future
+        }
 
         val pluginFile = SayanVanishPlugin.getInstance().pluginFile() ?: let {
             future.complete(false)
             return future
         }
 
-        if (plugin.container.description.version.get().contains("SNAPSHOT")) {
-            latestSnapshot?.let { snapshot ->
-                DownloadUtils.download(snapshot.downloads.VELOCITY!!.downloadUrl!!, pluginFile).whenComplete { result, error ->
-                    error?.printStackTrace()
-                    future.complete(result)
-                }
-            } ?: let {
-                future.complete(false)
-            }
-        } else {
-            latestRelease?.let { release ->
-                DownloadUtils.download(release.downloads.VELOCITY!!.downloadUrl!!, pluginFile).whenComplete { result, error ->
-                    error?.printStackTrace()
-                    future.complete(result)
-                }
-            } ?: let {
-                future.complete(false)
-            }
+        val targetVersion = latestComparableVersion(notifyForSnapshotBuilds)
+        if (targetVersion == null) {
+            future.complete(false)
+            return future
+        }
+        val downloadUrl = targetVersion.downloads.VELOCITY?.downloadUrl()
+        if (downloadUrl.isNullOrBlank()) {
+            future.complete(false)
+            return future
+        }
+
+        DownloadUtils.download(downloadUrl, pluginFile).whenComplete { result, error ->
+            error?.printStackTrace()
+            future.complete(result)
         }
 
         return future
     }
 
     fun latestVersion(): String {
-        return (if (notifyForSnapshotBuilds) latestSnapshot?.name else latestRelease?.name) ?: "N/A"
+        return latestComparableVersion(notifyForSnapshotBuilds)?.name ?: "N/A"
+    }
+
+    private fun latestComparableVersion(includeSnapshots: Boolean): VersionInfo? {
+        val candidates = buildList {
+            latestRelease?.let(::add)
+            if (includeSnapshots) {
+                latestSnapshot?.let(::add)
+            }
+        }
+        return candidates.maxWithOrNull { first, second ->
+            VersionUtils.compare(first.name, second.name)
+        }
     }
 
     private fun shortDescription(description: String?): String? {

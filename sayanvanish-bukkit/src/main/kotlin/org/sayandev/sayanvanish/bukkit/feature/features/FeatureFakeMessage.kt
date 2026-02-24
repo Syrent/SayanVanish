@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerJoinEvent
@@ -21,6 +22,7 @@ import org.sayandev.sayanvanish.bukkit.utils.PlayerUtils.sendRawComponent
 import org.sayandev.stickynote.bukkit.hook.PlaceholderAPIHook
 import org.sayandev.stickynote.bukkit.onlinePlayers
 import org.sayandev.stickynote.bukkit.utils.AdventureUtils
+import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
 
 @RegisteredFeature
 @Serializable
@@ -112,7 +114,7 @@ class FeatureFakeMessage(
                         )
                     )
                 } else {
-                    player.sendRawComponent(fakeQuitMessage, Placeholder.unparsed("player", user.username))
+                    player.sendRawComponent(PlaceholderAPIHook.injectPlaceholders(user.offlinePlayer(), fakeQuitMessage), Placeholder.unparsed("player", user.username))
                 }
             }
         }
@@ -133,7 +135,7 @@ class FeatureFakeMessage(
                         )
                     )
                 } else {
-                    player.sendRawComponent(fakeJoinMessage, Placeholder.unparsed("player", user.username))
+                    player.sendRawComponent(PlaceholderAPIHook.injectPlaceholders(user.offlinePlayer(), fakeJoinMessage), Placeholder.unparsed("player", user.username))
                 }
             }
         }

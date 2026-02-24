@@ -12,8 +12,6 @@ import org.sayandev.sayanvanish.api.feature.Feature.Companion.directory
 import org.spongepowered.configurate.serialize.TypeSerializerCollection
 import java.io.File
 
-public var storageConfig = StorageConfig.fromConfig() ?: StorageConfig.defaultConfig()
-
 @Serializable
 class StorageConfig(
     val transactionThreadCount: Int = 5,
@@ -44,7 +42,16 @@ class StorageConfig(
 
     companion object {
         private const val FILE_NAME = "storage.yml"
+        @JvmStatic
         val file = File(Platform.get().rootDirectory, FILE_NAME)
+
+        @Volatile
+        private var config: StorageConfig = fromConfig() ?: defaultConfig()
+
+        @JvmStatic
+        fun get(): StorageConfig {
+            return config
+        }
 
         @JvmStatic
         fun defaultConfig(): StorageConfig {
@@ -54,6 +61,17 @@ class StorageConfig(
         @JvmStatic
         fun fromConfig(): StorageConfig? {
             return Config.fromFile<StorageConfig>(File(Platform.get().rootDirectory, FILE_NAME))
+        }
+
+        @JvmStatic
+        fun reload(): StorageConfig {
+            config = fromConfig() ?: defaultConfig()
+            return config
+        }
+
+        @JvmStatic
+        fun set(config: StorageConfig) {
+            this.config = config
         }
     }
 }

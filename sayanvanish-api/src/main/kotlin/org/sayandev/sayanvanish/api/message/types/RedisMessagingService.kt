@@ -38,7 +38,7 @@ class RedisMessagingService(
         return syncVanishUserPublisher.sync(vanishUser)
     }
 
-    suspend fun shutdown(): Deferred<Boolean> {
+    override suspend fun shutdown(): Deferred<Boolean> {
         syncUserPublisher.shutdown()
         syncVanishUserPublisher.shutdown()
 

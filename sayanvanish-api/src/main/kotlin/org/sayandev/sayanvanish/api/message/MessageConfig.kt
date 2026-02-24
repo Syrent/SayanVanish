@@ -9,9 +9,6 @@ import com.charleskorn.kaml.YamlComment
 import org.sayandev.sayanvanish.api.feature.Feature.Companion.directory
 import java.io.File
 
-// TODO: use a singleton or something, i don't want global scope variables like this anymore
-public var messageConfig = MessageConfig.fromConfig() ?: MessageConfig.defaultConfig()
-
 @Serializable
 class MessageConfig(
     @YamlComment("Configuration for Redis database")
@@ -28,6 +25,14 @@ class MessageConfig(
     companion object {
         private const val FILE_NAME = "message.yml"
 
+        @Volatile
+        private var config: MessageConfig = fromConfig() ?: defaultConfig()
+
+        @JvmStatic
+        fun get(): MessageConfig {
+            return config
+        }
+
         @JvmStatic
         fun defaultConfig(): MessageConfig {
             return MessageConfig().also { it.save() }
@@ -40,7 +45,12 @@ class MessageConfig(
 
         @JvmStatic
         fun reload() {
-            messageConfig = fromConfig() ?: defaultConfig()
+            config = fromConfig() ?: defaultConfig()
+        }
+
+        @JvmStatic
+        fun set(config: MessageConfig) {
+            this.config = config
         }
     }
 }

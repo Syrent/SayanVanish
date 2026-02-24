@@ -5,7 +5,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
-import org.sayandev.sayanvanish.api.storage.storageConfig
+import org.sayandev.sayanvanish.api.storage.StorageConfig
 import java.io.File
 import java.util.*
 import java.util.concurrent.Executors
@@ -36,7 +36,7 @@ class SimulationTest {
                     APIPlatformAdapter()
                 )
             )
-            storageConfig.sql.threadCount = 1
+            StorageConfig.get().sql.threadCount = 1
             SayanVanishAPI.initialize()
         }
     }

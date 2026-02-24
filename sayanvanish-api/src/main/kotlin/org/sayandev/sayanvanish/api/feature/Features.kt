@@ -1,44 +1,83 @@
 package org.sayandev.sayanvanish.api.feature
 
 import org.sayandev.sayanvanish.api.User
+import org.sayandev.sayanvanish.api.VanishAPI
 import java.util.UUID
 
 object Features {
-    val features = mutableListOf<Feature>()
-    val userFeatures = mutableMapOf<UUID, List<Feature>>()
+    private fun registry(): FeatureRegistry {
+        return VanishAPI.get().getFeatureRegistry()
+    }
 
     @JvmStatic
-    inline fun <reified T> getFeature(): T {
-        return features.find { it is T } as T
+    inline fun <reified T : Feature> getFeature(): T {
+        return getFeature(T::class.java)
+    }
+
+    @JvmStatic
+    fun <T : Feature> getFeature(type: Class<T>): T {
+        return registry().findByType(type)
+            ?: throw IllegalArgumentException("Feature `${type.simpleName}` is not registered.")
     }
 
     @JvmStatic
     fun getFeatureById(id: String): Feature? {
-        return features.find { it.id.equals(id, ignoreCase = true) }
+        return registry().findById(id)
     }
 
     @JvmStatic
-    inline fun <reified T> getUserFeature(uniqueId: UUID): T {
-        return userFeatures[uniqueId] as T
+    fun addFeature(feature: Feature): Boolean {
+        return registry().add(feature)
     }
 
     @JvmStatic
-    inline fun <reified T> getUserFeature(user: User): T {
-        return getUserFeature(user.uniqueId)
+    fun removeFeature(feature: Feature): Boolean {
+        return registry().remove(feature)
     }
 
     @JvmStatic
-    fun addFeature(feature: Feature) {
-        features.add(feature)
+    fun removeFeature(id: String): Boolean {
+        return registry().remove(id)
+    }
+
+    @JvmStatic
+    fun clearFeatures() {
+        registry().clear()
     }
 
     @JvmStatic
     fun features(): List<Feature> {
-        return features
+        return registry().all()
     }
 
+    @JvmStatic
     fun userFeatures(user: User): List<Feature> {
-        return userFeatures.getOrPut(user.uniqueId) { features() }
+        return features().filter { registry().isEnabledForUser(user, it) }
+    }
+
+    @JvmStatic
+    fun isFeatureEnabled(user: User, feature: Feature): Boolean {
+        return registry().isEnabledForUser(user, feature)
+    }
+
+    @JvmStatic
+    fun setFeatureEnabled(user: User, feature: Feature, enabled: Boolean) {
+        registry().setEnabledForUser(user, feature, enabled)
+    }
+
+    @JvmStatic
+    fun resetUserFeatureState(uniqueId: UUID) {
+        registry().resetUser(uniqueId)
+    }
+
+    @JvmStatic
+    fun resetUserFeatureState(user: User) {
+        resetUserFeatureState(user.uniqueId)
+    }
+
+    @JvmStatic
+    fun resetAllUserFeatureStates() {
+        registry().resetUsers()
     }
 
 }

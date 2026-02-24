@@ -25,7 +25,6 @@ import org.sayandev.sayanvanish.api.feature.Feature
 import org.sayandev.sayanvanish.api.feature.Features
 import org.sayandev.sayanvanish.api.feature.RegisteredFeatureHandler
 import org.sayandev.sayanvanish.api.storage.StorageConfig
-import org.sayandev.sayanvanish.api.storage.storageConfig
 import org.sayandev.sayanvanish.api.message.MessageConfig
 import org.sayandev.sayanvanish.api.utils.Paste
 import org.sayandev.sayanvanish.bukkit.api.SayanVanishBukkitAPI.Companion.getOrAddVanishUser
@@ -195,16 +194,16 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
             literalWithPermission("reload")
             handler { context ->
                 val sender = context.sender().platformSender()
-                Features.features.forEach { feature ->
+                Features.features().forEach { feature ->
                     feature.disable(true)
                     if (feature::class.java.isAssignableFrom(Listener::class.java)) {
                         unregisterListener(feature as Listener)
                     }
                 }
-                Features.features.clear()
-                Features.userFeatures.clear()
+                Features.clearFeatures()
+                Features.resetAllUserFeatureStates()
                 Settings.reload()
-                storageConfig = StorageConfig.fromConfig() ?: StorageConfig.defaultConfig()
+                StorageConfig.reload()
                 MessageConfig.reload()
                 SayanVanishAPI.reloadMessaging(Settings.get().general.proxyMode)
                 language = LanguageConfig.fromConfig() ?: LanguageConfig.defaultConfig()
@@ -292,10 +291,9 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
                     return@suspendingHandler
                 }
 
-                val userFeature = Features.userFeatures(user).find { it.id == feature.id }!!
-
-                userFeature.toggle()
-                sender.sendPrefixComponent(language.feature.togglePlayer, Placeholder.unparsed("player", target.name), Placeholder.unparsed("feature", feature.id), Placeholder.unparsed("state", if (userFeature.enabled) "enabled" else "disabled"))
+                val currentlyEnabled = Features.isFeatureEnabled(user, feature)
+                Features.setFeatureEnabled(user, feature, !currentlyEnabled)
+                sender.sendPrefixComponent(language.feature.togglePlayer, Placeholder.unparsed("player", target.name), Placeholder.unparsed("feature", feature.id), Placeholder.unparsed("state", if (!currentlyEnabled) "enabled" else "disabled"))
                 return@suspendingHandler
             }
         }
@@ -342,13 +340,13 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
                 val feature = context.get<Feature>("feature")
 
                 feature.disable()
-                Features.features.remove(feature)
+                Features.removeFeature(feature)
                 val freshFeature = feature::class.java.getDeclaredConstructor().newInstance()
                 if (freshFeature.enabled) {
                     freshFeature.enable()
                 }
                 freshFeature.save()
-                Features.features.add(freshFeature)
+                Features.addFeature(freshFeature)
                 sender.sendPrefixComponent(language.feature.reset, Placeholder.unparsed("feature", feature.id))
             }
         }
@@ -491,7 +489,7 @@ class SayanVanishCommand : BukkitCommand(Settings.get().vanishCommand.name, *Set
     private suspend fun generateMainPaste(sender: CommandSender, otherKeys: Map<String, String>) {
         val key = Paste("json", listOf(ServerUtils.getServerData(
             mutableMapOf(
-                "database-type" to storageConfig.method.toString(),
+                "database-type" to StorageConfig.get().method.toString(),
             ).apply {
                 this.putAll(otherKeys)
             }

@@ -16,19 +16,19 @@ class TransactionDatabase: Database {
     override val dispatcher =
         AsyncDispatcher(
             "${Platform.get().pluginName.lowercase()}-transaction-thread",
-            storageConfig.transactionThreadCount,
+            StorageConfig.get().transactionThreadCount,
         )
 
     val databaseTypes = mutableMapOf<DatabaseType, Database>()
     var databaseConnected: Boolean = true
 
     override suspend fun initialize(): Deferred<Boolean> {
-        val transactionMethods = storageConfig.transactionTypes.map { it.type }.distinct()
+        val transactionMethods = StorageConfig.get().transactionTypes.map { it.type }.distinct()
         for (method in transactionMethods) {
             when (method) {
                 DatabaseType.SQL -> {
                     databaseTypes[DatabaseType.SQL] = try {
-                        SQLDatabase(storageConfig).also { sqlDatabase ->
+                        SQLDatabase(StorageConfig.get()).also { sqlDatabase ->
                             sqlDatabase.connect()
                             sqlDatabase.initialize()
                         }
@@ -40,7 +40,7 @@ class TransactionDatabase: Database {
                 }
                 DatabaseType.REDIS -> {
                     databaseTypes[DatabaseType.REDIS] = try {
-                        RedisDatabase(storageConfig).also { redisDatabase ->
+                        RedisDatabase(StorageConfig.get()).also { redisDatabase ->
                             redisDatabase.connect()
                             redisDatabase.initialize()
                         }

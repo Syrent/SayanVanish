@@ -15,7 +15,7 @@ class TypedMessagingService: MessagingService {
     override val dispatcher =
         AsyncDispatcher(
             "${Platform.get().pluginName.lowercase()}-messaging-thread",
-            messageConfig.threadCount
+            MessageConfig.get().threadCount
         )
 
     val messageTypes = mutableMapOf<MessagingTypes, MessagingService>()
@@ -36,10 +36,10 @@ class TypedMessagingService: MessagingService {
         }
     }
 
-    suspend fun initialize(enabled: Boolean = true): Deferred<Boolean> {
+    override suspend fun initialize(enabled: Boolean): Deferred<Boolean> {
         this.enabled = enabled
         if (!enabled) {
-            disable()
+            shutdown()
             return CompletableDeferred(true)
         }
         if (messageTypes.isNotEmpty()) {
@@ -53,12 +53,12 @@ class TypedMessagingService: MessagingService {
         PayloadWrapper.registerDeserializer(VanishUser::class.java, VanishUser.JsonAdapter())
         PayloadWrapper.registerDeserializer(VanishUser::class.java, VanishUser.JsonAdapter())
 
-        val messagingTypes = messageConfig.categoryTypes.map { it.type }.distinct()
+        val messagingTypes = MessageConfig.get().categoryTypes.map { it.type }.distinct()
         for (method in messagingTypes) {
             when {
                 method == MessagingTypes.REDIS -> {
                     messageTypes[MessagingTypes.REDIS] = try {
-                        RedisMessagingService(messageConfig.redis, dispatcher).also { redisMessaging ->
+                        RedisMessagingService(MessageConfig.get().redis, dispatcher).also { redisMessaging ->
                             redisMessaging.connection.connect()
                             redisMessaging.connection.initialize()
                         }
@@ -70,7 +70,7 @@ class TypedMessagingService: MessagingService {
                 }
                 method == MessagingTypes.WEBSOCKET -> {
                     messageTypes[MessagingTypes.WEBSOCKET] = try {
-                        WebSocketMessagingService(messageConfig.webSocketConfig, dispatcher)
+                        WebSocketMessagingService(MessageConfig.get().webSocketConfig, dispatcher)
                     } catch (e: Exception) {
                         messagingConnected = false
                         logMessagingConnectionError()
@@ -83,9 +83,9 @@ class TypedMessagingService: MessagingService {
         return CompletableDeferred(true)
     }
 
-    suspend fun reload(enabled: Boolean): Deferred<Boolean> {
+    override suspend fun reload(enabled: Boolean): Deferred<Boolean> {
         if (!enabled) {
-            disable()
+            shutdown()
             return CompletableDeferred(true)
         }
 
@@ -93,7 +93,7 @@ class TypedMessagingService: MessagingService {
             return CompletableDeferred(true)
         }
 
-        disable()
+        shutdown()
         return initialize(true)
     }
 
@@ -143,11 +143,12 @@ class TypedMessagingService: MessagingService {
         Platform.get().logger.severe("Here's the full error trace:")
     }
 
-    private suspend fun disable(): Deferred<Boolean> {
+    override suspend fun shutdown(): Deferred<Boolean> {
         for ((_, messagingService) in messageTypes) {
             when (messagingService) {
                 is RedisMessagingService -> messagingService.shutdown().await()
                 is WebSocketMessagingService -> messagingService.shutdown().await()
+                else -> messagingService.shutdown().await()
             }
         }
 

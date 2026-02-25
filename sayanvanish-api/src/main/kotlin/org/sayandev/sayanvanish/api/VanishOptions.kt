@@ -1,5 +1,8 @@
 package org.sayandev.sayanvanish.api
 
+import org.jetbrains.exposed.sql.ReferenceOption
+import org.sayandev.sayanvanish.api.storage.PlatformTable
+
 data class VanishOptions(
     var sendMessage: Boolean = true,
     var notifyStatusChangeToOthers: Boolean = true,
@@ -7,6 +10,21 @@ data class VanishOptions(
     var isOnJoin: Boolean = false,
     var isOnQuit: Boolean = false,
 ) {
+
+    object Schema : PlatformTable("vanish_user_options") {
+        val uniqueId = reference(
+            "unique_id",
+            VanishUser.Schema.uniqueId,
+            onDelete = ReferenceOption.CASCADE
+        ).uniqueIndex()
+        val sendMessage = bool("send_message").default(true)
+        val notifyStatusChangeToOthers = bool("notify_status_change_to_others").default(true)
+        val notifyJoinQuitVanished = bool("notify_join_quit_vanished").default(true)
+        val isOnJoin = bool("is_on_join").default(false)
+        val isOnQuit = bool("is_on_quit").default(false)
+
+        override val primaryKey = PrimaryKey(uniqueId)
+    }
 
     class Builder {
         private var sendMessage = true
@@ -41,7 +59,7 @@ data class VanishOptions(
         }
 
         fun build(): VanishOptions {
-            return VanishOptions(sendMessage, notifyStatusChangeToOthers, notifyJoinQuitVanished, isOnJoin)
+            return VanishOptions(sendMessage, notifyStatusChangeToOthers, notifyJoinQuitVanished, isOnJoin, isOnQuit)
         }
     }
 

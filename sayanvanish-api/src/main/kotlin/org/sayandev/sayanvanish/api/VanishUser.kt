@@ -151,7 +151,6 @@ interface VanishUser : User {
         val uniqueId = reference("unique_id", User.Schema.uniqueId).uniqueIndex()
         val isVanished = bool("is_vanished").default(false)
         val vanishLevel = integer("vanish_level").default(0)
-        val currentOptions = text("current_options")
 
         override val primaryKey = PrimaryKey(uniqueId)
     }

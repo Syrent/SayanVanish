@@ -3,6 +3,7 @@ package org.sayandev.sayanvanish.api.storage.sql
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.awaitAll
+import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
@@ -20,7 +21,6 @@ import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.storage.Database
 import org.sayandev.sayanvanish.api.storage.StorageConfig
-import org.sayandev.sayanvanish.api.utils.Gson
 import org.sayandev.stickynote.core.coroutine.dispatcher.AsyncDispatcher
 import org.sayandev.stickynote.core.utils.CoroutineUtils
 import java.util.*
@@ -42,6 +42,7 @@ class SQLDatabase(
     val tables = listOf(
         User.Schema,
         VanishUser.Schema,
+        VanishOptions.Schema,
     )
 
     lateinit var database: ExposedDatabase
@@ -86,7 +87,7 @@ class SQLDatabase(
 
     override suspend fun getVanishUser(uniqueId: UUID): Deferred<VanishUser?> {
         return async {
-            (VanishUser.Schema innerJoin User.Schema)
+            ((VanishUser.Schema innerJoin User.Schema) innerJoin VanishOptions.Schema)
                 .selectAll()
                 .firstOrNull { it[VanishUser.Schema.uniqueId] == uniqueId }
                 ?.let { result ->
@@ -97,10 +98,7 @@ class SQLDatabase(
                         result[VanishUser.Schema.isVanished],
                         result[User.Schema.isOnline],
                         result[VanishUser.Schema.vanishLevel],
-                        Gson.get().fromJson(
-                            result[VanishUser.Schema.currentOptions],
-                            VanishOptions::class.java
-                        )
+                        optionsFromResult(result)
                     )
                 }
                 ?.adapt()
@@ -109,7 +107,7 @@ class SQLDatabase(
 
     override suspend fun getVanishUsers(): Deferred<List<VanishUser>> {
         return async {
-            (VanishUser.Schema innerJoin User.Schema)
+            ((VanishUser.Schema innerJoin User.Schema) innerJoin VanishOptions.Schema)
                 .selectAll()
                 .map { result ->
                     // TODO: maybe add a fromResult method to VanishUser and User?
@@ -119,7 +117,8 @@ class SQLDatabase(
                         result[User.Schema.serverId],
                         result[VanishUser.Schema.isVanished],
                         result[User.Schema.isOnline],
-                        result[VanishUser.Schema.vanishLevel]
+                        result[VanishUser.Schema.vanishLevel],
+                        optionsFromResult(result)
                     ).adapt()
                 }
         }
@@ -164,8 +163,8 @@ class SQLDatabase(
                 row[uniqueId] = vanishUser.uniqueId
                 row[isVanished] = vanishUser.isVanished
                 row[vanishLevel] = vanishUser.vanishLevel
-                row[currentOptions] = Gson.get().toJson(vanishUser.currentOptions)
-            }.insertedCount == 1
+            }
+            upsertOptions(vanishUser.uniqueId, vanishUser.currentOptions)
         }
     }
 
@@ -198,6 +197,8 @@ class SQLDatabase(
 
     override suspend fun removeVanishUser(uniqueId: UUID): Deferred<Boolean> {
         return async {
+            VanishOptions.Schema
+                .deleteWhere { VanishOptions.Schema.uniqueId eq uniqueId }
             VanishUser.Schema
                 .deleteWhere { VanishUser.Schema.uniqueId eq uniqueId }
             true
@@ -219,8 +220,8 @@ class SQLDatabase(
                 row[uniqueId] = vanishUser.uniqueId
                 row[isVanished] = vanishUser.isVanished
                 row[vanishLevel] = vanishUser.vanishLevel
-                row[currentOptions] = Gson.get().toJson(vanishUser.currentOptions)
-            }.insertedCount == 1
+            }
+            upsertOptions(vanishUser.uniqueId, vanishUser.currentOptions)
         }
     }
 
@@ -242,7 +243,7 @@ class SQLDatabase(
 
     override suspend fun purgeUsers(): Deferred<Boolean> {
         return async {
-            VanishUser.Schema.deleteAll() + User.Schema.deleteAll() > 0
+            VanishOptions.Schema.deleteAll() + VanishUser.Schema.deleteAll() + User.Schema.deleteAll() > 0
         }
     }
 
@@ -254,11 +255,37 @@ class SQLDatabase(
                 .map { it[User.Schema.uniqueId] }
 
             if (userIds.isNotEmpty()) {
-                (VanishUser.Schema.deleteWhere { uniqueId inList userIds } + User.Schema.deleteWhere { uniqueId inList userIds }) > 0
+                (
+                    VanishOptions.Schema.deleteWhere { VanishOptions.Schema.uniqueId inList userIds } +
+                        VanishUser.Schema.deleteWhere { VanishUser.Schema.uniqueId inList userIds } +
+                        User.Schema.deleteWhere { User.Schema.uniqueId inList userIds }
+                    ) > 0
             } else {
                 true
             }
         }
+    }
+
+    private fun Transaction.optionsFromResult(result: ResultRow): VanishOptions {
+        return VanishOptions(
+            sendMessage = result[VanishOptions.Schema.sendMessage],
+            notifyStatusChangeToOthers = result[VanishOptions.Schema.notifyStatusChangeToOthers],
+            notifyJoinQuitVanished = result[VanishOptions.Schema.notifyJoinQuitVanished],
+            isOnJoin = result[VanishOptions.Schema.isOnJoin],
+            isOnQuit = result[VanishOptions.Schema.isOnQuit],
+        )
+    }
+
+    private fun Transaction.upsertOptions(uniqueId: UUID, options: VanishOptions): Boolean {
+        VanishOptions.Schema.upsert { row ->
+            row[VanishOptions.Schema.uniqueId] = uniqueId
+            row[VanishOptions.Schema.sendMessage] = options.sendMessage
+            row[VanishOptions.Schema.notifyStatusChangeToOthers] = options.notifyStatusChangeToOthers
+            row[VanishOptions.Schema.notifyJoinQuitVanished] = options.notifyJoinQuitVanished
+            row[VanishOptions.Schema.isOnJoin] = options.isOnJoin
+            row[VanishOptions.Schema.isOnQuit] = options.isOnQuit
+        }
+        return true
     }
 
     fun <T> async(statement: suspend Transaction.() -> T): Deferred<T> {

@@ -2,7 +2,6 @@ package org.sayandev.sayanvanish.api.message.types
 
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Deferred
-import org.jetbrains.exposed.sql.Except
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishAPI
@@ -24,6 +23,14 @@ class WebSocketMessagingService(
     val config: WebSocketConfig,
     override val dispatcher: AsyncDispatcher
 ) : MessagingService {
+
+    val connectionMeta = WebSocketConnectionMeta(
+        uri = URI.create(config.uri),
+        dispatcher = dispatcher,
+        autoHostOnPort = config.autoHostOnPort,
+        hostWhenAutoHosting = config.hostWhenAutoHosting
+    )
+
     val syncUserPublisher = SyncUserPublisher().apply { this.register() }
     val syncVanishUserPublisher = SyncVanishUserPublisher().apply { this.register() }
 
@@ -43,7 +50,7 @@ class WebSocketMessagingService(
 
     inner class SyncUserPublisher : WebSocketPublisher<User, Boolean>(
         MessageMeta.create(Platform.get().pluginName.lowercase(), MessagingCategoryTypes.SYNC_USER.id),
-        WebSocketConnectionMeta(URI.create(config.uri), dispatcher),
+        connectionMeta,
         Platform.get().logger
     ) {
         override fun handle(payload: User): Boolean? {
@@ -72,7 +79,7 @@ class WebSocketMessagingService(
 
     inner class SyncVanishUserPublisher : WebSocketPublisher<VanishUser, Boolean>(
         MessageMeta.create(Platform.get().pluginName.lowercase(), MessagingCategoryTypes.SYNC_VANISH_USER.id),
-        WebSocketConnectionMeta(URI.create(config.uri), dispatcher),
+        connectionMeta,
         Platform.get().logger
     ) {
         override fun handle(payload: VanishUser): Boolean? {

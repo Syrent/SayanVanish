@@ -93,8 +93,8 @@ paper {
     author = findProperty("author")!! as String
     defaultPermission = BukkitPluginDescription.Permission.Default.FALSE
 
-    loader = "${rootProject.group}.${findProperty("slug")!! as String}.bukkit.${rootProject.name}Loader"
-    main = "${rootProject.group}.${findProperty("slug")!! as String}.bukkit.${rootProject.name}Plugin"
+    loader = "${rootProject.group}.${findProperty("slug")!! as String}.paper.${rootProject.name}Loader"
+    main = "${rootProject.group}.${findProperty("slug")!! as String}.paper.${rootProject.name}Plugin"
 
     foliaSupported = true
 

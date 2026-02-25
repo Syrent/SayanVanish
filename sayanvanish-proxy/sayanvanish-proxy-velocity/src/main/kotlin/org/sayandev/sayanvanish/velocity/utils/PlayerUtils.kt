@@ -31,6 +31,30 @@ object PlayerUtils {
         })
     }
 
+    fun CommandSource.sendPrefixComponent(content: String, vararg placeholders: TagResolver) {
+        if (content.isBlank()) return
+
+        val prefix = language.general.prefix
+        val finalContent = if (Settings.get().general.includePrefixInMessages) {
+            prefix + content
+        } else {
+            content
+        }
+
+        this.sendComponent(finalContent.component(*placeholders))
+    }
+
+    fun CommandSource.sendPrefixComponent(content: Component) {
+        val prefix = language.general.prefix
+        val finalContent = if (Settings.get().general.includePrefixInMessages) {
+            prefix.component().append(content)
+        } else {
+            content
+        }
+
+        this.sendComponent( finalContent)
+    }
+
     fun CommandSource.sendRawComponent(content: String, vararg placeholders: TagResolver) {
         this.sendMessage(content.component(*placeholders))
     }

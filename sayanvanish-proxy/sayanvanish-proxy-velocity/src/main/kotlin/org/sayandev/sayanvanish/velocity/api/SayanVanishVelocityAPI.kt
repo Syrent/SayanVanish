@@ -2,11 +2,13 @@ package org.sayandev.sayanvanish.velocity.api
 
 import com.velocitypowered.api.proxy.Player
 import kotlinx.coroutines.Deferred
+import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.VanishUser
-import org.sayandev.sayanvanish.proxy.config.Settings
+import org.sayandev.stickynote.velocity.StickyNote
 import java.util.*
+import kotlin.jvm.optionals.getOrNull
 
 class SayanVanishVelocityAPI {
     companion object {
@@ -37,9 +39,11 @@ class SayanVanishVelocityAPI {
 
         @JvmSynthetic
         suspend fun Player.getOrCreateUser(): User {
-            return VanishAPI.get().getDatabase().getVanishUser(this.uniqueId).await() ?: VanishUser.Generic(
+            return VanishAPI.get().getDatabase().getUser(this.uniqueId).await() ?: User.Generic(
                 this.uniqueId,
-                this.username
+                this.username,
+                true,
+                StickyNote.getPlayer(this.uniqueId)?.currentServer?.getOrNull()?.serverInfo?.name ?: Platform.get().serverId
             )
         }
 
@@ -61,7 +65,7 @@ class SayanVanishVelocityAPI {
                 this.uniqueId,
                 this.username,
                 false,
-                Settings.get().general.serverId
+                Platform.get().serverId
             )
         }
 
@@ -74,7 +78,8 @@ class SayanVanishVelocityAPI {
         suspend fun Player.getOrCreateVanishUser(): VanishUser {
             return VanishAPI.get().getDatabase().getVanishUser(this.uniqueId).await() ?: VanishUser.Generic(
                 this.uniqueId,
-                this.username
+                this.username,
+                Platform.get().serverId
             )
         }
 
@@ -97,6 +102,7 @@ class SayanVanishVelocityAPI {
             return VanishAPI.get().getCacheService().getVanishUsers().getVanishUser(this.uniqueId) ?: VanishUser.Generic(
                 this.uniqueId,
                 this.username,
+                Platform.get().serverId
             )
         }
     }

@@ -50,7 +50,7 @@ class TypedMessagingService: MessagingService {
 
         PayloadWrapper.registerSerializer(User::class.java, User.JsonAdapter())
         PayloadWrapper.registerDeserializer(User::class.java, User.JsonAdapter())
-        PayloadWrapper.registerDeserializer(VanishUser::class.java, VanishUser.JsonAdapter())
+        PayloadWrapper.registerSerializer(VanishUser::class.java, VanishUser.JsonAdapter())
         PayloadWrapper.registerDeserializer(VanishUser::class.java, VanishUser.JsonAdapter())
 
         val messagingTypes = MessageConfig.get().categoryTypes.map { it.type }.distinct()

@@ -1,12 +1,12 @@
 package org.sayandev.sayanvanish.velocity.api
 
 import com.velocitypowered.api.proxy.Player
+import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.sayanvanish.api.Permissions
 import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.feature.Features
-import org.sayandev.sayanvanish.proxy.config.Settings
 import org.sayandev.sayanvanish.velocity.VelocityPlatformAdapter
 import org.sayandev.sayanvanish.velocity.feature.features.hook.FeatureHookLuckPerms
 import org.sayandev.stickynote.velocity.StickyNote
@@ -18,9 +18,8 @@ open class VelocityVanishUser(
     override var username: String
 ) : VanishUser {
 
-    override var serverId: String
-        get() = player()?.currentServer?.getOrNull()?.serverInfo?.name ?: Settings.get().general.serverId
-        set(_) {}
+    override var serverId: String = Platform.get().serverId
+        get() = player()?.currentServer?.getOrNull()?.serverInfo?.name ?: field
     override var currentOptions = VanishOptions.defaultOptions()
     override var isVanished = false
     override var isOnline: Boolean = player() != null

@@ -9,6 +9,7 @@ import org.sayandev.sayanvanish.api.storage.Database
 import org.sayandev.sayanvanish.api.storage.StorageConfig
 import org.sayandev.sayanvanish.api.utils.Gson
 import org.sayandev.stickynote.core.coroutine.dispatcher.AsyncDispatcher
+import redis.clients.jedis.Jedis
 import redis.clients.jedis.JedisPool
 import java.util.*
 
@@ -92,7 +93,17 @@ class RedisDatabase(
     override suspend fun saveVanishUser(user: VanishUser): Deferred<Boolean> {
         return async {
             redis.resource.use {
-                it.hset("vanish_users", user.uniqueId.toString(), Gson.get().toJson(user)) != 0L
+                val resolvedServerId = resolveServerId(it, user.uniqueId, runCatching { user.serverId }.getOrNull())
+                val payload = VanishUser.Generic(
+                    uniqueId = user.uniqueId,
+                    username = user.username,
+                    serverId = resolvedServerId,
+                    isVanished = user.isVanished,
+                    isOnline = user.isOnline,
+                    vanishLevel = user.vanishLevel,
+                    currentOptions = user.currentOptions
+                )
+                it.hset("vanish_users", user.uniqueId.toString(), Gson.get().toJson(payload)) != 0L
             }
         }
     }
@@ -108,7 +119,14 @@ class RedisDatabase(
     override suspend fun saveUser(user: User): Deferred<Boolean> {
         return async {
             redis.resource.use {
-                it.hset("users", user.uniqueId.toString(), Gson.get().toJson(user)) != 0L
+                val resolvedServerId = resolveServerId(it, user.uniqueId, runCatching { user.serverId }.getOrNull())
+                val payload = User.Generic(
+                    uniqueId = user.uniqueId,
+                    username = user.username,
+                    isOnline = user.isOnline,
+                    serverId = resolvedServerId
+                )
+                it.hset("users", user.uniqueId.toString(), Gson.get().toJson(payload)) != 0L
             }
         }
     }
@@ -177,6 +195,21 @@ class RedisDatabase(
         }
 
         return session.async(dispatcher, CoroutineStart.DEFAULT, block)
+    }
+
+    private fun resolveServerId(resource: Jedis, uniqueId: UUID, serverId: String?): String {
+        return serverId
+            ?: readServerId(resource, "users", uniqueId)
+            ?: readServerId(resource, "vanish_users", uniqueId)
+            ?: Platform.get().serverId
+    }
+
+    private fun readServerId(resource: Jedis, key: String, uniqueId: UUID): String? {
+        return resource.hget(key, uniqueId.toString())
+            ?.let { JsonParser.parseString(it).asJsonObject }
+            ?.let { json ->
+                if (json.has("serverId") && !json.get("serverId").isJsonNull) json.get("serverId").asString else null
+            }
     }
 
 }

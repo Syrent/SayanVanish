@@ -207,7 +207,10 @@ class SQLDatabase(
 
     override suspend fun removeUser(uniqueId: UUID): Deferred<Boolean> {
         return async {
-            removeVanishUser(uniqueId).await()
+            VanishOptions.Schema
+                .deleteWhere { VanishOptions.Schema.uniqueId eq uniqueId }
+            VanishUser.Schema
+                .deleteWhere { VanishUser.Schema.uniqueId eq uniqueId }
             User.Schema
                 .deleteWhere { User.Schema.uniqueId eq uniqueId }
             true

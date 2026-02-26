@@ -63,12 +63,14 @@ tasks {
     }
     withType(RunServer::class.java) {
         minecraftVersion("1.21.11")
+        pluginJars(shadowJar)
 
         downloadPlugins {
             hangar("ViaVersion", "5.6.1-SNAPSHOT+877")
             hangar("PlaceholderAPI", "2.11.7")
             modrinth("essentialsx", "2.21.2")
             modrinth("luckperms", "v5.5.17-bukkit")
+            modrinth("tab-bridge", "6.2.0")
 //            url("https://github.com/NEZNAMY/TAB/releases/download/5.4.0/TAB.v5.4.0.jar")
         }
         jvmArgs("-Dnet.kyori.adventure.text.warnWhenLegacyFormattingDetected=false")

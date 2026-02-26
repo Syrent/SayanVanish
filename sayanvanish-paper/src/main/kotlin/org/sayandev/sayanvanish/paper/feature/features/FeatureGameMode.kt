@@ -6,7 +6,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.player.PlayerGameModeChangeEvent
 import org.bukkit.event.player.PlayerToggleSneakEvent
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
-import org.sayandev.sayanvanish.paper.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
+import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.paper.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.StickyNote.runSync
 import org.sayandev.sayanvanish.paper.api.event.PaperUserUnVanishEvent

@@ -16,7 +16,7 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
-import org.sayandev.sayanvanish.paper.api.SayanVanishBukkitAPI.Companion.getCachedOrCreateVanishUser
+import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.getCachedOrCreateVanishUser
 import org.sayandev.sayanvanish.paper.feature.HookFeature
 import org.sayandev.stickynote.bukkit.warn
 import java.util.*

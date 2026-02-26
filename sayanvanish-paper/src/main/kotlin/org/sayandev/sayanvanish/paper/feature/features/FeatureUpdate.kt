@@ -12,7 +12,7 @@ import org.sayandev.sayanvanish.api.utils.HangarUtils
 import org.sayandev.sayanvanish.api.utils.VersionUtils
 import org.sayandev.sayanvanish.api.utils.VersionInfo
 import org.sayandev.sayanvanish.paper.SayanVanishPlugin
-import org.sayandev.sayanvanish.paper.api.SayanVanishBukkitAPI.Companion.cachedUser
+import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.cachedUser
 import org.sayandev.sayanvanish.paper.config.Settings
 import org.sayandev.sayanvanish.paper.feature.ListenedFeature
 import org.sayandev.sayanvanish.paper.utils.PlayerUtils.sendPrefixComponent

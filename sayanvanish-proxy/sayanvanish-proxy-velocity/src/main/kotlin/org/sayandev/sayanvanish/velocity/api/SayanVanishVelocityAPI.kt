@@ -39,11 +39,9 @@ class SayanVanishVelocityAPI {
 
         @JvmSynthetic
         suspend fun Player.getOrCreateUser(): User {
-            return VanishAPI.get().getDatabase().getUser(this.uniqueId).await() ?: User.Generic(
+            return VanishAPI.get().getDatabase().getUser(this.uniqueId).await() ?: VelocityVanishUser(
                 this.uniqueId,
                 this.username,
-                true,
-                StickyNote.getPlayer(this.uniqueId)?.currentServer?.getOrNull()?.serverInfo?.name ?: Platform.get().serverId
             )
         }
 
@@ -61,7 +59,7 @@ class SayanVanishVelocityAPI {
 
         @JvmSynthetic
         fun Player.getCachedOrCreateUser(): User {
-            return VanishAPI.get().getCacheService().getUsers().getUser(this.uniqueId) ?: User.Generic(
+            return VanishAPI.get().getCacheService().getUsers().getUser(this.uniqueId) ?: VelocityUser(
                 this.uniqueId,
                 this.username,
                 false,
@@ -76,10 +74,9 @@ class SayanVanishVelocityAPI {
 
         @JvmSynthetic
         suspend fun Player.getOrCreateVanishUser(): VanishUser {
-            return VanishAPI.get().getDatabase().getVanishUser(this.uniqueId).await() ?: VanishUser.Generic(
+            return VanishAPI.get().getDatabase().getVanishUser(this.uniqueId).await() ?: VelocityVanishUser(
                 this.uniqueId,
                 this.username,
-                Platform.get().serverId
             )
         }
 
@@ -99,10 +96,9 @@ class SayanVanishVelocityAPI {
 
         @JvmSynthetic
         fun Player.getCachedOrCreateVanishUser(): VanishUser {
-            return VanishAPI.get().getCacheService().getVanishUsers().getVanishUser(this.uniqueId) ?: VanishUser.Generic(
+            return VanishAPI.get().getCacheService().getVanishUsers().getVanishUser(this.uniqueId) ?: VelocityVanishUser(
                 this.uniqueId,
                 this.username,
-                Platform.get().serverId
             )
         }
     }

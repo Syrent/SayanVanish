@@ -15,7 +15,7 @@ import org.bukkit.event.player.PlayerTeleportEvent
 import org.bukkit.inventory.CraftingInventory
 import org.bukkit.util.Vector
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
-import org.sayandev.sayanvanish.paper.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
+import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.paper.api.event.PaperUserUnVanishEvent
 import org.sayandev.sayanvanish.paper.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.runSync

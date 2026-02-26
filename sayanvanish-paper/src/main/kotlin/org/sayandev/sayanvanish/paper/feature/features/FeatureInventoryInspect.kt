@@ -12,7 +12,7 @@ import org.bukkit.event.inventory.InventoryType
 import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
-import org.sayandev.sayanvanish.paper.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
+import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.paper.feature.ListenedFeature
 import org.sayandev.stickynote.bukkit.plugin
 import java.util.*

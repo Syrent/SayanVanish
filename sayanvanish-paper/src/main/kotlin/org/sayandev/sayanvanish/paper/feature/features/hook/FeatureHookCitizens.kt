@@ -9,7 +9,7 @@ import org.bukkit.event.Listener
 import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.paper.api.PaperVanishUser.Companion.bukkitAdapt
-import org.sayandev.sayanvanish.paper.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
+import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.paper.feature.HookFeature
 import org.sayandev.stickynote.bukkit.registerListener
 import kotlinx.serialization.Serializable

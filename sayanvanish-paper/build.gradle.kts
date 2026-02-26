@@ -69,7 +69,7 @@ tasks {
             hangar("PlaceholderAPI", "2.11.7")
             modrinth("essentialsx", "2.21.2")
             modrinth("luckperms", "v5.5.17-bukkit")
-            url("https://github.com/NEZNAMY/TAB/releases/download/5.4.0/TAB.v5.4.0.jar")
+//            url("https://github.com/NEZNAMY/TAB/releases/download/5.4.0/TAB.v5.4.0.jar")
         }
         jvmArgs("-Dnet.kyori.adventure.text.warnWhenLegacyFormattingDetected=false")
     }

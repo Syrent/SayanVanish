@@ -58,6 +58,10 @@ interface User {
      * @since 1.0.0
      */
     fun hasPermission(permission: String): Boolean {
+        if (this::class.java.isInterface) {
+            Platform.get().logger.warning("This platform does not support User#hasPermission(String)")
+            return false
+        }
         return Platform.get().adapter.adapt(this).hasPermission(permission)
     }
 
@@ -69,14 +73,26 @@ interface User {
      * @since 1.0.0
      */
     fun hasPermission(permission: Permissions): Boolean {
+        if (this::class.java.isInterface) {
+            Platform.get().logger.warning("This platform does not support User#hasPermission(Permission)")
+            return false
+        }
         return Platform.get().adapter.adapt(this).hasPermission(permission)
     }
 
     fun sendMessage(content: String, vararg placeholders: TagResolver) {
+        if (this::class.java.isInterface) {
+            Platform.get().logger.warning("This platform does not support User#sendMessage")
+            return
+        }
         Platform.get().adapter.adapt(this).sendMessage(content, *placeholders)
     }
 
     fun sendMessageWithPrefix(content: String, vararg placeholders: TagResolver) {
+        if (this::class.java.isInterface) {
+            Platform.get().logger.warning("This platform does not support User#sendMessageWithPrefix")
+            return
+        }
         Platform.get().adapter.adapt(this).sendMessageWithPrefix(content, *placeholders)
     }
 

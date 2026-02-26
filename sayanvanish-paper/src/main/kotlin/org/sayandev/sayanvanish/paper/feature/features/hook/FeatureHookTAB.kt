@@ -4,7 +4,7 @@ import me.neznamy.tab.api.TabPlayer
 import me.neznamy.tab.api.integration.VanishIntegration
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.paper.api.PaperVanishUser
-import org.sayandev.sayanvanish.paper.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
+import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.paper.feature.HookFeature
 import org.sayandev.stickynote.bukkit.plugin
 import kotlinx.serialization.Serializable

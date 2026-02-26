@@ -6,7 +6,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityChangeBlockEvent
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
-import org.sayandev.sayanvanish.paper.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
+import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.paper.feature.ListenedFeature
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient

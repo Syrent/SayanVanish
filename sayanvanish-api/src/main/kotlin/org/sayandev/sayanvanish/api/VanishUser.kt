@@ -26,25 +26,41 @@ interface VanishUser : User {
     fun stateText(isVanished: Boolean = this.isVanished) = if (isVanished) "<green>ON</green>" else "<red>OFF</red>"
 
     fun disappear(options: VanishOptions) {
-        isVanished = true
-        launch(VanishAPI.get().getDatabase().dispatcher) {
-            saveAndSync()
+        if (this::class.java.isInterface) {
+            Platform.get().logger.warning("This platform does not support VanishUser#disappear")
+            return
         }
+        Platform.get().adapter.adapt(this).disappear(options)
     }
 
     fun disappear() {
         disappear(VanishOptions.defaultOptions())
     }
 
-    fun appear(options: VanishOptions) {
-        isVanished = false
+    fun saveDisappear(options: VanishOptions) {
+        isVanished = true
         launch(VanishAPI.get().getDatabase().dispatcher) {
             saveAndSync()
         }
     }
 
+    fun appear(options: VanishOptions) {
+        if (this::class.java.isInterface) {
+            Platform.get().logger.warning("This platform does not support VanishUser#appear")
+            return
+        }
+        Platform.get().adapter.adapt(this).appear(options)
+    }
+
     fun appear() {
         appear(VanishOptions.defaultOptions())
+    }
+
+    fun saveAppear(options: VanishOptions) {
+        isVanished = false
+        launch(VanishAPI.get().getDatabase().dispatcher) {
+            saveAndSync()
+        }
     }
 
     suspend fun toggleVanish(options: VanishOptions) {

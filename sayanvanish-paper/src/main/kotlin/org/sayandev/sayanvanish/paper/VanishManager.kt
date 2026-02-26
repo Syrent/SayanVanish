@@ -7,8 +7,8 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.paper.api.PaperVanishUser.Companion.bukkitAdapt
-import org.sayandev.sayanvanish.paper.api.SayanVanishBukkitAPI.Companion.getCachedOrCreateUser
-import org.sayandev.sayanvanish.paper.api.SayanVanishBukkitAPI.Companion.getOrAddUser
+import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.getCachedOrCreateUser
+import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.getOrAddUser
 import org.sayandev.sayanvanish.paper.config.Settings
 import org.sayandev.stickynote.bukkit.launch
 import org.sayandev.stickynote.bukkit.registerListener

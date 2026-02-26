@@ -9,7 +9,7 @@ import net.kyori.adventure.text.minimessage.tag.Tag
 import org.bukkit.entity.Player
 import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
-import org.sayandev.sayanvanish.paper.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
+import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.paper.config.Settings
 import org.sayandev.sayanvanish.paper.config.language
 import org.sayandev.sayanvanish.paper.feature.HookFeature

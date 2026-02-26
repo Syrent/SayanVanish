@@ -7,7 +7,7 @@ import ch.andre601.advancedserverlist.api.objects.GenericPlayer
 import ch.andre601.advancedserverlist.api.objects.GenericServer
 import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.VanishAPI
-import org.sayandev.sayanvanish.paper.api.SayanVanishBukkitAPI.Companion.getCachedOrCreateVanishUser
+import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.getCachedOrCreateVanishUser
 import org.sayandev.sayanvanish.paper.config.language
 import org.sayandev.stickynote.bukkit.onlinePlayers
 

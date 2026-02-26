@@ -11,7 +11,7 @@ import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.VanishOptions
 import org.sayandev.sayanvanish.api.VanishUser
 import org.sayandev.sayanvanish.api.feature.Features
-import org.sayandev.sayanvanish.paper.api.SayanVanishBukkitAPI.Companion.getCachedOrCreateVanishUser
+import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.getCachedOrCreateVanishUser
 import org.sayandev.sayanvanish.paper.api.event.PaperUserUnVanishEvent
 import org.sayandev.sayanvanish.paper.api.event.PaperUserVanishEvent
 import org.sayandev.sayanvanish.paper.config.Settings
@@ -69,7 +69,7 @@ open class PaperVanishUser(
 
         player()?.setMetadata("vanished", FixedMetadataValue(plugin, true))
 
-        super.disappear(options)
+        super.saveDisappear(options)
 
         // order matters - don't move hideUser before vanish (hideUser have a canSee check for vanish state notify)
         hideForAll()
@@ -92,7 +92,7 @@ open class PaperVanishUser(
         player()?.removeMetadata("vanished", plugin)
         showUser()
 
-        super.appear(options)
+        super.saveAppear(options)
 
         sendMessageWithPrefix(language.vanish.vanishStateUpdate, Placeholder.parsed("state", stateText()))
     }

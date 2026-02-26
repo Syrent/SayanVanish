@@ -7,7 +7,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.paper.api.PaperVanishUser.Companion.bukkitAdapt
-import org.sayandev.sayanvanish.paper.api.SayanVanishBukkitAPI.Companion.cachedVanishUser
+import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.paper.feature.ListenedFeature
 import org.sayandev.sayanvanish.paper.utils.PlayerUtils.sendPrefixComponent
 import kotlinx.serialization.Serializable

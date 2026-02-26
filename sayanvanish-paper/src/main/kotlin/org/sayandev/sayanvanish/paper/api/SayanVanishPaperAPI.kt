@@ -8,7 +8,7 @@ import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.VanishUser
 import java.util.*
 
-class SayanVanishBukkitAPI {
+class SayanVanishPaperAPI {
     companion object {
         @JvmSynthetic
         suspend fun UUID.user(): Deferred<User?>  {

@@ -27,9 +27,9 @@ import org.sayandev.sayanvanish.api.feature.RegisteredFeatureHandler
 import org.sayandev.sayanvanish.api.storage.StorageConfig
 import org.sayandev.sayanvanish.api.message.MessageConfig
 import org.sayandev.sayanvanish.api.utils.Paste
-import org.sayandev.sayanvanish.paper.api.SayanVanishBukkitAPI.Companion.getOrAddVanishUser
-import org.sayandev.sayanvanish.paper.api.SayanVanishBukkitAPI.Companion.getOrCreateVanishUser
-import org.sayandev.sayanvanish.paper.api.SayanVanishBukkitAPI.Companion.user
+import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.getOrAddVanishUser
+import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.getOrCreateVanishUser
+import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.user
 import org.sayandev.sayanvanish.paper.config.LanguageConfig
 import org.sayandev.sayanvanish.paper.config.Settings
 import org.sayandev.sayanvanish.paper.config.language

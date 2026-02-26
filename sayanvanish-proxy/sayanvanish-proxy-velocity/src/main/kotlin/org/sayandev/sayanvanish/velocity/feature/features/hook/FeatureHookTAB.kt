@@ -12,6 +12,7 @@ import kotlinx.serialization.Serializable
 import com.charleskorn.kaml.YamlComment
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Transient
+import org.sayandev.sayanvanish.api.Platform
 
 
 @RegisteredFeature
@@ -21,7 +22,7 @@ class FeatureHookTAB : HookFeature() {
 
     @Transient override val id = "hook_tab"
     override var enabled: Boolean = true
-    override val plugin: String = "TAB"
+    override val plugin: String = "tab"
 
     override fun enable() {
         if (hasPlugin()) {
@@ -45,8 +46,8 @@ private class VanishIntegrationTAB(val feature: FeatureHookTAB): VanishIntegrati
 
     override fun canSee(viewer: TabPlayer, target: TabPlayer): Boolean {
         if (viewer.uniqueId == target.uniqueId) return true
-        val viewerUser = VanishAPI.get().getCacheService().getVanishUsers()[viewer.uniqueId] ?: VelocityVanishUser(viewer.uniqueId, viewer.name)
         val targetUser = VanishAPI.get().getCacheService().getVanishUsers()[target.uniqueId] ?: return true
+        val viewerUser = VanishAPI.get().getCacheService().getVanishUsers()[viewer.uniqueId] ?: VelocityVanishUser(viewer.uniqueId, viewer.name)
         return VanishAPI.get().canSee(viewerUser, targetUser)
     }
 }

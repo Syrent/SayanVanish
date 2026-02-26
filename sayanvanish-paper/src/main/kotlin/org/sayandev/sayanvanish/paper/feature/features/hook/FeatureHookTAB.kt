@@ -42,8 +42,8 @@ private class VanishIntegrationTAB(val feature: FeatureHookTAB): VanishIntegrati
 
     override fun canSee(viewer: TabPlayer, target: TabPlayer): Boolean {
         if (viewer.uniqueId == target.uniqueId) return true
-        val viewerUser = viewer.uniqueId.cachedVanishUser() ?: PaperVanishUser(viewer.uniqueId, viewer.name)
         val targetUser = target.uniqueId.cachedVanishUser() ?: return true
+        val viewerUser = viewer.uniqueId.cachedVanishUser() ?: PaperVanishUser(viewer.uniqueId, viewer.name)
         return viewerUser.canSee(targetUser)
     }
 }

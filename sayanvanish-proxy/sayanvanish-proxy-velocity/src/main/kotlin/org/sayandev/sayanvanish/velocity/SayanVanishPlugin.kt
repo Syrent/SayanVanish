@@ -22,6 +22,7 @@ import com.github.shynixn.mccoroutine.velocity.SuspendingPluginContainer
 import com.google.inject.Inject
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
+import com.velocitypowered.api.event.proxy.ProxyShutdownEvent
 import com.velocitypowered.api.plugin.annotation.DataDirectory
 import com.velocitypowered.api.proxy.ProxyServer
 import org.sayandev.sayanvanish.api.Platform
@@ -31,6 +32,7 @@ import org.sayandev.sayanvanish.proxy.config.Settings
 import org.sayandev.sayanvanish.proxy.config.language
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
 import org.sayandev.sayanvanish.velocity.command.SayanVanishProxyCommandVelocity
+import org.sayandev.stickynote.command.velocity.CommandApiLifecycle
 import org.sayandev.stickynote.loader.velocity.StickyNoteVelocityLoader
 import org.sayandev.stickynote.velocity.launch
 import org.sayandev.stickynote.velocity.registerListener
@@ -60,6 +62,9 @@ class SayanVanishPlugin @Inject constructor(
 
         if (!Platform.setAndRegister(VelocityPlatform())) return
 
+        CommandApiLifecycle.load(server, this)
+        CommandApiLifecycle.enable()
+
         SayanVanishAPI.initialize()
 
         Settings.reload()
@@ -87,6 +92,11 @@ class SayanVanishPlugin @Inject constructor(
                 }
             }
         }
+    }
+
+    @Subscribe
+    fun onProxyShutdown(event: ProxyShutdownEvent) {
+        CommandApiLifecycle.disable()
     }
 
     fun pluginFile(): File? {

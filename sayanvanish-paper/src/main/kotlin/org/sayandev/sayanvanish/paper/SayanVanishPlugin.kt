@@ -31,6 +31,7 @@ import org.sayandev.sayanvanish.paper.api.Metrics
 import org.sayandev.sayanvanish.paper.command.SayanVanishCommand
 import org.sayandev.sayanvanish.paper.config.Settings
 import org.sayandev.sayanvanish.paper.config.language
+import org.sayandev.stickynote.command.bukkit.CommandApiLifecycle
 import org.sayandev.stickynote.bukkit.StickyNote
 import org.sayandev.stickynote.bukkit.WrappedStickyNotePlugin
 import org.sayandev.stickynote.bukkit.error
@@ -38,8 +39,13 @@ import java.io.File
 
 class SayanVanishPlugin : JavaPlugin() {
 
-    override fun onEnable() {
+    override fun onLoad() {
         WrappedStickyNotePlugin(this)
+        CommandApiLifecycle.load(this)
+    }
+
+    override fun onEnable() {
+        CommandApiLifecycle.enable()
         setInstance(this)
 
         if (!Platform.setAndRegister(PaperPlatform())) {
@@ -79,6 +85,7 @@ class SayanVanishPlugin : JavaPlugin() {
         runBlocking {
             Platform.get().unregister()
         }
+        CommandApiLifecycle.disable()
         StickyNote.shutdown()
     }
 

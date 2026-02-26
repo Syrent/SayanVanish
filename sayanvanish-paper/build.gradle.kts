@@ -28,6 +28,7 @@ dependencies {
 //    compileOnly("io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT")
 //    paperweight.paperDevBundle("1.21.1-R0.1-SNAPSHOT")
     implementation(project(":sayanvanish-api"))
+    implementation("org.sayandev:stickynote-command-bukkit:2.0.0-alpha.38")
 }
 
 tasks.withType(xyz.jpenilla.runtask.task.AbstractRun::class) {

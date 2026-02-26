@@ -16,6 +16,7 @@ dependencies {
     annotationProcessor(libs.velocity.api)
 
     api(project(":sayanvanish-proxy"))
+    implementation("org.sayandev:stickynote-command-velocity:2.0.0-alpha.38")
 }
 
 tasks.withType(xyz.jpenilla.runtask.task.AbstractRun::class) {

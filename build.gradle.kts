@@ -1,5 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import com.diffplug.gradle.spotless.SpotlessExtension
 import io.papermc.hangarpublishplugin.model.Platforms
+import net.kyori.indra.licenser.spotless.IndraSpotlessLicenserExtension
 import org.sayandev.plugin.StickyNotePackagingMode
 import java.io.ByteArrayOutputStream
 import java.net.HttpURLConnection
@@ -10,6 +12,7 @@ plugins {
     `maven-publish`
     id("io.papermc.hangar-publish-plugin") version "0.1.2"
     id("com.modrinth.minotaur") version "2.8.10"
+    id("net.kyori.indra.licenser.spotless") version "4.0.0" apply false
     id("org.sayandev.stickynote.project")
 }
 
@@ -96,6 +99,36 @@ allprojects {
     plugins.apply("java-library")
     plugins.apply("org.sayandev.stickynote.project")
     plugins.apply("com.modrinth.minotaur")
+    if (path.startsWith(":sayanvanish")) {
+        plugins.apply("net.kyori.indra.licenser.spotless")
+
+        extensions.configure<IndraSpotlessLicenserExtension>("indraSpotlessLicenser") {
+            licenseHeaderFile(rootProject.file("license_header.txt"))
+            property("name", rootProject.name)
+            property("url", "https://github.com/Syrent/SayanVanish")
+        }
+
+        extensions.configure<SpotlessExtension>("spotless") {
+            java {
+                target("src/**/*.java")
+                targetExclude("**/generated/**", "**/build/**", "**/docs/**", "**/StickyNote/**")
+            }
+            kotlin {
+                target("src/**/*.kt")
+                targetExclude("**/generated/**", "**/build/**", "**/docs/**", "**/StickyNote/**")
+            }
+            groovy {
+                target("src/**/*.groovy")
+                targetExclude("**/generated/**", "**/build/**", "**/docs/**", "**/StickyNote/**")
+            }
+        }
+
+        pluginManager.withPlugin("com.diffplug.spotless") {
+            tasks.named("build") {
+                dependsOn("spotlessApply")
+            }
+        }
+    }
 
     stickynote {
         packagingMode(StickyNotePackagingMode.FAT)

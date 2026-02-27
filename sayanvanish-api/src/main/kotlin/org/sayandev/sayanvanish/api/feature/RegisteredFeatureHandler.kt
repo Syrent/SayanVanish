@@ -1,6 +1,23 @@
+/*
+ * This file is part of SayanVanish, licensed under the GNU General Public License v3.0.
+ *
+ * Copyright (c) 2026 Sayan Development and contributors
+ *
+ * SayanVanish is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * SayanVanish is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 package org.sayandev.sayanvanish.api.feature
 
-import org.reflections.Reflections
 import org.sayandev.sayanvanish.api.Platform
 import java.io.IOException
 import java.net.URL
@@ -8,31 +25,65 @@ import java.security.CodeSource
 import java.util.*
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
-import kotlin.collections.ArrayList
 
 
 object RegisteredFeatureHandler {
+    @Volatile
+    private var discoveryStrategy: FeatureDiscoveryStrategy = DefaultFeatureDiscoveryStrategy
 
+    @Volatile
+    private var instantiationStrategy: FeatureInstantiationStrategy = DefaultFeatureInstantiationStrategy
+
+    private val manualFeatureClasses = linkedSetOf<Class<out Feature>>()
+
+    @JvmStatic
+    fun setDiscoveryStrategy(strategy: FeatureDiscoveryStrategy) {
+        discoveryStrategy = strategy
+    }
+
+    @JvmStatic
+    fun setInstantiationStrategy(strategy: FeatureInstantiationStrategy) {
+        instantiationStrategy = strategy
+    }
+
+    @JvmStatic
+    fun resetStrategies() {
+        discoveryStrategy = DefaultFeatureDiscoveryStrategy
+        instantiationStrategy = DefaultFeatureInstantiationStrategy
+    }
+
+    @JvmStatic
+    fun registerFeatureClass(featureClass: Class<out Feature>) {
+        manualFeatureClasses.add(featureClass)
+    }
+
+    @JvmStatic
+    fun unregisterFeatureClass(featureClass: Class<out Feature>) {
+        manualFeatureClasses.remove(featureClass)
+    }
+
+    @JvmStatic
+    fun clearManualFeatureClasses() {
+        manualFeatureClasses.clear()
+    }
+
+    @JvmStatic
     fun process() {
-        val reflections = Reflections("org.sayandev.sayanvanish")
-        val annotatedClasses = if (reflections.getTypesAnnotatedWith(RegisteredFeature::class.java).isEmpty()) {
-            Platform.get().logger.warning("Couldn't load plugin features in your current server software, trying alternative method...")
-            getClassesInPackage(Platform.get(), "org.sayandev.sayanvanish")
-        } else {
-            reflections.getTypesAnnotatedWith(RegisteredFeature::class.java)
-        }
+        val annotatedClasses = linkedSetOf<Class<out Feature>>()
+        annotatedClasses.addAll(discoveryStrategy.discover(Platform.get()))
+        annotatedClasses.addAll(manualFeatureClasses)
 
         Platform.get().logger.info("Found ${annotatedClasses.size} features.")
         for (annotatedClass in annotatedClasses) {
             createNewInstance(annotatedClass)
         }
-        Platform.get().logger.info("Enabled ${Features.features.filter { it.isActive() }.size} features.")
+        Platform.get().logger.info("Enabled ${Features.features().count { it.isActive() }} features.")
     }
 
-    private fun createNewInstance(clazz: Class<*>) {
+    private fun createNewInstance(clazz: Class<out Feature>) {
         try {
-            if (Features.features.map { it.javaClass }.contains(clazz)) return
-            val instance = Feature.createFromConfig(clazz as Class<out Feature>)
+            if (Features.features().map { it.javaClass }.contains(clazz)) return
+            val instance = instantiationStrategy.create(clazz)
             instance.save()
             Features.addFeature(instance)
         } catch (e: NoClassDefFoundError) {
@@ -42,6 +93,7 @@ object RegisteredFeatureHandler {
         }
     }
 
+    @JvmStatic
     fun getClassesInPackage(plugin: Any, packageName: String): Collection<Class<*>> {
         val classes: MutableCollection<Class<*>> = ArrayList()
         val codeSource: CodeSource = plugin.javaClass.protectionDomain.codeSource
@@ -67,7 +119,8 @@ object RegisteredFeatureHandler {
                 try {
                     val clazz = plugin.javaClass.classLoader.loadClass(className)
                     if (clazz.isAnnotationPresent(RegisteredFeature::class.java)) {
-                        classes.add(clazz)
+                        @Suppress("UNCHECKED_CAST")
+                        classes.add(clazz as Class<out Feature>)
                     }
                 } catch (_: NoClassDefFoundError) {
                 } catch (_: ClassNotFoundException) { }

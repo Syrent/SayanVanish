@@ -1,101 +1,64 @@
+/*
+ * This file is part of SayanVanish, licensed under the GNU General Public License v3.0.
+ *
+ * Copyright (c) 2026 Sayan Development and contributors
+ *
+ * SayanVanish is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * SayanVanish is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 package org.sayandev.sayanvanish.velocity.api
 
-import com.velocitypowered.api.proxy.Player
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
-import org.sayandev.sayanvanish.api.Permission
-import org.sayandev.sayanvanish.api.SayanVanishAPI
+import org.sayandev.sayanvanish.api.Permissions
 import org.sayandev.sayanvanish.api.User
-import org.sayandev.sayanvanish.api.VanishOptions
-import org.sayandev.sayanvanish.api.feature.Features
-import org.sayandev.sayanvanish.proxy.config.settings
-import org.sayandev.sayanvanish.velocity.event.VelocityUserUnVanishEvent
-import org.sayandev.sayanvanish.velocity.event.VelocityUserVanishEvent
-import org.sayandev.sayanvanish.velocity.feature.features.hook.FeatureLuckPermsHook
-import org.sayandev.sayanvanish.velocity.utils.PlayerUtils.sendComponent
+import org.sayandev.sayanvanish.velocity.VelocityPlatformAdapter
+import org.sayandev.sayanvanish.velocity.utils.PlayerUtils.sendPrefixComponent
 import org.sayandev.stickynote.velocity.StickyNote
-import org.sayandev.stickynote.velocity.server
 import org.sayandev.stickynote.velocity.utils.AdventureUtils.component
 import java.util.*
-import kotlin.collections.toTypedArray
-import kotlin.jvm.optionals.getOrNull
-
 
 open class VelocityUser(
     override val uniqueId: UUID,
-    override var username: String
-) : User {
-
+    override var username: String,
+    override var isOnline: Boolean,
     override var serverId: String
-        get() = StickyNote.getPlayer(uniqueId)?.currentServer?.getOrNull()?.serverInfo?.name ?: settings.general.serverId
-        set(_) {}
-    override var currentOptions = VanishOptions.defaultOptions()
-    override var isVanished = false
-    override var isOnline: Boolean = SayanVanishAPI.getInstance().database.hasBasicUser(uniqueId, true)
-    override var vanishLevel: Int = 0
-        get() = player()?.let { player ->
-                val luckPermsHook = Features.getFeature<FeatureLuckPermsHook>()
-                    if (luckPermsHook.isActive()) {
-                        luckPermsHook.getPermissions(uniqueId)
-                            .filter { it.startsWith("sayanvanish.level.") }
-                            .maxOfOrNull { it.substringAfter("sayanvanish.level.").toIntOrNull() ?: field }
-                            ?: if (hasPermission(Permission.VANISH)) 1 else {
-                                if (isVanished) 1 else field
-                            }
-                    } else {
-                        field
-                    }
-            } ?: field
+) : User {
+    fun player() = StickyNote.getPlayer(uniqueId)
 
-    fun stateText(isVanished: Boolean = this.isVanished) = if (isVanished) "<green>ON</green>" else "<red>OFF</red>"
-
-    fun player(): Player? = StickyNote.getPlayer(uniqueId)
-
-    override fun vanish(options: VanishOptions) {
-        server.eventManager.fire(VelocityUserVanishEvent(this, options)).whenComplete { event, error ->
-            error?.printStackTrace()
-
-            val options = event.options
-            currentOptions = options
-
-            database.addToQueue(uniqueId, true)
-            super.vanish(options)
-        }
+    override fun sendMessage(content: String, vararg placeholders: TagResolver) {
+        player()?.sendMessage(content.component(*placeholders))
     }
 
-    override fun unVanish(options: VanishOptions) {
-        server.eventManager.fire(VelocityUserUnVanishEvent(this, options)).whenComplete { event, error ->
-            error?.printStackTrace()
+    override fun sendMessageWithPrefix(content: String, vararg placeholders: TagResolver) {
+        player()?.sendPrefixComponent(content.component(*placeholders))
+    }
 
-            val options = event.options
-            currentOptions = options
-
-            database.addToQueue(uniqueId, false)
-            super.unVanish(options)
-        }
+    override fun sendActionbar(content: String, vararg placeholders: TagResolver) {
+        player()?.sendActionBar(content.component(*placeholders))
     }
 
     override fun hasPermission(permission: String): Boolean {
-        return player()?.hasPermission(permission) == true
+        return player()?.hasPermission(permission) ?: false
     }
 
-    override fun sendComponent(content: String, vararg placeholder: Pair<String, String>) {
-        player()?.sendComponent(content, *placeholder.map { Placeholder.parsed(it.first, it.second) }.toTypedArray())
-    }
-
-    override fun sendActionbar(content: String, vararg placeholder: Pair<String, String>) {
-        player()?.sendActionBar(content.component(*placeholder.map { Placeholder.parsed(it.first, it.second) }.toTypedArray()))
+    override fun hasPermission(permission: Permissions): Boolean {
+        return player()?.hasPermission(permission.permission()) ?: false
     }
 
     companion object {
-        @JvmStatic
-        fun fromUser(user: User): VelocityUser {
-            return VelocityUser(user.uniqueId, user.username).apply {
-                this.isOnline = user.isOnline
-                this.isVanished = user.isVanished
-                this.vanishLevel = user.vanishLevel
-            }
+        @JvmSynthetic
+        fun User.velocityAdapt(): VelocityUser {
+            return VelocityPlatformAdapter.adapt(this)
         }
     }
-
 }

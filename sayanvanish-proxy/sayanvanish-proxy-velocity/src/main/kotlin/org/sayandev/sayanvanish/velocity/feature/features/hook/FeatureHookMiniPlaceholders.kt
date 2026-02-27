@@ -1,23 +1,46 @@
+/*
+ * This file is part of SayanVanish, licensed under the GNU General Public License v3.0.
+ *
+ * Copyright (c) 2026 Sayan Development and contributors
+ *
+ * SayanVanish is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * SayanVanish is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 package org.sayandev.sayanvanish.velocity.feature.features.hook
 
 import com.velocitypowered.api.proxy.Player
 import io.github.miniplaceholders.api.Expansion
 import io.github.miniplaceholders.api.utils.Tags
+import ir.syrent.enhancedvelocity.utils.component
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import net.kyori.adventure.text.minimessage.tag.Tag
-import org.sayandev.sayanvanish.api.SayanVanishAPI
+import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.proxy.config.language
-import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
-import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI.Companion.user
+import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.velocity.feature.HookFeature
-import org.sayandev.stickynote.velocity.plugin
-import org.sayandev.stickynote.velocity.utils.AdventureUtils.component
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
-import kotlin.jvm.optionals.getOrNull
+import org.sayandev.stickynote.velocity.onlinePlayers
 
 @RegisteredFeature
-@ConfigSerializable
-class FeatureHookMiniPlaceholders: HookFeature("hook_miniplaceholders", "miniplaceholders") {
+@Serializable
+@SerialName("hook_mini_placeholders")
+class FeatureHookMiniPlaceholders: HookFeature() {
+
+    @Transient override val id = "hook_miniplaceholders"
+    override var enabled: Boolean = true
+    override val plugin: String = "miniplaceholders"
 
     override fun enable() {
         if (hasPlugin()) {
@@ -43,42 +66,47 @@ private class MiniPlaceholdersHookImpl(val feature: FeatureHookMiniPlaceholders)
 
         builder.audiencePlaceholder("vanished") { audience, queue, context ->
             val player = audience as? Player ?: return@audiencePlaceholder Tags.EMPTY_TAG
-            return@audiencePlaceholder Tag.selfClosingInserting((if (player.user()?.isVanished == true) "true" else "false").component())
+            return@audiencePlaceholder Tag.selfClosingInserting((if (player.cachedVanishUser()?.isVanished == true) "true" else "false").component())
         }
 
         builder.audiencePlaceholder("level") { audience, queue, context ->
             val player = audience as? Player ?: return@audiencePlaceholder Tag.selfClosingInserting("0".component())
-            return@audiencePlaceholder Tag.selfClosingInserting((player.user()?.vanishLevel?.toString() ?: "0").component())
+            return@audiencePlaceholder Tag.selfClosingInserting((player.cachedVanishUser()?.vanishLevel?.toString() ?: "0").component())
         }
 
         builder.globalPlaceholder("count") { queue, context ->
-            Tag.selfClosingInserting(SayanVanishVelocityAPI.getInstance().database.getUsers().filter { user -> user.isOnline && user.isVanished }.size.toString().component())
+            Tag.selfClosingInserting(VanishAPI.get().getCacheService().getVanishUsers().values.filter { it.isVanished && it.isOnline }.size.toString().component())
         }
 
         builder.audiencePlaceholder("vanish_prefix") { audience, queue, context ->
-            Tag.selfClosingInserting((if ((audience as? Player)?.user()?.isVanished == true) language.vanish.placeholderPrefix else "").component())
+            Tag.selfClosingInserting((if ((audience as? Player)?.cachedVanishUser()?.isVanished == true) language.vanish.placeholderPrefix else "").component())
         }
 
         builder.audiencePlaceholder("vanish_suffix") { audience, queue, context ->
-            Tag.selfClosingInserting((if ((audience as? Player)?.user()?.isVanished == true) language.vanish.placeholderSuffix else "").component())
+            Tag.selfClosingInserting((if ((audience as? Player)?.cachedVanishUser()?.isVanished == true) language.vanish.placeholderSuffix else "").component())
         }
 
-        for (server in plugin.server.allServers) {
-            builder.globalPlaceholder("online_${server.serverInfo.name.lowercase()}") { queue, context ->
-                val vanishedOnlineUsers = SayanVanishVelocityAPI.getInstance().database.getUsers().filter { user -> user.isVanished && user.isOnline }
-                Tag.selfClosingInserting(SayanVanishAPI.getInstance().database.getBasicUsers(false).filter { it.serverId.lowercase() == server.serverInfo.name.lowercase() && !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString().component())
+        builder.globalPlaceholder("online") { queue, context ->
+            if (!queue.hasNext()) {
+                return@globalPlaceholder Tags.EMPTY_TAG
             }
-        }
 
-        builder.audiencePlaceholder("online_here") { audience, queue, context ->
-            val player = audience as? Player ?: return@audiencePlaceholder Tag.selfClosingInserting("0".component())
-            val currentServerVanishedOnlineUsers = SayanVanishVelocityAPI.getInstance().database.getUsers().filter { user -> user.isVanished && user.isOnline && user.serverId == player.currentServer.getOrNull()?.serverInfo?.name }
-            Tag.selfClosingInserting(SayanVanishAPI.getInstance().database.getBasicUsers(false).filter { !currentServerVanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString().component())
-        }
+            val vanishedOnlineUsers = VanishAPI.get().getCacheService().getVanishUsers().values.filter { user -> user.isVanished && user.isOnline }
+            val serverName = queue.pop().value()
 
-        builder.globalPlaceholder("online_total") { queue, context ->
-            val vanishedOnlineUsers = SayanVanishVelocityAPI.getInstance().database.getUsers().filter { user -> user.isVanished && user.isOnline }
-            Tag.selfClosingInserting(SayanVanishAPI.getInstance().database.getBasicUsers(false).filter { !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString().component())
+            val result = when (serverName) {
+                "here" -> {
+                    onlinePlayers.filter { onlinePlayer -> !vanishedOnlineUsers.map { vanishedOnlineUser -> vanishedOnlineUser.username }.contains(onlinePlayer.username) }.size.toString()
+                }
+                "total" -> {
+                    VanishAPI.get().getCacheService().getUsers().values.filter { !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
+                }
+                else -> {
+                    VanishAPI.get().getCacheService().getUsers().values.filter { it.serverId == serverName && !vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.contains(it.username) }.size.toString()
+                }
+            }
+
+            Tag.selfClosingInserting(result.component())
         }
 
         builder.build().register()

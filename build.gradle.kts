@@ -1,7 +1,8 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import com.google.gson.JsonParser
+import com.diffplug.gradle.spotless.SpotlessExtension
 import io.papermc.hangarpublishplugin.model.Platforms
-import org.gradle.kotlin.dsl.exclude
+import net.kyori.indra.licenser.spotless.IndraSpotlessLicenserExtension
+import org.sayandev.plugin.StickyNotePackagingMode
 import java.io.ByteArrayOutputStream
 import java.net.HttpURLConnection
 import java.net.URL
@@ -11,6 +12,7 @@ plugins {
     `maven-publish`
     id("io.papermc.hangar-publish-plugin") version "0.1.2"
     id("com.modrinth.minotaur") version "2.8.10"
+    id("net.kyori.indra.licenser.spotless") version "4.0.0" apply false
     id("org.sayandev.stickynote.project")
 }
 
@@ -31,11 +33,26 @@ fun lastCommitMessages(): String {
     val connection = url.openConnection() as HttpURLConnection
     connection.requestMethod = "GET"
     connection.setRequestProperty("Accept", "application/vnd.github.v3+json")
-    val response = connection.inputStream.bufferedReader().use { it.readText() }
-    val sha = JsonParser.parseString(response).asJsonObject.getAsJsonArray("workflow_runs").get(0).asJsonObject.get("head_sha").asString
+    // TODO: fix this
+    /*val response = runCatching { connection.inputStream.bufferedReader().use { it.readText() } }.getOrNull() ?: let {
+        println("Failed to fetch last commit messages from GitHub Actions API: ${connection.responseCode} ${connection.responseMessage}")
+        return "No recent commits found."
+    }
 
-    return executeGitCommand("log", "--pretty=format:%C(auto)%h %s %C(blue)<%an>", "$sha..HEAD")
-//    return "Dummy"
+    val sha = JsonParser.parseString(response).asJsonObject.getAsJsonArray("workflow_runs").let {
+        if (it.size() == 0) {
+            null
+        } else {
+            it.get(0).asJsonObject.get("head_sha").asString
+        }
+    }
+
+    return if (sha != null) {
+        executeGitCommand("log", "--pretty=format:%C(auto)%h %s %C(blue)<%an>", "$sha..HEAD")
+    } else {
+        "No changes"
+    }*/
+    return "Changelog unavailable due to API changes."
 }
 
 fun lastReleaseCommitMessages(): String {
@@ -44,11 +61,14 @@ fun lastReleaseCommitMessages(): String {
     connection.requestMethod = "GET"
     connection.setRequestProperty("Accept", "application/vnd.github.v3+json")
     val response = connection.inputStream.bufferedReader().use { it.readText() }
-    val previousReleaseVersion = JsonParser.parseString(response).asJsonArray.get(1).asJsonObject.get("tag_name").asString
+    // TODO: fix this
+    /*val previousReleaseVersion = JsonParser.parseString(response).asJsonArray.get(1).asJsonObject.get("tag_name").asString
 
     val currentProjectVersion = versionString
 
-    return executeGitCommand("log", "--pretty=format:%s%n", "$previousReleaseVersion..$currentProjectVersion")
+    return executeGitCommand("log", "--pretty=format:%s%n", "$previousReleaseVersion..$currentProjectVersion")*/
+
+    return "Changelog unavailable due to API changes."
 }
 
 val versionString: String = findProperty("version")!! as String
@@ -72,10 +92,49 @@ allprojects {
     version = findProperty("version")!! as String
 
     plugins.apply("java")
+    plugins.apply("org.jetbrains.kotlin.jvm")
+    plugins.apply("org.jetbrains.kotlin.plugin.serialization")
     plugins.apply("maven-publish")
-    plugins.apply("kotlin")
+    plugins.apply("com.gradleup.shadow")
+    plugins.apply("java-library")
     plugins.apply("org.sayandev.stickynote.project")
     plugins.apply("com.modrinth.minotaur")
+    if (path.startsWith(":sayanvanish")) {
+        plugins.apply("net.kyori.indra.licenser.spotless")
+
+        extensions.configure<IndraSpotlessLicenserExtension>("indraSpotlessLicenser") {
+            licenseHeaderFile(rootProject.file("license_header.txt"))
+            property("name", rootProject.name)
+            property("url", "https://github.com/Syrent/SayanVanish")
+        }
+
+        extensions.configure<SpotlessExtension>("spotless") {
+            java {
+                target("src/**/*.java")
+                targetExclude("**/generated/**", "**/build/**", "**/docs/**", "**/StickyNote/**")
+            }
+            kotlin {
+                target("src/**/*.kt")
+                targetExclude("**/generated/**", "**/build/**", "**/docs/**", "**/StickyNote/**")
+            }
+            groovy {
+                target("src/**/*.groovy")
+                targetExclude("**/generated/**", "**/build/**", "**/docs/**", "**/StickyNote/**")
+            }
+        }
+
+        pluginManager.withPlugin("com.diffplug.spotless") {
+            tasks.named("build") {
+                dependsOn("spotlessApply")
+            }
+        }
+    }
+
+    stickynote {
+        packagingMode(StickyNotePackagingMode.FAT)
+        useSubmodule(true)
+//        relocate(!gradle.startParameter.taskNames.any { it.startsWith("runServer") || it.startsWith("runVelocity") })
+    }
 
     repositories {
         mavenLocal()
@@ -176,21 +235,10 @@ allprojects {
 }
 
 subprojects {
-    configurations.create("compileOnlyApiResolved").apply {
-        isCanBeResolved = true
-        extendsFrom(configurations.getByName("compileOnlyApi"))
-    }
-
     java {
         withSourcesJar()
 
         disableAutoTargetJvm()
-    }
-
-    val publicationShadowJar by tasks.registering(ShadowJar::class) {
-        from(sourceSets.main.get().output)
-        configurations = listOf(*configurations.get().toTypedArray(), this@subprojects.configurations["compileOnlyApiResolved"])
-        archiveClassifier.set("")
     }
 
     tasks {
@@ -213,8 +261,7 @@ subprojects {
     publishing {
         publications {
             create<MavenPublication>("maven") {
-//                from(components["shadow"])
-                artifact(publicationShadowJar.get())
+                from(components["shadow"])
                 artifact(tasks["sourcesJar"])
                 this.version = versionString
 
@@ -272,18 +319,13 @@ hangarPublish {
 
         platforms {
             register(Platforms.PAPER) {
-                jar.set(project(":sayanvanish-bukkit").tasks.shadowJar.flatMap { it.archiveFile })
+                jar.set(project(":sayanvanish-paper").tasks.shadowJar.flatMap { it.archiveFile })
                 platformVersions.set((property("paperVersion") as String).split(",").map { it.trim() })
             }
 
             register(Platforms.VELOCITY) {
                 jar.set(project(":sayanvanish-proxy:sayanvanish-proxy-velocity").tasks.shadowJar.flatMap { it.archiveFile })
                 platformVersions.set((property("velocityVersion") as String).split(",").map { it.trim() })
-            }
-
-            register(Platforms.WATERFALL) {
-                jar.set(project(":sayanvanish-proxy:sayanvanish-proxy-bungeecord").tasks.shadowJar.flatMap { it.archiveFile })
-                platformVersions.set((property("waterfallVersion") as String).split(",").map { it.trim() })
             }
         }
     }

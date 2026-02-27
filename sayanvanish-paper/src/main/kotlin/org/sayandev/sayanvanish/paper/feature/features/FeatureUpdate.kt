@@ -1,0 +1,228 @@
+/*
+ * This file is part of SayanVanish, licensed under the GNU General Public License v3.0.
+ *
+ * Copyright (c) 2026 Sayan Development and contributors
+ *
+ * SayanVanish is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * SayanVanish is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+package org.sayandev.sayanvanish.paper.feature.features
+
+import org.bukkit.Bukkit
+import org.bukkit.command.CommandSender
+import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
+import org.bukkit.event.player.PlayerJoinEvent
+import org.sayandev.sayanvanish.api.feature.Configurable
+import org.sayandev.sayanvanish.api.feature.RegisteredFeature
+import org.sayandev.sayanvanish.api.utils.DownloadUtils
+import org.sayandev.sayanvanish.api.utils.HangarUtils
+import org.sayandev.sayanvanish.api.utils.VersionUtils
+import org.sayandev.sayanvanish.api.utils.VersionInfo
+import org.sayandev.sayanvanish.paper.SayanVanishPlugin
+import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.cachedUser
+import org.sayandev.sayanvanish.paper.config.Settings
+import org.sayandev.sayanvanish.paper.feature.ListenedFeature
+import org.sayandev.sayanvanish.paper.utils.PlayerUtils.sendPrefixComponent
+import org.sayandev.sayanvanish.paper.utils.PlayerUtils.sendRawComponent
+import org.sayandev.stickynote.paper.*
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import com.charleskorn.kaml.YamlComment
+import kotlinx.serialization.SerialName
+import java.io.File
+import java.util.concurrent.CompletableFuture
+
+@RegisteredFeature
+@Serializable
+@SerialName("update")
+data class FeatureUpdate(
+    @YamlComment("The interval to check for updates in minutes")
+    @Configurable val checkEveryXMinutes: Int = 60 * 24,
+    @YamlComment("The permission required to receive update notifications")
+    @Configurable val notifyPermission: String = "${plugin.name.lowercase()}.feature.update.notify",
+    @YamlComment("Whether to notify players if an update is available when they join the server")
+    @Configurable val notifyOnJoin: Boolean = true,
+    @YamlComment("Whether to notify players if an update is available for snapshot builds")
+    @Configurable val notifyForSnapshotBuilds: Boolean = true,
+    @YamlComment("Weather to ask players to do an automatic update when they join the server")
+    @Configurable val autoUpdateNotification: Boolean = true,
+    @YamlComment("The content of the update notification message")
+    val updateNotificationContent: List<String> = listOf(
+        "<green>A new version of <white>SayanVanish</white> is available!",
+        "<gold> - Latest release: <white><latest_release_name>",
+        "  <yellow>- <gray>Click to download: <blue><click:open_url:'<latest_release_url_paper>'>Paper</click> <gray>|</gray> <aqua><click:open_url:'<latest_release_url_velocity>'>Velocity</click> <gray>|</gray> <blue><click:open_url:'<latest_release_url_waterfall>'>Waterfall</click>",
+        "  <yellow>- <gray><click:open_url:'https://hangar.papermc.io/Syrent/SayanVanish/versions/<latest_release_name>'>Click to see full changelog",
+        "<gold> - Latest snapshot: <white><latest_snapshot_name>",
+        "  <yellow>- <gray>Click to download: <blue><click:open_url:'<latest_snapshot_url_paper>'>Paper</click> <gray>|</gray> <aqua><click:open_url:'<latest_snapshot_url_velocity>'>Velocity</click> <gray>|</gray> <blue><click:open_url:'<latest_snapshot_url_waterfall>'>Waterfall</click>",
+        "  <yellow>- <gray><click:open_url:'https://hangar.papermc.io/Syrent/SayanVanish/versions/<latest_snapshot_name>'>Click to see full changelog"
+    ),
+    @YamlComment("The content of the update request message")
+    val updateRequestContent: List<String> = listOf(
+        "<green>A new version of <white>SayanVanish</white> is available!",
+        "<hover:show_text:'<red>Click to update'><click:run_command:'/${Settings.get().vanishCommand.name} forceupdate'><aqua>You can install version <version> by clicking on this message</click></hover>",
+        "<red>Make sure to read the changelog before doing any update to prevent unexpected behaviors",
+    )
+) : ListenedFeature() {
+
+    @Transient override val id = "update"
+    override var enabled: Boolean = true
+
+    @Transient var latestRelease: VersionInfo? = null
+    @Transient var latestSnapshot: VersionInfo? = null
+
+    override fun enable() {
+        runAsync({
+            if (!isActive()) return@runAsync
+            log("Checking for updates...")
+            HangarUtils.getLatestRelease().whenComplete { latestRelease, releaseError ->
+                releaseError?.printStackTrace()
+
+                log("Checked latest release")
+                this.latestRelease = latestRelease
+
+                HangarUtils.getLatestSnapshot().whenComplete { latestSnapshot, snapshotError ->
+                    snapshotError?.printStackTrace()
+
+                    log("Checked latest snapshot")
+                    this.latestSnapshot = latestSnapshot
+
+                    runSync {
+                        sendUpdateNotification(Bukkit.getConsoleSender())
+                    }
+                }
+            }
+        }, 0, checkEveryXMinutes * 60 * 20L)
+        super.enable()
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    private fun onJoin(event: PlayerJoinEvent) {
+        val player = event.player
+        val user = player.cachedUser() ?: return
+        if (!isActive(user)) return
+        if (notifyOnJoin && player.hasPermission(notifyPermission) && latestComparableVersion(notifyForSnapshotBuilds) != null) {
+            if (!Settings.get().general.proxyMode) {
+                sendUpdateNotification(player)
+            }
+
+            if (autoUpdateNotification) {
+                sendUpdateRequest(player)
+            }
+        }
+    }
+
+    private fun sendUpdateNotification(sender: CommandSender) {
+        if (!isNewerVersionAvailable(notifyForSnapshotBuilds) || Settings.get().general.proxyMode) return
+
+        for (line in updateNotificationContent) {
+            sender.sendRawComponent(line
+                .replace("<latest_release_name>", latestRelease?.name ?: "Unknown")
+                .replace("<latest_release_url_paper>", latestRelease?.downloads?.PAPER?.downloadUrl() ?: "https://hangar.papermc.io/Syrent/SayanVanish")
+                .replace("<latest_release_url_velocity>", latestRelease?.downloads?.VELOCITY?.downloadUrl() ?: "https://hangar.papermc.io/Syrent/SayanVanish")
+                .replace("<latest_release_url_waterfall>", latestRelease?.downloads?.WATERFALL?.downloadUrl() ?: "https://hangar.papermc.io/Syrent/SayanVanish")
+                .replace("<latest_release_changelog>", shortDescription(latestRelease?.description) ?: "Unknown")
+                .replace("<latest_snapshot_name>", latestSnapshot?.name ?: "Unknown")
+                .replace("<latest_snapshot_url_paper>", latestSnapshot?.downloads?.PAPER?.downloadUrl() ?: "https://hangar.papermc.io/Syrent/SayanVanish")
+                .replace("<latest_snapshot_url_velocity>", latestSnapshot?.downloads?.VELOCITY?.downloadUrl() ?: "https://hangar.papermc.io/Syrent/SayanVanish")
+                .replace("<latest_snapshot_url_waterfall>", latestSnapshot?.downloads?.WATERFALL?.downloadUrl() ?: "https://hangar.papermc.io/Syrent/SayanVanish")
+                .replace("<latest_snapshot_changelog>", shortDescription(latestSnapshot?.description) ?: "Unknown")
+            )
+        }
+    }
+
+    private fun sendUpdateRequest(sender: CommandSender) {
+        if (!isNewerVersionAvailable(notifyForSnapshotBuilds)) return
+
+        for (line in updateRequestContent) {
+            sender.sendPrefixComponent(line.replace("<version>", latestVersion()))
+        }
+    }
+
+    private fun isNewerVersionAvailable(includeSnapshots: Boolean): Boolean {
+        val target = latestComparableVersion(includeSnapshots) ?: return false
+        val currentVersion = plugin.description.version
+        return VersionUtils.isNewer(target.name, currentVersion)
+    }
+
+    fun updatePlugin(): CompletableFuture<Boolean> {
+        val future = CompletableFuture<Boolean>()
+        if (!isNewerVersionAvailable(notifyForSnapshotBuilds)) {
+            future.complete(false)
+            return future
+        }
+
+        val targetVersion = latestComparableVersion(notifyForSnapshotBuilds)
+        if (targetVersion == null) {
+            future.complete(false)
+            return future
+        }
+        val downloadUrl = targetVersion.downloads.PAPER?.downloadUrl()
+        if (downloadUrl.isNullOrBlank()) {
+            future.complete(false)
+            return future
+        }
+
+        val updateDirectory = File(plugin.dataFolder.parentFile, "update")
+        val updatedFile = if (StickyNote.isPaper) {
+            if (!updateDirectory.exists()) { updateDirectory.mkdirs() }
+            File(updateDirectory, SayanVanishPlugin.getInstance().pluginFile().name)
+        } else SayanVanishPlugin.getInstance().pluginFile()
+
+        DownloadUtils.download(downloadUrl, updatedFile).whenComplete { result, error ->
+            error?.printStackTrace()
+            future.complete(result)
+        }
+
+        return future
+    }
+
+    fun latestVersion(): String {
+        return latestComparableVersion(notifyForSnapshotBuilds)?.name ?: "N/A"
+    }
+
+    private val proxyWords = listOf("proxy", "velocity", "bungee")
+    fun willAffectProxy(): Boolean {
+        val targetVersion = latestComparableVersion(notifyForSnapshotBuilds) ?: return false
+        return proxyWords.any { targetVersion.description.contains(it, ignoreCase = true) }
+    }
+
+    private fun latestComparableVersion(includeSnapshots: Boolean): VersionInfo? {
+        val candidates = buildList {
+            latestRelease?.let(::add)
+            if (includeSnapshots) {
+                latestSnapshot?.let(::add)
+            }
+        }
+        return candidates.maxWithOrNull { first, second ->
+            VersionUtils.compare(first.name, second.name)
+        }
+    }
+
+    private fun shortDescription(description: String?): String? {
+        if (description == null) return null
+        return if (description.length > 45) {
+            val words = description.split(" ")
+            var result = ""
+            for (word in words) {
+                if (result.length + word.length > 45) break
+                result += "$word "
+            }
+            result.trim() + "..."
+        } else {
+            description
+        }
+    }
+
+
+}

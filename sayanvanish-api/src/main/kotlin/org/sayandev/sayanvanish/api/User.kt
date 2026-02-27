@@ -1,133 +1,398 @@
+/*
+ * This file is part of SayanVanish, licensed under the GNU General Public License v3.0.
+ *
+ * Copyright (c) 2026 Sayan Development and contributors
+ *
+ * SayanVanish is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * SayanVanish is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 package org.sayandev.sayanvanish.api
 
-import com.google.gson.Gson
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
-import org.sayandev.sayanvanish.api.exception.UnsupportedPlatformException
+import com.google.gson.*
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.future.asCompletableFuture
+import kotlinx.coroutines.runBlocking
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
+import org.sayandev.sayanvanish.api.storage.PlatformTable
+import org.sayandev.stickynote.core.utils.async
+import java.lang.reflect.Type
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
-interface User : BasicUser {
+/**
+ * Represents a basic user with essential data such as unique ID and username.
+ * This interface is the building block for more specific user types like [VanishUser].
+ *
+ * The [User] interface is commonly used for features such as online counter placeholders
+ * and provides basic user information and permission checks.
+ *
+ * @property uniqueId The unique identifier for the user.
+ * @property username The username of the user.
+ * @property isOnline Whether the user is currently online.
+ * @property serverId The ID of the server the user is connected to.
+ *
+ * @since 1.0.0
+ */
+@Suppress("unused")
+interface User {
+    /**
+     * The unique identifier for the user.
+     */
+    val uniqueId: UUID
 
-    var currentOptions: VanishOptions
-    var isVanished: Boolean
+    /**
+     * The username of the user.
+     */
+    var username: String
+
+    /**
+     * Whether the user is currently online.
+     */
     var isOnline: Boolean
-    var vanishLevel: Int
 
-    fun vanish(options: VanishOptions) {
-        isVanished = true
-        save()
-        Platform.get().logger.info("$username has vanished.")
-    }
+    /**
+     * The ID of the server the user is connected to.
+     */
+    var serverId: String
 
-    fun vanishAsync(options: VanishOptions) {
-        isVanished = true
-        saveAsync()
-        Platform.get().logger.info("$username has vanished.")
-    }
-
-    fun vanish() {
-        vanish(VanishOptions.defaultOptions())
-    }
-
-    fun unVanish(options: VanishOptions) {
-        isVanished = false
-        save()
-        Platform.get().logger.info("$username has un-vanished.")
-    }
-
-    fun unVanishAsync(options: VanishOptions) {
-        isVanished = false
-        saveAsync()
-        Platform.get().logger.info("$username has un-vanished.")
-    }
-
-    fun unVanish() {
-        unVanish(VanishOptions.defaultOptions())
-    }
-
-    fun toggleVanish(options: VanishOptions) {
-        if (isVanished) unVanish(options) else vanish(options)
-    }
-
-    fun toggleVanish() {
-        toggleVanish(VanishOptions.defaultOptions())
-    }
-
-    fun sendComponent(content: String) {
-        sendComponent(content, *emptyArray())
-    }
-
-    fun sendActionbar(content: String) {
-        sendActionbar(content, *emptyArray())
-    }
-
-    fun sendComponent(content: String, vararg placeholder: Pair<String, String>) {
-        throw UnsupportedPlatformException("sendMessage")
-    }
-
-    fun sendActionbar(content: String, vararg placeholder: Pair<String, String>) {
-        throw UnsupportedPlatformException("sendActionbar")
+    /**
+     * Checks if the user has the specified permission string.
+     *
+     * @param permission The permission string to check.
+     * @return True if the user has the permission, false otherwise.
+     * @throws StackOverflowError If the platform does not support permission checks.
+     * @since 1.0.0
+     */
+    fun hasPermission(permission: String): Boolean {
+        if (this::class.java.isInterface) {
+            Platform.get().logger.warning("This platform does not support User#hasPermission(String)")
+            return false
+        }
+        return Platform.get().adapter.adapt(this).hasPermission(permission)
     }
 
     /**
-    * @param otherUser The user to check if this user can see
-    * */
-    fun canSee(otherUser: User): Boolean {
-        if (!otherUser.isVanished) return true
-        if (this.uniqueId == otherUser.uniqueId) return true
-        val canSee = vanishLevel >= otherUser.vanishLevel
-        return canSee
+     * Checks if the user has the specified [Permissions] object.
+     *
+     * @param permission The [Permissions] to check.
+     * @return True if the user has the permission, false otherwise.
+     * @since 1.0.0
+     */
+    fun hasPermission(permission: Permissions): Boolean {
+        if (this::class.java.isInterface) {
+            Platform.get().logger.warning("This platform does not support User#hasPermission(Permission)")
+            return false
+        }
+        return Platform.get().adapter.adapt(this).hasPermission(permission)
     }
 
-    override fun save() {
-        serverId = Platform.get().serverId
-        SayanVanishAPI.getInstance().database.addUser(this)
+    fun sendMessage(content: String, vararg placeholders: TagResolver) {
+        if (this::class.java.isInterface) {
+            Platform.get().logger.warning("This platform does not support User#sendMessage")
+            return
+        }
+        Platform.get().adapter.adapt(this).sendMessage(content, *placeholders)
     }
 
-    fun saveAsync() {
-        serverId = Platform.get().serverId
-        SayanVanishAPI.getInstance().database.addUserAsync(this)
+    fun sendMessageWithPrefix(content: String, vararg placeholders: TagResolver) {
+        if (this::class.java.isInterface) {
+            Platform.get().logger.warning("This platform does not support User#sendMessageWithPrefix")
+            return
+        }
+        Platform.get().adapter.adapt(this).sendMessageWithPrefix(content, *placeholders)
     }
 
-    fun delete() {
-        SayanVanishAPI.getInstance().database.removeUser(uniqueId)
+    fun sendActionbar(content: String, vararg placeholders: TagResolver) {
+        Platform.get().adapter.adapt(this).sendActionbar(content, *placeholders)
     }
 
-    override fun toJson(): String {
-        val json = JsonObject()
-        json.addProperty("unique-id", uniqueId.toString())
-        json.addProperty("username", username)
-        json.addProperty("is-vanished", isVanished)
-        json.addProperty("is-online", isOnline)
-        json.addProperty("vanish-level", vanishLevel)
-        json.addProperty("current-options", currentOptions.toJson())
-        return Gson().toJson(json)
+    /**
+     * Saves the user asynchronously to the database.
+     *
+     * @see org.sayandev.sayanvanish.api.storage.Database.saveUser
+     * @return A [Deferred] indicating the result of the save operation.
+     * @since 2.0.0
+     */
+    @JvmSynthetic
+    suspend fun save(): Deferred<Boolean> {
+        return VanishAPI.get().getDatabase().saveUser(this)
     }
 
-    companion object {
-        @JvmStatic
-        fun fromJson(serialized: String): User {
-            val json = JsonParser.parseString(serialized).asJsonObject
-            val uniqueId = json.get("unique-id").asString
-            val username = json.get("username").asString
-            val isVanished = json.get("is-vanished").asBoolean
-            val isOnline = json.get("is-online").asBoolean
-            val vanishLevel = json.get("vanish-level").asInt
-            val currentOptions = VanishOptions.fromJson(json.get("current-options").asString)
-            return object : User {
-                override val uniqueId = UUID.fromString(uniqueId)
-                override var username = username
-                override var isVanished = isVanished
-                override var isOnline = isOnline
-                override var vanishLevel = vanishLevel
-                override var currentOptions = currentOptions
-                override var serverId = Platform.get().id
+    /**
+     * Saves the user to the database in a blocking manner.
+     *
+     * @return True if the save was successful, false otherwise.
+     * @since 2.0.0
+     */
+    fun saveBlocking(): Boolean {
+        return runBlocking { save().await() }
+    }
+
+    /**
+     * Saves the user to the database and returns a [CompletableFuture] for the result.
+     *
+     * @return A [CompletableFuture] indicating the result of the save operation.
+     * @since 2.0.0
+     */
+    fun saveFuture(): CompletableFuture<Boolean> {
+        return async(VanishAPI.get().getDatabase().dispatcher) {
+            save().await()
+        }.asCompletableFuture()
+    }
+
+    suspend fun delete(): Deferred<Boolean> {
+        val deferred = CompletableDeferred<Boolean>()
+        async(VanishAPI.get().getDatabase().dispatcher) {
+            VanishAPI.get().getDatabase().removeUser(uniqueId).await()
+            VanishAPI.get().getMessagingService().syncUser(this@User).await()
+            VanishAPI.get().getCacheService().getUsers().remove(uniqueId)
+
+            val vanishedUser = VanishAPI.get().getDatabase().getVanishUser(uniqueId).await()
+            if (vanishedUser != null) {
+                VanishAPI.get().getDatabase().removeVanishUser(uniqueId).await()
+                VanishAPI.get().getMessagingService().syncVanishUser(vanishedUser).await()
+                VanishAPI.get().getCacheService().getVanishUsers().remove(uniqueId)
             }
+
+            deferred.complete(true)
         }
 
-        fun User.convert(to: Class<out User>): Any {
-            val instance = to.getDeclaredMethod("fromUser", User::class.java).invoke(null, this)
-            return instance
+        return deferred
+    }
+
+    /**
+     * Synchronizes the user data with the messaging service asynchronously.
+     *
+     * @return A [Deferred] indicating the result of the sync operation.
+     * @since 2.0.0
+     */
+    @JvmSynthetic
+    suspend fun sync(): Deferred<Boolean> {
+        return VanishAPI.get().getMessagingService().syncUser(this)
+    }
+
+    /**
+     * Synchronizes the user data with the messaging service in a blocking manner.
+     *
+     * @return True if the sync was successful, false otherwise.
+     * @since 2.0.0
+     */
+    fun syncBlocking(): Boolean {
+        return runBlocking { sync().await() }
+    }
+
+    /**
+     * Synchronizes the user data with the messaging service and returns a [CompletableFuture] for the result.
+     *
+     * @return A [CompletableFuture] indicating the result of the sync operation.
+     * @since 2.0.0
+     */
+    fun syncFuture(): CompletableFuture<Boolean> {
+        return async(VanishAPI.get().getMessagingService().dispatcher) {
+            sync().await()
+        }.asCompletableFuture()
+    }
+
+    /**
+     * Saves and synchronizes the user data.
+     *
+     * @return A list of [Deferred] objects indicating the results of the save and sync operations.
+     * @since 2.0.0
+     */
+    @JvmSynthetic
+    suspend fun saveAndSync(): List<Deferred<Boolean>> {
+        return listOf(
+            save(),
+            sync()
+        )
+    }
+
+    /**
+     * Saves and synchronizes the user data in a blocking manner.
+     *
+     * @return A list of Boolean values indicating the results of the save and sync operations.
+     * @since 2.0.0
+     */
+    fun saveAndSyncBlocking(): List<Boolean> {
+        return runBlocking { saveAndSync().awaitAll() }
+    }
+
+    /**
+     * Asynchronously retrieves the [VanishUser] representation of this user.
+     *
+     * @return A [Deferred] containing the [VanishUser] instance.
+     * @since 2.0.0
+     */
+    @JvmSynthetic
+    suspend fun asVanishUser(): Deferred<VanishUser> {
+        return CompletableDeferred<VanishUser>().apply {
+            async(VanishAPI.get().getDatabase().dispatcher) {
+                VanishAPI.get().getDatabase().getVanishUser(uniqueId).await() ?: VanishUser.Generic(uniqueId, username, serverId)
+            }.let { complete(it.await()) }
+        }
+    }
+
+    /**
+     * Retrieves the [VanishUser] representation of this user in a blocking manner.
+     *
+     * @return The [VanishUser] instance.
+     * @since 2.0.0
+     */
+    fun asVanishUserBlocking(): VanishUser {
+        return runBlocking { asVanishUser().await() }
+    }
+
+    /**
+     * Asynchronously retrieves the [VanishUser] representation of this user and returns a [CompletableFuture].
+     *
+     * @return A [CompletableFuture] containing the [VanishUser] instance.
+     * @since 2.0.0
+     */
+    fun asVanishUserFuture(): CompletableFuture<VanishUser> {
+        return async(VanishAPI.get().getDatabase().dispatcher) {
+            asVanishUser().await()
+        }.asCompletableFuture()
+    }
+
+    fun generatedVanishUser(): VanishUser {
+        return VanishUser.Generic(uniqueId, username, serverId)
+    }
+
+    fun adapt(): User {
+        return Platform.get().adapter.adapt(this)
+    }
+
+    /**
+     * @since 2.0.0
+     */
+    // TODO: use kotlinx-serialization-gson?
+    class JsonAdapter : JsonSerializer<User>, JsonDeserializer<User> {
+        override fun serialize(src: User, typeOfSrc: Type, context: JsonSerializationContext): JsonObject {
+            return JsonParser.parseString(Gson().toJson(src)).asJsonObject
+        }
+
+        override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): User {
+            return Gson().fromJson(json, Generic::class.java)
+        }
+    }
+
+    /**
+     * Represents the database schema for the [User] entity.
+     *
+     * Defines the columns and primary key for the users table.
+     *
+     * @since 2.0.0
+     */
+    object Schema : PlatformTable("users") {
+        val uniqueId = uuid("unique_id").uniqueIndex()
+        val username = varchar("username", 16)
+        val isOnline = bool("is_online").default(false)
+        val serverId = varchar("server_id", 256)
+
+        override val primaryKey = PrimaryKey(uniqueId)
+    }
+
+    /**
+     * Generic implementation of the [User] interface.
+     *
+     * @property uniqueId The unique identifier for the user.
+     * @property username The username of the user.
+     * @property isOnline Whether the user is currently online.
+     * @property serverId The ID of the server the user is connected to.
+     * @since 2.0.0
+     */
+    data class Generic(
+        override val uniqueId: UUID,
+        override var username: String,
+        override var isOnline: Boolean,
+        override var serverId: String
+    ) : User
+
+    companion object {
+        /**
+         * Retrieves a [User] from the cache by [UUID].
+         *
+         * @receiver The [UUID] of the user to retrieve.
+         * @return The [User] if found in cache, or null if not found.
+         * @since 2.0.0
+         */
+        @JvmSynthetic
+        fun UUID.userFromCache(): User? {
+            return VanishAPI.get().getCacheService().getUsers()[this]
+        }
+
+        /**
+         * Asynchronously retrieves a [User] by [UUID] from the database.
+         *
+         * @receiver The [UUID] of the user to retrieve.
+         * @return A [Deferred] containing the [User] if found, or null if not found.
+         * @since 2.0.0
+         */
+        @JvmSynthetic
+        suspend fun UUID.user(): Deferred<User?> {
+            return VanishAPI.get().getDatabase().getUser(this)
+        }
+
+        /**
+         * Retrieves a [User] by [UUID] from the database in a blocking manner.
+         *
+         * @receiver The [UUID] of the user to retrieve.
+         * @return The [User] if found, or null if not found.
+         * @since 2.0.0
+         */
+        @JvmSynthetic
+        fun UUID.userBlocking(): User? {
+            return runBlocking { user().await() }
+        }
+
+        /**
+         * Retrieves a [User] by [UUID] from the database in a blocking manner.
+         *
+         * @param uniqueId The [UUID] of the user to retrieve.
+         * @return The [User] if found, or null if not found.
+         * @since 2.0.0
+         */
+        @JvmStatic
+        fun getUserBlocking(uniqueId: UUID): User? {
+            return uniqueId.userBlocking()
+        }
+
+        /**
+         * Asynchronously retrieves a [User] by [UUID] from the database and returns a [CompletableFuture].
+         *
+         * @receiver The [UUID] of the user to retrieve.
+         * @return A [CompletableFuture] containing the [User] if found, or null if not found.
+         * @since 2.0.0
+         */
+        @JvmSynthetic
+        fun UUID.userFuture(): CompletableFuture<User?> {
+            return async(VanishAPI.get().getDatabase().dispatcher) {
+                user().await()
+            }.asCompletableFuture()
+        }
+
+        /**
+         * Retrieves a [User] by [UUID] from the database and returns a [CompletableFuture].
+         *
+         * @param uniqueId The [UUID] of the user to retrieve.
+         * @return A [CompletableFuture] containing the [User] if found, or null if not found.
+         * @since 2.0.0
+         */
+        @JvmStatic
+        fun getUserFuture(uniqueId: UUID): CompletableFuture<User?> {
+            return uniqueId.userFuture()
         }
     }
 

@@ -1,0 +1,8 @@
+[submodule "StickyNote"]
+	path = StickyNote
+	url = https://github.com/Sayan-Development/StickyNote.git
+	branch = pubsub-generic
+[submodule "docs"]
+	path = docs
+	url = https://github.com/Syrent/sayanvanish-docs.git
+	branch = main

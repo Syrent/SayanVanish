@@ -25,7 +25,7 @@ import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.paper.api.event.PaperUserUnVanishEvent
 import org.sayandev.sayanvanish.paper.api.event.PaperUserVanishEvent
 import org.sayandev.sayanvanish.paper.feature.HookFeature
-import org.sayandev.stickynote.bukkit.registerListener
+import org.sayandev.stickynote.paper.registerListener
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import xyz.jpenilla.squaremap.api.SquaremapProvider

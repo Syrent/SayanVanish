@@ -35,7 +35,7 @@ import org.sayandev.sayanvanish.paper.config.Settings
 import org.sayandev.sayanvanish.paper.feature.ListenedFeature
 import org.sayandev.sayanvanish.paper.utils.PlayerUtils.sendPrefixComponent
 import org.sayandev.sayanvanish.paper.utils.PlayerUtils.sendRawComponent
-import org.sayandev.stickynote.bukkit.*
+import org.sayandev.stickynote.paper.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import com.charleskorn.kaml.YamlComment

@@ -36,7 +36,7 @@ import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.cachedVa
 import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.getCachedOrCreateVanishUser
 import org.sayandev.sayanvanish.paper.config.language
 import org.sayandev.sayanvanish.paper.feature.ListenedFeature
-import org.sayandev.stickynote.bukkit.launch
+import org.sayandev.stickynote.paper.launch
 
 @RegisteredFeature
 @Serializable

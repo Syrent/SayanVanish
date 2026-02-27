@@ -33,9 +33,9 @@ import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.paper.api.event.PaperUserUnVanishEvent
 import org.sayandev.sayanvanish.paper.api.event.PaperUserVanishEvent
 import org.sayandev.sayanvanish.paper.feature.ListenedFeature
-import org.sayandev.stickynote.bukkit.nms.NMSUtils.sendPacket
-import org.sayandev.stickynote.bukkit.nms.PacketUtils
-import org.sayandev.stickynote.bukkit.utils.ServerVersion
+import org.sayandev.stickynote.paper.nms.NMSUtils.sendPacket
+import org.sayandev.stickynote.paper.nms.PacketUtils
+import org.sayandev.stickynote.paper.utils.ServerVersion
 import org.sayandev.stickynote.core.configuration.Config
 import com.charleskorn.kaml.YamlComment
 import kotlinx.serialization.SerialName

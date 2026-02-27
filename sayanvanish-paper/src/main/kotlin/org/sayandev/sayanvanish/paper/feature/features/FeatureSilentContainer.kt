@@ -36,8 +36,8 @@ import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.paper.api.event.PaperUserUnVanishEvent
 import org.sayandev.sayanvanish.paper.feature.ListenedFeature
-import org.sayandev.stickynote.bukkit.runSync
-import org.sayandev.stickynote.bukkit.utils.ServerVersion
+import org.sayandev.stickynote.paper.runSync
+import org.sayandev.stickynote.paper.utils.ServerVersion
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import java.util.*

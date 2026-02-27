@@ -24,7 +24,7 @@ import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.paper.api.PaperVanishUser
 import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.paper.feature.HookFeature
-import org.sayandev.stickynote.bukkit.plugin
+import org.sayandev.stickynote.paper.plugin
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Transient

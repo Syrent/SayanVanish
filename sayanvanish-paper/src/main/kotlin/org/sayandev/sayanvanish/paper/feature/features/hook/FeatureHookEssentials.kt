@@ -26,7 +26,7 @@ import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.paper.feature.HookFeature
-import org.sayandev.stickynote.bukkit.registerListener
+import org.sayandev.stickynote.paper.registerListener
 import kotlinx.serialization.Serializable
 import com.charleskorn.kaml.YamlComment
 import kotlinx.serialization.SerialName

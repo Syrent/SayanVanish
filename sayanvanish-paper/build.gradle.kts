@@ -1,5 +1,4 @@
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
-import org.sayandev.plugin.StickyNoteModules
 import xyz.jpenilla.runpaper.task.RunServer
 
 plugins {
@@ -9,8 +8,15 @@ plugins {
 }
 
 stickynote {
-    modules(StickyNoteModules.PAPER, StickyNoteModules.BUKKIT, StickyNoteModules.BUKKIT_NMS)
-//    relocate(!gradle.startParameter.getTaskNames().any { it.startsWith("runServer") || it.startsWith("runFolia") || it.startsWith("runVelocity") })
+    registerModule(core {
+        configuration {
+            kotlinx
+        }
+    })
+    registerModule(paper {
+        nms
+        command
+    })
 }
 
 dependencies {
@@ -28,7 +34,6 @@ dependencies {
 //    compileOnly("io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT")
 //    paperweight.paperDevBundle("1.21.1-R0.1-SNAPSHOT")
     implementation(project(":sayanvanish-api"))
-    implementation("org.sayandev:stickynote-command-bukkit:2.0.0-alpha.38")
 }
 
 tasks.withType(xyz.jpenilla.runtask.task.AbstractRun::class) {
@@ -59,7 +64,7 @@ tasks {
     }
 
     runServer {
-        runDirectory = file("run/bukkit-1")
+        runDirectory = file("run/paper-1")
         jvmArgs("-Dnet.kyori.adventure.text.warnWhenLegacyFormattingDetected=false", "-Dserver.id=lobby-1")
     }
     withType(RunServer::class.java) {
@@ -77,7 +82,7 @@ tasks {
         jvmArgs("-Dnet.kyori.adventure.text.warnWhenLegacyFormattingDetected=false")
     }
     register<RunServer>("runServer2") {
-        runDirectory = file("run/bukkit-2")
+        runDirectory = file("run/paper-2")
         jvmArgs("-Dnet.kyori.adventure.text.warnWhenLegacyFormattingDetected=false", "-Dserver.id=lobby-2")
     }
 

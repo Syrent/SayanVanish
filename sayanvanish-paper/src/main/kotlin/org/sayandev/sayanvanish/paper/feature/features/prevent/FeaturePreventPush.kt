@@ -27,8 +27,8 @@ import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.sayanvanish.paper.api.event.PaperUserUnVanishEvent
 import org.sayandev.sayanvanish.paper.api.event.PaperUserVanishEvent
 import org.sayandev.sayanvanish.paper.feature.ListenedFeature
-import org.sayandev.stickynote.bukkit.StickyNote
-import org.sayandev.stickynote.bukkit.hasPlugin
+import org.sayandev.stickynote.paper.StickyNote
+import org.sayandev.stickynote.paper.hasPlugin
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 

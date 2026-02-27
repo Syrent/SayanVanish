@@ -24,9 +24,9 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.sayandev.sayanvanish.paper.config.Settings
 import org.sayandev.sayanvanish.paper.config.language
-import org.sayandev.stickynote.bukkit.hook.PlaceholderAPIHook
-import org.sayandev.stickynote.bukkit.utils.AdventureUtils
-import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
+import org.sayandev.stickynote.paper.hook.PlaceholderAPIHook
+import org.sayandev.stickynote.paper.utils.AdventureUtils
+import org.sayandev.stickynote.paper.utils.AdventureUtils.component
 
 object PlayerUtils {
 

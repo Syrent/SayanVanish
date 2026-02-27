@@ -57,8 +57,8 @@ import org.sayandev.sayanvanish.paper.feature.features.prevent.FeaturePreventScu
 import org.sayandev.sayanvanish.paper.feature.features.prevent.FeaturePreventServerPing
 import org.sayandev.sayanvanish.paper.feature.features.prevent.FeaturePreventSpawnerSpawn
 import org.sayandev.sayanvanish.paper.feature.features.prevent.FeaturePreventTabComplete
-import org.sayandev.stickynote.bukkit.plugin
-import org.sayandev.stickynote.bukkit.pluginDirectory
+import org.sayandev.stickynote.paper.plugin
+import org.sayandev.stickynote.paper.pluginDirectory
 
 class PaperPlatform : Platform(
     "bukkit",

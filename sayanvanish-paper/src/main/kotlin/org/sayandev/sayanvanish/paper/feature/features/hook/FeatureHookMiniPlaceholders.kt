@@ -31,8 +31,8 @@ import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.cachedVa
 import org.sayandev.sayanvanish.paper.config.Settings
 import org.sayandev.sayanvanish.paper.config.language
 import org.sayandev.sayanvanish.paper.feature.HookFeature
-import org.sayandev.stickynote.bukkit.onlinePlayers
-import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
+import org.sayandev.stickynote.paper.onlinePlayers
+import org.sayandev.stickynote.paper.utils.AdventureUtils.component
 
 @RegisteredFeature
 @Serializable

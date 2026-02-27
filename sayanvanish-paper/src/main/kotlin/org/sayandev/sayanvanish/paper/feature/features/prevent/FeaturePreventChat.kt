@@ -34,8 +34,8 @@ import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.paper.config.language
 import org.sayandev.sayanvanish.paper.feature.ListenedFeature
-import org.sayandev.stickynote.bukkit.StickyNote
-import org.sayandev.stickynote.bukkit.plugin
+import org.sayandev.stickynote.paper.StickyNote
+import org.sayandev.stickynote.paper.plugin
 
 @RegisteredFeature
 @Serializable

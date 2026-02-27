@@ -26,8 +26,8 @@ import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
 import org.sayandev.sayanvanish.paper.api.PaperVanishUser.Companion.bukkitAdapt
 import org.sayandev.sayanvanish.paper.feature.ListenedFeature
-import org.sayandev.stickynote.bukkit.StickyNote
-import org.sayandev.stickynote.bukkit.utils.ServerVersion
+import org.sayandev.stickynote.paper.StickyNote
+import org.sayandev.stickynote.paper.utils.ServerVersion
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 

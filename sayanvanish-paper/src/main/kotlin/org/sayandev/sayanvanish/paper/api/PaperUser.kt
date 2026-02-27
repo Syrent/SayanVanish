@@ -28,10 +28,10 @@ import org.sayandev.sayanvanish.api.Permissions
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.paper.utils.PermissionUtils.asBukkitPermissionDefault
 import org.sayandev.sayanvanish.paper.utils.PlayerUtils.sendPrefixComponent
-import org.sayandev.stickynote.bukkit.extension.sendComponent
-import org.sayandev.stickynote.bukkit.extension.sendComponentActionbar
-import org.sayandev.stickynote.bukkit.utils.AdventureUtils
-import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
+import org.sayandev.stickynote.paper.extension.sendComponent
+import org.sayandev.stickynote.paper.extension.sendComponentActionbar
+import org.sayandev.stickynote.paper.utils.AdventureUtils
+import org.sayandev.stickynote.paper.utils.AdventureUtils.component
 import java.util.*
 
 class PaperUser(

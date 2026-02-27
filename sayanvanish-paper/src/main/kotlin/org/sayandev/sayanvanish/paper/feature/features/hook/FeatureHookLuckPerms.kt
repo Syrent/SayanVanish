@@ -36,7 +36,7 @@ import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.getCachedOrCreateVanishUser
 import org.sayandev.sayanvanish.paper.feature.HookFeature
-import org.sayandev.stickynote.bukkit.warn
+import org.sayandev.stickynote.paper.warn
 import java.util.*
 
 @RegisteredFeature

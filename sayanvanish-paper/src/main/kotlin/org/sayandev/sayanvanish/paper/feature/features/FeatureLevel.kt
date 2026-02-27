@@ -32,11 +32,11 @@ import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.getCache
 import org.sayandev.sayanvanish.paper.api.event.PaperUserUnVanishEvent
 import org.sayandev.sayanvanish.paper.api.event.PaperUserVanishEvent
 import org.sayandev.sayanvanish.paper.feature.ListenedFeature
-import org.sayandev.stickynote.bukkit.*
-import org.sayandev.stickynote.bukkit.nms.NMSUtils
-import org.sayandev.stickynote.bukkit.nms.NMSUtils.sendPacket
-import org.sayandev.stickynote.bukkit.nms.PacketUtils
-import org.sayandev.stickynote.bukkit.utils.ServerVersion
+import org.sayandev.stickynote.paper.*
+import org.sayandev.stickynote.paper.nms.NMSUtils
+import org.sayandev.stickynote.paper.nms.NMSUtils.sendPacket
+import org.sayandev.stickynote.paper.nms.PacketUtils
+import org.sayandev.stickynote.paper.utils.ServerVersion
 import kotlinx.serialization.Serializable
 import com.charleskorn.kaml.YamlComment
 import kotlinx.serialization.SerialName

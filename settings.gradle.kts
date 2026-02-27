@@ -1,4 +1,10 @@
 pluginManagement {
+    val useStickyNoteSubmodule = providers.gradleProperty("stickynote.useSubmodule").orNull?.toBoolean() == true
+    val stickyNoteSubmodulePath = providers.gradleProperty("stickynote.submodulePath").orNull ?: "StickyNote"
+    if (useStickyNoteSubmodule) {
+        includeBuild(stickyNoteSubmodulePath)
+    }
+
     repositories {
         mavenLocal()
         gradlePluginPortal()

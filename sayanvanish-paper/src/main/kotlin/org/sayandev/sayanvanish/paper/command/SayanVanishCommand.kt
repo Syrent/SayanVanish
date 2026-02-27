@@ -53,25 +53,25 @@ import org.sayandev.sayanvanish.paper.feature.features.FeatureLevel
 import org.sayandev.sayanvanish.paper.feature.features.FeatureUpdate
 import org.sayandev.sayanvanish.paper.utils.PlayerUtils.sendPrefixComponent
 import org.sayandev.sayanvanish.paper.utils.ServerUtils
-import org.sayandev.stickynote.bukkit.async
-import org.sayandev.stickynote.bukkit.plugin
-import org.sayandev.stickynote.bukkit.pluginDirectory
-import org.sayandev.stickynote.bukkit.runAsync
-import org.sayandev.stickynote.bukkit.runSync
-import org.sayandev.stickynote.bukkit.unregisterListener
-import org.sayandev.stickynote.bukkit.utils.AdventureUtils.component
-import org.sayandev.stickynote.command.bukkit.BukkitCommand
-import org.sayandev.stickynote.command.bukkit.commandNodePermission
-import org.sayandev.stickynote.command.bukkit.command as commandNode
-import org.sayandev.stickynote.command.bukkit.dsl
-import org.sayandev.stickynote.command.bukkit.withGeneratedPermission
-import org.sayandev.stickynote.command.bukkit.withUsePermission
+import org.sayandev.stickynote.paper.async
+import org.sayandev.stickynote.paper.plugin
+import org.sayandev.stickynote.paper.pluginDirectory
+import org.sayandev.stickynote.paper.runAsync
+import org.sayandev.stickynote.paper.runSync
+import org.sayandev.stickynote.paper.unregisterListener
+import org.sayandev.stickynote.paper.utils.AdventureUtils.component
+import org.sayandev.stickynote.command.paper.PaperCommand
+import org.sayandev.stickynote.command.paper.commandNodePermission
+import org.sayandev.stickynote.command.paper.command as commandNode
+import org.sayandev.stickynote.command.paper.dsl
+import org.sayandev.stickynote.command.paper.withGeneratedPermission
+import org.sayandev.stickynote.command.paper.withUsePermission
 import org.sayandev.stickynote.core.utils.MilliCounter
 import java.io.File
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 
-class SayanVanishCommand : BukkitCommand(
+class SayanVanishCommand : PaperCommand(
     Settings.get().vanishCommand.name,
     *Settings.get().vanishCommand.aliases.toTypedArray(),
 ) {
@@ -97,6 +97,10 @@ class SayanVanishCommand : BukkitCommand(
         invalidOptionMessage = { language.feature.invalidOption },
         invalidValueMessage = { expected -> language.feature.invalidValue.replace("<values>", expected) },
     )
+
+    init {
+        register()
+    }
 
     override fun build(command: CommandAPICommand) {
         command.dsl {

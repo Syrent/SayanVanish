@@ -1,11 +1,13 @@
-import org.sayandev.plugin.StickyNoteModules
-
 plugins {
     id("xyz.jpenilla.run-velocity") version "3.0.2"
 }
 
 stickynote {
-    modules(StickyNoteModules.VELOCITY)
+    registerModule(proxy {
+        velocity {
+            command
+        }
+    })
 }
 
 dependencies {
@@ -16,7 +18,6 @@ dependencies {
     annotationProcessor(libs.velocity.api)
 
     api(project(":sayanvanish-proxy"))
-    implementation("org.sayandev:stickynote-command-velocity:2.0.0-alpha.38")
 }
 
 tasks.withType(xyz.jpenilla.runtask.task.AbstractRun::class) {

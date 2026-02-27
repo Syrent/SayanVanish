@@ -31,11 +31,12 @@ import org.sayandev.sayanvanish.paper.api.Metrics
 import org.sayandev.sayanvanish.paper.command.SayanVanishCommand
 import org.sayandev.sayanvanish.paper.config.Settings
 import org.sayandev.sayanvanish.paper.config.language
-import org.sayandev.stickynote.command.bukkit.CommandApiLifecycle
-import org.sayandev.stickynote.bukkit.StickyNote
-import org.sayandev.stickynote.bukkit.WrappedStickyNotePlugin
-import org.sayandev.stickynote.bukkit.error
+import org.sayandev.stickynote.command.paper.CommandApiLifecycle
+import org.sayandev.stickynote.paper.StickyNote
+import org.sayandev.stickynote.paper.WrappedStickyNotePlugin
+import org.sayandev.stickynote.paper.error
 import java.io.File
+import java.util.logging.Level
 
 class SayanVanishPlugin : JavaPlugin() {
 
@@ -83,7 +84,12 @@ class SayanVanishPlugin : JavaPlugin() {
 
     override fun onDisable() {
         runBlocking {
-            Platform.get().unregister()
+            runCatching { VanishAPI.shutdown() }.onFailure {
+                logger.log(Level.SEVERE, "Failed to shut down SayanVanish API cleanly", it)
+            }
+            runCatching { Platform.get().unregister() }.onFailure {
+                logger.log(Level.SEVERE, "Failed to unregister SayanVanish platform cleanly", it)
+            }
         }
         CommandApiLifecycle.disable()
         StickyNote.shutdown()

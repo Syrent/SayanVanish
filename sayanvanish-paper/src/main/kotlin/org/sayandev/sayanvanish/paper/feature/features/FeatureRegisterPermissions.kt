@@ -27,7 +27,7 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.sayandev.sayanvanish.api.Permissions
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.paper.feature.ListenedFeature
-import org.sayandev.stickynote.bukkit.plugin
+import org.sayandev.stickynote.paper.plugin
 
 @RegisteredFeature
 @Serializable

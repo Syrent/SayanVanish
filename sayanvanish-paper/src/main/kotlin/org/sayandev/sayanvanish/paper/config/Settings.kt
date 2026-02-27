@@ -20,7 +20,7 @@ package org.sayandev.sayanvanish.paper.config
 
 import com.charleskorn.kaml.YamlComment
 import org.sayandev.sayanvanish.api.Platform
-import org.sayandev.stickynote.bukkit.pluginDirectory
+import org.sayandev.stickynote.paper.pluginDirectory
 import org.sayandev.stickynote.core.configuration.Config
 import kotlinx.serialization.Serializable
 import java.io.File

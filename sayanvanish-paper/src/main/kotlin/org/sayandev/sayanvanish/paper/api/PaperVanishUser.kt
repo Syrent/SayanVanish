@@ -18,6 +18,7 @@
  */
 package org.sayandev.sayanvanish.paper.api
 
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
@@ -36,11 +37,12 @@ import org.sayandev.sayanvanish.paper.config.Settings
 import org.sayandev.sayanvanish.paper.config.language
 import org.sayandev.sayanvanish.paper.feature.features.FeatureLevel
 import org.sayandev.sayanvanish.paper.feature.features.hook.FeatureHookLuckPerms
-import org.sayandev.stickynote.bukkit.hasPlugin
-import org.sayandev.stickynote.bukkit.onlinePlayers
-import org.sayandev.stickynote.bukkit.plugin
-import org.sayandev.stickynote.bukkit.server
-import org.sayandev.stickynote.bukkit.utils.ServerVersion
+import org.sayandev.stickynote.paper.extension.sendComponent
+import org.sayandev.stickynote.paper.hasPlugin
+import org.sayandev.stickynote.paper.onlinePlayers
+import org.sayandev.stickynote.paper.plugin
+import org.sayandev.stickynote.paper.server
+import org.sayandev.stickynote.paper.utils.ServerVersion
 import java.util.*
 
 open class PaperVanishUser(
@@ -107,6 +109,7 @@ open class PaperVanishUser(
         }
         player()?.isSleepingIgnored = false
 
+        player()?.sendComponent(Component.empty())
         player()?.removeMetadata("vanished", plugin)
         showUser()
 

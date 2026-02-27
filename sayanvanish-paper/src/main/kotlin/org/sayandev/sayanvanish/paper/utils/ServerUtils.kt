@@ -23,9 +23,9 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import org.bukkit.plugin.Plugin
 import org.sayandev.sayanvanish.api.VanishAPI
-import org.sayandev.stickynote.bukkit.onlinePlayers
-import org.sayandev.stickynote.bukkit.plugin
-import org.sayandev.stickynote.bukkit.server
+import org.sayandev.stickynote.paper.onlinePlayers
+import org.sayandev.stickynote.paper.plugin
+import org.sayandev.stickynote.paper.server
 import java.time.Instant
 
 

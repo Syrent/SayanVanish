@@ -35,9 +35,7 @@ object VelocityPlatformAdapter : PlatformAdapter<VelocityUser, VelocityVanishUse
     }
 
     override fun adapt(vanishUser: VanishUser): VelocityVanishUser {
-        val serverId = resolveServerId(vanishUser.uniqueId, runCatching { vanishUser.serverId }.getOrNull())
         return VelocityVanishUser(vanishUser.uniqueId, vanishUser.username).also {
-            it.serverId = serverId
             it.currentOptions = vanishUser.currentOptions
             it.isVanished = vanishUser.isVanished
             it.vanishLevel = vanishUser.vanishLevel

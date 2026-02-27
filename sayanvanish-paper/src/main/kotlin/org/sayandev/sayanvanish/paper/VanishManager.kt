@@ -28,8 +28,8 @@ import org.sayandev.sayanvanish.paper.api.PaperVanishUser.Companion.bukkitAdapt
 import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.getCachedOrCreateUser
 import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.getOrAddUser
 import org.sayandev.sayanvanish.paper.config.Settings
-import org.sayandev.stickynote.bukkit.launch
-import org.sayandev.stickynote.bukkit.registerListener
+import org.sayandev.stickynote.paper.launch
+import org.sayandev.stickynote.paper.registerListener
 
 object VanishManager : Listener {
 

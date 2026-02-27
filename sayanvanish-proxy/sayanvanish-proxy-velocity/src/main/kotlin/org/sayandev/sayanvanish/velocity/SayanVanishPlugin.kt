@@ -33,7 +33,7 @@ import org.sayandev.sayanvanish.proxy.config.language
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
 import org.sayandev.sayanvanish.velocity.command.SayanVanishProxyCommandVelocity
 import org.sayandev.stickynote.command.velocity.CommandApiLifecycle
-import org.sayandev.stickynote.loader.velocity.StickyNoteVelocityLoader
+import org.sayandev.stickynote.velocity.StickyNoteBootstrap
 import org.sayandev.stickynote.velocity.launch
 import org.sayandev.stickynote.velocity.registerListener
 import org.slf4j.Logger
@@ -55,7 +55,7 @@ class SayanVanishPlugin @Inject constructor(
 
     @Subscribe
     fun onProxyInitialize(event: ProxyInitializeEvent) {
-        StickyNoteVelocityLoader(this, PLUGIN_ID, server, logger, dataDirectory)
+        StickyNoteBootstrap.initialize(this, PLUGIN_ID, server, logger, dataDirectory, suspendingPluginContainer)
         suspendingPluginContainer.initialize(this)
         setInstance(this)
         Platform.get().rootDirectory = dataDirectory.toFile()
@@ -96,6 +96,12 @@ class SayanVanishPlugin @Inject constructor(
 
     @Subscribe
     fun onProxyShutdown(event: ProxyShutdownEvent) {
+        runCatching { VanishAPI.shutdown() }.onFailure {
+            logger.error("Failed to shut down SayanVanish API cleanly", it)
+        }
+        runCatching { Platform.get().unregisterBlocking() }.onFailure {
+            logger.error("Failed to unregister SayanVanish platform cleanly", it)
+        }
         CommandApiLifecycle.disable()
     }
 

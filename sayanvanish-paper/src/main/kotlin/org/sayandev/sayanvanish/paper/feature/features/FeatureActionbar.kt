@@ -31,9 +31,9 @@ import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.cachedVa
 import org.sayandev.sayanvanish.paper.api.event.PaperUserUnVanishEvent
 import org.sayandev.sayanvanish.paper.api.event.PaperUserVanishEvent
 import org.sayandev.sayanvanish.paper.feature.ListenedFeature
-import org.sayandev.stickynote.bukkit.StickyNote
-import org.sayandev.stickynote.bukkit.launch
-import org.sayandev.stickynote.bukkit.onlinePlayers
+import org.sayandev.stickynote.paper.StickyNote
+import org.sayandev.stickynote.paper.launch
+import org.sayandev.stickynote.paper.onlinePlayers
 
 @RegisteredFeature
 @Serializable
@@ -69,7 +69,6 @@ class FeatureActionbar(
             delay(delayMillis)
             while (StickyNote.plugin().isEnabled && enabled && isActive) {
                 // TODO: remove this warning
-//                warn("vanished: ${VanishAPI.get().getCacheService().getVanishUsers().values.joinToString(" ,") { "${it.username}:${it.isVanished}" }}")
                 for (user in onlinePlayers.mapNotNull { it.cachedVanishUser() }.filter { it.isVanished }) {
                     if (!isActive(user)) continue
                     user.sendActionbar(content)

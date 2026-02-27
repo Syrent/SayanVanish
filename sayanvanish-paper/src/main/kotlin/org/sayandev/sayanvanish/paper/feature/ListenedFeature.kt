@@ -21,8 +21,8 @@ package org.sayandev.sayanvanish.paper.feature
 import kotlinx.serialization.Serializable
 import org.bukkit.event.Listener
 import org.sayandev.sayanvanish.api.feature.Feature
-import org.sayandev.stickynote.bukkit.registerListener
-import org.sayandev.stickynote.bukkit.unregisterListener
+import org.sayandev.stickynote.paper.registerListener
+import org.sayandev.stickynote.paper.unregisterListener
 
 @Serializable
 abstract class ListenedFeature : Feature(), Listener {

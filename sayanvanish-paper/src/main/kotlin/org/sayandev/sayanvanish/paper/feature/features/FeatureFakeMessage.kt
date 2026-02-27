@@ -36,8 +36,8 @@ import org.sayandev.sayanvanish.paper.api.event.PaperUserUnVanishEvent
 import org.sayandev.sayanvanish.paper.api.event.PaperUserVanishEvent
 import org.sayandev.sayanvanish.paper.feature.ListenedFeature
 import org.sayandev.sayanvanish.paper.utils.PlayerUtils.sendRawComponent
-import org.sayandev.stickynote.bukkit.hook.PlaceholderAPIHook
-import org.sayandev.stickynote.bukkit.onlinePlayers
+import org.sayandev.stickynote.paper.hook.PlaceholderAPIHook
+import org.sayandev.stickynote.paper.onlinePlayers
 
 @RegisteredFeature
 @Serializable

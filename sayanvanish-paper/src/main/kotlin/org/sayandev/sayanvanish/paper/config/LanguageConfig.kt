@@ -19,7 +19,7 @@
 package org.sayandev.sayanvanish.paper.config
 
 import kotlinx.serialization.Serializable
-import org.sayandev.stickynote.bukkit.pluginDirectory
+import org.sayandev.stickynote.paper.pluginDirectory
 import org.sayandev.stickynote.core.configuration.Config
 import java.io.File
 

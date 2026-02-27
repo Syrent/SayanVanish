@@ -22,7 +22,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import org.sayandev.sayanvanish.api.User
 import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
-import org.sayandev.stickynote.bukkit.hasPlugin
+import org.sayandev.stickynote.paper.hasPlugin
 
 @Serializable
 abstract class HookFeature : ListenedFeature() {

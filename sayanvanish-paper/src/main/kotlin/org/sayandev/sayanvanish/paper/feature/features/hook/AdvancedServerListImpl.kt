@@ -27,7 +27,7 @@ import org.sayandev.sayanvanish.api.SayanVanishAPI
 import org.sayandev.sayanvanish.api.VanishAPI
 import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.getCachedOrCreateVanishUser
 import org.sayandev.sayanvanish.paper.config.language
-import org.sayandev.stickynote.bukkit.onlinePlayers
+import org.sayandev.stickynote.paper.onlinePlayers
 
 // TODO: we have so many placeholder providers, maybe we should create a common base class for them?
 class AdvancedServerListImpl : PlaceholderProvider("sayanvanish") {

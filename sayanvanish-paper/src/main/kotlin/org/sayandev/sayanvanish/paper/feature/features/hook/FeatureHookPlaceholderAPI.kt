@@ -26,14 +26,14 @@ import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.cachedVanishUser
 import org.sayandev.sayanvanish.paper.config.language
 import org.sayandev.sayanvanish.paper.feature.HookFeature
-import org.sayandev.stickynote.bukkit.StickyNote
-import org.sayandev.stickynote.bukkit.hook.PlaceholderAPIHook
-import org.sayandev.stickynote.bukkit.onlinePlayers
+import org.sayandev.stickynote.paper.StickyNote
+import org.sayandev.stickynote.paper.hook.PlaceholderAPIHook
+import org.sayandev.stickynote.paper.onlinePlayers
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import com.charleskorn.kaml.YamlComment
 import kotlinx.serialization.SerialName
-import org.sayandev.stickynote.bukkit.warn
+import org.sayandev.stickynote.paper.warn
 
 @RegisteredFeature
 @Serializable

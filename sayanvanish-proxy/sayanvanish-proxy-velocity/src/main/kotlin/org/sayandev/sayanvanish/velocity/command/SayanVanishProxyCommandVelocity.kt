@@ -45,6 +45,10 @@ class SayanVanishProxyCommandVelocity : VelocityCommand(Settings.get().command.n
 
     private val rootPermission = "${plugin.container.description.name.get().lowercase()}.commands.use"
 
+    init {
+        register()
+    }
+
     override fun build(command: CommandAPICommand) {
         command
             .withPermission(rootPermission)

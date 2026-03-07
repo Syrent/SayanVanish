@@ -3,15 +3,20 @@ package org.sayandev.sayanvanish.velocity.feature.features
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.proxy.ProxyPingEvent
 import com.velocitypowered.api.proxy.server.ServerPing
+import org.sayandev.sayanvanish.api.feature.Configurable
 import org.sayandev.sayanvanish.api.feature.RegisteredFeature
 import org.sayandev.sayanvanish.velocity.api.SayanVanishVelocityAPI
 import org.sayandev.sayanvanish.velocity.feature.ListenedFeature
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.objectmapping.meta.Comment
 import kotlin.jvm.optionals.getOrNull
 
 @RegisteredFeature
 @ConfigSerializable
-class FeatureUpdatePing : ListenedFeature("update_ping") {
+class FeatureUpdatePing(
+    @Comment("List of server names to update the ping for. if empty, the ping will be updated for all servers.")
+    @Configurable val servers: List<String> = emptyList()
+) : ListenedFeature("update_ping") {
 
     @Subscribe
     fun onProxyPing(event: ProxyPingEvent) {
@@ -25,9 +30,17 @@ class FeatureUpdatePing : ListenedFeature("update_ping") {
         val nonVanishedPlayersSample = pingPlayers.sample.filter { pingPlayer ->
             !vanishedOnlineUsersNames.contains(pingPlayer.name)
         }
+
+        var onlinePlayers = nonVanishedPlayersCount
+        if (!servers.isEmpty()) {
+            onlinePlayers = SayanVanishVelocityAPI.getInstance().database.getUsers().filter { user ->
+                !vanishedOnlineUsersNames.contains(user.username) && servers.contains(user.serverId)
+            }.size
+        }
+
         event.ping = event.ping
             .asBuilder()
-            .onlinePlayers(nonVanishedPlayersCount)
+            .onlinePlayers(onlinePlayers)
             .samplePlayers(*nonVanishedPlayersSample.map { ServerPing.SamplePlayer(it.name, it.id) }.toTypedArray())
             .build()
     }

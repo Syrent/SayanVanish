@@ -14,7 +14,7 @@ import kotlin.jvm.optionals.getOrNull
 @RegisteredFeature
 @ConfigSerializable
 class FeatureUpdatePing(
-    @Comment("List of server names to update the ping for. if empty, the ping will be updated for all servers.")
+    @Comment("List of server names whose players are counted toward the online player count. If empty, players from all servers will be counted.")
     @Configurable val servers: List<String> = emptyList()
 ) : ListenedFeature("update_ping") {
 
@@ -22,25 +22,19 @@ class FeatureUpdatePing(
     fun onProxyPing(event: ProxyPingEvent) {
         if (!isActive()) return
         val pingPlayers = event.ping.players.getOrNull() ?: return
-        val vanishedOnlineUsers = SayanVanishVelocityAPI.getInstance().database.getUsers().filter { user -> user.isVanished && user.isOnline }
-        val vanishedOnlineUsersNames = vanishedOnlineUsers.map { vanishUser -> vanishUser.username }
+        val vanishedOnlineUsers = SayanVanishVelocityAPI.getInstance().database.getUsers().filter { user -> user.isVanished && user.isOnline && (servers.isEmpty() || user.serverId in servers) }
+        val vanishedOnlineUsersNames = vanishedOnlineUsers.map { vanishUser -> vanishUser.username }.toSet()
         val nonVanishedPlayersCount = SayanVanishVelocityAPI.getInstance().database.getBasicUsers(true).filter { basicUser ->
-            !vanishedOnlineUsersNames.contains(basicUser.username)
+            (servers.isEmpty() || basicUser.serverId in servers) &&
+                !vanishedOnlineUsersNames.contains(basicUser.username)
         }.size
         val nonVanishedPlayersSample = pingPlayers.sample.filter { pingPlayer ->
             !vanishedOnlineUsersNames.contains(pingPlayer.name)
         }
 
-        var onlinePlayers = nonVanishedPlayersCount
-        if (!servers.isEmpty()) {
-            onlinePlayers = SayanVanishVelocityAPI.getInstance().database.getUsers().filter { user ->
-                !vanishedOnlineUsersNames.contains(user.username) && servers.contains(user.serverId)
-            }.size
-        }
-
         event.ping = event.ping
             .asBuilder()
-            .onlinePlayers(onlinePlayers)
+            .onlinePlayers(nonVanishedPlayersCount)
             .samplePlayers(*nonVanishedPlayersSample.map { ServerPing.SamplePlayer(it.name, it.id) }.toTypedArray())
             .build()
     }

@@ -1,6 +1,26 @@
+/*
+ * This file is part of SayanVanish, licensed under the GNU General Public License v3.0.
+ *
+ * Copyright (c) 2026 Sayan Development and contributors
+ *
+ * SayanVanish is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * SayanVanish is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 package org.sayandev.sayanvanish.api.utils
 
 import com.google.gson.JsonParser
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Deferred
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -15,8 +35,8 @@ class Paste(
     val content: List<String>,
 ) {
 
-    fun post(): CompletableFuture<String> {
-        val future = CompletableFuture<String>()
+    suspend fun post(): Deferred<String> {
+        val deferred = CompletableDeferred<String>()
 
         val url = URL(POST_URL)
         val connection = url.openConnection() as HttpURLConnection
@@ -41,10 +61,16 @@ class Paste(
                     response.append(inputLine)
                 }
 
-                val key = JsonParser.parseString(response.toString()).asJsonObject.get("key").asString
+                val body = response.toString()
+                val key =
+                    runCatching {
+                        JsonParser.parseString(body).asJsonObject.get("key").asString
+                    }.getOrNull()
+                        ?: connection.getHeaderField("Location")
+                        ?: throw IOException("Paste API did not return a key.")
 
-                future.complete(key)
-                return future
+                deferred.complete(key)
+                return deferred
             }
         } else {
             throw IOException("Failed to upload content, HTTP response code: $responseCode")
@@ -56,7 +82,11 @@ class Paste(
         private const val POST_URL = "$BASE_URL/post"
         private const val USER_AGENT: String = "Mozilla/5.0"
 
-        const val PASTE_URL = "https://pastes.dev"
+        const val PASTE_URL = BASE_URL
+
+        fun url(key: String): String {
+            return "$PASTE_URL/$key"
+        }
     }
 
 }

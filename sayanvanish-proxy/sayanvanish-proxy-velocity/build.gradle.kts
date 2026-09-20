@@ -1,11 +1,13 @@
-import org.sayandev.plugin.StickyNoteModules
-
 plugins {
-    id("xyz.jpenilla.run-velocity") version "2.3.0"
+    id("xyz.jpenilla.run-velocity") version "3.0.2"
 }
 
 stickynote {
-    modules(StickyNoteModules.VELOCITY)
+    registerModule(proxy {
+        velocity {
+            command
+        }
+    })
 }
 
 dependencies {
@@ -40,7 +42,8 @@ tasks {
         downloadPlugins {
             modrinth("miniplaceholders", "2.3.0")
             modrinth("luckperms", "v5.5.17-velocity")
-//            modrinth("velocitab", "1.7.8")
+            modrinth("tab-was-taken", "on2YAQXR")
+//            modrinth("velocitab", "1.7.10-19b1474")
 //            url("https://github.com/NEZNAMY/TAB/releases/download/5.0.3/TAB.v5.0.3.jar")
 //            url("https://cdn.modrinth.com/data/Q10irTG0/versions/eXh7ktan/Velocitab-1.7.2-67931d8.jar")
 //            url("https://github.com/Syrent/EnhancedVelocity/releases/download/1.3.3/EnhancedVelocity.v1.3.3.jar")

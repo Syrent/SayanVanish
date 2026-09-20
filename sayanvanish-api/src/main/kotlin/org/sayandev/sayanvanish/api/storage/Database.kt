@@ -1,0 +1,180 @@
+/*
+ * This file is part of SayanVanish, licensed under the GNU General Public License v3.0.
+ *
+ * Copyright (c) 2026 Sayan Development and contributors
+ *
+ * SayanVanish is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * SayanVanish is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+package org.sayandev.sayanvanish.api.storage
+
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.future.asCompletableFuture
+import kotlinx.coroutines.runBlocking
+import org.sayandev.sayanvanish.api.User
+import org.sayandev.sayanvanish.api.VanishUser
+import org.sayandev.stickynote.core.coroutine.dispatcher.AsyncDispatcher
+import org.sayandev.stickynote.core.utils.async
+import java.util.*
+import java.util.concurrent.CompletableFuture
+
+interface Database {
+
+    val dispatcher: AsyncDispatcher
+
+    var connected: Boolean
+
+    suspend fun initialize(): Deferred<Boolean>
+
+    suspend fun connect(): Deferred<Boolean>
+
+    suspend fun disconnect(): Deferred<Boolean>
+
+    suspend fun saveVanishUser(vanishUser: VanishUser): Deferred<Boolean>
+
+    fun saveVanishUserFuture(vanishUser: VanishUser): CompletableFuture<Boolean> {
+        return async(dispatcher) { saveVanishUser(vanishUser).await() }.asCompletableFuture()
+    }
+
+    fun saveVanishUserBlocking(vanishUser: VanishUser): Boolean {
+        return runBlocking { saveVanishUser(vanishUser).await() }
+    }
+
+    suspend fun hasVanishUser(uniqueId: UUID): Deferred<Boolean>
+
+    fun hasVanishUserFuture(uniqueId: UUID): CompletableFuture<Boolean> {
+        return async(dispatcher) { hasVanishUser(uniqueId).await() }.asCompletableFuture()
+    }
+
+    fun hasVanishUserBlocking(uniqueId: UUID): Boolean {
+        return runBlocking { hasVanishUser(uniqueId).await() }
+    }
+
+    suspend fun updateVanishUser(vanishUser: VanishUser): Deferred<Boolean>
+
+    fun updateVanishUserFuture(vanishUser: VanishUser): CompletableFuture<Boolean> {
+        return async(dispatcher) { updateVanishUser(vanishUser).await() }.asCompletableFuture()
+    }
+
+    fun updateVanishUserBlocking(vanishUser: VanishUser): Boolean {
+        return runBlocking { updateVanishUser(vanishUser).await() }
+    }
+
+    suspend fun removeVanishUser(uniqueId: UUID): Deferred<Boolean>
+
+    fun removeVanishUserFuture(uniqueId: UUID): CompletableFuture<Boolean> {
+        return async(dispatcher) { removeVanishUser(uniqueId).await() }.asCompletableFuture()
+    }
+
+    fun removeVanishUserBlocking(uniqueId: UUID): Boolean {
+        return runBlocking { removeVanishUser(uniqueId).await() }
+    }
+
+    suspend fun getVanishUser(uniqueId: UUID): Deferred<VanishUser?>
+
+    fun getVanishUserFuture(uniqueId: UUID): CompletableFuture<VanishUser?> {
+        return async(dispatcher) { getVanishUser(uniqueId).await() }.asCompletableFuture()
+    }
+
+    fun getVanishUserBlocking(uniqueId: UUID): VanishUser? {
+        return runBlocking { getVanishUser(uniqueId).await() }
+    }
+
+    suspend fun getVanishUsers(): Deferred<List<VanishUser>>
+
+    fun getVanishUsersFuture(): CompletableFuture<List<VanishUser>> {
+        return async(dispatcher) { getVanishUsers().await() }.asCompletableFuture()
+    }
+
+    fun getVanishUsersBlocking(): List<VanishUser> {
+        return runBlocking { getVanishUsers().await() }
+    }
+
+    suspend fun getUser(uniqueId: UUID): Deferred<User?>
+
+    fun getUserFuture(uniqueId: UUID): CompletableFuture<User?> {
+        return async(dispatcher) { getUser(uniqueId).await() }.asCompletableFuture()
+    }
+
+    fun getUserBlocking(uniqueId: UUID): User? {
+        return runBlocking { getUser(uniqueId).await() }
+    }
+
+    suspend fun getUsers(): Deferred<List<User>>
+
+    fun getUsersFuture(): CompletableFuture<List<User>> {
+        return async(dispatcher) { getUsers().await() }.asCompletableFuture()
+    }
+
+    fun getUsersBlocking(): List<User> {
+        return runBlocking { getUsers().await() }
+    }
+
+    suspend fun saveUser(user: User): Deferred<Boolean>
+
+    fun saveUserFuture(user: User): CompletableFuture<Boolean> {
+        return async(dispatcher) { saveUser(user).await() }.asCompletableFuture()
+    }
+
+    fun saveUserBlocking(user: User): Boolean {
+        return runBlocking { saveUser(user).await() }
+    }
+
+    suspend fun hasUser(uniqueId: UUID): Deferred<Boolean>
+
+    fun hasUserFuture(uniqueId: UUID): CompletableFuture<Boolean> {
+        return async(dispatcher) { hasUser(uniqueId).await() }.asCompletableFuture()
+    }
+
+    fun hasUserBlocking(uniqueId: UUID): Boolean {
+        return runBlocking { hasUser(uniqueId).await() }
+    }
+
+    suspend fun updateUser(user: User): Deferred<Boolean>
+
+    fun updateUserFuture(user: User): CompletableFuture<Boolean> {
+        return async(dispatcher) { updateUser(user).await() }.asCompletableFuture()
+    }
+
+    fun updateUserBlocking(user: User): Boolean {
+        return runBlocking { updateUser(user).await() }
+    }
+
+    suspend fun removeUser(uniqueId: UUID): Deferred<Boolean>
+
+    fun removeUserFuture(uniqueId: UUID): CompletableFuture<Boolean> {
+        return async(dispatcher) { removeUser(uniqueId).await() }.asCompletableFuture()
+    }
+
+    fun removeUserBlocking(uniqueId: UUID): Boolean {
+        return runBlocking { removeUser(uniqueId).await() }
+    }
+
+    suspend fun purgeAllTables(): Deferred<Boolean>
+
+    fun purgeAllTablesFuture(): CompletableFuture<Boolean> {
+        return async(dispatcher) { purgeAllTables().await() }.asCompletableFuture()
+    }
+
+    suspend fun purgeUsers(): Deferred<Boolean>
+
+    fun purgeUsersFuture(): CompletableFuture<Boolean> {
+        return async(dispatcher) { purgeUsers().await() }.asCompletableFuture()
+    }
+
+    suspend fun purgeUsers(serverId: String): Deferred<Boolean>
+
+    fun purgeUsersFuture(serverId: String): CompletableFuture<Boolean> {
+        return async(dispatcher) { purgeUsers(serverId).await() }.asCompletableFuture()
+    }
+}

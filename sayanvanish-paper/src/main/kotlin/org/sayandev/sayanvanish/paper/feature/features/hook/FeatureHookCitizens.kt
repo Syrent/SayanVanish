@@ -1,0 +1,97 @@
+/*
+ * This file is part of SayanVanish, licensed under the GNU General Public License v3.0.
+ *
+ * Copyright (c) 2026 Sayan Development and contributors
+ *
+ * SayanVanish is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * SayanVanish is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+package org.sayandev.sayanvanish.paper.feature.features.hook
+
+import net.citizensnpcs.api.ai.speech.SpeechContext
+import net.citizensnpcs.api.ai.speech.event.NPCSpeechEvent
+import net.citizensnpcs.api.ai.speech.event.SpeechEvent
+import org.bukkit.entity.Player
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.sayandev.sayanvanish.api.VanishAPI
+import org.sayandev.sayanvanish.api.feature.RegisteredFeature
+import org.sayandev.sayanvanish.paper.api.PaperVanishUser.Companion.bukkitAdapt
+import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.cachedVanishUser
+import org.sayandev.sayanvanish.paper.feature.HookFeature
+import org.sayandev.stickynote.paper.registerListener
+import kotlinx.serialization.Serializable
+import com.charleskorn.kaml.YamlComment
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Transient
+
+@RegisteredFeature
+@Serializable
+@SerialName("hook_citizens")
+class FeatureHookCitizens(
+    @YamlComment("Will cancel npc speech event if context of speech contains a vanished player")
+    val checkSpeech: Boolean = true,
+): HookFeature() {
+
+    @Transient override val id = "hook_citizens"
+    override var enabled: Boolean = true
+    override val plugin: String = "Citizens"
+
+    override fun enable() {
+        if (hasPlugin()) {
+            CitizensHookImpl(this)
+        }
+        super.enable()
+    }
+
+}
+
+private class CitizensHookImpl(val feature: FeatureHookCitizens): Listener {
+
+    init {
+        registerListener(this)
+    }
+
+    @EventHandler
+    private fun onNPCSpeech(event: NPCSpeechEvent) {
+        if (!feature.checkSpeech) return
+        if (!feature.isActive()) return
+        val hasContext = checkContext(event.context)
+        if (!hasContext) event.isCancelled = true
+    }
+
+    @EventHandler
+    private fun onSpeech(event: SpeechEvent) {
+        if (!feature.checkSpeech) return
+        if (!feature.isActive()) return
+        val hasContext = checkContext(event.context)
+        if (!hasContext) event.isCancelled = true
+    }
+
+    private fun checkContext(context: SpeechContext): Boolean {
+        val contains = VanishAPI.get().getCacheService().getVanishUsers().getVanished().filter { it.isOnline }.mapNotNull { it.bukkitAdapt().player() }.any { context.message.contains(it.name) }
+        if (contains) return false
+
+        val iterator = context.iterator()
+        while (iterator.hasNext()) {
+            val recipient = iterator.next()
+            val player = recipient.getEntity() as? Player ?: continue
+            val user = player.cachedVanishUser() ?: continue
+            if (user.isVanished) {
+                iterator.remove();
+            }
+        }
+
+        return context.hasRecipients();
+    }
+}

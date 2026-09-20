@@ -44,3 +44,5 @@ bin/
 .idea
 **/run
 .kotlin
+**/sayanvanish-test/**
+.gradle-local

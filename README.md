@@ -128,14 +128,14 @@ The dependency artifact for the main API is `sayanvanish-api`.
 
 **Platform-Specific Dependencies**
 
-For platform-specific dependencies, the artifact ID follows the format `sayanvanish-<platform>`. Examples include `sayanvanish-bukkit` and `sayanvanish-proxy-velocity`.
+For platform-specific dependencies, the artifact ID follows the format `sayanvanish-<platform>`. Examples include `sayanvanish-paper` and `sayanvanish-proxy-velocity`.
 
 **In Maven**
 
 ```xml
 <dependency>
   <groupId>org.sayandev</groupId>
-  <artifactId>sayanvanish-bukkit</artifactId>
+  <artifactId>sayanvanish-paper</artifactId>
   <version>[get version from github]</version>
 </dependency>
 ```
@@ -145,13 +145,13 @@ For platform-specific dependencies, the artifact ID follows the format `sayanvan
 * **Groovy**
 
 ```groovy
-compileOnly "org.sayandev:sayanvanish-bukkit:[get version from github]"
+compileOnly "org.sayandev:sayanvanish-paper:[get version from github]"
 ```
 
 * **Kotlin**
 
 ```kotlin
-compileOnly("org.sayandev:sayanvanish-bukkit:[get version from github]")
+compileOnly("org.sayandev:sayanvanish-paper:[get version from github]")
 ```
 
 #### Accessing the API
@@ -159,7 +159,7 @@ compileOnly("org.sayandev:sayanvanish-bukkit:[get version from github]")
 You can access the SayanVanish API like this:
 
 ```java
-SayanVanishAPI.getInstance();
+SayanVanishAPI;
 ```
 
 Or you can use a platform-specific user type like this:
@@ -177,7 +177,7 @@ SayanVanishBukkitAPI.getInstance();
 From this class, you can access and modify everything. For example, to add a new user:
 
 ```java
-SayanVanishAPI.getInstance().getDatabase().addUser(User);
+SayanVanishAPI.getDatabase().addUser(User);
 ```
 
 #### Events

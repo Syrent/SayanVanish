@@ -1,19 +1,37 @@
+/*
+ * This file is part of SayanVanish, licensed under the GNU General Public License v3.0.
+ *
+ * Copyright (c) 2026 Sayan Development and contributors
+ *
+ * SayanVanish is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * SayanVanish is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 package org.sayandev.sayanvanish.proxy.config
 
 import org.sayandev.sayanvanish.api.Platform
 import org.sayandev.stickynote.core.configuration.Config
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import kotlinx.serialization.Serializable
 import java.io.File
 
 public var language: LanguageConfig = LanguageConfig.fromConfig() ?: LanguageConfig.defaultConfig()
 
-@ConfigSerializable
+@Serializable
 class LanguageConfig(
     val general: General = General(),
     val vanish: Vanish = Vanish(),
-) : Config(languageDirectory, "${settings.general.language}.yml") {
+) {
 
-    @ConfigSerializable
+    @Serializable
     data class General(
         val prefix: String = "<#67e8f9>SayanVanish</#67e8f9> <gray>|</gray> <yellow>",
         val reloaded: String = "<green>Plugin successfully reloaded. <red>Please note that some changes may require a server restart to take effect. Subsequent reloads may cause issues.",
@@ -28,7 +46,7 @@ class LanguageConfig(
         val updateFailed: String = "<red>Failed to update the plugin. Please try again later."
     )
 
-    @ConfigSerializable
+    @Serializable
     data class Vanish(
         val placeholderPrefix: String = "&7[Vanished]&r ",
         val placeholderSuffix: String = " &r&7[Vanished]",
@@ -36,8 +54,13 @@ class LanguageConfig(
         val cantChatWhileVanished: String = "<gray>You can't chat while you are vanished, add <gold><bold><char></bold></gold> at the beginning of your message to bypass this."
     )
 
+    @Serializable
     enum class Language(val id: String) {
         EN_US("en_US"),
+    }
+
+    fun save() {
+        Config.save(File(languageDirectory, "${Settings.get().general.language}.yml"), this)
     }
 
     companion object {
@@ -51,7 +74,7 @@ class LanguageConfig(
 
         @JvmStatic
         fun fromConfig(): LanguageConfig? {
-            return fromConfig<LanguageConfig>(File(languageDirectory, "${settings.general.language}.yml"))
+            return Config.fromFile<LanguageConfig>(File(languageDirectory, "${Settings.get().general.language}.yml"))
         }
     }
 }

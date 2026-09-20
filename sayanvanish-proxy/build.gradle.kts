@@ -1,11 +1,11 @@
-import org.sayandev.plugin.StickyNoteModules
+stickynote {
+    registerModule(core {
+        configuration {
+            kotlinx
+        }
+    })
+}
 
-allprojects {
-    stickynote {
-        modules(StickyNoteModules.PROXY)
-    }
-
-    dependencies {
-        implementation(project(":sayanvanish-api"))
-    }
+dependencies {
+    api(project(":sayanvanish-api"))
 }

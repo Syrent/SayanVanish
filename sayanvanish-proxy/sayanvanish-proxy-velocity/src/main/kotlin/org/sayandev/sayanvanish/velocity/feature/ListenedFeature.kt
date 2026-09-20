@@ -1,18 +1,29 @@
+/*
+ * This file is part of SayanVanish, licensed under the GNU General Public License v3.0.
+ *
+ * Copyright (c) 2026 Sayan Development and contributors
+ *
+ * SayanVanish is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * SayanVanish is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 package org.sayandev.sayanvanish.velocity.feature
 
+import kotlinx.serialization.Serializable
 import org.sayandev.sayanvanish.api.feature.Feature
-import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
-import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.sayandev.stickynote.velocity.registerListener
-import org.spongepowered.configurate.serialize.TypeSerializerCollection
 
-@ConfigSerializable
-abstract class ListenedFeature(
-    id: String,
-    enabled: Boolean = true,
-    category: FeatureCategories = FeatureCategories.DEFAULT,
-    additionalSerializers: TypeSerializerCollection = TypeSerializerCollection.defaults()
-) : Feature(id, enabled, category, additionalSerializers) {
+@Serializable
+abstract class ListenedFeature : Feature() {
 
     override fun enable() {
         if (!condition) return

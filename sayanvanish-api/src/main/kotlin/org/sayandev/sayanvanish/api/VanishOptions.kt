@@ -1,8 +1,25 @@
+/*
+ * This file is part of SayanVanish, licensed under the GNU General Public License v3.0.
+ *
+ * Copyright (c) 2026 Sayan Development and contributors
+ *
+ * SayanVanish is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * SayanVanish is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 package org.sayandev.sayanvanish.api
 
-import com.google.gson.Gson
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
+import org.jetbrains.exposed.sql.ReferenceOption
+import org.sayandev.sayanvanish.api.storage.PlatformTable
 
 data class VanishOptions(
     var sendMessage: Boolean = true,
@@ -11,6 +28,21 @@ data class VanishOptions(
     var isOnJoin: Boolean = false,
     var isOnQuit: Boolean = false,
 ) {
+
+    object Schema : PlatformTable("vanish_user_options") {
+        val uniqueId = reference(
+            "unique_id",
+            VanishUser.Schema.uniqueId,
+            onDelete = ReferenceOption.CASCADE
+        ).uniqueIndex()
+        val sendMessage = bool("send_message").default(true)
+        val notifyStatusChangeToOthers = bool("notify_status_change_to_others").default(true)
+        val notifyJoinQuitVanished = bool("notify_join_quit_vanished").default(true)
+        val isOnJoin = bool("is_on_join").default(false)
+        val isOnQuit = bool("is_on_quit").default(false)
+
+        override val primaryKey = PrimaryKey(uniqueId)
+    }
 
     class Builder {
         private var sendMessage = true
@@ -45,32 +77,11 @@ data class VanishOptions(
         }
 
         fun build(): VanishOptions {
-            return VanishOptions(sendMessage, notifyStatusChangeToOthers, notifyJoinQuitVanished, isOnJoin)
+            return VanishOptions(sendMessage, notifyStatusChangeToOthers, notifyJoinQuitVanished, isOnJoin, isOnQuit)
         }
-    }
-
-    fun toJson(): String {
-        val json = JsonObject()
-        json.addProperty("send-message", sendMessage)
-        json.addProperty("notify-status-change-to-others", notifyStatusChangeToOthers)
-        json.addProperty("notify-join-quit-vanished", notifyJoinQuitVanished)
-        json.addProperty("is-on-join", isOnJoin)
-        json.addProperty("is-on-quit", isOnQuit)
-        return Gson().toJson(json)
     }
 
     companion object {
-        @JvmStatic
-        fun fromJson(serialized: String): VanishOptions {
-            val json = JsonParser.parseString(serialized).asJsonObject
-            return VanishOptions(
-                json.get("send-message").asBoolean,
-                json.get("notify-status-change-to-others").asBoolean,
-                json.get("notify-join-quit-vanished").asBoolean,
-                json.get("is-on-join").asBoolean
-            )
-        }
-
         @JvmStatic
         fun defaultOptions(): VanishOptions {
             return VanishOptions()

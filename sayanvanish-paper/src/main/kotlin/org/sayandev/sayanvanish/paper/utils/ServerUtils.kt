@@ -1,0 +1,96 @@
+/*
+ * This file is part of SayanVanish, licensed under the GNU General Public License v3.0.
+ *
+ * Copyright (c) 2026 Sayan Development and contributors
+ *
+ * SayanVanish is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * SayanVanish is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+package org.sayandev.sayanvanish.paper.utils
+
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
+import org.bukkit.plugin.Plugin
+import org.sayandev.sayanvanish.api.VanishAPI
+import org.sayandev.stickynote.paper.onlinePlayers
+import org.sayandev.stickynote.paper.plugin
+import org.sayandev.stickynote.paper.server
+import java.time.Instant
+
+
+object ServerUtils {
+
+    val gson = GsonBuilder().setPrettyPrinting().create()
+
+    suspend fun getServerData(additionalData: Map<String, String> = emptyMap()): String {
+        val jsonObject = JsonObject()
+        jsonObject.add("paste-info", JsonObject().apply {
+            this.addProperty("instant", Instant.now().toString())
+        })
+
+        // TODO: re-add system info
+        jsonObject.add("machine", JsonObject().apply {
+            this.addProperty("operating-system", System.getProperty("os.name"))
+//            this.addProperty("processor", SystemInfo().hardware.processor.processorIdentifier.name)
+            this.addProperty("available-processors", Runtime.getRuntime().availableProcessors())
+            this.addProperty("free-memory", Runtime.getRuntime().freeMemory() / 1024)
+            val maxMemory = Runtime.getRuntime().maxMemory()
+            this.addProperty("max-memory", if (maxMemory == Long.MAX_VALUE) -1 else (maxMemory / 1024))
+//            this.addProperty("system-memory", SystemInfo().hardware.memory.total / 1024)
+        })
+
+        jsonObject.add("server", JsonObject().apply {
+            this.addProperty("name", server.name)
+            this.addProperty("version", server.version)
+            this.addProperty("bukkit-version", server.bukkitVersion)
+            this.addProperty("motd", server.motd)
+            this.addProperty("online-mode", server.onlineMode)
+            this.addProperty("port", server.port)
+            this.addProperty("players", onlinePlayers.joinToString(", ") { it.name })
+            this.addProperty("operators", server.operators.filter { it.player != null }.joinToString(", ") { it.name ?: it.uniqueId.toString() })
+            this.addProperty("plugins", server.pluginManager.plugins.joinToString(", ") { it.name })
+        })
+
+        jsonObject.add("vanished-users", JsonArray().apply {
+            VanishAPI.get().getDatabase().getVanishUsers().await().map { it.username }.forEach(this::add)
+        })
+
+        jsonObject.add("plugin", serializePlugin(plugin))
+
+        jsonObject.add("plugins", JsonArray().apply {
+            server.pluginManager.plugins.filter { it != plugin }.forEach { serverPlugin ->
+                this.add(serializePlugin(serverPlugin))
+            }
+        })
+
+        jsonObject.add("additional-data", JsonObject().apply {
+            additionalData.map { this.addProperty(it.key, it.value) }
+        })
+
+        return gson.toJson(jsonObject)
+    }
+
+    fun serializePlugin(plugin: Plugin): JsonObject {
+        val description = plugin.description
+        return JsonObject().apply {
+            this.add(description.name, JsonObject().apply {
+                this.addProperty("version", description.version)
+                this.addProperty("api-version", description.apiVersion)
+                this.addProperty("libraries", description.libraries.joinToString(", "))
+                this.addProperty("depend", description.depend.joinToString(", "))
+                this.addProperty("soft-depend", description.softDepend.joinToString(", "))
+            })
+        }
+    }
+}

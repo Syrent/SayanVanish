@@ -1,0 +1,70 @@
+/*
+ * This file is part of SayanVanish, licensed under the GNU General Public License v3.0.
+ *
+ * Copyright (c) 2026 Sayan Development and contributors
+ *
+ * SayanVanish is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * SayanVanish is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+package org.sayandev.sayanvanish.paper.feature.features.prevent
+
+import org.bukkit.entity.Player
+import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
+import org.bukkit.event.server.TabCompleteEvent
+import org.sayandev.sayanvanish.api.Permissions
+import org.sayandev.sayanvanish.api.VanishAPI
+import org.sayandev.sayanvanish.api.VanishUser
+import org.sayandev.sayanvanish.api.feature.Configurable
+import org.sayandev.sayanvanish.api.feature.RegisteredFeature
+import org.sayandev.sayanvanish.api.feature.category.FeatureCategories
+import org.sayandev.sayanvanish.paper.api.SayanVanishPaperAPI.Companion.getCachedOrCreateVanishUser
+import org.sayandev.sayanvanish.paper.feature.ListenedFeature
+import kotlinx.serialization.Serializable
+import com.charleskorn.kaml.YamlComment
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Transient
+
+@RegisteredFeature
+@Serializable
+@SerialName("prevent_tab_complete")
+class FeaturePreventTabComplete(
+    @YamlComment("Whether to keep vanished player in tab completion if the player that is getting the suggestion has a higher level of vanish.")
+    @Configurable val checkVanishLevel: Boolean = false
+): ListenedFeature() {
+
+    @Transient override val id = "prevent_tab_complete"
+    override var enabled: Boolean = true
+    @Transient override val category: FeatureCategories = FeatureCategories.PREVENTION
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    private fun onTabComplete(event: TabCompleteEvent) {
+        val player = event.sender as? Player ?: return
+        val user = player.getCachedOrCreateVanishUser()
+        if (!isActive(user)) return
+        val vanishedUsers = VanishAPI.get().getCacheService().getVanishUsers().getVanished()
+        val completions = event.completions.toMutableSet()
+        if (!user.hasPermission(Permissions.VANISH) || !checkVanishLevel) {
+            event.completions = completions
+                .filter { completion -> !vanishedUsers.map(VanishUser::username).contains(completion) }
+            return
+        }
+
+        event.completions = completions.filter { completion ->
+            !vanishedUsers
+                .filter { vanishedUser -> vanishedUser.vanishLevel > user.vanishLevel }
+                .map(VanishUser::username).contains(completion)
+        }
+    }
+
+}
